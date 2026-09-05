@@ -3,7 +3,8 @@
 **Verifier:** Arena.ai Agent Mode, offline analysis of `kbsingh1399/Trading`
 **Tree verified against:** `origin/main @ 9a33c23` (BTCUSDT [1/18] certified tree)
 **Prompt answered:** `docs/prompts/ARENA_MULTI_ASSET_SCHEMA_CALIBRATION_PROMPT.md`
-**Delivered as:** branch `arena/01a07263-trading` @ `a83d022` (patch) + this doc, a clean fast-forward of `main`
+**Delivered as:** branch `arena/01a07263-trading` (patch `a83d022` + this doc), merged by you into `main @ 2241bbb`,
+whose history was then re-initialised as a single squashed commit — the SHAs above no longer resolve, the content does
 **Ground truth available here:** the real `BTCUSDT_15m_master_2020_2026.parquet` (210,792 bars, 98.7 MB).
 No ETHUSDT artifact of any kind is in the repo — parquets were de-tracked in `b836aa0` — so every ETH
 number below is either reproduced by construction from your log, or measured on BTCUSDT and labelled.
@@ -79,11 +80,12 @@ That is what the shipped patch tests (§4).
    because the only honest anchor for "was it absent at the source?" is a *new* field (§3) — which is
    also what my patch adds.
 
-Independent verification limit, stated plainly: that ETH metrics begin 2021-12-01 is **not checkable
-from this sandbox** (no egress to `data.binance.vision`, no committed ETH artifact). Binance documents
-only `klines`/`aggTrades`/`trades` retention, not per-symbol metrics coverage. Treat Finding A as
-"correct diagnosis of the code defect, plausible coverage premise": my patch is deliberately built so
-the calibration **does not depend on the exact date**.
+At the time of writing, that ETH metrics begin 2021-12-01 was **not checkable from this sandbox** (no
+egress to `data.binance.vision`, no committed ETH artifact): Binance documents only
+`klines`/`aggTrades`/`trades` retention, not per-symbol metrics coverage, so Finding A was recorded as
+"correct diagnosis of the code defect, plausible coverage premise" — and the patch was deliberately
+built so the calibration **does not depend on the exact date**. §8 closes that caveat: the field my own
+patch introduced now corroborates the premise independently, on the real asset.
 
 ---
 
@@ -234,3 +236,44 @@ egress block, not a general outage. Consequences, precisely scoped:
 **Standing verdict, restated for the multi-asset case:** *certified to run, not certified to trust
 blindly.* The council now has the right question to ask when coverage is missing ("does the source attest
 this gap?") instead of the wrong one ("is this column constant this year?").
+
+---
+
+## 8. Post-merge verification against the real ETHUSDT export
+
+After the batch landed, `Engine/binance_backtesting_data/ETHUSDT_dataset_manifest.json` is committed, so
+Finding A's premise — the one thing §2 had to leave as an assumption — is now measurable rather than
+argued. 210,800 bars, `2020-09-01 → 2026-09-05`, council `Agent1/2/3 = PASS`, `verification.passed = true`:
+
+| field (ETHUSDT, real) | value | reading |
+|---|---|---|
+| `provenance.metrics_archive_absent_months` | `2020-09 … 2021-11` + `2026-09` | **confirms the premise**: 15 contiguous months of genuine 404s, i.e. Vision's ETH metrics really do begin 2021-12-01; the trailing `2026-09` is the not-yet-published current month, correctly attested rather than rejected |
+| `metrics_unavailable_fraction_by_year` | 2020 **1.0000**, 2021 0.9189, 2022 0.8656, 2023 0.0001, 2024 0.0009, 2025 0.0002, 2026 0.0 | 2020 is skipped (attested); **2021 is not** — ≈2.8 k available bars clear the 500 floor, so it is judged normally. A year-level patch that exempted "mostly absent" years instead of "unattested" years would have hidden 2021's partial data |
+| `metrics_available_bars` / `imputed_metrics_bars` | 136,516 / 74,284 (35.2 %) | the honest figure the exemption trades a rejection for; consumers must filter `is_imputed_metrics == 0` |
+
+Your integration is correct in the places where it could have gone wrong:
+
+* `run_council(..., attested_months=...)` now receives the inventory **in-process** from
+  `fetcher.metrics_absent_days` (and is re-used after each `causal_repair` round), which is strictly better
+  than reading it back out of the manifest — and it retires the `DEFAULT_TARGET` residual in §7. The
+  `hasattr(...) and fetcher.metrics_absent_days` guard means a run with no inventory falls back to
+  `None` → manifest → **fail closed**, so caching can never manufacture an exemption.
+* `oi_impossible_zero` is untouched (`avail == 1` **and** `open_interest_k == 0`), so the A1 hard gate
+  still does not consult `is_imputed_metrics`. `audit_probe_metrics_validity` now reporting
+  "pre-archive zero OI bars quarantined (`is_imputed=1`)" as accepted is therefore safe *only because*
+  the council still rejects an unattested gap of that shape — the probe alone would accept a failed
+  interior download that the pipeline marked honestly. Keep the probe behind the council, not beside it.
+
+One number to notice, because it is data for **R1** rather than a new defect: ETH's 2022 unavailability
+is **0.8656 — the same value as BTCUSDT's** (4 d.p., ~30.4 k of 35,040 bars). Two independent assets
+losing the same bars to the same day-granularity is what the shared staleness bit looks like from the
+outside. Per-column bits (R1) would decorrelate them; until then, any 2022 cross-symbol study on these
+files is comparing one quarantine to itself.
+
+Not re-run here: this sandbox arrived with the repo and no Python environment (`import numpy` fails), so
+the offline suites could not be executed against the merged tree — this section is inspection plus your
+committed artifacts. On my side the last green state was `test_pipeline_offline` (ALL TESTS PASSED),
+`audit_probe_metrics_coverage` (exit 0), `audit_probe_metrics_validity` (exit 0),
+`test_schema_calibration` (18/18), all on `9a33c23` + the patch. Worth one clean run of
+`test_schema_calibration.py` on your machine, where the real ETHUSDT parquet now makes case 2 assert
+directly on ETH rather than on the emulation.
