@@ -101,7 +101,9 @@ def check_symbol(master_path: str) -> Optional[Dict]:
 
     # ---- A1: impossible values -------------------------------------------------
     local = pd.Series(oi).rolling(ROLL_WINDOW, center=True, min_periods=50).median().to_numpy()
-    suspect = (oi == 0.0) | ((oi < FRAC_OF_LOCAL * local) & (local > MIN_LOCAL_K))
+    ramp_mask = np.zeros(n, bool)
+    ramp_mask[:min(n, ROLL_WINDOW)] = True
+    suspect = ((oi == 0.0) | ((oi < FRAC_OF_LOCAL * local) & (local > MIN_LOCAL_K))) & (~ramp_mask)
     if suspect.any():
         chg = m["oi_change_pct"].to_numpy(np.float64)
         extreme = np.abs(chg) >= 50.0

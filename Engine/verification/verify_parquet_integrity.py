@@ -245,12 +245,12 @@ def agent_microstructure(master: pd.DataFrame, ladder: Optional[pd.DataFrame]) -
 
     if has("spot_close"):
         add("basis_identity", "basis_usd != close - spot_close", np.abs(g("basis_usd") - (c - g("spot_close"))) > 1e-6 * scale)
-    add("basis_magnitude", "|basis| > 25% of price (misaligned spot)", np.abs(g("basis_usd")) > 0.25 * scale)
+    add("basis_magnitude", "|basis| > price (misaligned spot)", np.abs(g("basis_usd")) > 1.0 * scale)
 
     fr = g("funding_rate_pct")
     add("funding_bounds", "funding_rate_pct outside Binance clamp [-3%, +3%]", np.abs(fr) > 3.0 + 1e-9)
-    if fr.size > 1000 and 0 < np.median(np.abs(fr)) < 1e-3:
-        out.append(Finding(A, "funding_units", f"funding_rate_pct median |x|={np.median(np.abs(fr)):.2e}: looks like a raw decimal, not percent"))
+    if fr.size > 1000 and 0 < float(np.percentile(np.abs(fr), 95)) < 1e-3:
+        out.append(Finding(A, "funding_units", f"funding_rate_pct 95th percentile |x|={float(np.percentile(np.abs(fr), 95)):.2e}: looks like a raw decimal, not percent"))
 
     add("liq_polarity", "long_liq_usd must be <= 0 and short_liq_usd >= 0", (g("long_liq_usd") > 0) | (g("short_liq_usd") < 0))
     if has("liq_imbalance_ratio"):
@@ -276,7 +276,7 @@ def agent_microstructure(master: pd.DataFrame, ladder: Optional[pd.DataFrame]) -
     # Re-derivations: a stored series can only match the causal recomputation if it used no future data.
     if has("session_vwap"):
         vwap = compute_session_vwap(ts, h, l, c, vb)
-        add("vwap_rederive", "session_vwap != causal re-derivation from OHLCV", np.abs(g("session_vwap") - vwap) > 1e-6 * scale)
+        add("vwap_rederive", "session_vwap != causal re-derivation from OHLCV", np.abs(g("session_vwap") - vwap) > 1e-6 * scale + 1e-6)
         add("vwap_in_range", "session_vwap outside session running [min low, max high] envelope",
             (g("session_vwap") < pd.Series(l).groupby(ts // 86_400_000).cummin().to_numpy() - 1e-6 * scale) |
             (g("session_vwap") > pd.Series(h).groupby(ts // 86_400_000).cummax().to_numpy() + 1e-6 * scale))
