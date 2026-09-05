@@ -110,7 +110,8 @@ class ParquetExporter:
         _atomic_write(clean, path, _arrow_schema(LADDER_COLUMNS, LADDER_DTYPES), row_group_size=rg)
         return path
 
-    def write_manifest(self, master: pd.DataFrame, symbol: str, ladder_stats: Dict[str, Any], verification: Dict[str, Any]) -> str:
+    def write_manifest(self, master: pd.DataFrame, symbol: str, ladder_stats: Dict[str, Any],
+                       verification: Dict[str, Any], metrics_absent_days: Optional[List[str]] = None) -> str:
         mpath, lpath = self.master_path(symbol), self.ladder_path(symbol)
         manifest = {
             "symbol": symbol,
@@ -133,6 +134,10 @@ class ParquetExporter:
                 "metrics_available_bars": int((master["metrics_available"] == 1).sum()),
                 "imputed_metrics_bars": int((master["is_imputed_metrics"] == 1).sum()) if "is_imputed_metrics" in master else 0,
                 "warmup_unconverged_bars": int((master["is_warmup_converged"] == 0).sum()) if "is_warmup_converged" in master else 0,
+                # months with no archive at the source, as observed by the downloader. The
+                # council's pre-archive exemption is granted on this field only; without it a
+                # metrics-free year is treated as unverified coverage and stays rejected.
+                "metrics_archive_absent_months": sorted({d[:7] for d in (metrics_absent_days or [])}),
                 "metrics_unavailable_fraction_by_year": {
                     str(y): round(float((master.loc[master["datetime_utc"].str[:4] == str(y), "metrics_available"] == 0).mean()), 4)
                     for y in sorted(master["datetime_utc"].str[:4].unique())

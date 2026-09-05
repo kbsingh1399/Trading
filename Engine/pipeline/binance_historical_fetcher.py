@@ -138,6 +138,7 @@ class BinanceHistoricalFetcher:
                  log: Callable[[str], None] = print) -> None:
         self.cache_dir = os.path.abspath(cache_dir)
         self.max_workers = max(1, max_workers)
+        self.metrics_absent_days: List[str] = []
         self.http = http or HttpClient()
         self.log = log
         self.dirs = {
@@ -323,6 +324,17 @@ class BinanceHistoricalFetcher:
             return _f
 
         res = self._parallel(daily(symbol), days, f"{symbol} metrics")
+        # Coverage inventory: days whose archive object does not exist on the host at all.
+        # Recorded here, at the fetch site, because it is the only evidence about the *source*
+        # in this pipeline: a frame can come up empty through a parse or join bug, but a None
+        # from _cached means Binance published no metrics archive for that day. The council
+        # (verify_parquet_integrity.agent_schema) uses it to tell legitimate pre-archive
+        # absence apart from fabricated coverage, so it must not be derived from the frame.
+        absent = sorted(d for d, df in res.items() if df is None or df.empty)
+        self.metrics_absent_days = absent
+        if absent:
+            self.log(f"[FETCHER] {symbol}: metrics archive absent for {len(absent)} day(s) "
+                     f"({absent[0]} .. {absent[-1]})")
         frames = [df for df in res.values() if df is not None and not df.empty]
         primary = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=METRIC_COLS)
         primary = primary.drop_duplicates("timestamp_ms").sort_values("timestamp_ms").reset_index(drop=True)

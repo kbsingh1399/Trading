@@ -72,6 +72,12 @@ from Engine.core.schema import (  # noqa: E402
 DEFAULT_TARGET = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "binance_backtesting_data")
 _TOL = 1e-6
 
+# --- regime-scan calibration (multi-asset universe) ---------------------------
+REGIME_MIN_AVAIL_BARS = 500        # bars *carrying metrics* needed to judge a year
+METRICS_INTERIOR_HOLE_BARS = 4032  # 28 days of 15m bars with no metrics content at all
+BASIS_MIN_DISTINCT = 20            # a spread that only ever takes <20 values is broken
+BASIS_MODAL_SHARE_MAX = 0.98       # >98% of bars on one basis value => spot collapsed
+
 
 @dataclass
 class Finding:
@@ -340,7 +346,80 @@ def agent_microstructure(master: pd.DataFrame, ladder: Optional[pd.DataFrame]) -
 # ==============================================================================
 # Agent 3 -- Zero-Null & Schema
 # ==============================================================================
-def agent_schema(master: pd.DataFrame, ladder: Optional[pd.DataFrame]) -> List[Finding]:
+def _available_mask(master: pd.DataFrame) -> np.ndarray:
+    """Bars the export discloses as carrying official metrics (all bars for legacy files)."""
+    if "metrics_available" in master:
+        return master["metrics_available"].to_numpy() == 1
+    return np.ones(len(master), dtype=bool)
+
+
+def metrics_coverage_report(master: pd.DataFrame) -> Dict[str, object]:
+    """
+    Why the regime scan skipped a year, in one dict.
+
+    A Finding is always a rejection in this council (there is no severity), so a
+    legitimate pre-archive absence cannot be reported as a soft warning from
+    ``agent_schema``. It is reported here instead, so that "no findings" is never
+    mistaken for "nothing was skipped".
+    """
+    rep: Dict[str, object] = {}
+    if "open_time_ms" not in master or not len(master):
+        return rep
+    ts = master["open_time_ms"].to_numpy(np.int64)
+    years = pd.to_datetime(ts, unit="ms", utc=True).year
+    avail = _available_mask(master)
+    counts = {}
+    for y in np.unique(years):
+        ym = years == y
+        counts[int(y)] = {"bars": int(ym.sum()), "available": int((ym & avail).sum())}
+    rep["years"] = counts
+    rep["skipped_years"] = sorted(
+        y for y, d in counts.items()
+        if d["bars"] >= 500 and d["available"] < REGIME_MIN_AVAIL_BARS
+    )
+    oi = master["open_interest_k"].to_numpy(np.float64) if "open_interest_k" in master else np.ones(len(master))
+    holes = _runs_longer_than((~avail) & (np.abs(oi) < 1e-12), 1)
+    interior = [r for r in holes if r[0] > 0 and r[1] < len(master)]
+    rep["longest_interior_hole_bars"] = max((b - a for a, b in interior), default=0)
+    rep["unavailable_prefix_bars"] = int(holes[0][1] - holes[0][0]) if holes and holes[0][0] == 0 else 0
+    first = np.flatnonzero(avail)
+    rep["metrics_first_available_utc"] = str(pd.to_datetime(ts[first[0]], unit="ms", utc=True)) if len(first) else None
+    return rep
+
+
+def _runs_longer_than(mask: np.ndarray, min_len: int) -> list:
+    """Maximal True-runs of a boolean mask as (start, end_exclusive), longest-first by position."""
+    idx = np.flatnonzero(np.asarray(mask, dtype=bool))
+    if not len(idx):
+        return []
+    out = []
+    for grp in np.split(idx, np.flatnonzero(np.diff(idx) > 1) + 1):
+        if len(grp) >= min_len:
+            out.append((int(grp[0]), int(grp[-1]) + 1))
+    return out
+
+
+def _attested_absent_months(symbol: str, target_dir: Optional[str] = None) -> "set":
+    """
+    Months the *download* observed as having no metrics archive on data.binance.vision.
+
+    Read out of the dataset manifest, where the fetcher records archive objects that returned
+    404. Non-circular by construction: it is an observation about the source, never derived
+    from the assembled frame, so a parse or join bug that silently empties a month cannot
+    attest itself. A missing field (legacy manifest) means "no exemption available".
+    """
+    if not symbol:
+        return set()
+    path = os.path.join(target_dir or DEFAULT_TARGET, f"{symbol}_dataset_manifest.json")
+    try:
+        with open(path, encoding="utf-8") as fh:
+            man = json.load(fh)
+    except Exception:
+        return set()
+    return {str(m)[:7] for m in ((man.get("provenance") or {}).get("metrics_archive_absent_months") or [])}
+
+
+def agent_schema(master: pd.DataFrame, ladder: Optional[pd.DataFrame], attested_months: Optional[set] = None) -> List[Finding]:
     A = "Agent3:Schema"
     out: List[Finding] = []
     ts = master["open_time_ms"].to_numpy(np.int64) if "open_time_ms" in master else np.array([], dtype=np.int64)
@@ -403,22 +482,80 @@ def agent_schema(master: pd.DataFrame, ladder: Optional[pd.DataFrame]) -> List[F
     if len(master) > 1000 and "open_time_ms" in master and len(ts):
         years = pd.to_datetime(ts, unit="ms", utc=True).year
         metric_cols = ("open_interest_k", "ls_ratio_global", "ls_ratio_top", "top_account_ratio", "whale_index", "oi_change_pct")
+        avail = _available_mask(master)
+        months = pd.to_datetime(ts, unit="ms", utc=True).strftime("%Y-%m")
+        if attested_months is None:
+            attested_months = _attested_absent_months(
+                str(master["symbol"].iloc[0]) if "symbol" in master else "")
+        attested_bar = np.isin(months, sorted(attested_months)) if attested_months else np.zeros(len(master), bool)
+        avail_nu = {c: master.loc[avail, c].nunique() for c in metric_cols if c in master}
         for y in np.unique(years):
             y_mask = (years == y)
-            if y_mask.sum() >= 500:
-                for col in metric_cols:
-                    if col in master:
-                        y_nu = master.loc[y_mask, col].nunique()
-                        total_nu = master[col].nunique()
-                        if y_nu <= 1 and total_nu > 1:
-                            out.append(Finding(A, "regime_dead_feature",
-                                               f"{col} is constant (nunique={y_nu}) in year {y} despite total nunique={total_nu} (partially fabricated metrics)"))
+            a_mask = y_mask & avail
+            if int(a_mask.sum()) < REGIME_MIN_AVAIL_BARS:
+                # A year with (almost) no metrics is legitimate ONLY when Binance never
+                # published the archive for it. The availability flag cannot decide that -- it
+                # is the very field this scan exists to audit -- so the exemption is granted on
+                # the download inventory alone, and an unattested gap stays a rejection.
+                if int(y_mask.sum()) >= REGIME_MIN_AVAIL_BARS:
+                    need = set(np.unique(months[y_mask]))
+                    unattested = need - set(attested_months or set())
+                    if unattested:
+                        f = _finding(A, "metrics_coverage_unattested",
+                                     f"year {int(y)} has {int(y_mask.sum()) - int(a_mask.sum()):,}/{int(y_mask.sum()):,} bars "
+                                     f"with no metrics, and the download did not attest {len(unattested)} of its months "
+                                     f"({', '.join(sorted(unattested)[:3])}...) as absent from the Binance Vision archive: "
+                                     f"pre-archive absence and fabricated coverage cannot be told apart inside the file",
+                                     y_mask & ~avail, ts)
+                        if f:
+                            out.append(f)
+                continue
+            for col in metric_cols:
+                if col in master:
+                    y_nu = master.loc[a_mask, col].nunique()
+                    total_nu = avail_nu[col]
+                    if y_nu <= 1 and total_nu > 1:
+                        out.append(Finding(A, "regime_dead_feature",
+                                           f"{col} is constant (nunique={y_nu}) across the {int(a_mask.sum()):,} bars "
+                                           f"carrying metrics in year {int(y)} despite total nunique={total_nu} "
+                                           f"(partially fabricated metrics)"))
+    # metrics_interior_hole: a long stretch with no metrics content at all, in the middle of
+    # the history (or at its head) that the download inventory does not attest as absent. Legitimate pre-archive absence is a contiguous prefix (Binance Vision
+    # starts ETHUSDT metrics on 2021-12); a hole after data has begun flowing is a failed
+    # download. Without this, conditioning the scan above on metrics_available would let a
+    # lost month pass simply because it was honestly marked unavailable.
+    if len(master) > 1000 and "open_time_ms" in master and "open_interest_k" in master:
+        empty = ((~_available_mask(master)) & (~attested_bar) &
+                 (np.abs(master["open_interest_k"].to_numpy(np.float64)) < 1e-12))
+        interior = [r for r in _runs_longer_than(empty, METRICS_INTERIOR_HOLE_BARS + 1)
+                    if r[0] > 0 and r[1] < len(master)]
+        if interior:
+            a, b = max(interior, key=lambda r: r[1] - r[0])
+            bad = np.zeros(len(master), dtype=bool)
+            bad[a:b] = True
+            f = _finding(A, "metrics_interior_hole",
+                         f"{b - a:,} consecutive bars with no metrics content in the interior of the "
+                         f"history (failed archive download, not a pre-archive gap)", bad, ts)
+            if f:
+                out.append(f)
     # precision collapse: a price-scale feature must not be quantised coarser than the asset trades
     if len(master) > 1000:
         close_nu = master["close"].nunique()
-        for col in ("ema_8", "atr_14", "basis_usd"):
+        for col in ("ema_8", "atr_14"):
             if col in master and master[col].nunique() < max(50, close_nu * 0.01):
                 out.append(Finding(A, "precision_collapse", f"{col} has only {master[col].nunique()} distinct values vs {close_nu} distinct closes"))
+        # basis_usd is a bounded *spread*, not a price level: its distinct count is capped by
+        # (band width / asset tick), so it is uncorrelated with close cardinality and must not
+        # be judged against it. What genuinely signals a broken basis is collapse onto a single
+        # value, i.e. spot fabricated from the futures close (basis ≡ 0) or a stale spot join.
+        if "basis_usd" in master:
+            bser = pd.Series(np.round(master["basis_usd"].to_numpy(np.float64), 8))
+            vc = bser.value_counts()
+            mode_share = float(vc.iloc[0]) / len(bser) if len(vc) else 1.0
+            if len(vc) < BASIS_MIN_DISTINCT or mode_share >= BASIS_MODAL_SHARE_MAX:
+                out.append(Finding(A, "precision_collapse",
+                                   f"basis_usd collapsed: {len(vc)} distinct values, modal value covers "
+                                   f"{mode_share:.1%} of bars (spot may be fabricated from futures close)"))
         # value area is bucket-quantised by design; it collapses only if the bucket dwarfs the traded range
         if "session_vah" in master:
             rng = float(master["high"].max() - master["low"].min())

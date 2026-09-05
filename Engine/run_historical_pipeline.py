@@ -269,7 +269,8 @@ def run_pipeline(
         log(f"[FAIL-CLOSED] {symbol}: export rejected by post-export audit gate. Aborting manifest write.")
         return False
 
-    exporter.write_manifest(master, symbol, ladder_stats, {**report.to_dict(), "repair_rounds": rounds})
+    exporter.write_manifest(master, symbol, ladder_stats, {**report.to_dict(), "repair_rounds": rounds},
+                            metrics_absent_days=getattr(fetcher, "metrics_absent_days", None))
     log(f"[OK] {symbol}: exported {os.path.basename(mpath)} ({os.path.getsize(mpath) / 1_048_576:.1f} MB) + "
         f"{os.path.basename(lpath)} ({os.path.getsize(lpath) / 1_048_576:.1f} MB) in {time.time() - t3:.1f}s")
 
