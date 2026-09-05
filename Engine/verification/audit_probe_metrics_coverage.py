@@ -110,12 +110,27 @@ def main() -> int:
               f"atr_14==0 on {100 * (master['atr_14'] == 0).mean():.2f} % of bars")
     print("  (legacy shipped data: DOGE atr_14==0 on 97.0 % of bars, 73 distinct ema_8)")
 
-    report = run_council(master, ladder, "DOGEUSDT", log=lambda m: None)
+    # The fixture's head is value-identical to a legitimate pre-archive absence, so the ONLY thing
+    # that must decide it is the download inventory. Assert the defect shape explicitly: run the
+    # council with an attestation of "nothing is absent at the source". Passing nothing instead would
+    # let agent_schema fall back to the symbol's real manifest, which for DOGEUSDT genuinely attests
+    # 2020-09..2021-11 as absent -- excusing the fixture for a reason that has nothing to do with it.
+    report = run_council(master, ladder, "DOGEUSDT", log=lambda m: None, attested_months=set())
     print("\n" + "=" * 78)
-    print(f"COUNCIL VERDICT: passed={report.passed}  {report.agent_status}")
+    print(f"COUNCIL VERDICT (no attestation): passed={report.passed}  {report.agent_status}")
     print("=" * 78)
     for f in report.findings[:10]:
         print(f"   -> {f}")
+
+    # and the other side of the same line: the identical frame, with the source attesting those
+    # months as never published, must be accepted. That is the ETHUSDT/DOGEUSDT 2020 case.
+    head_months = sorted(set(pd.to_datetime(master.loc[pre, "open_time_ms"].to_numpy("int64"),
+                                            unit="ms", utc=True).strftime("%Y-%m")))
+    rep_att = run_council(master, ladder, "DOGEUSDT", log=lambda m: None, attested_months=set(head_months))
+    excused = {f.check for f in rep_att.findings} & {"regime_dead_feature", "metrics_coverage_unattested",
+                                                     "metrics_interior_hole"}
+    print(f"\n  same frame, ATTESTED absent ({head_months[0]}..{head_months[-1]}): passed={rep_att.passed}, "
+          f"coverage findings={sorted(excused) or 'none'}")
 
     fabricated = int(pre.sum())
     if report.passed:
@@ -125,6 +140,10 @@ def main() -> int:
         print("  (see docs/PIPELINE_VERIFICATION_CERTIFICATION.md §4.1).")
         return 1
     print("\n  Council now rejects partially-fabricated metrics -> fix verified in place.")
+    if excused or rep_att.passed is not True:
+        print("  ** the attested twin did not behave as the calibration promises (see above) **")
+        return 1
+    print("  and honours an attested pre-archive absence -> multi-asset calibration verified in place.")
     return 0
 
 

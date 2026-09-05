@@ -47,6 +47,7 @@ from Engine.core.schema import (  # noqa: E402
     SYMBOLS,
     WARMUP_START_DATE,
     ladder_filename,
+    manifest_filename,
     master_filename,
 )
 from Engine.pipeline.binance_historical_fetcher import BinanceHistoricalFetcher  # noqa: E402
@@ -85,7 +86,16 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
     import pyarrow.parquet as pq
     mpath = os.path.join(target_dir, master_filename(symbol))
     lpath = os.path.join(target_dir, ladder_filename(symbol))
-    if not (os.path.exists(mpath) and os.path.exists(lpath)):
+    ppath = os.path.join(target_dir, manifest_filename(symbol))
+    if not (os.path.exists(mpath) and os.path.exists(lpath) and os.path.exists(ppath)):
+        return False
+    # a pair of parquets is not a certificate: skip only when the manifest says the council passed.
+    try:
+        import json
+        with open(ppath, encoding="utf-8") as fh:
+            if not json.load(fh).get("verification", {}).get("passed", False):
+                return False
+    except Exception:
         return False
     try:
         mf, lf = pq.ParquetFile(mpath), pq.ParquetFile(lpath)
@@ -241,14 +251,28 @@ def run_pipeline(
     # ------------------------------------------------------------ export
     t3 = time.time()
     exporter = ParquetExporter(target_dir)
+    written = []
     try:
         mpath = exporter.export_master(master, symbol)
+        written.append(mpath)
         lpath = exporter.export_ladder(ladder, symbol)
+        written.append(lpath)
         manifest_path = exporter.write_manifest(master, symbol, ladder_stats, {**report.to_dict(), "repair_rounds": rounds},
                                                 metrics_absent_days=getattr(fetcher, "metrics_absent_days", None))
-    except SchemaError as exc:
-        log(f"[REJECT] {symbol}: schema validation failed at export: {exc}")
-        return False
+        written.append(manifest_path)
+    except Exception as exc:
+        # Fail closed here too: an export that died between the two writes would otherwise leave a
+        # master/ladder pair that existing_output_is_current() could later treat as current.
+        for p in written:
+            try:
+                os.remove(p)
+            except OSError:
+                pass
+        if isinstance(exc, SchemaError):
+            log(f"[REJECT] {symbol}: schema validation failed at export: {exc}; removed {len(written)} partial artifact(s)")
+            return False
+        log(f"[REJECT] {symbol}: export failed ({type(exc).__name__}: {exc}); removed {len(written)} partial artifact(s)")
+        raise
 
     audit_ok = True
     if run_audit:

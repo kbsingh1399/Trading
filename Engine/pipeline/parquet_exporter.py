@@ -138,6 +138,11 @@ class ParquetExporter:
                 # council's pre-archive exemption is granted on this field only; without it a
                 # metrics-free year is treated as unverified coverage and stays rejected.
                 "metrics_archive_absent_months": sorted({d[:7] for d in (metrics_absent_days or [])}),
+                # Day-granular form of the same inventory. The month rollup above is derived from it,
+                # so a month with a single absent day is attested as wholly absent; a consumer that
+                # needs to excuse *only* the days the source never published must read this field.
+                "metrics_archive_absent_days": sorted(metrics_absent_days or []),
+                "metrics_archive_absent_day_count": len(set(metrics_absent_days or [])),
                 "metrics_unavailable_fraction_by_year": {
                     str(y): round(float((master.loc[master["datetime_utc"].str[:4] == str(y), "metrics_available"] == 0).mean()), 4)
                     for y in sorted(master["datetime_utc"].str[:4].unique())
