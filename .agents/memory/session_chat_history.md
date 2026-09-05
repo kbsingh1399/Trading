@@ -40518,3 +40518,23 @@ Also ensure no...lookahead etc guidelines
   - origin/main: 4018fb2666267594bd2d27347704760b233a4bd7
   - origin/arena/01a07263-trading: 4018fb2666267594bd2d27347704760b233a4bd7
 - Both remotes are 100% identical bit-for-bit mirrors of the local PC.
+
+---
+**User:** Following is the output of latest arena.ai prompt : New claims, new data. Let me fetch and diff the actual code before trusting anything... Certification verdict: A1, A1b and A5 are genuinely closed. Certified for the 18-asset batch run, subject to two pre-flight items...
+**Assistant:**
+- Pulled latest commit b097613 from origin/arena/01a07263-trading into main (fast-forward).
+- Reviewed docs/PIPELINE_CERTIFICATION_ROUND3.md:
+  - Arena confirmed A1, A1b, and A5 are genuinely closed.
+  - Formally certified pipeline for full 18-asset batch execution (--all-symbols).
+- Surgically implemented the pre-flight engineering items highlighted in Round 3:
+  - R3: Eliminated .bfill() in causal_med in historical_metrics_processor.py to ensure 100% strict causality.
+  - R6: Made batch export gate fail-closed in run_historical_pipeline.py by running validity probe before write_manifest and eliminating swallowed exceptions.
+  - R7: Added 5.0s floor on server Retry-After cooldown and set default min_interval to 0.05s in http_client.py.
+  - R4: Added regression tests to test_pipeline_offline.py for _stale_runs_mask, oi_impossible_zero, and causal imputation.
+- Ran all local verification test suites:
+  - test_pipeline_offline: All 10 suites passed in 26.8s.
+  - audit_probe_metrics_validity: PASS (0 impossible OI, 14 upstream runs quarantined).
+  - audit_probe_indicator_parity: PASS (0 violations).
+  - audit_probe_metrics_coverage: PASS (catches partially fabricated metrics).
+  - verify_parquet_integrity: PASS (all 3 agents PASS, 0 findings).
+- Committed changes to main (c0a62e5) and pushed in full parity to origin/main and origin/arena/01a07263-trading.
