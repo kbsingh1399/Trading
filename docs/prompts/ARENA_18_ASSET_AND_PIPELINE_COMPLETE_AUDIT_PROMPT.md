@@ -1,17 +1,17 @@
-# ARENA.AI MASTER PROMPT: 18-ASSET DATASET INTEGRITY & PRODUCTION PIPELINE FINAL AUDIT
+# ARENA.AI MASTER PROMPT: 18-ASSET ROW-BY-ROW DATASET AUDIT & PRODUCTION PIPELINE CERTIFICATION
 
-> **EXECUTIVE OBJECTIVE**: Conduct an adversarial, forensic audit of the completed 18-asset historical backtesting dataset dumped in `Engine/binance_backtesting_data/` and the master production orchestrator `Engine/run_historical_pipeline.py`. Verify whether all 18 institutional assets are mathematically sound, continuous, causal (zero-lookahead), and fully compliant with the 3-Agent Integrity Council and Metrics Validity Gates before beginning Walk-Forward Optimization across the 20 Out-Of-Sample (OOS) Windows (2021–2026).
+> **EXECUTIVE OBJECTIVE**: Conduct an adversarial, forensic row-by-row audit across all 18 institutional asset datasets dumped in `Engine/binance_backtesting_data/` and the master pipeline orchestrator `Engine/run_historical_pipeline.py`. Verify that every row across all 3,467,571 candles and 70,934,532 footprint rungs is mathematically sound, continuous, causal (zero-lookahead), and fully compliant with the 3-Agent Council and Metrics Validity Gates.
 
 ---
 
 ## 1. REPOSITORY & DIRECT GIT REFERENCES
 
-To bypass context caps and review production code and dataset manifests directly, fetch from the authoritative repository:
+Both branches are byte-for-byte mirrors on GitHub at commit `dee695ddfe3fad96fb2d17e6ace5481ec3ac70e8`:
 - **Repository**: [https://github.com/kbsingh1399/Trading](https://github.com/kbsingh1399/Trading) (Branch: `main`)
 - **Dual Mirror**: [https://github.com/kbsingh1399/Trading/tree/arena%2F01a07263-trading](https://github.com/kbsingh1399/Trading/tree/arena%2F01a07263-trading)
-- **Active Commit**: `21909f836a6c1ba0aa6800d9ff9fcda7b3decddf`
+- **Active Commit**: `dee695ddfe3fad96fb2d17e6ace5481ec3ac70e8`
 
-### Core Source Code Raw Links:
+### Core Source Code Links:
 1. **Pipeline Orchestrator**:
    [`Engine/run_historical_pipeline.py`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_historical_pipeline.py)
 2. **Causal Metrics Processor**:
@@ -22,93 +22,107 @@ To bypass context caps and review production code and dataset manifests directly
    [`Engine/pipeline/footprint_ladder.py`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/footprint_ladder.py)
 5. **Atomic Parquet Exporter**:
    [`Engine/pipeline/parquet_exporter.py`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/parquet_exporter.py)
-6. **Resilient Rate-Limited HTTP Client**:
-   [`Engine/pipeline/http_client.py`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/http_client.py)
-7. **Autonomous 3-Agent Integrity Council**:
+6. **Autonomous 3-Agent Integrity Council**:
    [`Engine/verification/verify_parquet_integrity.py`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/verification/verify_parquet_integrity.py)
-8. **Metrics Validity Gate**:
+7. **Metrics Validity Gate**:
    [`Engine/verification/audit_probe_metrics_validity.py`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/verification/audit_probe_metrics_validity.py)
-9. **Offline Unit & Integration Test Suite**:
-   [`Engine/verification/test_pipeline_offline.py`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/verification/test_pipeline_offline.py)
-
-### Dataset Manifests & Audit Reports:
-- **Council Master Report**:
-  [`Engine/binance_backtesting_data/verification_report.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/verification_report.json)
-- **Individual Asset Manifests**:
-  - BTC: [`BTCUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/BTCUSDT_dataset_manifest.json)
-  - ETH: [`ETHUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/ETHUSDT_dataset_manifest.json)
-  - SOL: [`SOLUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/SOLUSDT_dataset_manifest.json)
-  - BNB: [`BNBUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/BNBUSDT_dataset_manifest.json)
-  - XRP: [`XRPUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/XRPUSDT_dataset_manifest.json)
-  - DOGE: [`DOGEUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/DOGEUSDT_dataset_manifest.json)
-  - ADA: [`ADAUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/ADAUSDT_dataset_manifest.json)
-  - TRX: [`TRXUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/TRXUSDT_dataset_manifest.json)
-  - LINK: [`LINKUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/LINKUSDT_dataset_manifest.json)
-  - AVAX: [`AVAXUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/AVAXUSDT_dataset_manifest.json)
-  - SUI: [`SUIUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/SUIUSDT_dataset_manifest.json)
-  - NEAR: [`NEARUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/NEARUSDT_dataset_manifest.json)
-  - DOT: [`DOTUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/DOTUSDT_dataset_manifest.json)
-  - LTC: [`LTCUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/LTCUSDT_dataset_manifest.json)
-  - BCH: [`BCHUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/BCHUSDT_dataset_manifest.json)
-  - APT: [`APTUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/APTUSDT_dataset_manifest.json)
-  - OP: [`OPUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/OPUSDT_dataset_manifest.json)
-  - ARB: [`ARBUSDT_dataset_manifest.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/ARBUSDT_dataset_manifest.json)
+8. **Master Verification Report**:
+   [`Engine/binance_backtesting_data/verification_report.json`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/verification_report.json)
 
 ---
 
-## 2. AUDIT MANDATE 1: FORENSIC VERIFICATION OF THE DUMPED DATASETS
+## 2. THE 18 INSTITUTIONAL ASSET PARQUET REPOSITORY TARGETS
 
-Examine the 18 dataset manifests and `verification_report.json`. Answer the following forensic questions:
+All 36 parquet files (18 15m Master + 18 Footprint Ladder) and 18 manifests are live on GitHub under `Engine/binance_backtesting_data/`:
 
-1. **Universe Completeness & Bar Coverage**:
-   - The master backtest files cover `2020-09-01` to `2026-09-05` (totaling 3,467,571 15-minute bars and 70,934,532 order-book footprint ladder rungs across 18 symbols).
-   - Symbols listed post-2020 (`APTUSDT` 2022-10, `OPUSDT` 2022-06, `ARBUSDT` 2023-03, `SUIUSDT` 2023-05) start cleanly at their respective contract listing dates.
-   - **Question**: Are there any internal bar cadence gaps, non-monotonic timestamps, or missing 15-minute intervals in any of the 18 master parquets?
-2. **Pre-Archive Absent Metrics Contract (§4.1 / A5 Resolution)**:
-   - Binance Vision did not publish official metrics (`metrics_` tables) for altcoins during late 2020 / early 2021.
-   - The pipeline captures non-circularly attested 404 observations into `provenance.metrics_archive_absent_months` and passes them to `verify_parquet_integrity.py` and `audit_probe_metrics_validity.py`.
-   - **Question**: Does this attestation contract strictly prevent synthetic data fabrication while properly allowing authentic pre-archive periods to be marked as `is_imputed = 1`?
-3. **Quarantined Upstream Frozen Positioning & Zero Open Interest**:
-   - Upstream Binance anomalies (14 frozen snapshot runs on legacy assets, and pre-archive zero OI) are explicitly quarantined with `is_imputed = 1` and `open_interest = 0.0`.
-   - **Question**: Does this ensure that strategy indicators (such as `oi_change` or `long_liq_zs`) do not fire spurious liquidation signals during exchange data outages or pre-archive windows?
-4. **Order Book Footprint Ladder Dual-Table Integrity**:
-   - `*_15m_footprint_ladder.parquet` files contain exact `rung_source = 0` (aggTrades ticks) and causal `rung_source = 1` (synthetic rungs from OHLCV).
-   - **Question**: Is the daily dynamic price binning causal (derived from the day's first traded price rather than intraday lookahead), and are imbalance flags correctly cast as `int8`?
-5. **Sub-Dollar Precision Contract**:
-   - Price-denominated indicators on sub-dollar assets (`DOGE`, `TRX`, `ADA`, `XRP`) are stored at 8 decimal places rather than truncated to 2 dp.
-   - **Question**: Are ATR, EMA, and VWAP bands preserved with high precision, completely eliminating the 0.0 ATR truncation bug?
+| Symbol | Listing / Start Date | Total Rows (15m Bars) | Total Ladder Rungs | Raw Master Parquet URL |
+|---|---|---|---|---|
+| **BTCUSDT** | 2020-09-01 | 210,797 | 2,710,652 | [Download BTC Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/BTCUSDT_15m_master_2020_2026.parquet) |
+| **ETHUSDT** | 2020-09-01 | 210,800 | 3,478,600 | [Download ETH Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/ETHUSDT_15m_master_2020_2026.parquet) |
+| **SOLUSDT** | 2020-09-14 | 209,527 | 5,090,130 | [Download SOL Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/SOLUSDT_15m_master_2020_2026.parquet) |
+| **BNBUSDT** | 2020-09-01 | 210,803 | 3,245,742 | [Download BNB Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/BNBUSDT_15m_master_2020_2026.parquet) |
+| **XRPUSDT** | 2020-09-01 | 210,800 | 4,223,706 | [Download XRP Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/XRPUSDT_15m_master_2020_2026.parquet) |
+| **DOGEUSDT**| 2020-09-01 | 210,804 | 4,889,889 | [Download DOGE Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/DOGEUSDT_15m_master_2020_2026.parquet) |
+| **ADAUSDT** | 2020-09-01 | 210,801 | 4,522,519 | [Download ADA Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/ADAUSDT_15m_master_2020_2026.parquet) |
+| **TRXUSDT** | 2020-09-01 | 210,804 | 2,749,584 | [Download TRX Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/TRXUSDT_15m_master_2020_2026.parquet) |
+| **LINKUSDT**| 2020-09-01 | 210,801 | 4,682,806 | [Download LINK Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/LINKUSDT_15m_master_2020_2026.parquet) |
+| **AVAXUSDT**| 2020-09-23 | 208,661 | 5,091,966 | [Download AVAX Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/AVAXUSDT_15m_master_2020_2026.parquet) |
+| **SUIUSDT** | 2023-05-03 | 117,236 | 2,742,669 | [Download SUI Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/SUIUSDT_15m_master_2020_2026.parquet) |
+| **NEARUSDT**| 2020-10-15 | 206,546 | 5,589,367 | [Download NEAR Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/NEARUSDT_15m_master_2020_2026.parquet) |
+| **DOTUSDT** | 2020-09-01 | 210,802 | 4,578,021 | [Download DOT Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/DOTUSDT_15m_master_2020_2026.parquet) |
+| **LTCUSDT** | 2020-09-01 | 210,802 | 4,017,553 | [Download LTC Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/LTCUSDT_15m_master_2020_2026.parquet) |
+| **BCHUSDT** | 2020-09-01 | 210,804 | 4,026,393 | [Download BCH Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/BCHUSDT_15m_master_2020_2026.parquet) |
+| **APTUSDT** | 2022-10-19 | 136,107 | 3,016,809 | [Download APT Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/APTUSDT_15m_master_2020_2026.parquet) |
+| **OPUSDT**  | 2022-06-01 | 149,500 | 3,717,836 | [Download OP Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/OPUSDT_15m_master_2020_2026.parquet) |
+| **ARBUSDT** | 2023-03-23 | 121,176 | 2,560,290 | [Download ARB Master](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/ARBUSDT_15m_master_2020_2026.parquet) |
 
----
-
-## 3. AUDIT MANDATE 2: ADVERSARIAL REVIEW OF `run_historical_pipeline.py`
-
-Perform an adversarial architectural review of [`Engine/run_historical_pipeline.py`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_historical_pipeline.py) and its pipeline modules:
-
-1. **Fail-Closed Verification Gate Sequencing**:
-   - The manifest is written immediately after exporting parquets, followed by synchronous execution of `verify_all_parquets()`.
-   - If verification fails, the pipeline purges all generated files for that symbol and raises a hard exception.
-   - **Question**: Does this guarantee that no corrupted or unverified dataset can ever persist on disk or be loaded into backtesting?
-2. **Strict Causality & Zero-Lookahead Guarantees**:
-   - `historical_metrics_processor.py` joins spot and metrics using `<= close_time_ms` as-of logic, with zero backward filling on missing delta bars (`.bfill()` strictly eliminated).
-   - **Question**: Is there any possibility of future bar information bleeding into previous bars?
-3. **Resilience & Rate-Limiting**:
-   - `http_client.py` enforces exponential backoff, jitter, a 5.0-second floor on `Retry-After`, and process-wide latched cooldowns on HTTP 418/429.
-   - **Question**: Are concurrent downloads (up to 16 workers) protected against IP ban or connection starvation?
-4. **Idempotence & Multi-Process Concurrency**:
-   - Fast-skip logic validates schema, bar count, and manifest checksum before skipping already-processed assets.
-   - **Question**: Does the pipeline operate deterministically across re-runs?
+*(Footprint ladders follow the exact pattern: `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/{SYMBOL}_15m_footprint_ladder.parquet`)*
 
 ---
 
-## 4. AUDIT MANDATE 3: FORMAL INSTITUTIONAL CERTIFICATION
+## 3. AUDIT MANDATE 1: ROW-BY-ROW DATA INTEGRITY VERIFICATION RECIPES
 
-Provide a clear, definitive institutional certification report with:
-1. **Per-Asset Audit Verdict**: A summary table of all 18 assets assessing:
-   - Data Continuity & Row Counts
-   - Microstructure & Footprint Ladder Integrity
-   - Schema & Precision Compliance
-   - Metrics Validity & Quarantine Verification
-2. **Pipeline Architecture Verdict**:
-   - Is `Engine/run_historical_pipeline.py` approved as an institutional-grade, zero-lookahead pipeline?
-3. **Readiness for Walk-Forward Optimization**:
-   - Are these 18 master datasets certified for the 20 Out-Of-Sample (OOS) regime backtests in `Engine_2/s1_liquidation_cascade.py`?
+Execute or simulate the following row-by-row mathematical assertions on the 18 master datasets:
+
+### 3.1 Strict Cadence & Monotonic Continuity
+For each consecutive row pair $(i, i+1)$ in every master parquet:
+$$\Delta t = \text{open\_time\_ms}[i+1] - \text{open\_time\_ms}[i] \equiv 900{,}000\text{ ms (exactly 15 minutes)}$$
+$$\text{close\_time\_ms}[i] = \text{open\_time\_ms}[i] + 899{,}999\text{ ms}$$
+- **Assertion**: Are there exactly 0 timestamp breaks, 0 duplicate timestamps, and 0 non-monotonic steps across all 3,467,571 bars?
+
+### 3.2 Row-by-Row Price & Volume Invariants
+On every individual row:
+- $\text{high} \ge \max(\text{open}, \text{close})$
+- $\text{low} \le \min(\text{open}, \text{close})$
+- $\text{low} > 0$ and $\text{high} > 0$
+- $\text{volume} \ge 0$, $\text{quote\_volume} \ge 0$, $\text{trades} \ge 0$
+- $\text{taker\_buy\_volume} \le \text{volume}$
+- $\text{taker\_buy\_quote\_volume} \le \text{quote\_volume}$
+
+### 3.3 Zero-Null and Finite Value Contract
+- Check every column across all 62 relational schema fields.
+- **Assertion**: Are there exactly 0 nulls, 0 NaNs, and 0 infinities in any column for all 18 symbols?
+
+### 3.4 Bounded Microstructure Oscillators & Indicators
+Verify row-by-row value domain constraints:
+- $0.0 \le \text{rsi\_14} \le 100.0$
+- $0.0 \le \text{mfi\_14} \le 100.0$
+- $0.0 \le \text{adx\_14} \le 100.0$
+- $\text{atr\_14} > 0$ (Verify that sub-dollar assets DOGE, TRX, ADA, XRP preserve 8 decimal places and do NOT collapse to 0.0)
+- $-1.0 \le \text{funding\_rate} \le 1.0$
+- $\text{open\_interest} \ge 0.0$
+
+### 3.5 Causal Attestation & Metrics Quarantine Verification
+- Where Binance Vision historical archives have authentic pre-archive gaps (attested in the dataset manifest under `provenance.metrics_archive_absent_months`):
+  - Does the dataset set $\text{open\_interest} = 0.0$ and explicitly tag $\text{is\_imputed} = 1$?
+  - Does the Metrics Validity Gate confirm 0 unflagged frozen ranges and 0 impossible open interest values?
+
+### 3.6 Footprint Ladder Row-by-Row Integrity (`*_15m_footprint_ladder.parquet`)
+For every rung row:
+- $\text{ask\_qty} \ge 0$ and $\text{bid\_qty} \ge 0$
+- $\text{delta} \equiv \text{ask\_qty} - \text{bid\_qty}$
+- $\text{total\_qty} \equiv \text{ask\_qty} + \text{bid\_qty}$
+- $\text{rung\_source} \in \{0, 1\}$ (0 = authentic aggTrades tick cluster, 1 = causal synthetic fallback)
+- $\text{imbalance\_buy} \in \{0, 1\}$ and $\text{imbalance\_sell} \in \{0, 1\}$ (stored as `int8`)
+
+---
+
+## 4. AUDIT MANDATE 2: ADVERSARIAL PIPELINE ARCHITECTURE REVIEW
+
+Audit [`Engine/run_historical_pipeline.py`](https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_historical_pipeline.py) against senior institutional quantitative standards:
+
+1. **Fail-Closed Execution Gate**:
+   - Verify that manifests are exported and verified *before* acceptance, and that any failure triggers immediate file cleanup and abort.
+2. **Zero-Lookahead Guarantee**:
+   - Verify that metrics alignment uses strictly $\le \text{close\_time\_ms}$, that backward filling (`.bfill()`) has been completely eliminated, and that session VWAP daily resets occur strictly at 00:00 UTC.
+3. **Concurrency & Rate-Limiting Protection**:
+   - Verify that the shared HTTP client enforces 418/429 exponential backoff with jitter and a 5.0-second floor on `Retry-After`.
+
+---
+
+## 5. REQUIRED AUDIT DELIVERABLES
+
+Please return a structured audit report answering:
+1. **Per-Asset Row-by-Row Scorecard**: Confirmation for each of the 18 assets that bar counts, rungs, continuity, precision, and bounds pass 100%.
+2. **Adversarial Bug Hunt Findings**: Any residual mathematical, structural, or lookahead defects identified.
+3. **Formal Institutional Certification**: A definitive verdict on whether these datasets are certified for the 20 Out-Of-Sample (OOS) Walk-Forward Windows in `Engine_2/s1_liquidation_cascade.py`.
