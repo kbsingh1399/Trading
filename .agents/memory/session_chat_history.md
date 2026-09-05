@@ -40477,3 +40477,29 @@ Also ensure no...lookahead etc guidelines
 - Executed `python -m Engine.verification.audit_probe_metrics_validity`: reproduced the rejection (160 impossible OI bars and 30,463 frozen positioning bars).
 
 
+
+---
+**User:** you can delete Engine/binance_backtesting_data, redownload it and let arena.ai verify all changes even in Engine/run_historical_pipeline.py and in downloaded data...how's that sound to you...and you can add your suggestion as well
+**Assistant:**
+- Analyzed newly identified blockers A1 (160 impossible OI bars), A1b (30,463 frozen positioning bars in 2022), and A5 (Retry-After truncated to 600s).
+- Outlined plan: patch fetcher, processor, http_client, and council rules; delete data; re-ingest BTCUSDT; verify locally; push to Git; generate Arena prompt.
+
+---
+**User:** yes...fix the code and then redownload after deletng existing files
+**Assistant:**
+- Implemented surgical fixes across pipeline modules:
+  - Engine/pipeline/binance_historical_fetcher.py: Replaced .fillna(0.0) + .fillna(0.0) with .add(other, fill_value=0.0) and bounded USDC addition to post-floor rows.
+  - Engine/pipeline/historical_metrics_processor.py: Added causal outlier filter for impossible OI and _stale_runs_mask for frozen positioning runs. Quarantined all 30,463 frozen bars with metrics_available=0 and is_imputed_metrics=1.
+  - Engine/pipeline/http_client.py: Server Retry-After now honored up to 7200s (2h sanity ceiling).
+  - Engine/verification/verify_parquet_integrity.py: Added Agent 2 check oi_impossible_zero.
+  - Engine/verification/audit_probe_metrics_validity.py: Differentiated unflagged frozen runs (which fail) from quarantined upstream runs (which pass with diagnostics).
+  - Engine/run_historical_pipeline.py: Aligned validity check to check for unflagged frozen runs.
+- Deleted Engine/binance_backtesting_data/ and re-downloaded/re-ingested BTCUSDT (210,792 bars, 2,710,633 ladder rungs).
+- Verified with local audit test suites:
+  - test_pipeline_offline: All 9 suites passed in 20.2s.
+  - audit_probe_indicator_parity: 0 violations across 145 prefixes.
+  - audit_probe_metrics_coverage: Council rejects partially fabricated metrics (exit 0).
+  - audit_probe_metrics_validity: 0 impossible OI bars, 14 upstream runs quarantined (exit 0).
+  - Autonomous 3-Agent Council: Continuity=PASS, Microstructure=PASS, Schema=PASS.
+- Committed changes and pushed to main at commit e18c601.
+- Generated Arena.ai verification prompt at docs/prompts/ARENA_POST_A1_A1B_BTC_VERIFICATION_PROMPT.md.
