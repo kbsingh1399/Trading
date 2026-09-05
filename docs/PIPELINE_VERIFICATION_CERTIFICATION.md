@@ -585,9 +585,8 @@ market.
 `run_pipeline` logs `master['datetime_utc'].iloc[0]` before checking `len(master) > 0`; `nice_bin_step` returns
 `max(step, 1e-6)`, which for a 1e-4-priced asset makes the floor a meaningful share of the price; `get_merge_level`
 matches on `s.startswith("BTC")` (fine for the fixed universe, silently `0.0001` for anything else);
-`estimate_depth_from_volatility` returns `bid_depth_usd is ask_depth_usd` (same object, aliased not copied for the
-USD pair while the coin pair *is* copied) so the bid/ask asymmetry is 0 by construction — a proxy, and the schema
-comment should say so more loudly; `MAX_RUNGS` widening mutates `step` in place on the slice used later for
+`estimate_depth_from_volatility` returns `depth_usd, depth_usd.copy(), depth_coin, depth_coin.copy()`, so bid and
+ask are *distinct arrays with identical values* and the bid/ask asymmetry is 0 by construction — a proxy whose implied spread is identically 0; verified on the shipped canary: bid==ask on all 210,788 bars (see REREVIEW_ADDENDUM A6); `MAX_RUNGS` widening mutates `step` in place on the slice used later for
 `price_bin` (correct here, fragile); `_coerce`'s `np.isfinite` backstop is unreachable for master because
 `_finalise` pre-zeroes.
 
