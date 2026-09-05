@@ -243,27 +243,35 @@ def run_pipeline(
     except SchemaError as exc:
         log(f"[REJECT] {symbol}: schema validation failed at export: {exc}")
         return False
-    exporter.write_manifest(master, symbol, ladder_stats, {**report.to_dict(), "repair_rounds": rounds})
-    log(f"[OK] {symbol}: exported {os.path.basename(mpath)} ({os.path.getsize(mpath) / 1_048_576:.1f} MB) + "
-        f"{os.path.basename(lpath)} ({os.path.getsize(lpath) / 1_048_576:.1f} MB) in {time.time() - t3:.1f}s")
 
     audit_ok = True
     if run_audit:
         audit_ok = verify_all_parquets(target_dir, symbols=[symbol], log=log)
         try:
             from Engine.verification.audit_probe_metrics_validity import check_symbol
-            m_file = os.path.join(target_dir, f"{symbol}_15m_master_2020_2026.parquet")
-            if os.path.isfile(m_file):
-                res = check_symbol(m_file)
-                unflagged_fz = [f for f in res["frozen"] if f["available"] > 0 or f["imputed"] < f["len"]] if res else []
-                if res is not None and (res["zero"] or unflagged_fz):
-                    log(f"[WARNING] {symbol}: audit_probe_metrics_validity flagged issues: zero={bool(res['zero'])}, unflagged_frozen={len(unflagged_fz)}")
+            res = check_symbol(mpath)
+            if res is None:
+                log(f"[REJECT] {symbol}: audit_probe_metrics_validity returned None (required columns missing)")
+                audit_ok = False
+            else:
+                unflagged_fz = [f for f in res["frozen"] if f["available"] > 0 or f["imputed"] < f["len"]]
+                if res["zero"] or unflagged_fz:
+                    log(f"[REJECT] {symbol}: audit_probe_metrics_validity flagged issues: zero={bool(res['zero'])}, unflagged_frozen={len(unflagged_fz)}")
                     audit_ok = False
                 else:
-                    q_info = f" ({len(res['frozen'])} upstream frozen runs quarantined)" if res and res["frozen"] else ""
+                    q_info = f" ({len(res['frozen'])} upstream frozen runs quarantined)" if res["frozen"] else ""
                     log(f"[OK] {symbol}: audit_probe_metrics_validity PASSED (0 impossible OI, 0 unflagged frozen runs{q_info})")
         except Exception as e:
-            log(f"[WARN] {symbol}: could not run audit_probe_metrics_validity: {e}")
+            log(f"[REJECT] {symbol}: audit_probe_metrics_validity failed with error: {e}")
+            audit_ok = False
+
+    if not audit_ok:
+        log(f"[FAIL-CLOSED] {symbol}: export rejected by post-export audit gate. Aborting manifest write.")
+        return False
+
+    exporter.write_manifest(master, symbol, ladder_stats, {**report.to_dict(), "repair_rounds": rounds})
+    log(f"[OK] {symbol}: exported {os.path.basename(mpath)} ({os.path.getsize(mpath) / 1_048_576:.1f} MB) + "
+        f"{os.path.basename(lpath)} ({os.path.getsize(lpath) / 1_048_576:.1f} MB) in {time.time() - t3:.1f}s")
 
     if clean_cache and os.path.isdir(cache_dir):
         shutil.rmtree(cache_dir, ignore_errors=True)

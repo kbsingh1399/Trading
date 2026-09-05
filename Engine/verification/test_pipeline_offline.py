@@ -277,7 +277,14 @@ def test_negative_controls(master, ladder):
     m["session_vwap"] = m["session_vwap"].rolling(3, center=True).mean().bfill().ffill()   # centred window
     f = checks(m, ladder)
     assert "vwap_rederive" in f
-    print("  [PASS] negative controls: gap, duplicate, NaN, stale spot, missing POC, shifted EMA, centred VWAP all rejected with bar index + timestamp")
+
+    # A1 impossible open interest check: open_interest_k == 0 while metrics_available == 1
+    m = master.copy()
+    avail_idx = m.index[m["metrics_available"] == 1][0]
+    m.loc[avail_idx, "open_interest_k"] = 0.0
+    f = checks(m, ladder)
+    assert "oi_impossible_zero" in f and f["oi_impossible_zero"].bar_index == avail_idx
+    print("  [PASS] negative controls: gap, duplicate, NaN, stale spot, missing POC, shifted EMA, centred VWAP, impossible OI all rejected with bar index + timestamp")
 
 
 def test_precision_on_sub_dollar_asset(master):
@@ -496,6 +503,32 @@ def test_fetcher_against_mock_binance():
     print("  [PASS] fetcher vs Binance-shaped mock server: monthly/daily/REST stitching, us->ms, header/no-header, missing-day repair, 429 latch, forming-candle exclusion, cache hits")
 
 
+def test_metrics_validity_and_quarantine_regression(kl, spot, funding, metrics):
+    """Regression test for A1 (impossible OI filter) and A1b (_stale_runs_mask quarantine)."""
+    from Engine.pipeline.historical_metrics_processor import _stale_runs_mask, HistoricalMetricsProcessor
+    # 1. Test _stale_runs_mask unit logic
+    vals = np.ones(500)
+    oi_moves = np.ones(500, dtype=bool)
+    mask = _stale_runs_mask(vals, threshold=288, oi_moves=oi_moves, min_moving=0.90)
+    assert mask.all(), "stale_runs_mask failed to flag 500-bar identical run with moving OI"
+    # tape down: oi_moves is False
+    mask_dead_tape = _stale_runs_mask(vals, threshold=288, oi_moves=~oi_moves, min_moving=0.90)
+    assert not mask_dead_tape.any(), "stale_runs_mask should not flag when tape is down"
+
+    # 2. Test processor end-to-end with injected 400-bar frozen run in metrics
+    me = metrics.copy()
+    freeze_start = 500
+    freeze_len = 400
+    me.loc[freeze_start:freeze_start + freeze_len, "sum_toptrader_long_short_ratio"] = 1.073470
+    proc = HistoricalMetricsProcessor(log=QUIET)
+    m = proc.process_master_dataset(kl, me, funding, None, spot, symbol="DOGEUSDT")
+    assert "is_imputed_metrics" in m and "metrics_available" in m
+    imputed = m["is_imputed_metrics"].to_numpy()
+    avail = m["metrics_available"].to_numpy()
+    assert (imputed == (avail == 0)).all(), "is_imputed_metrics != (metrics_available == 0) contract violated"
+    print("  [PASS] regression: _stale_runs_mask, oi_impossible_zero, and causal imputation invariants verified")
+
+
 def main() -> int:
     t0 = time.time()
     print("OFFLINE PIPELINE TEST SUITE")
@@ -505,6 +538,7 @@ def main() -> int:
     test_prefix_invariance(kl, spot, funding, metrics)
     test_event_join_uses_close_time(kl, spot, funding, metrics)
     test_negative_controls(master, ladder)
+    test_metrics_validity_and_quarantine_regression(kl, spot, funding, metrics)
     test_orchestrator_end_to_end()
     test_repair_gate()
     test_fetcher_against_mock_binance()

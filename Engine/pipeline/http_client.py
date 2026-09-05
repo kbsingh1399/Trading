@@ -45,7 +45,7 @@ class HttpClient:
         base_delay: float = 0.5,
         max_delay: float = 60.0,
         timeout: float = 30.0,
-        min_interval: float = 0.0,
+        min_interval: float = 0.05,
         rate_limit_cooldown: float = 30.0,
         ban_cooldown: float = 120.0,
     ) -> None:
@@ -138,8 +138,8 @@ class HttpClient:
                         except ValueError:
                             server_cool = 0.0
                     if server_cool > 0.0:
-                        # Server gave explicit instruction: honor it directly (bounded only by a 2-hour emergency sanity ceiling)
-                        cool = min(server_cool, 7200.0)
+                        # Server gave explicit instruction: honor it directly, bounded with a 5s floor and 2h ceiling
+                        cool = min(max(server_cool, 5.0), 7200.0)
                     else:
                         base = self.rate_limit_cooldown if e.code == 429 else self.ban_cooldown
                         raw_cool = base * (attempt + 1)

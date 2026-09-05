@@ -275,8 +275,8 @@ class HistoricalMetricsProcessor:
             
             # Causal rolling median check to identify severe anomalies (< 20% of local median when median > 1k)
             s_raw = pd.Series(np.where(available_raw, oi_coin_raw, np.nan))
-            causal_med = s_raw.rolling(201, min_periods=20).median().bfill().to_numpy()
-            is_impossible_oi = (~available_raw) | ((oi_coin_raw < 0.20 * causal_med) & (causal_med > 1000.0))
+            causal_med = s_raw.rolling(201, min_periods=20).median().ffill().to_numpy()
+            is_impossible_oi = (~available_raw) | ((~np.isnan(causal_med)) & (causal_med > 1000.0) & (oi_coin_raw < 0.20 * causal_med))
             
             # Causal forward fill across impossible episodes, zero if at start
             oi_coin = pd.Series(np.where(is_impossible_oi, np.nan, oi_coin_raw)).ffill().fillna(0.0).to_numpy(np.float64)
