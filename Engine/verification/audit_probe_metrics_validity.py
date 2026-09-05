@@ -170,9 +170,11 @@ def main(argv: Optional[List[str]] = None) -> int:
             continue
         z, fz = res["zero"], res["frozen"]
         unflagged_fz = [f for f in fz if f["available"] > 0 or f["imputed"] < f["len"]]
-        if not z and not unflagged_fz:
-            q_msg = f", {len(fz)} upstream frozen runs quarantined (metrics_available=0, is_imputed=1)" if fz else ""
-            print(f"  [{sym}] PASS -- {res['rows']:,} rows, no impossible or unflagged frozen metrics{q_msg}")
+        unflagged_z = bool(z) and (z["unflagged"] > 0 or z["marked_available"] > 0)
+        if not unflagged_z and not unflagged_fz:
+            q_fz = f", {len(fz)} upstream frozen runs quarantined" if fz else ""
+            q_z = f", {z['bars']:,} pre-archive zero OI bars quarantined (is_imputed=1)" if z else ""
+            print(f"  [{sym}] PASS -- {res['rows']:,} rows, no impossible or unflagged frozen metrics{q_fz}{q_z}")
             if fz:
                 mask = np.zeros(res["rows"], bool)
                 for f in fz:

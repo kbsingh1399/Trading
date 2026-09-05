@@ -123,15 +123,18 @@ def main() -> int:
     if os.path.exists(eth_real):
         eth = pd.read_parquet(eth_real)
         src = "REAL ETHUSDT export"
+        m_absent = eth["metrics_available"].to_numpy() == 0
+        months = sorted(set(pd.to_datetime(eth.loc[m_absent, "open_time_ms"].to_numpy("int64"),
+                                           unit="ms", utc=True).strftime("%Y-%m")))
     else:
         eth = _mark_no_metrics(base.copy(), _year_mask(base, 2020))
         src = "emulated on BTCUSDT (metrics rows removed for 2020, marked unavailable)"
+        months = sorted(set(pd.to_datetime(eth.loc[_year_mask(eth, 2020), "open_time_ms"].to_numpy("int64"),
+                                           unit="ms", utc=True).strftime("%Y-%m")))
     n = _names(agent_schema(eth, lad, attested_months=set()))
     check(f"{src}, UNATTESTED: still rejected -- a metrics-free year is not excused by its own flag",
           "metrics_coverage_unattested" in n and "regime_dead_feature" not in n,
           f"findings={n or 'none'}")
-    months = sorted(set(pd.to_datetime(eth.loc[_year_mask(eth, 2020), "open_time_ms"].to_numpy("int64"),
-                                       unit="ms", utc=True).strftime("%Y-%m")))
     n_att = _names(agent_schema(eth, lad, attested_months=set(months)))
     check(f"{src}, ATTESTED absent from the archive {months[0]}..{months[-1]}: accepted",
           not n_att, f"findings={n_att or 'none'}")
@@ -145,14 +148,15 @@ def main() -> int:
             _json.dump({"provenance": {"metrics_archive_absent_months": months + ["2021-04-15"]}}, fh)
         got = vpi._attested_absent_months("BTCUSDT", target_dir=d)
         check("the exemption is read from the manifest the downloader wrote (day keys normalised to months)",
-              got == set(months) | {"2021-04"}, f"read {sorted(got)}")
+          got == set(months) | {"2021-04"}, f"read {sorted(got)}")
         check("no manifest -> no exemption (fail closed)",
               vpi._attested_absent_months("NOSUCHUSDT", target_dir=d) == set())
         # full contract: what the fetcher records -> what the manifest carries -> what the council reads
         from Engine.pipeline.parquet_exporter import ParquetExporter
+        sym = str(eth["symbol"].iloc[0]) if "symbol" in eth else "BTCUSDT"
         with tempfile.TemporaryDirectory() as d2:
             ParquetExporter(d2).write_manifest(
-                eth, "BTCUSDT", {}, {"passed": True},
+                eth, sym, {}, {"passed": True},
                 metrics_absent_days=[f"{mm}-15" for mm in months])   # one observed 404 day per month
             saved = vpi.DEFAULT_TARGET
             try:

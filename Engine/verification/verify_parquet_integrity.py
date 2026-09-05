@@ -590,11 +590,15 @@ AGENTS: Dict[str, Callable[[pd.DataFrame, Optional[pd.DataFrame]], List[Finding]
 }
 
 
-def run_council(master: pd.DataFrame, ladder: Optional[pd.DataFrame], symbol: str, log: Callable[[str], None] = print) -> CouncilReport:
+def run_council(master: pd.DataFrame, ladder: Optional[pd.DataFrame], symbol: str, log: Callable[[str], None] = print,
+                attested_months: Optional[set] = None) -> CouncilReport:
     report = CouncilReport(symbol=symbol, passed=True, master_rows=len(master), ladder_rows=len(ladder) if ladder is not None else 0)
     for name, fn in AGENTS.items():
         try:
-            findings = fn(master, ladder)
+            if name == "Agent3:Schema":
+                findings = fn(master, ladder, attested_months=attested_months)
+            else:
+                findings = fn(master, ladder)
         except Exception as exc:  # an agent crash is itself a failure
             findings = [Finding(name, "exception", f"{type(exc).__name__}: {exc}")]
         report.findings.extend(findings)
@@ -616,12 +620,13 @@ def verify_symbol(target_dir: str, symbol: str, log: Callable[[str], None] = pri
         return CouncilReport(symbol, False, 0, 0, [Finding("Council", "missing", f"{mpath} not found")], {})
     master = pd.read_parquet(mpath)
     ladder = pd.read_parquet(lpath) if os.path.exists(lpath) else None
+    attested = _attested_absent_months(symbol, target_dir)
     if ladder is None:
-        rep = run_council(master, None, symbol, log)
+        rep = run_council(master, None, symbol, log, attested_months=attested)
         rep.findings.append(Finding("Agent1:Continuity", "ladder_missing", f"{lpath} not found"))
         rep.passed = False
         return rep
-    return run_council(master, ladder, symbol, log)
+    return run_council(master, ladder, symbol, log, attested_months=attested)
 
 
 def verify_all_parquets(target_dir: str = DEFAULT_TARGET, symbols: Optional[List[str]] = None, log: Callable[[str], None] = print) -> bool:

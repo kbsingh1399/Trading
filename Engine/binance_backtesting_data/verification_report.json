@@ -10,5 +10,17 @@
       "Agent3:Schema": "PASS"
     },
     "findings": []
+  },
+  "ETHUSDT": {
+    "symbol": "ETHUSDT",
+    "passed": true,
+    "master_rows": 210800,
+    "ladder_rows": 3478600,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
   }
 }

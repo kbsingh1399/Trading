@@ -217,7 +217,11 @@ def run_pipeline(
     log(f"[OK] {symbol}: ladder assembled in {time.time() - t2:.1f}s | {ladder_stats}")
 
     # ------------------------------------------------------------ council gate
-    report = run_council(master, ladder, symbol, log)
+    attested_months = None
+    if hasattr(fetcher, "metrics_absent_days") and fetcher.metrics_absent_days:
+        attested_months = {d[:7] for d in fetcher.metrics_absent_days}
+
+    report = run_council(master, ladder, symbol, log, attested_months=attested_months)
     rounds = 0
     while not report.passed and rounds < MAX_REPAIR_ROUNDS:
         rounds += 1
@@ -226,7 +230,7 @@ def run_pipeline(
         if not changed:
             log(f"[GATE] {symbol}: no applicable causal repair for {sorted({f.check for f in report.findings})}")
             break
-        report = run_council(master, ladder, symbol, log)
+        report = run_council(master, ladder, symbol, log, attested_months=attested_months)
 
     if not report.passed:
         log(f"[REJECT] {symbol}: export refused. {len(report.findings)} finding(s):")
@@ -240,6 +244,8 @@ def run_pipeline(
     try:
         mpath = exporter.export_master(master, symbol)
         lpath = exporter.export_ladder(ladder, symbol)
+        manifest_path = exporter.write_manifest(master, symbol, ladder_stats, {**report.to_dict(), "repair_rounds": rounds},
+                                                metrics_absent_days=getattr(fetcher, "metrics_absent_days", None))
     except SchemaError as exc:
         log(f"[REJECT] {symbol}: schema validation failed at export: {exc}")
         return False
@@ -255,8 +261,9 @@ def run_pipeline(
                 audit_ok = False
             else:
                 unflagged_fz = [f for f in res["frozen"] if f["available"] > 0 or f["imputed"] < f["len"]]
-                if res["zero"] or unflagged_fz:
-                    log(f"[REJECT] {symbol}: audit_probe_metrics_validity flagged issues: zero={bool(res['zero'])}, unflagged_frozen={len(unflagged_fz)}")
+                unflagged_z = (res["zero"].get("unflagged", 0) > 0 or res["zero"].get("marked_available", 0) > 0) if res["zero"] else False
+                if unflagged_z or unflagged_fz:
+                    log(f"[REJECT] {symbol}: audit_probe_metrics_validity flagged issues: unflagged_zero={res['zero'].get('unflagged', 0) if res['zero'] else 0}, unflagged_frozen={len(unflagged_fz)}")
                     audit_ok = False
                 else:
                     q_info = f" ({len(res['frozen'])} upstream frozen runs quarantined)" if res["frozen"] else ""
@@ -266,11 +273,15 @@ def run_pipeline(
             audit_ok = False
 
     if not audit_ok:
-        log(f"[FAIL-CLOSED] {symbol}: export rejected by post-export audit gate. Aborting manifest write.")
+        log(f"[FAIL-CLOSED] {symbol}: export rejected by post-export audit gate. Cleaning up export files.")
+        for p in (mpath, lpath, manifest_path):
+            if os.path.exists(p):
+                try:
+                    os.remove(p)
+                except Exception:
+                    pass
         return False
 
-    exporter.write_manifest(master, symbol, ladder_stats, {**report.to_dict(), "repair_rounds": rounds},
-                            metrics_absent_days=getattr(fetcher, "metrics_absent_days", None))
     log(f"[OK] {symbol}: exported {os.path.basename(mpath)} ({os.path.getsize(mpath) / 1_048_576:.1f} MB) + "
         f"{os.path.basename(lpath)} ({os.path.getsize(lpath) / 1_048_576:.1f} MB) in {time.time() - t3:.1f}s")
 
