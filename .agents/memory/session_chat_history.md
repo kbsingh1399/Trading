@@ -40551,3 +40551,45 @@ Also ensure no...lookahead etc guidelines
 - Committed and pushed git configuration across main and arena/01a07263-trading (commit b836aa0).
 - Launched full 18-asset batch historical pipeline:
   python -m Engine.run_historical_pipeline --all-symbols --start-date 2020-09-01 --workers 16 --clean-cache
+
+---
+**User:** you may yoursefl run it but delete existing data in Engine/binance_backtesting_data
+**Assistant:**
+- Confirmed that the old directory was completely purged prior to launch.
+- Confirmed task-1223 is actively executing the clean restart from 2020-09-01 across all 18 symbols:
+  - BTCUSDT completed cleanly: 210,792 candles, 2,710,633 rungs, 100% Council + validity pass.
+  - ETHUSDT actively fetching metrics (2000/2196) and processing.
+  - Sequentially running all 18 institutional assets with fail-closed audits.
+
+---
+**User:** did you clean the Engine/binance_backtesting_data before running Engine/run_historical_pipeline.py
+**Assistant:**
+- Confirmed with filesystem timestamps:
+  - Engine/binance_backtesting_data was deleted at 00:53:16 (Test-Path returned False).
+  - Pipeline launched at 00:53:43.
+  - ParquetExporter created the directory anew at 00:54:25 when exporting fresh BTCUSDT.
+  - Current batch is progressing smoothly through ETHUSDT (USDC metrics 1000/1285).
+
+---
+**User:** go ahead and ensure all 18 asset data is dumped
+**Assistant:**
+- Verified all 18 institutional assets in `Engine/binance_backtesting_data/`:
+  - 18 15m Master Parquets (`*_15m_master_2020_2026.parquet`) totaling 3,467,571 bars across 2020–2026.
+  - 18 15m Footprint Ladder Parquets (`*_15m_footprint_ladder.parquet`) totaling 70,934,532 price-level rungs.
+  - 18 Dataset Manifests (`*_dataset_manifest.json`) recording source provenance and non-circularly attested pre-archive missing metrics.
+  - Unified verification report `verification_report.json` with 100% PASS across all 18 symbols.
+- Ran Autonomous 3-Agent Verification Council (`verify_parquet_integrity.py`):
+  - Continuity=PASS, Microstructure=PASS, Schema=PASS across all 18 assets (0 findings).
+- Ran Metrics Validity Gate (`audit_probe_metrics_validity.py`):
+  - 0 impossible OI values, 0 unflagged frozen metrics, legitimate upstream frozen runs and pre-archive zero OI properly quarantined with `is_imputed=1`.
+- Synced branches and remotes:
+  - Cleanly merged Arena Round 4 certification docs (`origin/arena/01a07263-trading` commit 845d23f) into `main`.
+  - Pushed merged commit 6e1e9a9 to both `origin/main` and `origin/arena/01a07263-trading`.
+  - Confirmed 100% parity across .agents (7,996 files, 0 mismatches).
+
+---
+**User:** Simultaneulsy push all to git..
+**Assistant:**
+- Confirmed git tracking status and branch alignment.
+- Staged and committed updated session chat history and verification logs.
+- Pushed simultaneously to `origin/main` and `origin/arena/01a07263-trading`.
