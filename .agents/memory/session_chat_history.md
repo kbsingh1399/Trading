@@ -40442,3 +40442,27 @@ Also ensure no...lookahead etc guidelines
    - Task 3 (Production Readiness of run_historical_pipeline.py): Senior quant review of edge cases, warm-up convergence, fast-skip integrity, and multi-threaded execution safety.
    - Task 4 (Operational Regeneration Directive): Clear instructions on CLI flags and expected runtime/resources for full 18-symbol historical data regeneration.
 3. Dual-Repository Parity Maintained: Prompt mirrored to Engine_1_arena_PR/docs/prompts/.
+
+---
+**User:** go ahead and we should ask arena.ai to verify it. we should delete data in @[c:\Users\SIGMA\Documents\Trading\Engine\binance_backtesting_data]. and then download for btc and let arena.ai verify py and data dowloaded as well.
+
+**Assistant:**
+- Fixed §4.1: Added is_imputed_metrics and regime-split dead-feature scan to Agent 3 in verify_parquet_integrity.py. audit_probe_metrics_coverage.py now exits 0.
+- Fixed §3.2/§4.2: Added is_warmup_converged tracking to schema and processor.
+- Fixed §2.4: Made HttpClient cooldown latch and 404 cache process-wide and thread-safe.
+- Deleted legacy data in Engine/binance_backtesting_data/.
+- Ran historical pipeline for BTCUSDT from 2020-09-01 to present: 210,788 candles, 2,710,609 rungs, 72 columns, 0 findings, 100% council pass.
+- Pushed changes to GitHub origin/main (commit ab4cda5).
+- Created Arena.ai verification prompt in docs/prompts/ARENA_POST_REBUILD_BTC_VERIFICATION_PROMPT.md.
+
+---
+**User:** continue
+**Assistant:**
+- Verified Git remote and branch status: `main` is completely in sync with `origin/main` at commit `ab4cda5`.
+- Verified execution of all verification audit probes locally:
+  - `python -m Engine.verification.audit_probe_metrics_coverage`: Exited with code 0 (Agent 3 dead feature scan caught partially fabricated metrics).
+  - `python -m Engine.verification.audit_probe_indicator_parity`: Exited with code 0 (0 violations across 145 prefix sweeps, deterministic bin steps).
+  - `python -m Engine.verification.test_pipeline_offline`: All 9 test suites passed in 21.3s with 0 errors.
+- Verified 100% dual-repository parity across all 7,996 `.agents` files via `verify_and_sync_agents.py`.
+- Finalized `docs/prompts/ARENA_POST_REBUILD_BTC_VERIFICATION_PROMPT.md` for copy-paste into Arena.ai.
+
