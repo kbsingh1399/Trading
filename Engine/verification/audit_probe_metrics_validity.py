@@ -169,8 +169,16 @@ def main(argv: Optional[List[str]] = None) -> int:
         if res is None:
             continue
         z, fz = res["zero"], res["frozen"]
-        if not z and not fz:
-            print(f"  [{sym}] PASS -- {res['rows']:,} rows, no impossible or frozen-stale metrics")
+        unflagged_fz = [f for f in fz if f["available"] > 0 or f["imputed"] < f["len"]]
+        if not z and not unflagged_fz:
+            q_msg = f", {len(fz)} upstream frozen runs quarantined (metrics_available=0, is_imputed=1)" if fz else ""
+            print(f"  [{sym}] PASS -- {res['rows']:,} rows, no impossible or unflagged frozen metrics{q_msg}")
+            if fz:
+                mask = np.zeros(res["rows"], bool)
+                for f in fz:
+                    mask[f["start"]:f["start"] + f["len"]] = True
+                tot = int(mask.sum())
+                print(f"        quarantined upstream stale positioning: {len(fz)} runs, {tot:,} unique bars ({100.0 * tot / res['rows']:.2f}% of file)")
             continue
         bad += 1
         print(f"  [{sym}] ** REJECT ** {res['rows']:,} rows")
@@ -190,32 +198,31 @@ def main(argv: Optional[List[str]] = None) -> int:
                       f"bars with |oi_change_pct| >= 50% sit on impossible-OI rows ({share:.1f}% of the "
                       f"file's largest OI events are artifacts)")
 
-        if fz:
-            # Report the UNION of affected bars: ls_ratio_top and top_account_ratio freeze
-            # over the same windows, so summing per-column lengths double-counts.
+        if unflagged_fz:
+            # Report the UNION of affected unflagged bars
             mask = np.zeros(res["rows"], bool)
-            for f in fz:
+            for f in unflagged_fz:
                 mask[f["start"]:f["start"] + f["len"]] = True
             tot = int(mask.sum())
             per_col: Dict[str, int] = {}
-            for f in fz:
+            for f in unflagged_fz:
                 per_col[f["col"]] = per_col.get(f["col"], 0) + f["len"]
             episodes = int((np.diff(mask.astype(np.int8)) == 1).sum() + (1 if mask[0] else 0))
-            print(f"    A1b frozen-stale ranges (>= {STALE_RUN_BARS} bars with OI moving "
-                  f">= {OI_MUST_BE_MOVING:.0%}): {len(fz)} column-runs over {episodes} distinct "
+            print(f"    A1b silently-frozen ranges (>= {STALE_RUN_BARS} bars with OI moving "
+                  f">= {OI_MUST_BE_MOVING:.0%}): {len(unflagged_fz)} unflagged column-runs over {episodes} distinct "
                   f"episode(s), {tot:,} unique bars ({100.0 * tot / res['rows']:.2f}% of the file)")
             print(f"        per column (bars, before de-duplication): "
                   + ", ".join(f"{k}={v:,}" for k, v in
                               sorted(per_col.items(), key=lambda x: -x[1])))
-            for f in sorted(fz, key=lambda x: -x["len"])[: args.max_print]:
+            for f in sorted(unflagged_fz, key=lambda x: -x["len"])[: args.max_print]:
                 origin = ("carry-forward" if f["carry_forward"] else "UPSTREAM STALE (not a fill)")
                 print(f"        {f['col']:20} {f['len']:>6,} bars {f['start_ts'][:16]} -> "
                       f"{f['end_ts'][:16]} value={f['value']:.6f}")
                 print(f"        {'':20} OI moved on {f['oi_moving']:.1%} of bars, "
-                      f"prev={f['prev']:.6f} -> {origin}; "
-                      f"metrics_available=1 on {f['available']:,}, is_imputed=1 on {f['imputed']:,}")
-            if len(fz) > args.max_print:
-                print(f"        ... {len(fz) - args.max_print} further runs")
+                  f"prev={f['prev']:.6f} -> {origin}; "
+                  f"metrics_available=1 on {f['available']:,}, is_imputed=1 on {f['imputed']:,}")
+            if len(unflagged_fz) > args.max_print:
+                print(f"        ... {len(unflagged_fz) - args.max_print} further runs")
 
     print("=" * 100)
     if bad:

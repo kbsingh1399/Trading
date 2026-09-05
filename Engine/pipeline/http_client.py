@@ -131,12 +131,19 @@ class HttpClient:
                     raise FetchError(f"404 {url}") from e
                 if e.code in _RATE_LIMIT_CODES:
                     retry_after = e.headers.get("Retry-After") if e.headers else None
-                    try:
-                        cool = float(retry_after) if retry_after else 0.0
-                    except ValueError:
-                        cool = 0.0
-                    raw_cool = max(cool, self.rate_limit_cooldown if e.code == 429 else self.ban_cooldown) * (attempt + 1)
-                    cool = min(self.max_delay * 10, raw_cool)
+                    server_cool = 0.0
+                    if retry_after:
+                        try:
+                            server_cool = float(retry_after)
+                        except ValueError:
+                            server_cool = 0.0
+                    if server_cool > 0.0:
+                        # Server gave explicit instruction: honor it directly (bounded only by a 2-hour emergency sanity ceiling)
+                        cool = min(server_cool, 7200.0)
+                    else:
+                        base = self.rate_limit_cooldown if e.code == 429 else self.ban_cooldown
+                        raw_cool = base * (attempt + 1)
+                        cool = min(self.max_delay * 10, raw_cool)
                     self._trip_cooldown(cool)
                 elif e.code in _TRANSIENT_CODES:
                     time.sleep(self._backoff(attempt))

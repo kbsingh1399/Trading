@@ -250,6 +250,20 @@ def run_pipeline(
     audit_ok = True
     if run_audit:
         audit_ok = verify_all_parquets(target_dir, symbols=[symbol], log=log)
+        try:
+            from Engine.verification.audit_probe_metrics_validity import check_symbol
+            m_file = os.path.join(target_dir, f"{symbol}_15m_master_2020_2026.parquet")
+            if os.path.isfile(m_file):
+                res = check_symbol(m_file)
+                unflagged_fz = [f for f in res["frozen"] if f["available"] > 0 or f["imputed"] < f["len"]] if res else []
+                if res is not None and (res["zero"] or unflagged_fz):
+                    log(f"[WARNING] {symbol}: audit_probe_metrics_validity flagged issues: zero={bool(res['zero'])}, unflagged_frozen={len(unflagged_fz)}")
+                    audit_ok = False
+                else:
+                    q_info = f" ({len(res['frozen'])} upstream frozen runs quarantined)" if res and res["frozen"] else ""
+                    log(f"[OK] {symbol}: audit_probe_metrics_validity PASSED (0 impossible OI, 0 unflagged frozen runs{q_info})")
+        except Exception as e:
+            log(f"[WARN] {symbol}: could not run audit_probe_metrics_validity: {e}")
 
     if clean_cache and os.path.isdir(cache_dir):
         shutil.rmtree(cache_dir, ignore_errors=True)

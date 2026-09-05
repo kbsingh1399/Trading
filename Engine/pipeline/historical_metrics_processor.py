@@ -56,6 +56,30 @@ LIQ_Z_WINDOW = 96
 VWAP_Z_WINDOW = 24
 METRICS_MAX_STALENESS_MS = 6 * 3_600_000
 FUNDING_MAX_STALENESS_MS = 16 * 3_600_000   # two missed 8h settlements
+STALE_RUN_BARS = 288       # 3 days of 15m bars
+OI_MUST_BE_MOVING = 0.90   # else the whole tape was down and a frozen ratio is expected
+
+
+def _stale_runs_mask(values: np.ndarray, threshold: int, oi_moves: np.ndarray, min_moving: float) -> np.ndarray:
+    """
+    Flags entire runs of >= threshold identical values where open interest is moving >= min_moving.
+    Matches the exact detection contract of audit_probe_metrics_validity.
+    """
+    n = len(values)
+    if n < threshold:
+        return np.zeros(n, dtype=bool)
+    v = np.round(values.astype(np.float64), 8)
+    v = np.where(np.isnan(v), np.inf, v)
+    change = np.flatnonzero(np.diff(v) != 0)
+    starts = np.concatenate(([0], change + 1))
+    lengths = np.diff(np.concatenate((starts, [len(v)])))
+    mask = np.zeros(n, dtype=bool)
+    for s, L in zip(starts, lengths):
+        if L >= threshold:
+            moving = float(oi_moves[s:min(s + L, n - 1)].mean()) if n > 1 else 0.0
+            if moving >= min_moving:
+                mask[s:s + L] = True
+    return mask
 
 
 def build_continuous_timeline(klines: pd.DataFrame) -> pd.DataFrame:
@@ -244,19 +268,45 @@ class HistoricalMetricsProcessor:
                 mm = _asof_backward(ct, sub, "timestamp_ms", [col])
                 merged[col] = mm[col].to_numpy(np.float64)
                 merged[col + "_age"] = mm["_age_ms"].to_numpy(np.float64)
-            oi_coin = merged["sum_open_interest"]
+            oi_coin_raw = merged["sum_open_interest"]
             oi_age = merged["sum_open_interest_age"]
-            available = (~np.isnan(oi_coin)) & (oi_age <= METRICS_MAX_STALENESS_MS)
-            oi_coin = np.where(np.isnan(oi_coin), 0.0, oi_coin)
+            # A1: impossible values -- open interest must be finite, > 0, and not stale
+            available_raw = (~np.isnan(oi_coin_raw)) & (oi_coin_raw > 0.0) & (oi_age <= METRICS_MAX_STALENESS_MS)
+            
+            # Causal rolling median check to identify severe anomalies (< 20% of local median when median > 1k)
+            s_raw = pd.Series(np.where(available_raw, oi_coin_raw, np.nan))
+            causal_med = s_raw.rolling(201, min_periods=20).median().bfill().to_numpy()
+            is_impossible_oi = (~available_raw) | ((oi_coin_raw < 0.20 * causal_med) & (causal_med > 1000.0))
+            
+            # Causal forward fill across impossible episodes, zero if at start
+            oi_coin = pd.Series(np.where(is_impossible_oi, np.nan, oi_coin_raw)).ffill().fillna(0.0).to_numpy(np.float64)
+            available = (~is_impossible_oi) & (oi_coin > 0.0)
+
             oi_usd = merged["sum_open_interest_value"]
-            oi_usd = np.where(np.isnan(oi_usd), oi_coin * c, oi_usd)
+            oi_usd_ff = pd.Series(np.where(is_impossible_oi | np.isnan(oi_usd), np.nan, oi_usd)).ffill().to_numpy(np.float64)
+            oi_usd = np.where(np.isnan(oi_usd_ff), oi_coin * c, oi_usd_ff)
             ls_glob = np.where(np.isnan(merged["count_long_short_ratio"]), 1.0, merged["count_long_short_ratio"])
             ls_top = np.where(np.isnan(merged["sum_toptrader_long_short_ratio"]), 1.0, merged["sum_toptrader_long_short_ratio"])
             top_acc = merged["count_toptrader_long_short_ratio"]
             top_acc = np.where(np.isnan(top_acc), ls_glob, top_acc)
             taker_ratio = merged["sum_taker_long_short_vol_ratio"]
             taker_ratio = np.where(np.isnan(taker_ratio), fallback_taker, taker_ratio)
-            out["metrics_available"] = available.astype(np.int8)
+
+            # A1b: detect frozen upstream positioning runs (>= 288 bars while OI moves >= 90%)
+            oi_moves = np.diff(oi_coin) != 0 if n > 1 else np.array([False])
+            frozen_mask = np.zeros(n, dtype=bool)
+            for col_arr in (ls_glob, ls_top, top_acc, taker_ratio):
+                frozen_mask |= _stale_runs_mask(col_arr, STALE_RUN_BARS, oi_moves, OI_MUST_BE_MOVING)
+            
+            # Whale index computed from sanitized inputs
+            top_long_p = ls_top / (1.0 + ls_top)
+            glob_long_p = ls_glob / (1.0 + ls_glob)
+            whale_idx = top_long_p / np.maximum(glob_long_p, 1e-4) * 100.0
+            frozen_mask |= _stale_runs_mask(whale_idx, STALE_RUN_BARS, oi_moves, OI_MUST_BE_MOVING)
+
+            # Mark metrics available only if OI is valid AND positioning is not frozen upstream
+            is_valid_metrics = available & (~frozen_mask)
+            out["metrics_available"] = is_valid_metrics.astype(np.int8)
         else:
             log(f"[WARN] {symbol}: no official metrics stream")
             oi_coin = np.zeros(n)
@@ -265,6 +315,7 @@ class HistoricalMetricsProcessor:
             ls_top = np.ones(n)
             top_acc = np.ones(n)
             taker_ratio = fallback_taker
+            whale_idx = np.full(n, 100.0)
             out["metrics_available"] = np.zeros(n, dtype=np.int8)
 
         out["open_interest_k"] = oi_coin / 1000.0
@@ -277,9 +328,7 @@ class HistoricalMetricsProcessor:
         out["ls_ratio_global"] = ls_glob
         out["ls_ratio_top"] = ls_top
         out["top_account_ratio"] = top_acc
-        top_long_p = ls_top / (1.0 + ls_top)
-        glob_long_p = ls_glob / (1.0 + ls_glob)
-        out["whale_index"] = top_long_p / np.maximum(glob_long_p, 1e-4) * 100.0
+        out["whale_index"] = whale_idx
         out["taker_volume_ratio"] = np.clip(taker_ratio, 0.0, 1e6)
         out["is_imputed_metrics"] = (out["metrics_available"].to_numpy() == 0).astype(np.int8)
 

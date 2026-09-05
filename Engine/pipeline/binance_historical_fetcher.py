@@ -339,8 +339,15 @@ class BinanceHistoricalFetcher:
                     usdc = usdc[["timestamp_ms", "sum_open_interest", "sum_open_interest_value"]].rename(
                         columns={"sum_open_interest": "_oi_usdc", "sum_open_interest_value": "_oiv_usdc"})
                     primary = primary.merge(usdc, on="timestamp_ms", how="left")
-                    primary["sum_open_interest"] = primary["sum_open_interest"].fillna(0.0) + primary["_oi_usdc"].fillna(0.0)
-                    primary["sum_open_interest_value"] = primary["sum_open_interest_value"].fillna(0.0) + primary["_oiv_usdc"].fillna(0.0)
+                    # Bound addition strictly to post-floor rows and use .add(fill_value=0.0) so NaN+NaN remains NaN
+                    usdc_floor_ms = _ms(_utc(USDC_METRICS_FLOOR))
+                    mask = primary["timestamp_ms"] >= usdc_floor_ms
+                    primary.loc[mask, "sum_open_interest"] = primary.loc[mask, "sum_open_interest"].add(
+                        primary.loc[mask, "_oi_usdc"], fill_value=0.0
+                    )
+                    primary.loc[mask, "sum_open_interest_value"] = primary.loc[mask, "sum_open_interest_value"].add(
+                        primary.loc[mask, "_oiv_usdc"], fill_value=0.0
+                    )
                     primary = primary.drop(columns=["_oi_usdc", "_oiv_usdc"])
                     self.log(f"[FETCHER] {symbol}: aggregated stablecoin OI with {usdc_symbol}")
 

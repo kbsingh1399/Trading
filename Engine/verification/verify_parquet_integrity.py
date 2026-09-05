@@ -253,6 +253,9 @@ def agent_microstructure(master: pd.DataFrame, ladder: Optional[pd.DataFrame]) -
     add("atr_nonneg", "ATR negative", (g("atr_14") < 0) | (g("atr_100") < 0))
     add("oi_change_domain", "oi_change_pct outside [-100, 100]", np.abs(g("oi_change_pct")) > 100 + 1e-9)
     add("oi_nonneg", "open interest negative", (g("open_interest_k") < 0) | (g("open_interest_usd") < 0))
+    # A1: impossible open interest (open_interest_k == 0 while marked fresh)
+    avail_mask = master["metrics_available"].to_numpy() == 1
+    add("oi_impossible_zero", "open_interest_k == 0 while metrics_available=1", avail_mask & (g("open_interest_k") == 0))
     add("ratios_positive", "L/S ratios must be > 0", (g("ls_ratio_global") <= 0) | (g("ls_ratio_top") <= 0) | (g("top_account_ratio") <= 0))
     add("depth_positive", "depth proxies must be non-negative magnitudes",
         (g("bid_depth_usd") < 0) | (g("ask_depth_usd") < 0) | (g("bid_depth_coin") < 0) | (g("ask_depth_coin") < 0))
