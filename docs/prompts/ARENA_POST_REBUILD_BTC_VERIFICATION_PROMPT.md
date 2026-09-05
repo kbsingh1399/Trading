@@ -37,6 +37,8 @@ Please fetch the raw files via Git / HTTP, verify the fixes adversarially, inspe
 - **Ingested BTCUSDT Live Manifest & Council Verification Report**:
   - `BTCUSDT_dataset_manifest.json`: `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/BTCUSDT_dataset_manifest.json`
   - `verification_report.json`: `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/verification_report.json`
+  - `BTCUSDT_15m_master_2020_2026.parquet`: `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/BTCUSDT_15m_master_2020_2026.parquet`
+  - `BTCUSDT_15m_footprint_ladder.parquet`: `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/BTCUSDT_15m_footprint_ladder.parquet`
 
 ---
 
