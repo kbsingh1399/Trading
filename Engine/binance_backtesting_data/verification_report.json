@@ -2,8 +2,8 @@
   "BTCUSDT": {
     "symbol": "BTCUSDT",
     "passed": true,
-    "master_rows": 210792,
-    "ladder_rows": 2710633,
+    "master_rows": 210797,
+    "ladder_rows": 2710652,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",
