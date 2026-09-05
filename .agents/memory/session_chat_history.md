@@ -40612,3 +40612,13 @@ I need you to build a prompt enhancer extention for antigravity which can use ap
 - Completed and staged master audit prompt with explicit raw GitHub URLs for all 36 parquets, 18 manifests, and the verification report.
 - Committed and pushed commit `0d8162e` simultaneously to `origin/main` and `origin/arena/01a07263-trading` with 100% byte-for-byte dual mirror parity.
 - Updated `SESSION_CONTEXT_MAP.md` milestone registry with Phase 10.
+
+---
+**User:** meanwhile install this and apply it : https://github.com/FutureisinPast/antigravity-conversation-fix
+**User:** we lost chats...how can we recover them [screenshot showing only 50 convos with placeholder titles]
+**Assistant:**
+- Performed deep scan of .gemini directories: confirmed all conversations exist intact on disk (508 in antigravity, 100 in antigravity-backup, 233 in antigravity-ide = 666 unique conversations).
+- Identified that active database state.vscdb only indexed 50 conversations, causing 616 conversations to disappear from the sidebar.
+- Downloaded and installed v1.07 of Antigravity_Conversation_Fix (Antigravity_Conversation_Fix.exe, rebuild_conversations.py, run.bat) into C:\Users\SIGMA\antigravity-conversation-fix\.
+- Created a 1-click launcher on user desktop: C:\Users\SIGMA\Desktop\Fix_Antigravity_Conversations.bat.
+- Provided 2-step instructions: Close Antigravity (File > Exit), double-click the desktop launcher, press Enter to auto-assign workspaces and restore all 666 conversations.
