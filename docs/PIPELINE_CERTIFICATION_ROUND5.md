@@ -166,10 +166,12 @@ two parquets, never consulting the `verification.passed` certificate its own val
 Verified with a new deterministic harness, `Engine/verification/test_export_fail_closed.py` (6 checks):
 injected failure at master export, at ladder export (master left behind), and at manifest write → after the
 fix **no `.parquet` survives on disk** in any case; control run writes both files + `verification.passed=true`.
+Those three injection cases are what pin the fix -- without it the exporter leaves an orphan file behind,
+which was the observed behaviour while the harness was being written.
 **Fix shipped:** the export block now tracks every path it writes, removes them on any exception, returns
 `False` for `SchemaError` (skip the symbol) and re-raises anything else; `existing_output_is_current()` now
 requires master + ladder + **manifest with `verification.passed is true`**, so an incomplete/corrupt/absent
-certificate is unusable. 5 of 7 offline tests pass pre-patch too (no regression); full suite green (§6).
+certificate is unusable. `test_pipeline_offline.py` stays green after the change (7/7, 16.8 s) -- no regression; §6 re-runs both.
 
 ### 4.2 Lookahead — no finding, by two independent proofs
 * **Structural grep:** 0 `.bfill(` and 0 `.ffill(` in `Engine/pipeline/`; `shift(-1)` only at
