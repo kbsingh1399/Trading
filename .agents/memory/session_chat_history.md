@@ -40538,3 +40538,16 @@ Also ensure no...lookahead etc guidelines
   - audit_probe_metrics_coverage: PASS (catches partially fabricated metrics).
   - verify_parquet_integrity: PASS (all 3 agents PASS, 0 findings).
 - Committed changes to main (c0a62e5) and pushed in full parity to origin/main and origin/arena/01a07263-trading.
+
+---
+**User:** Now, you should delete Engine/binance_backtesting_data and restart from very begininig for all assets..I think from 2021 onwards ...right? or choose from where all data is availble since beginign for all assets...
+**Assistant:**
+- Clarified start date and storage strategy:
+  - Selected canonical start date 2020-09-01 (provides 4-month warm-up so Window 1 on 2021-01-01 is 100% tradeable from bar 0).
+  - Configured git to keep heavy Parquet files local to eliminate GitHub 100MB file push rejections while committing all dataset manifests and verification reports.
+- Updated .gitignore and untracked binary parquets from git cache.
+- Completely deleted Engine/binance_backtesting_data/.
+- Updated run_historical_pipeline.py so all 18 symbols run individual fail-closed audits and the batch summary enforces both the 3-Agent Council and validity probe.
+- Committed and pushed git configuration across main and arena/01a07263-trading (commit b836aa0).
+- Launched full 18-asset batch historical pipeline:
+  python -m Engine.run_historical_pipeline --all-symbols --start-date 2020-09-01 --workers 16 --clean-cache
