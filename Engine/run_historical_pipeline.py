@@ -309,7 +309,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             ok = run_pipeline(
                 symbol=sym, start_date_str=args.start_date, target_dir=args.target_dir, cache_dir=args.cache_dir,
                 max_workers=args.workers, footprint_days=args.footprint_days, all_footprint=args.all_footprint,
-                clean_cache=False, force=args.force, run_audit=not args.all_symbols,
+                clean_cache=False, force=args.force, run_audit=True,
             )
             results[sym] = "SUCCESS" if ok else "REJECTED"
         except Exception as exc:
@@ -323,7 +323,15 @@ def main(argv: Optional[List[str]] = None) -> int:
             _log(f"  {sym:<10} {status}")
         _log(f"batch wall time: {(time.time() - batch_t0) / 60:.1f} min")
         done = [s for s, st in results.items() if st == "SUCCESS"]
-        audit_ok = verify_all_parquets(args.target_dir, symbols=done) if done else False
+        council_ok = verify_all_parquets(args.target_dir, symbols=done) if done else False
+        validity_ok = True
+        try:
+            from Engine.verification.audit_probe_metrics_validity import main as validity_main
+            validity_ok = (validity_main([args.target_dir]) == 0)
+        except Exception as e:
+            _log(f"[ERROR] batch validity probe failed: {e}")
+            validity_ok = False
+        audit_ok = council_ok and validity_ok
     else:
         audit_ok = results[symbols[0]] == "SUCCESS"
 
