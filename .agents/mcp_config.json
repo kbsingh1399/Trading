@@ -1,0 +1,30 @@
+{
+    "mcpServers": {
+        "context7": {
+            "command": "npx.cmd",
+            "args": [
+                "-y",
+                "@upstash/context7-mcp"
+            ]
+        },
+        "reticle": {
+            "command": "npx.cmd",
+            "args": [
+                "-y",
+                "@reticlehq/server",
+                "mcp"
+            ]
+        },
+        "scite": {
+            "command": "npx.cmd",
+            "args": [
+                "-y",
+                "mcp-remote",
+                "https://api.scite.ai/mcp"
+            ],
+            "env": {
+                "SCITE_API_KEY": "scite_HcQiTAuZm4LwsfYoRvoG069bIMSPomwg8_zEUtTDzVE"
+            }
+        }
+    }
+}

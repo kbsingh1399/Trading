@@ -1,0 +1,114 @@
+{
+  "BTCUSDT": {
+    "symbol": "BTCUSDT",
+    "passed": false,
+    "master_rows": 210613,
+    "ladder_rows": 2992918,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "FAIL (6)",
+      "Agent3:Schema": "FAIL (5)"
+    },
+    "findings": [
+      {
+        "agent": "Agent2:Microstructure",
+        "check": "fut_cvd_identity",
+        "message": "future_cvd_15m != taker_buy - taker_sell",
+        "bar_index": 2,
+        "open_time_ms": 1598920200000,
+        "timestamp_utc": "2020-09-01 00:30:00+00:00",
+        "count": 108103
+      },
+      {
+        "agent": "Agent2:Microstructure",
+        "check": "fut_lifetime_cvd",
+        "message": "future_cvd_lifetime increments != future_cvd_15m",
+        "bar_index": 0,
+        "open_time_ms": 1598918400000,
+        "timestamp_utc": "2020-09-01 00:00:00+00:00",
+        "count": 1
+      },
+      {
+        "agent": "Agent2:Microstructure",
+        "check": "spot_unavailable_zero",
+        "message": "spot_cvd_15m must be 0 when spot_flow_source=UNAVAILABLE (stale reuse)",
+        "bar_index": 8664,
+        "open_time_ms": 1606716000000,
+        "timestamp_utc": "2020-11-30 06:00:00+00:00",
+        "count": 68
+      },
+      {
+        "agent": "Agent2:Microstructure",
+        "check": "oi_change_domain",
+        "message": "oi_change_pct outside [-100, 100]",
+        "bar_index": 25270,
+        "open_time_ms": 1621661400000,
+        "timestamp_utc": "2021-05-22 05:30:00+00:00",
+        "count": 69
+      },
+      {
+        "agent": "Agent2:Microstructure",
+        "check": "ema_8_recursion",
+        "message": "ema_8 violates one-step recursion (stored value used other inputs)",
+        "bar_index": 1,
+        "open_time_ms": 1598919300000,
+        "timestamp_utc": "2020-09-01 00:15:00+00:00",
+        "count": 109707
+      },
+      {
+        "agent": "Agent2:Microstructure",
+        "check": "ema_21_recursion",
+        "message": "ema_21 violates one-step recursion (stored value used other inputs)",
+        "bar_index": 3,
+        "open_time_ms": 1598921100000,
+        "timestamp_utc": "2020-09-01 00:45:00+00:00",
+        "count": 112834
+      },
+      {
+        "agent": "Agent3:Schema",
+        "check": "columns",
+        "message": "column contract violated: missing=['spot_close', 'session_vwap', 'vwap_zscore', 'volume_ratio', 'zc_div', 'long_liq_zs', 'short_liq_zs', 'liq_imbalance_ratio'] extra=[] order_ok=False",
+        "bar_index": null,
+        "open_time_ms": null,
+        "timestamp_utc": null,
+        "count": 1
+      },
+      {
+        "agent": "Agent3:Schema",
+        "check": "ladder_columns",
+        "message": "ladder columns ['open_time_ms', 'price_bin', 'bid_vol_coin', 'ask_vol_coin', 'net_delta_coin', 'is_buy_imbalance', 'is_sell_imbalance', 'is_poc', 'trade_count'] != ['open_time_ms', 'price_bin', 'bid_vol_coin', 'ask_vol_coin', 'net_delta_coin', 'is_buy_imbalance', 'is_sell_imbalance', 'is_poc', 'trade_count', 'rung_source']",
+        "bar_index": null,
+        "open_time_ms": null,
+        "timestamp_utc": null,
+        "count": 1
+      },
+      {
+        "agent": "Agent3:Schema",
+        "check": "ladder_dtype",
+        "message": "is_buy_imbalance: expected int8, found int64",
+        "bar_index": null,
+        "open_time_ms": null,
+        "timestamp_utc": null,
+        "count": 1
+      },
+      {
+        "agent": "Agent3:Schema",
+        "check": "ladder_dtype",
+        "message": "is_sell_imbalance: expected int8, found int64",
+        "bar_index": null,
+        "open_time_ms": null,
+        "timestamp_utc": null,
+        "count": 1
+      },
+      {
+        "agent": "Agent3:Schema",
+        "check": "ladder_dtype",
+        "message": "is_poc: expected int8, found int64",
+        "bar_index": null,
+        "open_time_ms": null,
+        "timestamp_utc": null,
+        "count": 1
+      }
+    ]
+  }
+}

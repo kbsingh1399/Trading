@@ -1,0 +1,315 @@
+"""
+================================================================================
+MASTER BINANCE HISTORICAL 15M DUAL-TABLE PIPELINE (2020 -> PRESENT)
+================================================================================
+Per symbol:
+  1. FETCH     futures klines (from listing / 2019 for EMA warm-up), spot klines,
+               official metrics, funding, optional aggTrades footprint.
+  2. PROCESS   canonical Table-1 features (strictly causal, vectorised).
+  3. SLICE     to the requested start date (warm-up bars are discarded AFTER
+               indicators are computed, so EMA/RSI/ATR are fully converged).
+  4. LADDER    Table-2 = exact tick rungs + causal synthetic rungs.
+  5. COUNCIL   3-agent verification on the in-memory frames. On failure:
+               targeted causal repair -> re-verify. Export only on PASS.
+  6. EXPORT    atomic dual-table Parquet + manifest.
+
+CLI
+  python -m Engine.run_historical_pipeline --symbol BTCUSDT
+  python -m Engine.run_historical_pipeline --all-symbols --workers 8
+  python -m Engine.run_historical_pipeline --symbol SOLUSDT --start-date 2021-01-01 --footprint-days 30
+  python -m Engine.run_historical_pipeline --all-symbols --clean-cache --force
+================================================================================
+"""
+
+from __future__ import annotations
+
+import argparse
+import os
+import shutil
+import sys
+import time
+import traceback
+from datetime import datetime, timezone
+from typing import Callable, Dict, List, Optional
+
+import numpy as np
+import pandas as pd
+
+if __package__ in (None, ""):
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from Engine.core.schema import (  # noqa: E402
+    BAR_MS,
+    CANONICAL_COLUMNS,
+    DEFAULT_START_DATE,
+    FUTURES_LISTING_DATES,
+    LADDER_COLUMNS,
+    SYMBOLS,
+    WARMUP_START_DATE,
+    ladder_filename,
+    master_filename,
+)
+from Engine.pipeline.binance_historical_fetcher import BinanceHistoricalFetcher  # noqa: E402
+from Engine.pipeline.footprint_ladder import assemble_ladder  # noqa: E402
+from Engine.pipeline.historical_metrics_processor import HistoricalMetricsProcessor  # noqa: E402
+from Engine.pipeline.http_client import HttpClient  # noqa: E402
+from Engine.pipeline.parquet_exporter import ParquetExporter, SchemaError  # noqa: E402
+from Engine.pipeline.tick_footprint_fetcher import TickFootprintFetcher  # noqa: E402
+from Engine.verification.verify_parquet_integrity import CouncilReport, run_council, verify_all_parquets  # noqa: E402
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_TARGET_DIR = os.path.join(SCRIPT_DIR, "binance_backtesting_data")
+DEFAULT_CACHE_DIR = os.path.join(SCRIPT_DIR, "data_cache")
+ENGINE_1_CRYPTO_SYMBOLS = SYMBOLS   # backward-compatible alias (run_live_terminal imports it)
+MAX_REPAIR_ROUNDS = 2
+
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
+
+
+def _log(msg: str) -> None:
+    print(f"{datetime.now(timezone.utc).strftime('%H:%M:%S')} {msg}", flush=True)
+
+
+def _parse_date(s: str) -> datetime:
+    return datetime.strptime(s, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+
+
+# ------------------------------------------------------------------------------
+# Fast-skip probe: only trust existing output if it satisfies the full contract
+# ------------------------------------------------------------------------------
+def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: float) -> bool:
+    import pyarrow.parquet as pq
+    mpath = os.path.join(target_dir, master_filename(symbol))
+    lpath = os.path.join(target_dir, ladder_filename(symbol))
+    if not (os.path.exists(mpath) and os.path.exists(lpath)):
+        return False
+    try:
+        mf, lf = pq.ParquetFile(mpath), pq.ParquetFile(lpath)
+        if mf.schema_arrow.names != CANONICAL_COLUMNS or lf.schema_arrow.names != LADDER_COLUMNS:
+            return False
+        last = mf.read_row_group(mf.num_row_groups - 1, columns=["close_time_ms"]).column(0).to_numpy()
+        age_h = (time.time() * 1000 - int(last[-1])) / 3_600_000
+        if age_h > max_age_hours:
+            return False
+        m_ts = pd.read_parquet(mpath, columns=["open_time_ms"])["open_time_ms"].to_numpy()
+        l_ts = pd.read_parquet(lpath, columns=["open_time_ms"])["open_time_ms"].unique()
+        return bool(np.isin(m_ts, l_ts).all() and m_ts.size > 1000)
+    except Exception:
+        return False
+
+
+# ------------------------------------------------------------------------------
+# Causal repair: the only repairs permitted are ones that use bar t's own data
+# or data strictly at/before bar t.
+# ------------------------------------------------------------------------------
+def causal_repair(master: pd.DataFrame, ladder: pd.DataFrame, report: CouncilReport, log: Callable[[str], None]) -> tuple[pd.DataFrame, pd.DataFrame, bool]:
+    checks = {f.check for f in report.findings}
+    changed = False
+    m = master.copy()
+
+    if {"nulls", "non_finite"} & checks:
+        num = m.select_dtypes(include=[np.number]).columns
+        arr = m[num].to_numpy(dtype=np.float64)
+        bad = ~np.isfinite(arr)
+        if bad.any():
+            # forward-fill from the previous bar (causal), 0 if none
+            for j in np.flatnonzero(bad.any(axis=0)):
+                col = num[j]
+                s = m[col].replace([np.inf, -np.inf], np.nan).ffill().fillna(0.0)
+                m[col] = s.astype(m[col].dtype) if m[col].dtype.kind in "iu" else s
+            changed = True
+            log(f"  [REPAIR] replaced {int(bad.sum())} non-finite cells via causal ffill/0")
+
+    if "spot_unavailable_zero" in checks:
+        mask = (m["spot_flow_source"] == "UNAVAILABLE").to_numpy()
+        m.loc[mask, "spot_cvd_15m"] = 0.0
+        from Engine.core.canonical_indicators import compute_session_cvd
+        spot = m["spot_cvd_15m"].to_numpy(np.float64)
+        m["spot_cvd_session"] = np.round(compute_session_cvd(m["open_time_ms"].to_numpy(), spot), 8)
+        m["spot_cvd_lifetime"] = np.round(np.cumsum(spot), 8)
+        m["zc_div"] = np.round(spot - m["future_cvd_15m"].to_numpy(np.float64), 8)
+        changed = True
+        log(f"  [REPAIR] zeroed stale spot delta on {int(mask.sum())} UNAVAILABLE bars")
+
+    if "liq_polarity" in checks:
+        m["long_liq_usd"] = -np.abs(m["long_liq_usd"].to_numpy(np.float64))
+        m["short_liq_usd"] = np.abs(m["short_liq_usd"].to_numpy(np.float64))
+        changed = True
+        log("  [REPAIR] enforced liquidation polarity")
+
+    if {"ladder_coverage", "ladder_orphans", "ladder_poc", "ladder_dup_rung", "ladder_volume_conservation"} & checks:
+        ladder, stats = assemble_ladder(m, ladder[ladder["rung_source"] == 0] if "rung_source" in ladder else None)
+        # candles whose exact rungs failed conservation/POC are rebuilt synthetically
+        bad_ts = {f.open_time_ms for f in report.findings if f.check in ("ladder_poc", "ladder_volume_conservation") and f.open_time_ms}
+        if bad_ts:
+            keep = ladder[~ladder["open_time_ms"].isin(bad_ts)]
+            ladder, stats = assemble_ladder(m, keep[keep["rung_source"] == 0])
+        changed = True
+        log(f"  [REPAIR] ladder re-assembled: {stats}")
+
+    return m, ladder, changed
+
+
+# ------------------------------------------------------------------------------
+# Per-symbol pipeline
+# ------------------------------------------------------------------------------
+def run_pipeline(
+    symbol: str = "BTCUSDT",
+    start_date_str: str = DEFAULT_START_DATE,
+    target_dir: str = DEFAULT_TARGET_DIR,
+    cache_dir: str = DEFAULT_CACHE_DIR,
+    max_workers: int = 16,
+    footprint_days: int = 0,
+    all_footprint: bool = False,
+    clean_cache: bool = False,
+    force: bool = False,
+    run_audit: bool = True,
+    skip_if_fresh_hours: float = 24.0,
+    log: Callable[[str], None] = _log,
+    **_legacy_kwargs,   # start_year / end_year from older callers are accepted and ignored
+) -> bool:
+    t_start = time.time()
+    start_dt = _parse_date(start_date_str or DEFAULT_START_DATE)
+    listing = _parse_date(FUTURES_LISTING_DATES.get(symbol, WARMUP_START_DATE))
+    effective_start = max(start_dt, listing)
+    warmup_start = max(_parse_date(WARMUP_START_DATE), listing)
+    now = datetime.now(timezone.utc)
+
+    if not force and existing_output_is_current(target_dir, symbol, skip_if_fresh_hours):
+        log(f"[SKIP] {symbol}: existing dual-table output satisfies contract and is < {skip_if_fresh_hours:.0f}h old")
+        return True
+
+    log("=" * 96)
+    log(f"PIPELINE {symbol} | slice from {effective_start:%Y-%m-%d} | warm-up from {warmup_start:%Y-%m-%d} | workers={max_workers}")
+    log("=" * 96)
+
+    http = HttpClient()
+    fetcher = BinanceHistoricalFetcher(cache_dir=cache_dir, max_workers=max_workers, http=http, log=log)
+
+    t0 = time.time()
+    klines = fetcher.fetch_futures_klines(symbol, warmup_start.strftime("%Y-%m-%d"), now)
+    spot = fetcher.fetch_spot_klines(symbol, warmup_start.strftime("%Y-%m-%d"), now)
+    metrics = fetcher.fetch_metrics(symbol, effective_start.strftime("%Y-%m-%d"), now)
+    funding = fetcher.fetch_funding_rates(symbol, int(warmup_start.timestamp() * 1000))
+    log(f"[OK] {symbol}: streams fetched in {time.time() - t0:.1f}s | http={http.stats}")
+
+    fp_summary, fp_ladder = pd.DataFrame(), pd.DataFrame()
+    if all_footprint or footprint_days > 0:
+        fp_start = effective_start if all_footprint else max(effective_start, now - pd.Timedelta(days=footprint_days))
+        fpf = TickFootprintFetcher(cache_dir=cache_dir, max_workers=max(1, max_workers // 2), log=log)
+        fp_summary, fp_ladder = fpf.fetch_footprint(symbol, fp_start.strftime("%Y-%m-%d"), now=now)
+
+    t1 = time.time()
+    processor = HistoricalMetricsProcessor(log=log)
+    master = processor.process_master_dataset(
+        klines, metrics, funding, fp_summary, spot, symbol=symbol,
+        export_start_ms=int(effective_start.timestamp() * 1000),
+    )
+    log(f"[OK] {symbol}: {len(master):,} bars x {len(master.columns)} cols computed in {time.time() - t1:.1f}s "
+        f"({master['datetime_utc'].iloc[0]} -> {master['datetime_utc'].iloc[-1]})")
+
+    t2 = time.time()
+    ladder, ladder_stats = assemble_ladder(master, fp_ladder if not fp_ladder.empty else None)
+    log(f"[OK] {symbol}: ladder assembled in {time.time() - t2:.1f}s | {ladder_stats}")
+
+    # ------------------------------------------------------------ council gate
+    report = run_council(master, ladder, symbol, log)
+    rounds = 0
+    while not report.passed and rounds < MAX_REPAIR_ROUNDS:
+        rounds += 1
+        log(f"[GATE] {symbol}: council FAILED -> causal repair round {rounds}/{MAX_REPAIR_ROUNDS}")
+        master, ladder, changed = causal_repair(master, ladder, report, log)
+        if not changed:
+            log(f"[GATE] {symbol}: no applicable causal repair for {sorted({f.check for f in report.findings})}")
+            break
+        report = run_council(master, ladder, symbol, log)
+
+    if not report.passed:
+        log(f"[REJECT] {symbol}: export refused. {len(report.findings)} finding(s):")
+        for f in report.findings[:50]:
+            log(f"    {f}")
+        return False
+
+    # ------------------------------------------------------------ export
+    t3 = time.time()
+    exporter = ParquetExporter(target_dir)
+    try:
+        mpath = exporter.export_master(master, symbol)
+        lpath = exporter.export_ladder(ladder, symbol)
+    except SchemaError as exc:
+        log(f"[REJECT] {symbol}: schema validation failed at export: {exc}")
+        return False
+    exporter.write_manifest(master, symbol, ladder_stats, {**report.to_dict(), "repair_rounds": rounds})
+    log(f"[OK] {symbol}: exported {os.path.basename(mpath)} ({os.path.getsize(mpath) / 1_048_576:.1f} MB) + "
+        f"{os.path.basename(lpath)} ({os.path.getsize(lpath) / 1_048_576:.1f} MB) in {time.time() - t3:.1f}s")
+
+    audit_ok = True
+    if run_audit:
+        audit_ok = verify_all_parquets(target_dir, symbols=[symbol], log=log)
+
+    if clean_cache and os.path.isdir(cache_dir):
+        shutil.rmtree(cache_dir, ignore_errors=True)
+        log(f"[CLEANUP] cache removed: {cache_dir}")
+
+    log(f"[{'SUCCESS' if audit_ok else 'WARNING'}] {symbol}: {len(master):,} candles / {len(ladder):,} rungs in {(time.time() - t_start) / 60:.2f} min")
+    return audit_ok
+
+
+# ------------------------------------------------------------------------------
+# CLI
+# ------------------------------------------------------------------------------
+def main(argv: Optional[List[str]] = None) -> int:
+    ap = argparse.ArgumentParser(description="Binance 15m dual-table historical pipeline (2020 -> present)")
+    ap.add_argument("--symbol", default="BTCUSDT")
+    ap.add_argument("--all-symbols", action="store_true", help=f"process all {len(SYMBOLS)} perpetuals")
+    ap.add_argument("--start-date", default=DEFAULT_START_DATE, help="first bar of the exported slice (YYYY-MM-DD)")
+    ap.add_argument("--target-dir", default=DEFAULT_TARGET_DIR)
+    ap.add_argument("--cache-dir", default=DEFAULT_CACHE_DIR)
+    ap.add_argument("--workers", type=int, default=16)
+    ap.add_argument("--footprint-days", type=int, default=0, help="days of aggTrades tick footprint to fetch (0 = none)")
+    ap.add_argument("--all-footprint", action="store_true", help="fetch aggTrades for the full slice")
+    ap.add_argument("--clean-cache", action="store_true", help="delete the raw download cache after a successful export")
+    ap.add_argument("--force", action="store_true", help="rebuild even if fresh, contract-compliant output exists")
+    ap.add_argument("--start-year", type=int, help=argparse.SUPPRESS)   # legacy no-ops
+    ap.add_argument("--end-year", type=int, help=argparse.SUPPRESS)
+    args = ap.parse_args(argv)
+
+    symbols = SYMBOLS if args.all_symbols else [args.symbol.upper()]
+    results: Dict[str, str] = {}
+    batch_t0 = time.time()
+    for i, sym in enumerate(symbols, 1):
+        _log(f"[{i}/{len(symbols)}] >>> {sym}")
+        try:
+            ok = run_pipeline(
+                symbol=sym, start_date_str=args.start_date, target_dir=args.target_dir, cache_dir=args.cache_dir,
+                max_workers=args.workers, footprint_days=args.footprint_days, all_footprint=args.all_footprint,
+                clean_cache=False, force=args.force, run_audit=not args.all_symbols,
+            )
+            results[sym] = "SUCCESS" if ok else "REJECTED"
+        except Exception as exc:
+            traceback.print_exc()
+            results[sym] = f"ERROR: {exc}"
+
+    if args.all_symbols:
+        _log("=" * 96)
+        _log("BATCH SUMMARY")
+        for sym, status in results.items():
+            _log(f"  {sym:<10} {status}")
+        _log(f"batch wall time: {(time.time() - batch_t0) / 60:.1f} min")
+        done = [s for s, st in results.items() if st == "SUCCESS"]
+        audit_ok = verify_all_parquets(args.target_dir, symbols=done) if done else False
+    else:
+        audit_ok = results[symbols[0]] == "SUCCESS"
+
+    if args.clean_cache and audit_ok and os.path.isdir(args.cache_dir):
+        shutil.rmtree(args.cache_dir, ignore_errors=True)
+        _log(f"[CLEANUP] cache removed: {args.cache_dir}")
+    return 0 if audit_ok and all(v == "SUCCESS" for v in results.values()) else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
