@@ -32,7 +32,6 @@ Backtesting_Data/
 backtesting_data/
 models/
 */models/
-*.parquet
 *.patch
 .venv/
 engine_log.txt
