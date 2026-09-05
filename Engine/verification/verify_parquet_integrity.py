@@ -377,12 +377,17 @@ def agent_schema(master: pd.DataFrame, ladder: Optional[pd.DataFrame]) -> List[F
             f = _finding(A, "vocab", f"{col} outside {vocab}", bad, ts)
             if f:
                 out.append(f)
-    for col in ("is_synthetic", "metrics_available"):
+    for col in ("is_synthetic", "metrics_available", "is_imputed_metrics", "is_warmup_converged"):
         if col in master:
             bad = ~master[col].isin((0, 1)).to_numpy()
             f = _finding(A, "flag_domain", f"{col} must be 0/1", bad, ts)
             if f:
                 out.append(f)
+    if "is_imputed_metrics" in master and "metrics_available" in master:
+        bad_impute = (master["is_imputed_metrics"].to_numpy() != (master["metrics_available"].to_numpy() == 0))
+        f = _finding(A, "imputed_contract", "is_imputed_metrics != (metrics_available == 0)", bad_impute, ts)
+        if f:
+            out.append(f)
     if "symbol" in master and master["symbol"].nunique() != 1:
         out.append(Finding(A, "symbol", "more than one symbol in a master file"))
     for col in num.columns:
@@ -390,6 +395,21 @@ def agent_schema(master: pd.DataFrame, ladder: Optional[pd.DataFrame]) -> List[F
             continue
         if len(master) > 1000 and master[col].nunique() <= 1:
             out.append(Finding(A, "dead_feature", f"{col} is constant across {len(master):,} bars"))
+    # Regime-split dead feature scan: catch partially-available metrics where a feature is constant
+    # over a calendar year (or substantial regime) while varying elsewhere in the file.
+    if len(master) > 1000 and "open_time_ms" in master and len(ts):
+        years = pd.to_datetime(ts, unit="ms", utc=True).year
+        metric_cols = ("open_interest_k", "ls_ratio_global", "ls_ratio_top", "top_account_ratio", "whale_index", "oi_change_pct")
+        for y in np.unique(years):
+            y_mask = (years == y)
+            if y_mask.sum() >= 500:
+                for col in metric_cols:
+                    if col in master:
+                        y_nu = master.loc[y_mask, col].nunique()
+                        total_nu = master[col].nunique()
+                        if y_nu <= 1 and total_nu > 1:
+                            out.append(Finding(A, "regime_dead_feature",
+                                               f"{col} is constant (nunique={y_nu}) in year {y} despite total nunique={total_nu} (partially fabricated metrics)"))
     # precision collapse: a price-scale feature must not be quantised coarser than the asset trades
     if len(master) > 1000:
         close_nu = master["close"].nunique()

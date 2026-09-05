@@ -147,7 +147,7 @@ def causal_repair(master: pd.DataFrame, ladder: pd.DataFrame, report: CouncilRep
         bad_ts = {f.open_time_ms for f in report.findings if f.check in ("ladder_poc", "ladder_volume_conservation") and f.open_time_ms}
         if bad_ts:
             keep = ladder[~ladder["open_time_ms"].isin(bad_ts)]
-            ladder, stats = assemble_ladder(m, keep[keep["rung_source"] == 0])
+            ladder, stats = assemble_ladder(m, keep[keep["rung_source"] == 0] if "rung_source" in keep else None)
         changed = True
         log(f"  [REPAIR] ladder re-assembled: {stats}")
 

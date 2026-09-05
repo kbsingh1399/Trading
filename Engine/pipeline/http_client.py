@@ -35,6 +35,10 @@ class FetchError(RuntimeError):
 
 
 class HttpClient:
+    _global_cooldown_until: float = 0.0
+    _global_lock: threading.Lock = threading.Lock()
+    _global_not_found: Set[str] = set()
+
     def __init__(
         self,
         max_attempts: int = 6,
@@ -61,8 +65,10 @@ class HttpClient:
     # ------------------------------------------------------------------ utils
     def _sleep_for_cooldown(self) -> None:
         while True:
+            with HttpClient._global_lock:
+                g_wait = HttpClient._global_cooldown_until - time.monotonic()
             with self._lock:
-                wait = self._cooldown_until - time.monotonic()
+                wait = max(self._cooldown_until - time.monotonic(), g_wait)
             if wait <= 0:
                 return
             time.sleep(min(wait, 5.0))
@@ -78,8 +84,11 @@ class HttpClient:
             time.sleep(wait)
 
     def _trip_cooldown(self, seconds: float) -> None:
+        until = time.monotonic() + seconds
+        with HttpClient._global_lock:
+            HttpClient._global_cooldown_until = max(HttpClient._global_cooldown_until, until)
         with self._lock:
-            self._cooldown_until = max(self._cooldown_until, time.monotonic() + seconds)
+            self._cooldown_until = max(self._cooldown_until, until)
             self.stats["rate_limited"] += 1
 
     def _backoff(self, attempt: int) -> float:
@@ -92,14 +101,19 @@ class HttpClient:
         Returns the response body, or ``None`` on a 404 when ``allow_404``.
         Raises ``FetchError`` after exhausting retries on any other failure.
         """
-        if url in self._not_found:
-            return None
+        with HttpClient._global_lock:
+            if url in HttpClient._global_not_found:
+                return None
+        with self._lock:
+            if url in self._not_found:
+                return None
         timeout = timeout or self.timeout
         last_exc: Optional[BaseException] = None
         for attempt in range(self.max_attempts):
             self._sleep_for_cooldown()
             self._throttle()
-            self.stats["requests"] += 1
+            with self._lock:
+                self.stats["requests"] += 1
             try:
                 req = urllib.request.Request(url, headers=HEADERS)
                 with urllib.request.urlopen(req, timeout=timeout) as resp:
@@ -107,8 +121,11 @@ class HttpClient:
             except urllib.error.HTTPError as e:
                 last_exc = e
                 if e.code == 404:
-                    self.stats["not_found"] += 1
-                    self._not_found.add(url)
+                    with HttpClient._global_lock:
+                        HttpClient._global_not_found.add(url)
+                    with self._lock:
+                        self.stats["not_found"] += 1
+                        self._not_found.add(url)
                     if allow_404:
                         return None
                     raise FetchError(f"404 {url}") from e
@@ -118,7 +135,8 @@ class HttpClient:
                         cool = float(retry_after) if retry_after else 0.0
                     except ValueError:
                         cool = 0.0
-                    cool = max(cool, self.rate_limit_cooldown if e.code == 429 else self.ban_cooldown) * (attempt + 1)
+                    raw_cool = max(cool, self.rate_limit_cooldown if e.code == 429 else self.ban_cooldown) * (attempt + 1)
+                    cool = min(self.max_delay * 10, raw_cool)
                     self._trip_cooldown(cool)
                 elif e.code in _TRANSIENT_CODES:
                     time.sleep(self._backoff(attempt))
@@ -127,8 +145,10 @@ class HttpClient:
             except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as e:
                 last_exc = e
                 time.sleep(self._backoff(attempt))
-            self.stats["retries"] += 1
-        self.stats["failed"] += 1
+            with self._lock:
+                self.stats["retries"] += 1
+        with self._lock:
+            self.stats["failed"] += 1
         raise FetchError(f"exhausted {self.max_attempts} attempts for {url}: {last_exc!r}")
 
     def get_optional(self, url: str, timeout: Optional[float] = None) -> Optional[bytes]:

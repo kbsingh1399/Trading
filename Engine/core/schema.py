@@ -92,6 +92,8 @@ EXTENDED_COLUMNS: List[str] = [
     "long_liq_zs",            # float64 rolling-96 z-score of |long_liq_usd|
     "short_liq_zs",           # float64 rolling-96 z-score of short_liq_usd
     "liq_imbalance_ratio",    # float64 (short - |long|) / (short + |long|) in [-1, 1]
+    "is_imputed_metrics",     # int8 1 = official metrics imputed/unavailable at bar
+    "is_warmup_converged",    # int8 1 = indicators converged (>= 3,200 warm-up bars)
 ]
 
 CANONICAL_COLUMNS: List[str] = LEGACY_COLUMNS + EXTENDED_COLUMNS
@@ -101,6 +103,7 @@ COLUMN_DTYPES: Dict[str, str] = {
     "datetime_utc": "string", "symbol": "string",
     "future_flow_source": "string", "spot_flow_source": "string", "poc_source": "string",
     "is_synthetic": "int8", "metrics_available": "int8",
+    "is_imputed_metrics": "int8", "is_warmup_converged": "int8",
     "trade_count": "int64", "taker_buy_count": "int64", "taker_sell_count": "int64",
 }
 for _c in CANONICAL_COLUMNS:
@@ -115,8 +118,8 @@ STRING_VOCAB: Dict[str, Tuple[str, ...]] = {
 # Columns that are legitimately constant over long stretches (excluded from the
 # dead-feature detector in the verification council).
 ALLOWED_CONSTANT_COLUMNS: Tuple[str, ...] = (
-    "symbol", "is_synthetic", "metrics_available", "future_flow_source",
-    "spot_flow_source", "poc_source", "fp_poc_vol_ratio", "fp_stacked_buy_imb",
+    "symbol", "is_synthetic", "metrics_available", "is_imputed_metrics", "is_warmup_converged",
+    "future_flow_source", "spot_flow_source", "poc_source", "fp_poc_vol_ratio", "fp_stacked_buy_imb",
     "fp_stacked_sell_imb", "max_trade_vol_btc",
 )
 

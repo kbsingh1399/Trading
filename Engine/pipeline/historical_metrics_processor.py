@@ -281,6 +281,7 @@ class HistoricalMetricsProcessor:
         glob_long_p = ls_glob / (1.0 + ls_glob)
         out["whale_index"] = top_long_p / np.maximum(glob_long_p, 1e-4) * 100.0
         out["taker_volume_ratio"] = np.clip(taker_ratio, 0.0, 1e6)
+        out["is_imputed_metrics"] = (out["metrics_available"].to_numpy() == 0).astype(np.int8)
 
         # ---------------------------------------------------------------- footprint / value area
         log(f"[PROCESSOR] {symbol}: footprint & session value area")
@@ -333,16 +334,21 @@ class HistoricalMetricsProcessor:
         tot = short_liq + np.abs(long_liq)
         out["liq_imbalance_ratio"] = np.divide(short_liq - np.abs(long_liq), tot, out=np.zeros(n), where=tot > 0)
 
+        first_warmup = 0
         if export_start_ms is not None:
             keep = out["open_time_ms"].to_numpy() >= int(export_start_ms)
             if not keep.any():
                 raise ValueError(f"{symbol}: no bars at/after {pd.to_datetime(export_start_ms, unit='ms', utc=True)}")
             first = int(np.flatnonzero(keep)[0])
+            first_warmup = first
             out = out.iloc[first:].reset_index(drop=True)
             if first > 0:
                 for life, delta in (("future_cvd_lifetime", "future_cvd_15m"), ("spot_cvd_lifetime", "spot_cvd_15m")):
                     out[life] = out[life].to_numpy() - (out[life].iloc[0] - out[delta].iloc[0])
                 log(f"[PROCESSOR] {symbol}: dropped {first:,} warm-up bars; lifetime CVD re-anchored")
+
+        warmup_bars = first_warmup + np.arange(len(out))
+        out["is_warmup_converged"] = np.where(warmup_bars >= 3200, 1, 0).astype(np.int8)
 
         final = self._finalise(out[CANONICAL_COLUMNS].copy())
         log(f"[PROCESSOR] {symbol}: {len(final):,} rows x {len(final.columns)} cols")

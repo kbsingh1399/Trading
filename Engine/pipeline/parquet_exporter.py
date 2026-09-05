@@ -131,6 +131,12 @@ class ParquetExporter:
                 "spot_exact_bars": int((master["spot_flow_source"] == "SPOT_EXACT").sum()),
                 "synthetic_bars": int((master["is_synthetic"] == 1).sum()),
                 "metrics_available_bars": int((master["metrics_available"] == 1).sum()),
+                "imputed_metrics_bars": int((master["is_imputed_metrics"] == 1).sum()) if "is_imputed_metrics" in master else 0,
+                "warmup_unconverged_bars": int((master["is_warmup_converged"] == 0).sum()) if "is_warmup_converged" in master else 0,
+                "metrics_unavailable_fraction_by_year": {
+                    str(y): round(float((master.loc[master["datetime_utc"].str[:4] == str(y), "metrics_available"] == 0).mean()), 4)
+                    for y in sorted(master["datetime_utc"].str[:4].unique())
+                } if "datetime_utc" in master and "metrics_available" in master else {},
             },
             "verification": verification,
             "schema_version": "2.0",
