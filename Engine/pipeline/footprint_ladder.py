@@ -104,30 +104,49 @@ def synthesize_causal_ladder(master: pd.DataFrame) -> pd.DataFrame:
     return ladder[LADDER_COLUMNS].astype(LADDER_DTYPES)
 
 
-def assemble_ladder(master: pd.DataFrame, tick_ladder: pd.DataFrame | None) -> Tuple[pd.DataFrame, dict]:
+def assemble_ladder(
+    master: pd.DataFrame,
+    tick_ladder: pd.DataFrame | None,
+    allow_synthetic: bool = False,
+) -> Tuple[pd.DataFrame, dict]:
     """
-    Combines exact tick rungs with synthetic rungs for uncovered candles, bounded
-    to the master's timeline. Returns (ladder, stats).
+    Combines exact tick rungs with optional synthetic rungs for uncovered candles.
+    Under the Zero-Synthetic Mandate, allow_synthetic defaults to False, ensuring
+    100% of generated rungs represent empirical trade executions.
     """
     master_ts = master["open_time_ms"].to_numpy(np.int64)
     if tick_ladder is not None and not tick_ladder.empty:
-        tick = tick_ladder[tick_ladder["open_time_ms"].isin(master_ts)].copy()
-        if "rung_source" not in tick.columns:
-            tick["rung_source"] = np.int8(0)
+        # Align columns to LADDER_COLUMNS if present
+        cols_to_keep = [c for c in LADDER_COLUMNS if c in tick_ladder.columns]
+        tick = tick_ladder[tick_ladder["open_time_ms"].isin(master_ts)][cols_to_keep].copy()
+        for c in LADDER_COLUMNS:
+            if c not in tick.columns:
+                tick[c] = np.zeros(len(tick), dtype=LADDER_DTYPES.get(c, "float64"))
         covered = np.isin(master_ts, tick["open_time_ms"].unique())
     else:
         tick = pd.DataFrame(columns=LADDER_COLUMNS).astype(LADDER_DTYPES)
         covered = np.zeros(len(master), dtype=bool)
 
-    synthetic = synthesize_causal_ladder(master.loc[~covered])
-    ladder = pd.concat([tick[LADDER_COLUMNS], synthetic], ignore_index=True) if not tick.empty else synthetic
-    ladder = ladder.astype(LADDER_DTYPES)
-    ladder = ladder.sort_values(["open_time_ms", "price_bin"], kind="stable").reset_index(drop=True)
+    if allow_synthetic and (~covered).any():
+        synthetic = synthesize_causal_ladder(master.loc[~covered])
+        ladder = pd.concat([tick[LADDER_COLUMNS], synthetic[LADDER_COLUMNS]], ignore_index=True)
+        synthetic_cnt = int((~covered).sum())
+        synthetic_rungs = int(len(synthetic))
+    else:
+        ladder = tick[LADDER_COLUMNS].copy() if not tick.empty else pd.DataFrame(columns=LADDER_COLUMNS).astype(LADDER_DTYPES)
+        synthetic_cnt = 0
+        synthetic_rungs = 0
+
+    if not ladder.empty:
+        ladder = ladder.astype(LADDER_DTYPES)
+        ladder = ladder.sort_values(["open_time_ms", "price_bin"], kind="stable").reset_index(drop=True)
+
     stats = {
         "candles": int(len(master)),
         "tick_exact_candles": int(covered.sum()),
-        "synthetic_candles": int((~covered).sum()),
+        "synthetic_candles": synthetic_cnt,
         "tick_rungs": int(len(tick)),
-        "synthetic_rungs": int(len(synthetic)),
+        "synthetic_rungs": synthetic_rungs,
     }
     return ladder, stats
+

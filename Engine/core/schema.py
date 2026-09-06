@@ -108,27 +108,57 @@ ALLOWED_CONSTANT_COLUMNS: Tuple[str, ...] = (
 )
 
 # ------------------------------------------------------------------------------
-# Table 2: footprint ladder
+# Fixed Institutional Price Merge Levels (Deterministic Order Flow Geometry)
+# ------------------------------------------------------------------------------
+FIXED_MERGE_STEPS: Dict[str, float] = {
+    "BTCUSDT": 25.0,        # Standard Exocharts / Sierra Chart $25 bucket
+    "ETHUSDT": 1.0,         # Standard Exocharts / Sierra Chart $1 bucket
+    "SOLUSDT": 0.10,        # Sub-dollar microstructure (10 cents)
+    "BNBUSDT": 0.50,        # Half-dollar bucket
+    "DOGEUSDT": 0.0005,     # 5-pip bucket
+    "XRPUSDT": 0.0010,      # 10-pip bucket
+    "ADAUSDT": 0.0005,      # 5-pip bucket
+    "TRXUSDT": 0.0001,      # Single pip bucket
+    "LINKUSDT": 0.02,       # 2-cent bucket
+    "AVAXUSDT": 0.05,       # 5-cent bucket
+    "SUIUSDT": 0.005,       # Half-cent bucket
+    "NEARUSDT": 0.01,       # 1-cent bucket
+    "DOTUSDT": 0.01,        # 1-cent bucket
+    "LTCUSDT": 0.10,        # 10-cent bucket
+    "BCHUSDT": 0.50,        # Half-dollar bucket
+    "APTUSDT": 0.01,        # 1-cent bucket
+    "OPUSDT": 0.005,        # Half-cent bucket
+    "ARBUSDT": 0.002,       # 2-tenth cent bucket
+}
+
+# ------------------------------------------------------------------------------
+# Table 2: 100% Real Empirical Footprint Ladder (13 Columns)
 # ------------------------------------------------------------------------------
 LADDER_COLUMNS: List[str] = [
-    "open_time_ms",      # int64  FK -> Table 1
-    "price_bin",         # float64 rung price (bin_idx * bin_step)
-    "bid_vol_coin",      # float64 taker-sell volume executed at the rung
-    "ask_vol_coin",      # float64 taker-buy volume executed at the rung
-    "net_delta_coin",    # float64 ask - bid
-    "is_buy_imbalance",  # int8   diagonal ask/bid >= 3:1 vs rung below
-    "is_sell_imbalance", # int8   diagonal bid/ask >= 3:1 vs rung above
-    "is_poc",            # int8   exactly one per candle
-    "trade_count",       # int64
-    "rung_source",       # int8   0 = exact aggTrades tick, 1 = causal synthetic
+    "open_time_ms",        # int64  FK -> Table 1 15m candle timestamp
+    "price_bin",           # float64 fixed price rung (e.g. 65000.0, 65025.0)
+    "bid_vol_coin",        # float64 aggressive sell volume into bid
+    "ask_vol_coin",        # float64 aggressive buy volume into ask
+    "net_delta_coin",      # float64 ask_vol - bid_vol
+    "total_vol_coin",      # float64 ask_vol + bid_vol
+    "trade_count",         # int64  trade count executed at this rung
+    "is_poc",              # int8   1 if Point of Control of this 15m candle, else 0
+    "is_buy_imbalance",    # int8   1 if diagonal buy imbalance >= 3:1 with notional floor
+    "is_sell_imbalance",   # int8   1 if diagonal sell imbalance >= 3:1 with notional floor
+    "is_stacked_buy_imb",  # int8   1 if part of >= 3 stacked buy imbalance cluster
+    "is_stacked_sell_imb", # int8   1 if part of >= 3 stacked sell imbalance cluster
+    "is_value_area",       # int8   1 if within 70% Value Area (VAH to VAL)
 ]
 LADDER_DTYPES: Dict[str, str] = {
     "open_time_ms": "int64", "price_bin": "float64", "bid_vol_coin": "float64",
-    "ask_vol_coin": "float64", "net_delta_coin": "float64", "is_buy_imbalance": "int8",
-    "is_sell_imbalance": "int8", "is_poc": "int8", "trade_count": "int64", "rung_source": "int8",
+    "ask_vol_coin": "float64", "net_delta_coin": "float64", "total_vol_coin": "float64",
+    "trade_count": "int64", "is_poc": "int8", "is_buy_imbalance": "int8",
+    "is_sell_imbalance": "int8", "is_stacked_buy_imb": "int8", "is_stacked_sell_imb": "int8",
+    "is_value_area": "int8",
 }
 RUNG_SOURCE_TICK: int = 0
 RUNG_SOURCE_SYNTHETIC: int = 1
+
 
 # ------------------------------------------------------------------------------
 # Universe

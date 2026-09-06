@@ -55,6 +55,7 @@ from Engine.pipeline.footprint_ladder import assemble_ladder  # noqa: E402
 from Engine.pipeline.historical_metrics_processor import HistoricalMetricsProcessor  # noqa: E402
 from Engine.pipeline.http_client import HttpClient  # noqa: E402
 from Engine.pipeline.parquet_exporter import ParquetExporter, SchemaError  # noqa: E402
+from Engine.pipeline.real_footprint_engine import RealFootprintEngine  # noqa: E402
 from Engine.pipeline.tick_footprint_fetcher import TickFootprintFetcher  # noqa: E402
 from Engine.verification.verify_parquet_integrity import CouncilReport, run_council, verify_all_parquets  # noqa: E402
 
@@ -203,14 +204,13 @@ def causal_repair(master: pd.DataFrame, ladder: pd.DataFrame, report: CouncilRep
         log("  [REPAIR] enforced liquidation polarity")
 
     if {"ladder_coverage", "ladder_orphans", "ladder_poc", "ladder_dup_rung", "ladder_volume_conservation"} & checks:
-        ladder, stats = assemble_ladder(m, ladder[ladder["rung_source"] == 0] if "rung_source" in ladder else None)
-        # candles whose exact rungs failed conservation/POC are rebuilt synthetically
-        bad_ts = {f.open_time_ms for f in report.findings if f.check in ("ladder_poc", "ladder_volume_conservation") and f.open_time_ms}
-        if bad_ts:
-            keep = ladder[~ladder["open_time_ms"].isin(bad_ts)]
-            ladder, stats = assemble_ladder(m, keep[keep["rung_source"] == 0] if "rung_source" in keep else None)
-        changed = True
-        log(f"  [REPAIR] ladder re-assembled: {stats}")
+        if ladder is not None and not ladder.empty:
+            ladder, stats = assemble_ladder(m, ladder, allow_synthetic=False)
+            bad_ts = {f.open_time_ms for f in report.findings if f.check in ("ladder_poc", "ladder_volume_conservation") and f.open_time_ms}
+            if bad_ts:
+                ladder = ladder[~ladder["open_time_ms"].isin(bad_ts)].reset_index(drop=True)
+            changed = True
+            log(f"  [REPAIR] ladder re-assembled (100% empirical, zero synthetic): {stats}")
 
     return m, ladder, changed
 
@@ -261,10 +261,20 @@ def run_pipeline(
     log(f"[OK] {symbol}: streams fetched in {time.time() - t0:.1f}s | http={http.stats}")
 
     fp_summary, fp_ladder = pd.DataFrame(), pd.DataFrame()
+    ladder_stats = {"candles": 0, "tick_exact_candles": 0, "synthetic_candles": 0, "total_rungs": 0}
     if all_footprint or footprint_days > 0:
         fp_start = effective_start if all_footprint else max(effective_start, now - pd.Timedelta(days=footprint_days))
-        fpf = TickFootprintFetcher(cache_dir=cache_dir, max_workers=max(1, max_workers // 2), log=log)
-        fp_summary, fp_ladder = fpf.fetch_footprint(symbol, fp_start.strftime("%Y-%m-%d"), now=now)
+        # Bounded worker pool for footprint processing to prevent RAM spikes
+        fp_workers = max(1, min(max_workers // 2, 6))
+        fpe = RealFootprintEngine(cache_dir=cache_dir, max_workers=fp_workers, http=http, log=log)
+        fp_ladder, fp_summary = fpe.fetch_footprint(symbol, fp_start.strftime("%Y-%m-%d"), now=now)
+        ladder_stats = {
+            "candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,
+            "tick_exact_candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,
+            "synthetic_candles": 0,
+            "total_rungs": len(fp_ladder),
+        }
+        log(f"[OK] {symbol}: 100% real tick footprint fetched: {ladder_stats['total_rungs']:,} rungs across {ladder_stats['tick_exact_candles']:,} candles (ZERO synthetic)")
 
     t1 = time.time()
     processor = HistoricalMetricsProcessor(log=log)
@@ -276,8 +286,9 @@ def run_pipeline(
         f"({master['datetime_utc'].iloc[0]} -> {master['datetime_utc'].iloc[-1]})")
 
     t2 = time.time()
-    ladder, ladder_stats = assemble_ladder(master, fp_ladder if not fp_ladder.empty else None)
+    ladder, ladder_stats = assemble_ladder(master, fp_ladder if not fp_ladder.empty else None, allow_synthetic=False)
     log(f"[OK] {symbol}: ladder assembled in {time.time() - t2:.1f}s | {ladder_stats}")
+
 
     # ------------------------------------------------------------ council gate
     attested_months = None
@@ -402,7 +413,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     ap.add_argument("--cache-dir", default=DEFAULT_CACHE_DIR)
     ap.add_argument("--workers", type=int, default=16)
     ap.add_argument("--footprint-days", type=int, default=0, help="days of aggTrades tick footprint to fetch (0 = none)")
-    ap.add_argument("--all-footprint", action="store_true", help="fetch aggTrades for the full slice")
+    ap.add_argument("--all-footprint", "--footprint", dest="all_footprint", action="store_true", help="fetch 100%% real tick aggTrades footprint for the full slice")
     ap.add_argument("--clean-cache", dest="clean_cache", action="store_true", default=True,
                     help="delete intermediate raw download cache continuously after each successful export (default: True)")
     ap.add_argument("--no-clean-cache", dest="clean_cache", action="store_false",
