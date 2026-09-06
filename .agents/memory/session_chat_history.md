@@ -39906,7 +39906,7 @@ eferences.bib into architecture memory in both repositories.
 - **User Directive / Sentinel**: Cron tasks `task-2932` (iteration 3), `task-2783` (iteration 6), `task-2634` (iteration 9), `task-2487` (iteration 12), `task-2345` (iteration 15), `task-2203` (iteration 18), `task-2067` (iteration 21), `task-794` (iteration 39), and `task-1891` (iteration 26) fired for periodic Knowledge Base expansion, remote branch verification, and continuous peer-reviewed econometrics synthesis.
 - **Synthesized Knowledge Additions (Nodes 263–268: 268 Structured Nodes)**:
   - **Node 263**: Madhavan-Richardson-Roomans Microstructure Autocorrelations & Trade Size Information Content (Madhavan et al. 1997; trade size surprise $\mathcal{S}_{\text{MRR}} \ge 0.0 \land \Delta \mathcal{S}_{\text{MRR}} > 0$ proving institutional absorption).
-  - **Node 264**: Brunnermeier-Pedersen Carry-Trade Unwinding & Volatility-Liquidity Feedback Spirals (Brunnermeier & Pedersen 2009; spiral decoupling indicator $\mathcal{D}_{\text{spiral}} \ge -0.05 \land \Delta \sigma_{\text{realized}} < 0$ marking deleveraging exhaustion).
+  - **Node 264**: Brunnermeier-Pedersen Carry-Trade Unwinding & Volatility-Liquidity Feedback Spirals (Brunnermeier & Pedersen 2009; spiral decoupling indicator $\mathcal{D}_{\text{spiral}} \ge -0.05 \land \Delta \text{Volatility-Liquidity Feedback Spirals} < 0$ marking deleveraging exhaustion).
   - **Node 265**: Hautsch-Sheng Order Book Dynamic Equilibrium & Spatial Queue Decay (Hautsch & Sheng 2011; spatial bid density gradient $\mathcal{G}_{\text{spatial}} \ge 2.10 \land \Delta \mathcal{G}_{\text{spatial}} > 0$ forming impenetrable near-mid bid wall).
   - **Node 266**: Huang-Stoll Spread Decomposition & Cross-Market Realized Adverse Selection (Huang & Stoll 1997; adverse selection component $\mathcal{A}_{\text{adverse}} \le 0.15 \land \Delta \mathcal{A}_{\text{adverse}} \le 0$ purging toxic flow).
   - **Node 267**: Cont-Stoikov Real-Time Order Flow Imbalance (OFI) Drift & Level-2 Imbalance Field (Cont et al. 2014; normalized OFI scalar $\Omega_{\text{OFI}} \ge +1.80 \land \Delta \Omega_{\text{OFI}} > 0$ triggering affirmative drift impulse).
@@ -40213,8 +40213,22 @@ eferences.bib into architecture memory in both repositories.
 
 
 ## Turn: Opus 5 Quant Suite Verification & Walk-Forward Audit
-**User:** C:\Users\SIGMA\Downloads\Opus_5_0509.txt is the output of latest opus 5 prompt. create a file in scratch to check if it is working.
-**Status:** Verification complete. Scripts created in scratch (quant_strategy_suite.py, test_all_20_regimes.py). Backtest executed across 20 OOS windows on 14 Binance symbols (2.5M+ 15m bars). Results logged to results_walkforward/scorecard_all_sleeves_20_windows.csv.
+**User:** C:\Users\SIGMA\Downloads\Opus_5_0509.t- Executed full independent 18-symbol forensic verification ( udit_full_dataset_forensic.py --council): all 18 symbols passed (0 findings, exit code 0).
+
+---
+**User:** Following is the output of prompt : "C:\Users\SIGMA\Downloads\GLM_5.3_0609.txt", "C:\Users\SIGMA\Downloads\Qwen_0609.txt", "C:\Users\SIGMA\Downloads\Sonnet_4.6" / Go ahead and apply all fixes... / Now plan is simple to delete faulty data from@[c:\Users\SIGMA\Documents\Trading\Engine\binance_backtesting_data] and download just single asset data out of 18 just to verify with us and other agents...
+**Assistant:**
+- Triaged and empirically verified findings from Claude Sonnet 4.6, GLM-5.3, and Qwen 2.5/Max audits.
+- Confirmed & patched `zc_div` false absorption bug: clamped to 0.0 when `spot_flow_source == 'UNAVAILABLE'` (eliminated 53.8% false absorption rate on unavailable spot bars).
+- Hardened Autonomous Council (`verify_parquet_integrity.py`): updated `zc_div_identity` check for spot availability and added strict `zc_div_unavailable_zero` assertion.
+- Hardened pipeline fast-skip (`run_historical_pipeline.py`): added manifest row count equality, UTC epoch validation, and bidirectional timestamp inclusion checks.
+- Safely quarantined old 18-asset data into `Engine/binance_backtesting_data_backup/` (added to `.gitignore`).
+- Ran fresh single-asset pipeline for `BTCUSDT` (2020-09-01 -> 2026-09-06): 210,848 candles (0 nulls, monotonic), 2,710,890 footprint rungs.
+- Passed Autonomous 3-Agent Council verification (Continuity=PASS, Microstructure=PASS, Schema=PASS).
+- Verified with Python that 100% of UNAVAILABLE bars (93/93) have `zc_div == 0.0` strictly.
+- Committed all pipeline fixes and single verified BTC dataset (`e2ffcf2`) and pushed to GitHub mirrors (`main` and `arena/01a07263-trading`).
+- Updated `ADVERSARIAL_PIPELINE_AND_DATA_AUDIT_PROMPT.md` for external model inspection.
+atch (quant_strategy_suite.py, test_all_20_regimes.py). Backtest executed across 20 OOS windows on 14 Binance symbols (2.5M+ 15m bars). Results logged to results_walkforward/scorecard_all_sleeves_20_windows.csv.
 
 ## Turn: Strategic Pivot — Dynamic Strategy Pool (100+ Strategies) & Causal In-Sample Selector
 **User:** /orchestrate may be we should first design multiple trading strategies in concept... dynamic strategy pool, causal selection based on previous data, parallel multi-strategy multi-trade execution, convert to unconstrained master prompt.
@@ -40636,3 +40650,16 @@ I need you to build a prompt enhancer extention for antigravity which can use ap
 - Tested fail-closed export hardening (	est_export_fail_closed.py): 3/3 passed (100%).
 - Tested offline pipeline test suite (python -m Engine.verification.test_pipeline_offline): 10/10 passed in 31.2s.
 - Executed full independent 18-symbol forensic verification (udit_full_dataset_forensic.py --council): all 18 symbols passed (0 findings, exit code 0).
+---
+**User:** Following is the output of prompt : "C:\Users\SIGMA\Downloads\GLM_5.3_0609.txt", "C:\Users\SIGMA\Downloads\Qwen_0609.txt", "C:\Users\SIGMA\Downloads\Sonnet_4.6" / Go ahead and apply all fixes... / Now plan is simple to delete faulty data from@[c:\Users\SIGMA\Documents\Trading\Engine\binance_backtesting_data] and download just single asset data out of 18 just to verify with us and other agents...
+**Assistant:**
+- Triaged and empirically verified findings from Claude Sonnet 4.6, GLM-5.3, and Qwen 2.5/Max audits.
+- Confirmed & patched zc_div false absorption bug: clamped to 0.0 when spot_flow_source == 'UNAVAILABLE' (eliminated 53.8% false absorption rate on unavailable spot bars).
+- Hardened Autonomous Council (verify_parquet_integrity.py): updated zc_div_identity check for spot availability and added strict zc_div_unavailable_zero assertion.
+- Hardened pipeline fast-skip (run_historical_pipeline.py): added manifest row count equality, UTC epoch validation, and bidirectional timestamp inclusion checks.
+- Safely quarantined old 18-asset data into Engine/binance_backtesting_data_backup/ (added to .gitignore).
+- Ran fresh single-asset pipeline for BTCUSDT (2020-09-01 -> 2026-09-06): 210,848 candles (0 nulls, monotonic), 2,710,890 footprint rungs.
+- Passed Autonomous 3-Agent Council verification (Continuity=PASS, Microstructure=PASS, Schema=PASS).
+- Verified with Python that 100% of UNAVAILABLE bars (93/93) have zc_div == 0.0 strictly.
+- Committed all pipeline fixes and single verified BTC dataset (e2ffcf2) and pushed to GitHub mirrors (main and arena/01a07263-trading).
+- Updated ADVERSARIAL_PIPELINE_AND_DATA_AUDIT_PROMPT.md for external model inspection.
