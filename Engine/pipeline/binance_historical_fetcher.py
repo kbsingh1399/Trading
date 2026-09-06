@@ -24,6 +24,7 @@ from __future__ import annotations
 import io
 import json
 import os
+import time
 import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
@@ -541,8 +542,8 @@ class BinanceHistoricalFetcher:
                 try:
                     out[k] = fut.result()
                 except FetchError as exc:
-                    self.log(f"  [ERROR] {label} {k}: {exc}")
-                    out[k] = None
+                    self.log(f"  [FATAL TRANSPORT ERROR] {label} {k}: {exc}")
+                    raise
                 done += 1
                 if done % 200 == 0 or done == len(keys):
                     self.log(f"  [FETCHER] {label}: {done}/{len(keys)}")
@@ -560,8 +561,15 @@ class BinanceHistoricalFetcher:
         def daily(ymd: str) -> Optional[pd.DataFrame]:
             return self._cached(kind, f"{symbol}-15m-{ymd}", f"{base}/daily/klines/{symbol}/15m/{symbol}-15m-{ymd}.zip", parse_kline_csv)
 
-        cur_month_start = datetime(now.year, now.month, 1, tzinfo=timezone.utc)
-        months = _month_keys(start, cur_month_start)
+        live_now = datetime.now(timezone.utc)
+        live_cur_month_start = datetime(live_now.year, live_now.month, 1, tzinfo=timezone.utc)
+        next_month_start = datetime(now.year + (now.month == 12), 1 if now.month == 12 else now.month + 1, 1, tzinfo=timezone.utc)
+        if now >= next_month_start - timedelta(seconds=1) and next_month_start <= live_cur_month_start:
+            month_end_exclusive = next_month_start
+        else:
+            month_end_exclusive = min(datetime(now.year, now.month, 1, tzinfo=timezone.utc), live_cur_month_start)
+
+        months = _month_keys(start, month_end_exclusive)
         monthly_res = self._parallel(monthly, months, f"{symbol} {market} monthly klines")
         frames = [df for df in monthly_res.values() if df is not None and not df.empty]
 
@@ -581,8 +589,10 @@ class BinanceHistoricalFetcher:
                 m_start = datetime(y, m, 1, tzinfo=timezone.utc)
                 m_end = datetime(y + (m == 12), 1 if m == 12 else m + 1, 1, tzinfo=timezone.utc)
                 daily_keys += _day_keys(max(m_start, start), min(m_end, now))
-        today = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        daily_keys += _day_keys(max(cur_month_start, start), today)
+        end_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        if (now.hour >= 23 and now.minute >= 45) and end_day < live_now.replace(hour=0, minute=0, second=0, microsecond=0):
+            end_day += timedelta(days=1)
+        daily_keys += _day_keys(max(month_end_exclusive, start), end_day)
         daily_res = self._parallel(daily, daily_keys, f"{symbol} {market} daily klines")
         frames += [df for df in daily_res.values() if df is not None and not df.empty]
 
@@ -919,6 +929,7 @@ class BinanceHistoricalFetcher:
                             daily_summaries.append(d_summary)
                 except Exception as exc:
                     self.log(f"  [FOOTPRINT] {symbol} {d_str} processing error: {exc}")
+                    raise
 
         if not daily_ladders:
             empty_ladder = pd.DataFrame(columns=LADDER_COLUMNS).astype(LADDER_DTYPES)
@@ -967,8 +978,9 @@ class BinanceHistoricalFetcher:
                         },
                     )
                     return df
-        except FetchError:
-            return None
+        except FetchError as e:
+            self.log(f"  [FATAL TRANSPORT ERROR] {symbol} {date_str} aggTrades: {e}")
+            raise
         except Exception as e:
             self.log(f"  [FOOTPRINT] error streaming aggTrades for {symbol} {date_str}: {e}")
             return None

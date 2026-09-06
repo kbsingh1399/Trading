@@ -69,28 +69,36 @@ Evaluate the following major architectural transitions executed in this iteratio
 
 Evaluate the freshly generated dual-table verification dataset in `Engine/binance_backtesting_data/`:
 
-* **Target Master Parquet (Table 1)**: `ETHUSDT_15m_master_2020_2026.parquet` (1.1 MB)
-* **Target Footprint Ladder Parquet (Table 2)**: `ETHUSDT_15m_footprint_ladder.parquet` (0.9 MB)
+* **Target Master Parquet (Table 1)**: `ETHUSDT_15m_master_2020_2026.parquet` (1.13 MB)
+* **Target Footprint Ladder Parquet (Table 2)**: `ETHUSDT_15m_footprint_ladder.parquet` (0.94 MB)
 * **Target Manifest**: `ETHUSDT_dataset_manifest.json`
 * **Verification Report**: `verification_report.json`
+* **Cryptographic Hashes (SHA-256)**:
+  * `master_sha256`: `6aaa50012440c25e0f8cdfd8fd0f94a8d78f9084be8494c6a964850f79eb6645`
+  * `ladder_sha256`: `a15c6fb4d7ded102765085e30c286cb795f19ea3305bf25ec47779feccfe621f`
 * **Dataset Shapes & Properties**:
-  * **Table 1 (Master)**: 2,879 rows × 56 canonical columns (0 nulls, 0 non-finites)
-  * **Table 2 (Footprint Ladder)**: 26,540 rows × 13 canonical columns (0 nulls, 0 non-finites)
-  * **Time Range**: `2026-06-01 00:00:00 UTC` -> `2026-06-30 23:30:00 UTC` (Monotonic 15-minute cadence)
-  * **Candle Footprint Coverage**: Exactly 2,879/2,879 candles have empirical tick rungs (100% empirical, ZERO synthetic)
+  * **Table 1 (Master)**: Exactly 2,880 rows × 56 canonical columns (0 nulls, 0 non-finites)
+  * **Table 2 (Footprint Ladder)**: Exactly 26,543 rows × 13 canonical columns (0 nulls, 0 non-finites)
+  * **Time Range**: `2026-06-01 00:00:00 UTC` -> `2026-06-30 23:45:00 UTC` (Monotonic 15-minute cadence, exactly $30 \times 24 \times 4 = 2,880$ intervals)
+  * **Terminal Candle Alignment**: Terminal bar `open_time_ms = 1782863100000` (23:45:00), `close_time_ms = 1782863999999` (23:59:59.999 UTC)
+  * **Candle Footprint Coverage**: Exactly 2,880/2,880 candles have empirical tick rungs (100% empirical, ZERO synthetic)
+  * **Volume Conservation**:
+    * Max Volume Difference: $1.16 \times 10^{-10}$ coin
+    * Max Taker Buy Difference: $5.82 \times 10^{-11}$ coin
+    * Max Taker Sell Difference: $2.91 \times 10^{-11}$ coin
   * **Ladder Fixed Merge Step**: $1.0 price bin width for ETHUSDT
 * **Council Verification Status (`verify_parquet_integrity.py`)**:
-  * `Agent1:Continuity`: **PASS** (zero cadence breaks, 100% ladder coverage across all 2,879 master bars)
-  * `Agent2:Microstructure`: **PASS** (volume conserved down to floating precision, `ladder volume == taker_buy + taker_sell == volume_base`, ask volume == `taker_buy_vol_btc`, delta identity verified, session and lifetime CVD verified)
+  * `Agent1:Continuity`: **PASS** (Zero cadence breaks, boundary checks verified, 100% ladder coverage across all 2,880 master bars)
+  * `Agent2:Microstructure`: **PASS** (Volume conserved down to floating precision, `ladder volume == taker_buy + taker_sell == volume_base`, ask volume == `taker_buy_vol_btc`, delta identity verified, session and lifetime CVD verified)
   * `Agent3:Schema`: **PASS** (56/56 master columns and 13/13 ladder columns match schema dtypes, zero nulls)
 * **Metrics Validity Probe (`audit_probe_metrics_validity.py`)**:
   * `0 impossible Open Interest values`
   * `0 unflagged frozen runs`
-  * `All 2,879 bars carry authentic official derivatives positioning data`
+  * `All 2,880 bars carry authentic official derivatives positioning data`
 
 ---
 
-## 4. FORMAL QUESTIONS FOR THE AUDITOR (OPUS)
+## 4. FORMAL QUESTIONS FOR THE AUDITOR (OPUS / ARENA)
 
 Please answer the following targeted questions with high quantitative and architectural rigor:
 
@@ -98,13 +106,13 @@ Please answer the following targeted questions with high quantitative and archit
 Does consolidating footprint synthesis and streaming aggTrades directly into `binance_historical_fetcher.py` and deleting the 3 redundant modules achieve superior maintainability without introducing circular dependencies or violating the Single Responsibility Principle? Is the 5-module structure clean and complete?
 
 ### Question 2: Zero Lookahead & Causal Imputation
-Does the 15m as-of join on `close_time_ms` ($\le \text{close\_time\_ms}$) strictly prevent post-close information leakage? Are the 14 upstream frozen metric runs and the 43,575 pre-archive bars correctly quarantined using `is_imputed_metrics == 1` so downstream ML strategies cannot accidentally trade on lookahead or fabricated features?
+Does the 15m as-of join on `close_time_ms` ($\le \text{close\_time\_ms}$) strictly prevent post-close information leakage? Are the 14 upstream frozen metric runs and pre-archive bars correctly quarantined using `is_imputed_metrics == 1` as an ex-post data-quality filter so downstream ML strategies cannot accidentally trade on lookahead or fabricated features?
 
-### Question 3: Fail-Closed Export Gate & Council Auditing
-Inspect `verify_parquet_integrity.py` and `test_export_fail_closed.py`. Does the 3-agent council provide an ironclad guarantee that incomplete, corrupt, or uncertified datasets are immediately purged from disk if any assertion fails?
+### Question 3: Fail-Closed Export Gate, SHA-256 Binding & Council Auditing
+Inspect `verify_parquet_integrity.py` and `test_export_fail_closed.py`. Does the 3-agent council (with boundary assertions $N_{\text{expected}} = 2,880$) and cryptographic SHA-256 manifest binding provide an ironclad guarantee that incomplete, corrupt, or uncertified datasets are immediately purged from disk if any assertion fails, and that fast-skip cannot be bypassed?
 
 ### Question 4: Dataset Integrity & Production Readiness
-Based on the verification row count (2,879 master bars, 26,540 ladder rungs), column count (56 master / 13 ladder), zero nulls, monotonic timestamps, zero synthetic rungs, and the passing 3-agent council report, are the dual tables mathematically certified and ready for production backtesting?
+Based on the verification row count (2,880 master bars, 26,543 ladder rungs), column count (56 master / 13 ladder), zero nulls, monotonic timestamps, zero synthetic rungs, and the passing 3-agent council report, are the dual tables mathematically certified and ready for production backtesting?
 
 ---
 

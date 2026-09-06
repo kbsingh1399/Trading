@@ -159,8 +159,8 @@ class HttpClient:
         raise FetchError(f"exhausted {self.max_attempts} attempts for {url}: {last_exc!r}")
 
     def get_optional(self, url: str, timeout: Optional[float] = None) -> Optional[bytes]:
-        """Like ``get`` but converts a final failure into ``None`` (caller logs)."""
-        try:
-            return self.get(url, timeout=timeout)
-        except FetchError:
-            return None
+        """
+        Fetches URL allowing HTTP 404 (returns None).
+        Any non-404 transport error (5xx, timeouts, connection drops) raises FetchError.
+        """
+        return self.get(url, timeout=timeout, allow_404=True)

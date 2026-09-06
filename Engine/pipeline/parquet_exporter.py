@@ -18,6 +18,7 @@ Manifest {symbol}_dataset_manifest.json
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from datetime import datetime, timezone
@@ -76,6 +77,15 @@ def _atomic_write(df: pd.DataFrame, path: str, schema: pa.Schema, row_group_size
     pq.write_table(table, tmp, compression="snappy", row_group_size=row_group_size, use_dictionary=True, write_statistics=True)
     os.replace(tmp, path)
 
+def _file_sha256(path: str) -> Optional[str]:
+    if not os.path.exists(path):
+        return None
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    return h.hexdigest()
+
 
 class ParquetExporter:
     def __init__(self, output_dir: str) -> None:
@@ -123,12 +133,14 @@ class ParquetExporter:
             "end_time_utc": str(master["datetime_utc"].iloc[-1]),
             "exported_at_utc": datetime.now(timezone.utc).isoformat(),
             "master_file": os.path.basename(mpath),
+            "master_sha256": _file_sha256(mpath),
             "master_size_mb": round(os.path.getsize(mpath) / 1_048_576, 2) if os.path.exists(mpath) else None,
             "ladder_file": os.path.basename(lpath) if os.path.exists(lpath) else None,
+            "ladder_sha256": _file_sha256(lpath),
             "ladder_size_mb": round(os.path.getsize(lpath) / 1_048_576, 2) if os.path.exists(lpath) else None,
             "ladder": ladder_stats,
             "provenance": {
-                "tick_exact_bars": int((master["future_flow_source"] == "TICK_EXACT").sum()) if "future_flow_source" in master else 0,
+                "tick_exact_bars": int(ladder_stats.get("tick_exact_candles", 0)),
                 "spot_exact_bars": int((master["spot_close"].notna()).sum()) if "spot_close" in master else 0,
                 "imputed_metrics_bars": int((master["is_imputed_metrics"] == 1).sum()) if "is_imputed_metrics" in master else 0,
                 "metrics_archive_absent_months": sorted({d[:7] for d in (metrics_absent_days or [])}),

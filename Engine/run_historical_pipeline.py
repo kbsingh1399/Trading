@@ -108,6 +108,18 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
                 return False
         if expected_rows is not None and mf.metadata.num_rows != expected_rows:
             return False
+        import hashlib
+        def _hash_file(p: str) -> str:
+            h = hashlib.sha256()
+            with open(p, "rb") as f:
+                while chunk := f.read(65536):
+                    h.update(chunk)
+            return h.hexdigest()
+
+        if manifest_data.get("master_sha256") and _hash_file(mpath) != manifest_data["master_sha256"]:
+            return False
+        if has_ladder and manifest_data.get("ladder_sha256") and _hash_file(lpath) != manifest_data["ladder_sha256"]:
+            return False
         last = mf.read_row_group(mf.num_row_groups - 1, columns=["close_time_ms"]).column(0).to_numpy()
         now_utc_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
         age_h = max(0.0, (now_utc_ms - int(last[-1])) / 3_600_000)
@@ -222,6 +234,7 @@ def causal_repair(master: pd.DataFrame, ladder: pd.DataFrame, report: CouncilRep
 def run_pipeline(
     symbol: str = "BTCUSDT",
     start_date_str: str = DEFAULT_START_DATE,
+    end_date_str: Optional[str] = None,
     target_dir: str = DEFAULT_TARGET_DIR,
     cache_dir: str = DEFAULT_CACHE_DIR,
     max_workers: int = 16,
@@ -240,32 +253,39 @@ def run_pipeline(
     start_dt = _parse_date(start_date_str or DEFAULT_START_DATE)
     listing = _parse_date(FUTURES_LISTING_DATES.get(symbol, WARMUP_START_DATE))
     effective_start = max(start_dt, listing)
-    warmup_start = max(_parse_date(WARMUP_START_DATE), listing)
-    now = datetime.now(timezone.utc)
+    end_dt = _parse_date(end_date_str).replace(hour=23, minute=59, second=59, microsecond=999000) if end_date_str else datetime.now(timezone.utc)
+    if start_date_str and start_date_str != DEFAULT_START_DATE:
+        from datetime import timedelta
+        warmup_start = max(listing, effective_start - timedelta(days=90))
+    else:
+        warmup_start = max(_parse_date(WARMUP_START_DATE), listing)
 
-    if not force and existing_output_is_current(target_dir, symbol, skip_if_fresh_hours):
+    if not force and not end_date_str and existing_output_is_current(target_dir, symbol, skip_if_fresh_hours):
         log(f"[SKIP] {symbol}: existing dual-table output satisfies contract and is < {skip_if_fresh_hours:.0f}h old")
         return True
 
     log("=" * 96)
-    log(f"PIPELINE {symbol} | slice from {effective_start:%Y-%m-%d} | warm-up from {warmup_start:%Y-%m-%d} | workers={max_workers}")
+    slice_end_label = f"{end_dt:%Y-%m-%d}" if end_date_str else "present"
+    log(f"PIPELINE {symbol} | slice {effective_start:%Y-%m-%d} -> {slice_end_label} | warm-up from {warmup_start:%Y-%m-%d} | workers={max_workers}")
     log("=" * 96)
 
     http = HttpClient()
     fetcher = BinanceHistoricalFetcher(cache_dir=cache_dir, max_workers=max_workers, http=http, log=log)
 
     t0 = time.time()
-    klines = fetcher.fetch_futures_klines(symbol, warmup_start.strftime("%Y-%m-%d"), now)
-    spot = fetcher.fetch_spot_klines(symbol, warmup_start.strftime("%Y-%m-%d"), now)
-    metrics = fetcher.fetch_metrics(symbol, effective_start.strftime("%Y-%m-%d"), now)
+    klines = fetcher.fetch_futures_klines(symbol, warmup_start.strftime("%Y-%m-%d"), end_dt)
+    spot = fetcher.fetch_spot_klines(symbol, warmup_start.strftime("%Y-%m-%d"), end_dt)
+    metrics = fetcher.fetch_metrics(symbol, effective_start.strftime("%Y-%m-%d"), end_dt)
     funding = fetcher.fetch_funding_rates(symbol, int(warmup_start.timestamp() * 1000))
     log(f"[OK] {symbol}: streams fetched in {time.time() - t0:.1f}s | http={http.stats}")
 
     fp_summary, fp_ladder = pd.DataFrame(), pd.DataFrame()
     ladder_stats = {"candles": 0, "tick_exact_candles": 0, "synthetic_candles": 0, "total_rungs": 0}
     if all_footprint or footprint_days > 0:
-        fp_start = effective_start if all_footprint else max(effective_start, now - pd.Timedelta(days=footprint_days))
-        fp_ladder, fp_summary = fetcher.fetch_footprint(symbol, fp_start.strftime("%Y-%m-%d"), now=now)
+        fp_start = effective_start if all_footprint else max(effective_start, end_dt - pd.Timedelta(days=footprint_days))
+        fp_ladder, fp_summary = fetcher.fetch_footprint(
+            symbol, fp_start.strftime("%Y-%m-%d"), end_date_str=end_date_str, now=end_dt
+        )
         ladder_stats = {
             "candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,
             "tick_exact_candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,
@@ -279,6 +299,7 @@ def run_pipeline(
     master = processor.process_master_dataset(
         klines, metrics, funding, fp_summary, spot, symbol=symbol,
         export_start_ms=int(effective_start.timestamp() * 1000),
+        export_end_ms=int(end_dt.timestamp() * 1000) if end_date_str else None,
     )
     log(f"[OK] {symbol}: {len(master):,} bars x {len(master.columns)} cols computed in {time.time() - t1:.1f}s "
         f"({master['datetime_utc'].iloc[0]} -> {master['datetime_utc'].iloc[-1]})")
@@ -293,7 +314,10 @@ def run_pipeline(
     if hasattr(fetcher, "metrics_absent_days") and fetcher.metrics_absent_days:
         attested_months = {d[:7] for d in fetcher.metrics_absent_days}
 
-    report = run_council(master, ladder, symbol, log, attested_months=attested_months)
+    exp_start_ms = int(effective_start.timestamp() * 1000)
+    exp_end_ms = int(end_dt.timestamp() * 1000) if end_date_str else None
+    report = run_council(master, ladder, symbol, log, attested_months=attested_months,
+                         expected_start_ms=exp_start_ms, expected_end_ms=exp_end_ms)
     rounds = 0
     while not report.passed and rounds < MAX_REPAIR_ROUNDS:
         rounds += 1
@@ -302,7 +326,8 @@ def run_pipeline(
         if not changed:
             log(f"[GATE] {symbol}: no applicable causal repair for {sorted({f.check for f in report.findings})}")
             break
-        report = run_council(master, ladder, symbol, log, attested_months=attested_months)
+        report = run_council(master, ladder, symbol, log, attested_months=attested_months,
+                             expected_start_ms=exp_start_ms, expected_end_ms=exp_end_ms)
 
     if not report.passed:
         log(f"[REJECT] {symbol}: export refused. {len(report.findings)} finding(s):")
@@ -407,6 +432,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     ap.add_argument("--symbol", default="BTCUSDT")
     ap.add_argument("--all-symbols", action="store_true", help=f"process all {len(SYMBOLS)} perpetuals")
     ap.add_argument("--start-date", default=DEFAULT_START_DATE, help="first bar of the exported slice (YYYY-MM-DD)")
+    ap.add_argument("--end-date", default=None, help="last bar of the exported slice (YYYY-MM-DD)")
     ap.add_argument("--target-dir", default=DEFAULT_TARGET_DIR)
     ap.add_argument("--cache-dir", default=DEFAULT_CACHE_DIR)
     ap.add_argument("--workers", type=int, default=16)
@@ -428,7 +454,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         _log(f"[{i}/{len(symbols)}] >>> {sym}")
         try:
             ok = run_pipeline(
-                symbol=sym, start_date_str=args.start_date, target_dir=args.target_dir, cache_dir=args.cache_dir,
+                symbol=sym, start_date_str=args.start_date, end_date_str=args.end_date,
+                target_dir=args.target_dir, cache_dir=args.cache_dir,
                 max_workers=args.workers, footprint_days=args.footprint_days, all_footprint=args.all_footprint,
                 clean_cache=args.clean_cache, force=args.force, run_audit=True,
             )

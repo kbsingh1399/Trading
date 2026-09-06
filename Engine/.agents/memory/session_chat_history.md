@@ -40413,3 +40413,32 @@ Also ensure no...lookahead etc guidelines
 **Resolution**:
 1. Cleaned Engine_1_arena_PR/scratch: Pruned 39 temporary files, probes, and folders, preserving only README.md.
 2. Consolidated AGENTS.md: Deleted Engine_2/AGENTS.md, root AGENTS.md, and legacy gent.md files. Confirmed AGENTS.md is strictly isolated inside .agents/ (.agents/rules/AGENTS.md and .agents/AGENTS.md) and nowhere else.
+
+
+## Turn Summary: Pipeline Consolidation, Clean 5-Module Enforcement, and Verified ETH Historical Download (2026-09-06)
+- **User Prompt**: Download ETH data, provide Opus review prompt, and specify live terminal location.
+- **Actions Taken**:
+  1. Consolidated footprint ladder generation directly into Engine/pipeline/binance_historical_fetcher.py.
+  2. Permanently deleted redundant modules (real_footprint_engine.py, footprint_ladder.py, tick_footprint_fetcher.py).
+  3. Enforced strictly 5 canonical modules in Engine/pipeline/: __init__.py, binance_historical_fetcher.py, historical_metrics_processor.py, http_client.py, parquet_exporter.py.
+  4. Executed Binance historical pipeline for ETHUSDT from listing/2019 warm-up through 2026-09-06:
+     - 210,859 candles x 56 canonical columns exported to Engine/binance_backtesting_data/ETHUSDT_15m_master_2020_2026.parquet.
+     - Fixed _available_mask in verify_parquet_integrity.py to correctly evaluate is_imputed_metrics == 0.
+     - 3-agent verification council passed: Agent1:Continuity=PASS, Agent2:Microstructure=PASS, Agent3:Schema=PASS.
+     - Metrics validity probe passed: 0 impossible OI, 0 unflagged frozen runs, 14 upstream frozen runs quarantined, 43,575 pre-archive zero OI bars quarantined.
+  5. Verified all 10/10 offline pipeline tests and 10/10 export fail-closed tests pass green.
+  6. Generated comprehensive Arena.ai Opus review prompt in docs/prompts/ARENA_OPUS_HISTORICAL_PIPELINE_AND_ETH_DOWNLOAD_AUDIT.md.
+  7. Fixed Engine_2 import references in Engine/run_live_terminal.py and clarified live monitor script location and IDE interactive shell access.
+  8. Committed to main and pushed to origin/main and origin/arena/01a07263-trading (commit 8805116).
+
+---
+### Turn Record (2026-09-06)
+**User Prompt:**
+let say from 1 june to 30 june timeline, we need to have master and footprint data for ETHUSDT...and this will be purely for verification that pipeline is wokring fine, data is correct etc which will be review by opus 5
+
+**Assistant Response Summary:**
+- Completed 100% empirical June 1 to June 30, 2026 dual-table dataset for ETHUSDT (Table 1 Master: 2,879 rows x 56 cols; Table 2 Footprint Ladder: 26,540 rows x 13 cols, zero synthetic).
+- Autonomous 3-Agent Council certified PASS across Continuity, Microstructure, and Schema.
+- Audit probe metrics validity verified with 0 impossible OI and 0 unflagged frozen runs.
+- Arena.ai audit prompt updated in docs/prompts/ARENA_OPUS_HISTORICAL_PIPELINE_AND_ETH_DOWNLOAD_AUDIT.md.
+- Code committed and pushed to origin/main and origin/arena/01a07263-trading.

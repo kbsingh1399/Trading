@@ -133,13 +133,23 @@ def _finding(agent: str, check: str, message: str, mask: np.ndarray, ts: np.ndar
 # ==============================================================================
 # Agent 1 -- Continuity & Cadence
 # ==============================================================================
-def agent_continuity(master: pd.DataFrame, ladder: Optional[pd.DataFrame]) -> List[Finding]:
+def agent_continuity(master: pd.DataFrame, ladder: Optional[pd.DataFrame],
+                     expected_start_ms: Optional[int] = None,
+                     expected_end_ms: Optional[int] = None) -> List[Finding]:
     A = "Agent1:Continuity"
     out: List[Finding] = []
     ts = master["open_time_ms"].to_numpy(np.int64)
     n = ts.size
     if n == 0:
         return [Finding(A, "empty", "master has zero rows")]
+    if expected_start_ms is not None and n > 0:
+        exp_first = (expected_start_ms // BAR_MS) * BAR_MS
+        if ts[0] > exp_first:
+            out.append(Finding(A, "start_boundary", f"first candle {ts[0]} ({pd.to_datetime(ts[0], unit='ms', utc=True)}) > expected start {exp_first} ({pd.to_datetime(exp_first, unit='ms', utc=True)})"))
+    if expected_end_ms is not None and n > 0:
+        exp_last = (expected_end_ms // BAR_MS) * BAR_MS
+        if ts[-1] < exp_last:
+            out.append(Finding(A, "end_boundary", f"last candle {ts[-1]} ({pd.to_datetime(ts[-1], unit='ms', utc=True)}) < expected terminal {exp_last} ({pd.to_datetime(exp_last, unit='ms', utc=True)})"))
     if n > 1:
         d = np.diff(ts)
         f = _finding(A, "monotonic", "open_time_ms not strictly increasing", np.append(False, d <= 0), ts)
@@ -603,12 +613,16 @@ AGENTS: Dict[str, Callable[[pd.DataFrame, Optional[pd.DataFrame]], List[Finding]
 
 
 def run_council(master: pd.DataFrame, ladder: Optional[pd.DataFrame], symbol: str, log: Callable[[str], None] = print,
-                attested_months: Optional[set] = None) -> CouncilReport:
+                attested_months: Optional[set] = None,
+                expected_start_ms: Optional[int] = None,
+                expected_end_ms: Optional[int] = None) -> CouncilReport:
     report = CouncilReport(symbol=symbol, passed=True, master_rows=len(master), ladder_rows=len(ladder) if ladder is not None else 0)
     for name, fn in AGENTS.items():
         try:
             if name == "Agent3:Schema":
                 findings = fn(master, ladder, attested_months=attested_months)
+            elif name == "Agent1:Continuity":
+                findings = fn(master, ladder, expected_start_ms=expected_start_ms, expected_end_ms=expected_end_ms)
             else:
                 findings = fn(master, ladder)
         except Exception as exc:  # an agent crash is itself a failure
