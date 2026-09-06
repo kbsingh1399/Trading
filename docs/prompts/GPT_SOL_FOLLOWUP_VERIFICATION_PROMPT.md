@@ -4,7 +4,7 @@
 > In your Round 2 adversarial review (`GPT_5.6_Sol_2.txt`), you acknowledged that Finding 1 (terminal 23:45 bar, 2,880 rows) and Finding 4 (tick-exact provenance) are resolved, but returned a conditional **`[REVISE]`** on 5 specific items:
 > 1. **Fast-Skip Mandatory Hashes & Complete Artifact Set (P0)**: Bypassing hash check on empty fields; declared ladder file deleted on disk bypassed validation.
 > 2. **HTTP 200 Decompression/Parser Errors Swallowed (P0)**: Catching `Exception` in `_cached()` and returning `None`, misclassifying corrupt archives as missing exchange history.
-> 3. **Missing Negative Test Coverage (P0)**: Need explicit unit tests for missing/malformed SHA-256, file tampering, ladder deletion, and parse failures.
+> 3. **Missing Negative Test Coverage (P0)**: Need explicit unit tests for missing/malformed SHA-256, file tampering, ladder deletion, parse failures, and `verify_symbol()` manifest-contract negative cases.
 > 4. **Retrospective Frozen-Run Documentation & Causal Separation (P1)**: Explicitly quarantine `_stale_runs_mask()` as an ex-post dataset filter and forbid it as a contemporaneous predictive signal.
 > 5. **Expected Boundary Hardening & Post-Export Manifest Re-Check (P1)**: Council must check exact equality (`!=`), persist `expected_start_ms`, `expected_end_ms`, `expected_rows` in `manifest.json`, and verify them in `verify_symbol()`.
 > 6. **GitHub Parity Mirror 404 (P0)**: `Engine/` was untracked/uncommitted in `Engine_1_arena_PR`.
@@ -75,18 +75,29 @@ Source files are available across both authoritative repositories (verified `HTT
 ---
 
 ### Item 3 (P0): Comprehensive Negative Test Suite
-* **Problem**: `test_export_fail_closed.py` lacked negative tests for manifest hash tampering, malformed hashes, ladder deletion, and parse exceptions.
+* **Problem**: `test_export_fail_closed.py` lacked negative tests for manifest hash tampering, malformed hashes, ladder deletion, parse exceptions, `verify_symbol()` manifest-contract edge cases, and the null-ladder fast-skip bypass.
 * **Fix Implemented in `Engine/verification/test_export_fail_closed.py`**:
-  Expanded suite with two new test blocks covering all failure modes:
-  - `test_manifest_hash_and_ladder_contract()`:
+  Expanded suite with four new test blocks covering all failure modes:
+  - `test_manifest_hash_and_ladder_contract()` (Test 4a–4d):
     - Test 4a: `master_sha256 = None` $\to$ Rejected (`[PASS]`).
     - Test 4b: `master_sha256 = "abc123not64hex"` $\to$ Rejected (`[PASS]`).
     - Test 4c: Tampered master file bytes $\to$ Hash mismatch $\to$ Rejected (`[PASS]`).
     - Re-export $\to$ Restores current status (`[PASS]`).
     - Test 4d: Ladder deleted while declared in manifest $\to$ Rejected (`[PASS]`).
-  - `test_corrupt_archive_raises_archive_parse_error()`:
-    - Test 5: HTTP 200 returning invalid ZIP data $\to$ Raises `ArchiveParseError` with exact URL and bad zip error (`[PASS]`).
-* **Test Suite Result**: **18/18 assertions passed (100% clean)**.
+  - `test_corrupt_archive_raises_archive_parse_error()` (Test 5):
+    - HTTP 200 returning invalid ZIP data $\to$ Raises `ArchiveParseError` with exact URL and bad zip error (`[PASS]`).
+  - `test_verify_symbol_manifest_negative_cases()` (Tests 6a–6h):
+    - 6a: Missing manifest $\to$ `passed=False`, key `missing_manifest` (`[PASS]`).
+    - 6b: Corrupt JSON $\to$ `passed=False`, key `unreadable_manifest` (`[PASS]`).
+    - 6c: `expected_rows=None` $\to$ `passed=False`, key `manifest_expected_rows` (`[PASS]`).
+    - 6d: `expected_rows='lots'` (non-integer) $\to$ `passed=False`, key `manifest_expected_rows` (`[PASS]`).
+    - 6e: Missing `expected_start_ms` $\to$ `passed=False`, key `manifest_expected_start` (`[PASS]`).
+    - 6f: Rows math inconsistent $\to$ `passed=False`, key `manifest_rows_inconsistent` (`[PASS]`).
+    - 6g: Master row count mismatch $\to$ `passed=False`, key `master_rows_mismatch` (`[PASS]`).
+    - 6h: Missing ladder $\to$ `passed=False`, key `missing_ladder` (`[PASS]`).
+  - `test_sol_regression_null_ladder_file_denied()` (Test 7):
+    - `ladder_file=null` in manifest $\to$ fast-skip REJECTED (not current) (`[PASS]`).
+* **Test Suite Result**: **37/37 assertions passed (100% clean)**.
 
 ---
 
@@ -200,6 +211,6 @@ Post-export Council verification: Passed: True
 
 1. **Fast-Skip Robustness**: Does enforcing 64-char valid hex checksums and validating the physical presence of declared ladders on disk completely eliminate the fast-skip bypass vulnerability?
 2. **Archive Error Classification**: Does raising `ArchiveParseError` on HTTP 200 decompression and parsing failures guarantee that corrupt downloads fail closed and cannot be misclassified as missing archives?
-3. **Negative Test Sufficiency**: Does the 18-assertion test suite in `test_export_fail_closed.py` adequately protect the pipeline against tampering and edge-case corruption?
+3. **Negative Test Sufficiency**: Does the 37-assertion test suite in `test_export_fail_closed.py` — covering hash tampering, malformed checksums, ladder deletion, corrupt HTTP 200 archives, `verify_symbol()` manifest-contract edge cases, and the null-ladder fast-skip regression — adequately protect the pipeline against tampering and edge-case corruption?
 4. **Causal Quarantine**: Does the formal documentation and quarantine of `is_imputed_metrics` resolve the lookahead ambiguity?
 5. **Final Production Verdict**: Is the pipeline architecture now formally certified `[PASS]` for full-universe generation across all 18 institutional assets?
