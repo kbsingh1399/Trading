@@ -133,6 +133,7 @@ class HistoricalMetricsProcessor:
         spot_df: Optional[pd.DataFrame] = None,
         symbol: str = "BTCUSDT",
         export_start_ms: Optional[int] = None,
+        export_end_ms: Optional[int] = None,
     ) -> pd.DataFrame:
         """
         ``export_start_ms``: first bar to keep. Indicators are computed on the
@@ -188,8 +189,14 @@ class HistoricalMetricsProcessor:
         if fp is not None:
             fpm = pd.DataFrame({"open_time_ms": ot}).merge(fp.drop_duplicates("open_time_ms"), on="open_time_ms", how="left")
             exact = fpm["taker_buy_vol_coin"].notna().to_numpy()
-            buy = np.where(exact, fpm["taker_buy_vol_coin"].to_numpy(np.float64), kl_buy)
-            sell = np.where(exact, fpm["taker_sell_vol_coin"].to_numpy(np.float64), kl_sell)
+            raw_fp_buy = fpm["taker_buy_vol_coin"].fillna(0.0).to_numpy(np.float64)
+            raw_fp_sell = fpm["taker_sell_vol_coin"].fillna(0.0).to_numpy(np.float64)
+            fp_tot = raw_fp_buy + raw_fp_sell
+            use_fp = exact & (fp_tot > 0)
+            buy = np.where(use_fp, raw_fp_buy, kl_buy)
+            sell = np.where(use_fp, raw_fp_sell, kl_sell)
+            vb = np.where(use_fp, fp_tot, vb)
+            out["volume_base"] = vb
             buy_cnt = np.where(exact, fpm["taker_buy_count"].fillna(0).to_numpy(np.int64), kl_buy_cnt)
             sell_cnt = np.where(exact, fpm["taker_sell_count"].fillna(0).to_numpy(np.int64), kl_sell_cnt)
             max_trade = np.where(exact, fpm["max_single_trade_vol"].fillna(0.0).to_numpy(np.float64), vb * 0.05)
@@ -380,6 +387,13 @@ class HistoricalMetricsProcessor:
                     out[life] = out[life].to_numpy() - (out[life].iloc[0] - out[delta].iloc[0])
                 log(f"[PROCESSOR] {symbol}: dropped {first:,} warm-up bars; lifetime CVD re-anchored")
 
+        if export_end_ms is not None:
+            keep_end = out["open_time_ms"].to_numpy() <= int(export_end_ms)
+            if not keep_end.any():
+                raise ValueError(f"{symbol}: no bars at/before {pd.to_datetime(export_end_ms, unit='ms', utc=True)}")
+            out = out.loc[keep_end].reset_index(drop=True)
+            log(f"[PROCESSOR] {symbol}: sliced up to end date ({pd.to_datetime(export_end_ms, unit='ms', utc=True)})")
+
         final = self._finalise(out[CANONICAL_COLUMNS].copy())
         log(f"[PROCESSOR] {symbol}: {len(final):,} rows x {len(final.columns)} cols")
         return final
@@ -402,6 +416,9 @@ class HistoricalMetricsProcessor:
         for cols, dp in ((price_cols, PRICE_DP), (coin_cols, COIN_DP), (usd_cols, USD_DP), (ratio_cols, RATIO_DP), (pct_cols, PCT_DP)):
             for col in cols:
                 df[col] = np.round(df[col].to_numpy(np.float64), dp)
+        # Ensure exact volume conservation and CVD identity after coin_cols rounding
+        df["taker_sell_vol_btc"] = np.round(df["volume_base"] - df["taker_buy_vol_btc"], COIN_DP)
+        df["future_cvd_15m"] = np.round(df["taker_buy_vol_btc"] - df["taker_sell_vol_btc"], COIN_DP)
         num_cols = [c for c in df.columns if COLUMN_DTYPES[c] == "float64"]
         arr = df[num_cols].to_numpy(np.float64)
         bad = ~np.isfinite(arr)

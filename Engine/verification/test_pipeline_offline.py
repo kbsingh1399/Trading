@@ -304,11 +304,11 @@ def test_orchestrator_end_to_end():
 
     class FakeFetcher:
         def __init__(self, *a, **k): pass
-        def fetch_futures_klines(self, symbol, start_date, now=None): return kl.copy()
-        def fetch_spot_klines(self, symbol, start_date, now=None): return spot.copy()
-        def fetch_metrics(self, symbol, start_date, now=None): return metrics.copy()
-        def fetch_funding_rates(self, symbol, start_time_ms): return funding.copy()
-        def fetch_footprint(self, symbol, start_date, now=None): return fp_ladder.copy(), fp_summary.copy()
+        def fetch_futures_klines(self, *a, **k): return kl.copy()
+        def fetch_spot_klines(self, *a, **k): return spot.copy()
+        def fetch_metrics(self, *a, **k): return metrics.copy()
+        def fetch_funding_rates(self, *a, **k): return funding.copy()
+        def fetch_footprint(self, *a, **k): return fp_ladder.copy(), fp_summary.copy()
 
     orig = rp.BinanceHistoricalFetcher
     rp.BinanceHistoricalFetcher = FakeFetcher

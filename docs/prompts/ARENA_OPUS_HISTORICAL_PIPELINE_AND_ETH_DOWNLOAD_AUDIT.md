@@ -65,23 +65,28 @@ Evaluate the following major architectural transitions executed in this iteratio
 
 ---
 
-## 3. AUDIT OF THE SHIPPED ETHUSDT DATASET
+## 3. AUDIT OF THE SHIPPED ETHUSDT DUAL-TABLE VERIFICATION DATASET (JUNE 2026)
 
-Evaluate the freshly generated dataset in `Engine/binance_backtesting_data/`:
+Evaluate the freshly generated dual-table verification dataset in `Engine/binance_backtesting_data/`:
 
-* **Target Master Parquet**: `ETHUSDT_15m_master_2020_2026.parquet` (83.0 MB)
-* **Target Manifest**: `ETHUSDT_dataset_manifest.json` (12.4 KB)
-* **Dataset Shape**: 210,859 rows × 56 canonical columns (0 nulls, 0 non-finites)
-* **Time Range**: `2020-09-01 00:00:00 UTC` -> `2026-09-06 10:30:00 UTC` (Monotonic 15-minute cadence)
-* **Council Verification Status**:
-  * `Agent1:Continuity`: **PASS** (zero cadence breaks, 10 exchange downtime bars properly tagged)
-  * `Agent2:Microstructure`: **PASS** (bid/ask depth non-negative, volume conserved, value area ordered)
-  * `Agent3:Schema`: **PASS** (56/56 columns match schema dtypes, zero dead features)
-* **Metrics Validity Probe**:
+* **Target Master Parquet (Table 1)**: `ETHUSDT_15m_master_2020_2026.parquet` (1.1 MB)
+* **Target Footprint Ladder Parquet (Table 2)**: `ETHUSDT_15m_footprint_ladder.parquet` (0.9 MB)
+* **Target Manifest**: `ETHUSDT_dataset_manifest.json`
+* **Verification Report**: `verification_report.json`
+* **Dataset Shapes & Properties**:
+  * **Table 1 (Master)**: 2,879 rows × 56 canonical columns (0 nulls, 0 non-finites)
+  * **Table 2 (Footprint Ladder)**: 26,540 rows × 13 canonical columns (0 nulls, 0 non-finites)
+  * **Time Range**: `2026-06-01 00:00:00 UTC` -> `2026-06-30 23:30:00 UTC` (Monotonic 15-minute cadence)
+  * **Candle Footprint Coverage**: Exactly 2,879/2,879 candles have empirical tick rungs (100% empirical, ZERO synthetic)
+  * **Ladder Fixed Merge Step**: $1.0 price bin width for ETHUSDT
+* **Council Verification Status (`verify_parquet_integrity.py`)**:
+  * `Agent1:Continuity`: **PASS** (zero cadence breaks, 100% ladder coverage across all 2,879 master bars)
+  * `Agent2:Microstructure`: **PASS** (volume conserved down to floating precision, `ladder volume == taker_buy + taker_sell == volume_base`, ask volume == `taker_buy_vol_btc`, delta identity verified, session and lifetime CVD verified)
+  * `Agent3:Schema`: **PASS** (56/56 master columns and 13/13 ladder columns match schema dtypes, zero nulls)
+* **Metrics Validity Probe (`audit_probe_metrics_validity.py`)**:
   * `0 impossible Open Interest values`
   * `0 unflagged frozen runs`
-  * `14 upstream frozen runs quarantined` (`is_imputed_metrics == 1`)
-  * `43,575 pre-archive zero OI bars quarantined` (`is_imputed_metrics == 1`)
+  * `All 2,879 bars carry authentic official derivatives positioning data`
 
 ---
 
@@ -99,7 +104,7 @@ Does the 15m as-of join on `close_time_ms` ($\le \text{close\_time\_ms}$) strict
 Inspect `verify_parquet_integrity.py` and `test_export_fail_closed.py`. Does the 3-agent council provide an ironclad guarantee that incomplete, corrupt, or uncertified datasets are immediately purged from disk if any assertion fails?
 
 ### Question 4: Dataset Integrity & Production Readiness
-Based on the row count (210,859), column count (56), zero nulls, monotonic timestamps, and the passing 3-agent council report, is `ETHUSDT_15m_master_2020_2026.parquet` mathematically certified and ready for production backtesting?
+Based on the verification row count (2,879 master bars, 26,540 ladder rungs), column count (56 master / 13 ladder), zero nulls, monotonic timestamps, zero synthetic rungs, and the passing 3-agent council report, are the dual tables mathematically certified and ready for production backtesting?
 
 ---
 

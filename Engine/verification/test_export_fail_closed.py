@@ -48,19 +48,19 @@ class _FakeFetcher:
         self.s = streams
         self.fp = fp
 
-    def fetch_futures_klines(self, symbol, start_date, now=None):
+    def fetch_futures_klines(self, *a, **k):
         return self.s[0].copy()
 
-    def fetch_spot_klines(self, symbol, start_date, now=None):
+    def fetch_spot_klines(self, *a, **k):
         return self.s[1].copy()
 
-    def fetch_metrics(self, symbol, start_date, now=None):
+    def fetch_metrics(self, *a, **k):
         return self.s[3].copy()
 
-    def fetch_funding_rates(self, symbol, start_time_ms):
+    def fetch_funding_rates(self, *a, **k):
         return self.s[2].copy()
 
-    def fetch_footprint(self, symbol, start_date, now=None):
+    def fetch_footprint(self, *a, **k):
         fp_ladder, fp_summary = self.fp
         l_df = fp_ladder.copy() if fp_ladder is not None else pd.DataFrame()
         s_df = fp_summary.copy() if fp_summary is not None else pd.DataFrame()

@@ -2,8 +2,8 @@
   "ETHUSDT": {
     "symbol": "ETHUSDT",
     "passed": true,
-    "master_rows": 210859,
-    "ladder_rows": 0,
+    "master_rows": 2879,
+    "ladder_rows": 26540,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",
