@@ -1,14 +1,26 @@
 # ADVERSARIAL PIPELINE & DATA QUALITY AUDIT
-## Institutional Quantitative Backtesting Infrastructure — Fault-Finding Brief
+## Institutional Quantitative Backtesting Infrastructure — Fault-Finding Brief (Round 6 Patched)
+
+---
+
+## ⚡ ROUND 6 AUDIT FOCUS: SINGLE CLEAN ASSET VERIFICATION (BTCUSDT)
+
+> **Current Repository State**:
+> 1. Based on findings from Claude Sonnet 4.6, GLM-5.3, and Qwen, the pipeline was patched:
+>    - **`zc_div` false absorption bug fixed**: When `spot_flow_source == 'UNAVAILABLE'`, `zc_div` is strictly clamped to `0.0`.
+>    - **Council verification hardened**: `verify_parquet_integrity.py` enforces `zc_div == 0.0` on UNAVAILABLE bars.
+>    - **Fast-skip hardened**: Manifest row count, UTC epoch validation, and bidirectional timestamp bounds enforced.
+> 2. `Engine/binance_backtesting_data/` has been purged of all unpatched assets and contains **ONLY** the single fresh, verified asset: `BTCUSDT` (210,848 candles, 2,710,890 footprint rungs, 0 nulls, monotonic).
+> 3. Autonomous 3-Agent Council Verdict: **100% PASS** (`Continuity=PASS`, `Microstructure=PASS`, `Schema=PASS`).
 
 ---
 
 ## GITHUB ACCESS — ALL FILES AVAILABLE HERE
 
 **Repo**: `https://github.com/kbsingh1399/Trading`
-**Commit**: `1d85dcb` (HEAD = `main` = `arena/01a07263-trading` — byte-for-byte identical mirrors)
+**Branch**: `main` (Mirrored to `arena/01a07263-trading`)
 
-Use these raw URLs to fetch files directly. Replace `{SYMBOL}` with any of the 18 symbols below.
+Use these raw URLs to fetch files directly.
 
 ### Pipeline Code (fetch and read these first)
 

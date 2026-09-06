@@ -93,21 +93,26 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
     try:
         import json
         with open(ppath, encoding="utf-8") as fh:
-            if not json.load(fh).get("verification", {}).get("passed", False):
+            manifest_data = json.load(fh)
+            if not manifest_data.get("verification", {}).get("passed", False):
                 return False
+            expected_rows = manifest_data.get("total_rows")
     except Exception:
         return False
     try:
         mf, lf = pq.ParquetFile(mpath), pq.ParquetFile(lpath)
         if mf.schema_arrow.names != CANONICAL_COLUMNS or lf.schema_arrow.names != LADDER_COLUMNS:
             return False
+        if expected_rows is not None and mf.metadata.num_rows != expected_rows:
+            return False
         last = mf.read_row_group(mf.num_row_groups - 1, columns=["close_time_ms"]).column(0).to_numpy()
-        age_h = (time.time() * 1000 - int(last[-1])) / 3_600_000
+        now_utc_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
+        age_h = max(0.0, (now_utc_ms - int(last[-1])) / 3_600_000)
         if age_h > max_age_hours:
             return False
         m_ts = pd.read_parquet(mpath, columns=["open_time_ms"])["open_time_ms"].to_numpy()
         l_ts = pd.read_parquet(lpath, columns=["open_time_ms"])["open_time_ms"].unique()
-        return bool(np.isin(m_ts, l_ts).all() and m_ts.size > 1000)
+        return bool(np.isin(m_ts, l_ts).all() and np.isin(l_ts, m_ts).all() and m_ts.size > 1000)
     except Exception:
         return False
 
@@ -141,9 +146,9 @@ def causal_repair(master: pd.DataFrame, ladder: pd.DataFrame, report: CouncilRep
         spot = m["spot_cvd_15m"].to_numpy(np.float64)
         m["spot_cvd_session"] = np.round(compute_session_cvd(m["open_time_ms"].to_numpy(), spot), 8)
         m["spot_cvd_lifetime"] = np.round(np.cumsum(spot), 8)
-        m["zc_div"] = np.round(spot - m["future_cvd_15m"].to_numpy(np.float64), 8)
+        m["zc_div"] = np.where(m["spot_flow_source"] == "SPOT_EXACT", np.round(spot - m["future_cvd_15m"].to_numpy(np.float64), 8), 0.0)
         changed = True
-        log(f"  [REPAIR] zeroed stale spot delta on {int(mask.sum())} UNAVAILABLE bars")
+        log(f"  [REPAIR] zeroed stale spot delta and zc_div on {int(mask.sum())} UNAVAILABLE bars")
 
     if "liq_polarity" in checks:
         m["long_liq_usd"] = -np.abs(m["long_liq_usd"].to_numpy(np.float64))

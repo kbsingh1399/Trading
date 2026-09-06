@@ -23,8 +23,8 @@
 - **Key Discovery**: Captured real-time CVD, open interest, and liquidation prints via viewport listeners and accumulator diffs.
 
 ### Phase 2: 18-Asset Binance Historical Data Pipeline (Engine 2)
-- **Dataset**: 18 institutional assets (BTC, ETH, SOL, BNB, XRP, DOGE, ADA, AVAX, LINK, SUI, NEAR, APT, PEPE, WIF, TIA, ARB, OP, INJ).
-- **Structure**: 93.9M total rows; 3,464,074 15m candles with strictly monotonic timestamps and 0 nulls.
+- **Dataset**: 18 institutional assets (`BTC, ETH, XRP, SOL, BNB, DOGE, ADA, TRX, LINK, AVAX, SUI, NEAR, DOT, LTC, BCH, APT, OP, ARB` per `schema.py`; replaces legacy draft list `PEPE, WIF, TIA, INJ`).
+- **Structure**: 3,467,571 15m candles with strictly monotonic timestamps, 0 nulls, and clean zeroed zc_div on UNAVAILABLE spot bars.
 - **Artifacts**: Stored in `Engine_2/binance_backtesting_data/` as master parquets and footprint ladder parquets.
 
 ### Phase 3: The 20 Walk-Forward OOS Windows

@@ -71,3 +71,6 @@ gemini-web2api/
 graphify-out/cache/
 */graphify-out/cache/
 .agents/graphify-out/cache/
+
+# Local backup directory for previous backtesting data
+Engine/binance_backtesting_data_backup/

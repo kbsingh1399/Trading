@@ -377,7 +377,7 @@ class HistoricalMetricsProcessor:
         out["vwap_zscore"] = compute_vwap_zscore(c, vwap, VWAP_Z_WINDOW)
         sma9_base = compute_sma_series(vb, 9)
         out["volume_ratio"] = np.divide(vb, sma9_base, out=np.zeros(n), where=sma9_base > 0)
-        out["zc_div"] = spot_delta - fut_delta
+        out["zc_div"] = np.where(spot_exact, spot_delta - fut_delta, 0.0)
         out["long_liq_zs"] = compute_rolling_zscore(np.abs(long_liq), LIQ_Z_WINDOW)
         out["short_liq_zs"] = compute_rolling_zscore(short_liq, LIQ_Z_WINDOW)
         tot = short_liq + np.abs(long_liq)

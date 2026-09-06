@@ -53,7 +53,7 @@ When `AGENTS.md` is loaded, execute sequentially without asking:
 ---
 
 # PART 2: SETTLED QUANTITATIVE STRATEGY INVARIANTS
-1. **Universe**: 18 Institutional Binance USDT-M Perpetuals (3,464,074 15m bars, 0 nulls, monotonic in `Engine/binance_backtesting_data/`).
+1. **Universe**: 18 Institutional Binance USDT-M Perpetuals: `BTC, ETH, XRP, SOL, BNB, DOGE, ADA, TRX, LINK, AVAX, SUI, NEAR, DOT, LTC, BCH, APT, OP, ARB` (3,467,571 15m bars, 0 nulls, monotonic in `Engine/binance_backtesting_data/`). Canonical universe defined in `schema.py`; replaces legacy speculative drafting list `PEPE, WIF, TIA, INJ` which lack 2020-2022 historical depth.
 2. **Walk-Forward**: 20 Non-Overlapping OOS 1-Month Windows (2021–2026) with causal 72h purge ($t_{\text{purge}} = t_{\text{start}} - 72\text{h}$).
 3. **Signal Confluence**:
    $$\text{long\_liq\_zs} > 1.8 \;\land\; \text{zc\_div} > 0.8 \;\land\; \Delta\text{Spot} > 0 \;\land\; \Delta\text{Futures} < 0 \;\land\; \text{RSI} < 40 \;\land\; \text{VWAP Z} < -0.5$$

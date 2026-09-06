@@ -1,7 +1,7 @@
 {
   "symbol": "BTCUSDT",
   "timeframe": "15m",
-  "total_rows": 210797,
+  "total_rows": 210848,
   "columns": [
     "open_time_ms",
     "close_time_ms",
@@ -78,26 +78,33 @@
   ],
   "column_count": 72,
   "start_time_utc": "2020-09-01 00:00:00",
-  "end_time_utc": "2026-09-05 19:00:00",
-  "exported_at_utc": "2026-09-05T19:29:34.614042+00:00",
+  "end_time_utc": "2026-09-06 07:45:00",
+  "exported_at_utc": "2026-09-06T08:12:25.860400+00:00",
   "master_file": "BTCUSDT_15m_master_2020_2026.parquet",
-  "master_size_mb": 94.17,
+  "master_size_mb": 94.19,
   "ladder_file": "BTCUSDT_15m_footprint_ladder.parquet",
   "ladder_size_mb": 14.97,
   "ladder": {
-    "candles": 210797,
+    "candles": 210848,
     "tick_exact_candles": 0,
-    "synthetic_candles": 210797,
+    "synthetic_candles": 210848,
     "tick_rungs": 0,
-    "synthetic_rungs": 2710652
+    "synthetic_rungs": 2710890
   },
   "provenance": {
     "tick_exact_bars": 0,
-    "spot_exact_bars": 210704,
+    "spot_exact_bars": 210755,
     "synthetic_bars": 15,
-    "metrics_available_bars": 180195,
+    "metrics_available_bars": 180246,
     "imputed_metrics_bars": 30602,
     "warmup_unconverged_bars": 0,
+    "metrics_archive_absent_months": [
+      "2026-09"
+    ],
+    "metrics_archive_absent_days": [
+      "2026-09-06"
+    ],
+    "metrics_archive_absent_day_count": 1,
     "metrics_unavailable_fraction_by_year": {
       "2020": 0.0,
       "2021": 0.0039,
@@ -111,8 +118,8 @@
   "verification": {
     "symbol": "BTCUSDT",
     "passed": true,
-    "master_rows": 210797,
-    "ladder_rows": 2710652,
+    "master_rows": 210848,
+    "ladder_rows": 2710890,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",

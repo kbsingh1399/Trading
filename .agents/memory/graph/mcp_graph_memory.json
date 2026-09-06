@@ -36,8 +36,8 @@
       "name": "Engine_2_Backtesting_System",
       "entityType": "DataArchitecture",
       "observations": [
-        "18 institutional Binance USDT-M assets: BTC, ETH, SOL, BNB, XRP, DOGE, ADA, AVAX, LINK, SUI, NEAR, APT, PEPE, WIF, TIA, ARB, OP, INJ.",
-        "Dataset size: 3,464,074 15-minute bars (93.9M data points), zero nulls, strictly monotonic timestamps, stored in Engine_2/binance_backtesting_data/.",
+        "18 institutional Binance USDT-M assets: BTC, ETH, XRP, SOL, BNB, DOGE, ADA, TRX, LINK, AVAX, SUI, NEAR, DOT, LTC, BCH, APT, OP, ARB (schema.py canonical universe).",
+        "Dataset size: 3,467,571 15-minute bars across 18 symbols, zero nulls, strictly monotonic timestamps, stored in Engine/binance_backtesting_data/.",
         "Walk-forward: 20 non-overlapping 1-month OOS test windows from March 2021 to April 2026.",
         "Purge Boundary: Strictly enforced 72-hour trade resolution purge gap (t_purge = t_start - 72h) matching max 288-bar trade duration."
       ]

@@ -241,7 +241,10 @@ def agent_microstructure(master: pd.DataFrame, ladder: Optional[pd.DataFrame]) -
     unavailable = master["spot_flow_source"].to_numpy() == "UNAVAILABLE"
     add("spot_unavailable_zero", "spot_cvd_15m must be 0 when spot_flow_source=UNAVAILABLE (stale reuse)", unavailable & (spot != 0))
     if has("zc_div"):
-        add("zc_div_identity", "zc_div != spot_cvd_15m - future_cvd_15m", np.abs(g("zc_div") - (spot - fut)) > 1e-6 * np.maximum(np.abs(fut) + np.abs(spot), 1))
+        add("zc_div_identity", "zc_div != spot_cvd_15m - future_cvd_15m on valid spot bars",
+            (~unavailable) & (np.abs(g("zc_div") - (spot - fut)) > 1e-6 * np.maximum(np.abs(fut) + np.abs(spot), 1)))
+        add("zc_div_unavailable_zero", "zc_div must be 0 when spot_flow_source=UNAVAILABLE",
+            unavailable & (g("zc_div") != 0))
 
     if has("spot_close"):
         add("basis_identity", "basis_usd != close - spot_close", np.abs(g("basis_usd") - (c - g("spot_close"))) > 1e-6 * scale)
