@@ -330,17 +330,10 @@ class HistoricalMetricsProcessor:
         out["top_account_ratio"] = top_acc
         out["whale_index"] = whale_idx
         out["taker_volume_ratio"] = np.clip(taker_ratio, 0.0, 1e6)
-        out["is_imputed_metrics"] = (out["metrics_available"].to_numpy() == 0).astype(np.int8)
+        out["is_imputed_metrics"] = (~is_valid_metrics).astype(np.int8)
 
-        # ---------------------------------------------------------------- footprint / value area
-        log(f"[PROCESSOR] {symbol}: footprint & session value area")
-        out["fp_delta"] = fut_delta
-        ohlc_poc = (h + l + 2.0 * c) / 4.0
-        out["fp_poc"] = np.where(np.isnan(real_poc), ohlc_poc, real_poc)
-        out["poc_source"] = np.where(np.isnan(real_poc), "OHLC_APPROX", "TICK_EXACT")
-        out["fp_poc_vol_ratio"] = poc_ratio
-        out["fp_stacked_buy_imb"] = st_buy
-        out["fp_stacked_sell_imb"] = st_sell
+        # ---------------------------------------------------------------- session value area & trades
+        log(f"[PROCESSOR] {symbol}: session value area & trade execution")
         svah, sval, pvah, pval = compute_session_value_area(ot, h, l, c, vb, bucket_size=get_merge_level(symbol))
         out["session_vah"], out["session_val"] = svah, sval
         out["prev_day_vah"], out["prev_day_val"] = pvah, pval
@@ -348,14 +341,7 @@ class HistoricalMetricsProcessor:
         out["taker_sell_count"] = sell_cnt.astype(np.int64)
         out["taker_buy_vol_btc"] = buy
         out["taker_sell_vol_btc"] = sell
-        out["max_trade_vol_btc"] = max_trade
         out["avg_trade_size_usd"] = np.divide(vq, np.maximum(tc, 1))
-        out["future_flow_source"] = np.where(exact, "TICK_EXACT", "KLINE_APPROX")
-
-        b_usd, a_usd, b_coin, a_coin = estimate_depth_from_volatility(c, out["atr_14"].to_numpy(), vb)
-        out["bid_depth_usd"], out["ask_depth_usd"] = b_usd, a_usd
-        out["bid_depth_coin"], out["ask_depth_coin"] = b_coin, a_coin
-        out["is_synthetic"] = df["is_synthetic"].to_numpy(np.int8)
 
         # ---------------------------------------------------------------- liquidations
         log(f"[PROCESSOR] {symbol}: liquidation cascade engine")
@@ -383,21 +369,16 @@ class HistoricalMetricsProcessor:
         tot = short_liq + np.abs(long_liq)
         out["liq_imbalance_ratio"] = np.divide(short_liq - np.abs(long_liq), tot, out=np.zeros(n), where=tot > 0)
 
-        first_warmup = 0
         if export_start_ms is not None:
             keep = out["open_time_ms"].to_numpy() >= int(export_start_ms)
             if not keep.any():
                 raise ValueError(f"{symbol}: no bars at/after {pd.to_datetime(export_start_ms, unit='ms', utc=True)}")
             first = int(np.flatnonzero(keep)[0])
-            first_warmup = first
             out = out.iloc[first:].reset_index(drop=True)
             if first > 0:
                 for life, delta in (("future_cvd_lifetime", "future_cvd_15m"), ("spot_cvd_lifetime", "spot_cvd_15m")):
                     out[life] = out[life].to_numpy() - (out[life].iloc[0] - out[delta].iloc[0])
                 log(f"[PROCESSOR] {symbol}: dropped {first:,} warm-up bars; lifetime CVD re-anchored")
-
-        warmup_bars = first_warmup + np.arange(len(out))
-        out["is_warmup_converged"] = np.where(warmup_bars >= 3200, 1, 0).astype(np.int8)
 
         final = self._finalise(out[CANONICAL_COLUMNS].copy())
         log(f"[PROCESSOR] {symbol}: {len(final):,} rows x {len(final.columns)} cols")
@@ -407,22 +388,20 @@ class HistoricalMetricsProcessor:
     @staticmethod
     def _finalise(df: pd.DataFrame) -> pd.DataFrame:
         price_cols = ("open", "high", "low", "close", "atr_14", "atr_100", "ema_8", "ema_21", "ema_50", "ema_200",
-                      "ema_800", "basis_usd", "fp_poc", "session_vah", "session_val", "prev_day_vah", "prev_day_val",
+                      "ema_800", "basis_usd", "session_vah", "session_val", "prev_day_vah", "prev_day_val",
                       "spot_close", "session_vwap")
         coin_cols = ("volume_base", "future_cvd_15m", "future_cvd_session", "future_cvd_lifetime", "spot_cvd_15m",
-                     "spot_cvd_session", "spot_cvd_lifetime", "open_interest_k", "fp_delta", "taker_buy_vol_btc",
-                     "taker_sell_vol_btc", "max_trade_vol_btc", "bid_depth_coin", "ask_depth_coin", "zc_div")
+                     "spot_cvd_session", "spot_cvd_lifetime", "open_interest_k", "taker_buy_vol_btc",
+                     "taker_sell_vol_btc", "zc_div")
         usd_cols = ("volume_quote", "volume_sma9", "open_interest_usd", "long_liq_usd", "short_liq_usd",
-                    "avg_trade_size_usd", "bid_depth_usd", "ask_depth_usd")
+                    "avg_trade_size_usd")
         ratio_cols = ("rsi_14", "ls_ratio_global", "ls_ratio_top", "top_account_ratio", "whale_index",
-                      "taker_volume_ratio", "fp_poc_vol_ratio", "vwap_zscore", "volume_ratio", "long_liq_zs",
+                      "taker_volume_ratio", "vwap_zscore", "volume_ratio", "long_liq_zs",
                       "short_liq_zs", "liq_imbalance_ratio")
         pct_cols = ("funding_rate_pct", "oi_change_pct")
         for cols, dp in ((price_cols, PRICE_DP), (coin_cols, COIN_DP), (usd_cols, USD_DP), (ratio_cols, RATIO_DP), (pct_cols, PCT_DP)):
             for col in cols:
                 df[col] = np.round(df[col].to_numpy(np.float64), dp)
-        for col in ("fp_stacked_buy_imb", "fp_stacked_sell_imb"):
-            df[col] = df[col].astype(np.float64)
         num_cols = [c for c in df.columns if COLUMN_DTYPES[c] == "float64"]
         arr = df[num_cols].to_numpy(np.float64)
         bad = ~np.isfinite(arr)

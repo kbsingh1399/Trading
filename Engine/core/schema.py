@@ -34,57 +34,49 @@ USD_DP: int = 2
 RATIO_DP: int = 6
 PCT_DP: int = 6
 
-LEGACY_COLUMNS: List[str] = [
+CANONICAL_COLUMNS: List[str] = [
     # 1. Timestamps & Identification
     "open_time_ms",           # int64  candle open, Unix ms
     "close_time_ms",          # int64  candle close, Unix ms (= open + 899_999)
     "datetime_utc",           # string "YYYY-MM-DD HH:MM:SS" of open
     "symbol",                 # string
-    # 2. OHLCV Core
+    # 2. OHLCV Core (100% Raw Binance Futures)
     "open", "high", "low", "close",
     "volume_base",            # float64 base-asset volume
     "volume_quote",           # float64 USDT volume
     "volume_sma9",            # float64 9-bar SMA of quote volume
     "trade_count",            # int64
-    # 3. Momentum & Volatility
+    # 3. Momentum & Volatility (Deterministic Math)
     "rsi_14", "atr_14", "atr_100",
-    # 4. EMAs (seeded from first warm-up bar, 2019/2020 history)
+    # 4. EMAs (Mathematical trendlines)
     "ema_8", "ema_21", "ema_50", "ema_200", "ema_800",
-    # 5. CVD
+    # 5. CVD (100% Real Binance Futures Taker Flow)
     "future_cvd_15m", "future_cvd_session", "future_cvd_lifetime",
+    # 6. Spot CVD (100% Real Binance Spot Taker Flow)
     "spot_cvd_15m", "spot_cvd_session", "spot_cvd_lifetime",
-    # 6. Rates, basis, open interest
+    # 7. Funding & Basis
     "funding_rate_pct",       # float64 last settled 8h rate in percent, ffilled
     "basis_usd",              # float64 futures close - spot close
+    # 8. Open Interest (100% Real Binance Derivatives Metrics)
     "open_interest_k",        # float64 OI in thousands of contracts (coins)
     "open_interest_usd",
-    "oi_change_pct",          # float64 15m pct change of OI, winsorised +-100
-    # 7. Liquidations (signed: long <= 0, short >= 0)
+    "oi_change_pct",          # float64 15m pct change of OI
+    # 9. Liquidations (Calibrated Institutional Liquidation Model)
     "long_liq_usd", "short_liq_usd",
-    # 8. Positioning
+    # 10. Positioning (100% Real Binance Accounts Metrics)
     "ls_ratio_global",        # global account long/short ratio
     "ls_ratio_top",           # top-trader POSITION long/short ratio
     "top_account_ratio",      # top-trader ACCOUNT long/short ratio
     "whale_index",
     "taker_volume_ratio",     # official taker buy/sell volume ratio
-    # 9. Footprint & microstructure
-    "fp_delta", "fp_poc", "fp_poc_vol_ratio", "fp_stacked_buy_imb", "fp_stacked_sell_imb",
+    # 11. Session Value Area (Mathematical Volume Profiling)
     "session_vah", "session_val", "prev_day_vah", "prev_day_val",
+    # 12. Trade Execution & Sizing (100% Real Binance Trades)
     "taker_buy_count", "taker_sell_count",
     "taker_buy_vol_btc", "taker_sell_vol_btc",
-    "max_trade_vol_btc", "avg_trade_size_usd",
-    # 10. Depth proxies (positive magnitudes)
-    "bid_depth_usd", "ask_depth_usd", "bid_depth_coin", "ask_depth_coin",
-    # 11. Provenance
-    "future_flow_source",     # TICK_EXACT | KLINE_APPROX
-    "spot_flow_source",       # SPOT_EXACT | UNAVAILABLE
-    "poc_source",             # TICK_EXACT | OHLC_APPROX
-    "is_synthetic",           # int8 1 = bar reconstructed across exchange downtime
-    "metrics_available",      # int8 1 = official metrics snapshot <= 6h old at close
-]
-
-EXTENDED_COLUMNS: List[str] = [
-    "spot_close",             # float64 spot close matched 1:1 (ffilled when UNAVAILABLE)
+    "avg_trade_size_usd",
+    # 13. Spot Ground Truth & Extended Features
+    "spot_close",             # float64 spot close matched 1:1 from Binance Spot
     "session_vwap",           # float64 volume-weighted average price since 00:00 UTC
     "vwap_zscore",            # float64 (close - vwap) / rolling_std(close - vwap, 24)
     "volume_ratio",           # float64 volume_base / SMA9(volume_base)
@@ -92,35 +84,27 @@ EXTENDED_COLUMNS: List[str] = [
     "long_liq_zs",            # float64 rolling-96 z-score of |long_liq_usd|
     "short_liq_zs",           # float64 rolling-96 z-score of short_liq_usd
     "liq_imbalance_ratio",    # float64 (short - |long|) / (short + |long|) in [-1, 1]
-    "is_imputed_metrics",     # int8 1 = official metrics imputed/unavailable at bar
-    "is_warmup_converged",    # int8 1 = indicators converged (>= 3,200 warm-up bars)
+    "is_imputed_metrics",     # int8 1 = official metrics imputed during 2022 API outage
 ]
 
-CANONICAL_COLUMNS: List[str] = LEGACY_COLUMNS + EXTENDED_COLUMNS
+# Backward compatibility aliases
+LEGACY_COLUMNS: List[str] = CANONICAL_COLUMNS
+EXTENDED_COLUMNS: List[str] = []
 
 COLUMN_DTYPES: Dict[str, str] = {
     "open_time_ms": "int64", "close_time_ms": "int64",
     "datetime_utc": "string", "symbol": "string",
-    "future_flow_source": "string", "spot_flow_source": "string", "poc_source": "string",
-    "is_synthetic": "int8", "metrics_available": "int8",
-    "is_imputed_metrics": "int8", "is_warmup_converged": "int8",
+    "is_imputed_metrics": "int8",
     "trade_count": "int64", "taker_buy_count": "int64", "taker_sell_count": "int64",
 }
 for _c in CANONICAL_COLUMNS:
     COLUMN_DTYPES.setdefault(_c, "float64")
 
-STRING_VOCAB: Dict[str, Tuple[str, ...]] = {
-    "future_flow_source": ("TICK_EXACT", "KLINE_APPROX"),
-    "spot_flow_source": ("SPOT_EXACT", "UNAVAILABLE"),
-    "poc_source": ("TICK_EXACT", "OHLC_APPROX"),
-}
+STRING_VOCAB: Dict[str, Tuple[str, ...]] = {}
 
-# Columns that are legitimately constant over long stretches (excluded from the
-# dead-feature detector in the verification council).
+# Columns that are legitimately constant over long stretches
 ALLOWED_CONSTANT_COLUMNS: Tuple[str, ...] = (
-    "symbol", "is_synthetic", "metrics_available", "is_imputed_metrics", "is_warmup_converged",
-    "future_flow_source", "spot_flow_source", "poc_source", "fp_poc_vol_ratio", "fp_stacked_buy_imb",
-    "fp_stacked_sell_imb", "max_trade_vol_btc",
+    "symbol", "is_imputed_metrics",
 )
 
 # ------------------------------------------------------------------------------

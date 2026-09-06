@@ -87,7 +87,7 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
     mpath = os.path.join(target_dir, master_filename(symbol))
     lpath = os.path.join(target_dir, ladder_filename(symbol))
     ppath = os.path.join(target_dir, manifest_filename(symbol))
-    if not (os.path.exists(mpath) and os.path.exists(lpath) and os.path.exists(ppath)):
+    if not (os.path.exists(mpath) and os.path.exists(ppath)):
         return False
     # a pair of parquets is not a certificate: skip only when the manifest says the council passed.
     try:
@@ -100,9 +100,14 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
     except Exception:
         return False
     try:
-        mf, lf = pq.ParquetFile(mpath), pq.ParquetFile(lpath)
-        if mf.schema_arrow.names != CANONICAL_COLUMNS or lf.schema_arrow.names != LADDER_COLUMNS:
+        mf = pq.ParquetFile(mpath)
+        if mf.schema_arrow.names != CANONICAL_COLUMNS:
             return False
+        has_ladder = os.path.exists(lpath)
+        if has_ladder:
+            lf = pq.ParquetFile(lpath)
+            if lf.schema_arrow.names != LADDER_COLUMNS:
+                return False
         if expected_rows is not None and mf.metadata.num_rows != expected_rows:
             return False
         last = mf.read_row_group(mf.num_row_groups - 1, columns=["close_time_ms"]).column(0).to_numpy()
@@ -111,10 +116,51 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
         if age_h > max_age_hours:
             return False
         m_ts = pd.read_parquet(mpath, columns=["open_time_ms"])["open_time_ms"].to_numpy()
-        l_ts = pd.read_parquet(lpath, columns=["open_time_ms"])["open_time_ms"].unique()
-        return bool(np.isin(m_ts, l_ts).all() and np.isin(l_ts, m_ts).all() and m_ts.size > 1000)
+        if has_ladder:
+            l_ts = pd.read_parquet(lpath, columns=["open_time_ms"])["open_time_ms"].unique()
+            if not (np.isin(m_ts, l_ts).all() and np.isin(l_ts, m_ts).all()):
+                return False
+        return bool(m_ts.size > 1000)
     except Exception:
         return False
+
+
+# ------------------------------------------------------------------------------
+# Continuous raw cache cleanup & disk space governance
+# ------------------------------------------------------------------------------
+def check_disk_space(path: str, min_free_gb: float = 5.0, log: Callable[[str], None] = _log) -> float:
+    """Checks available free disk space on the volume containing path."""
+    try:
+        target = path if os.path.exists(path) else os.path.dirname(os.path.abspath(path))
+        total, used, free = shutil.disk_usage(target)
+        free_gb = free / (1024 ** 3)
+        if free_gb < min_free_gb:
+            log(f"[DISK WARNING] Low free space on {target}: {free_gb:.2f} GB free (threshold: {min_free_gb:.1f} GB)")
+        return free_gb
+    except Exception:
+        return 999.0
+
+
+def cleanup_symbol_raw_cache(cache_dir: str, symbol: str, log: Callable[[str], None] = _log) -> int:
+    """Removes intermediate raw downloaded chunks (.parquet, .tmp, .zip, .csv) for a symbol to prevent disk bloat."""
+    if not os.path.isdir(cache_dir):
+        return 0
+    removed = 0
+    sym_lower = symbol.lower()
+    sym_upper = symbol.upper()
+    for root, _, files in os.walk(cache_dir):
+        for f in files:
+            f_lower = f.lower()
+            if sym_lower in f_lower or sym_upper in f or f.endswith(".tmp"):
+                p = os.path.join(root, f)
+                try:
+                    os.remove(p)
+                    removed += 1
+                except OSError:
+                    pass
+    if removed > 0:
+        log(f"[CLEANUP] continuous raw cleanup: removed {removed} intermediate cache files for {symbol} from {cache_dir}")
+    return removed
 
 
 # ------------------------------------------------------------------------------
@@ -180,14 +226,16 @@ def run_pipeline(
     max_workers: int = 16,
     footprint_days: int = 0,
     all_footprint: bool = False,
-    clean_cache: bool = False,
+    clean_cache: bool = True,
     force: bool = False,
     run_audit: bool = True,
     skip_if_fresh_hours: float = 24.0,
     log: Callable[[str], None] = _log,
+    min_free_disk_gb: float = 5.0,
     **_legacy_kwargs,   # start_year / end_year from older callers are accepted and ignored
 ) -> bool:
     t_start = time.time()
+    check_disk_space(target_dir, min_free_gb=min_free_disk_gb, log=log)
     start_dt = _parse_date(start_date_str or DEFAULT_START_DATE)
     listing = _parse_date(FUTURES_LISTING_DATES.get(symbol, WARMUP_START_DATE))
     effective_start = max(start_dt, listing)
@@ -260,8 +308,16 @@ def run_pipeline(
     try:
         mpath = exporter.export_master(master, symbol)
         written.append(mpath)
-        lpath = exporter.export_ladder(ladder, symbol)
-        written.append(lpath)
+        if ladder is not None and not ladder.empty:
+            lpath = exporter.export_ladder(ladder, symbol)
+            written.append(lpath)
+        else:
+            lpath = exporter.ladder_path(symbol)
+            if os.path.exists(lpath):
+                try:
+                    os.remove(lpath)
+                except OSError:
+                    pass
         manifest_path = exporter.write_manifest(master, symbol, ladder_stats, {**report.to_dict(), "repair_rounds": rounds},
                                                 metrics_absent_days=getattr(fetcher, "metrics_absent_days", None))
         written.append(manifest_path)
@@ -311,14 +367,26 @@ def run_pipeline(
                     pass
         return False
 
-    log(f"[OK] {symbol}: exported {os.path.basename(mpath)} ({os.path.getsize(mpath) / 1_048_576:.1f} MB) + "
-        f"{os.path.basename(lpath)} ({os.path.getsize(lpath) / 1_048_576:.1f} MB) in {time.time() - t3:.1f}s")
+    ladder_info = f" + {os.path.basename(lpath)} ({os.path.getsize(lpath) / 1_048_576:.1f} MB)" if os.path.exists(lpath) else " (master only, zero synthetic footprint)"
+    log(f"[OK] {symbol}: exported {os.path.basename(mpath)} ({os.path.getsize(mpath) / 1_048_576:.1f} MB){ladder_info} in {time.time() - t3:.1f}s")
 
     if clean_cache and os.path.isdir(cache_dir):
-        shutil.rmtree(cache_dir, ignore_errors=True)
-        log(f"[CLEANUP] cache removed: {cache_dir}")
+        cleanup_symbol_raw_cache(cache_dir, symbol, log=log)
+        for root, dirs, files in os.walk(cache_dir, topdown=False):
+            for d in dirs:
+                dp = os.path.join(root, d)
+                try:
+                    if not os.listdir(dp):
+                        os.rmdir(dp)
+                except OSError:
+                    pass
+        if os.path.isdir(cache_dir) and not os.listdir(cache_dir):
+            try:
+                os.rmdir(cache_dir)
+            except OSError:
+                pass
 
-    log(f"[{'SUCCESS' if audit_ok else 'WARNING'}] {symbol}: {len(master):,} candles / {len(ladder):,} rungs in {(time.time() - t_start) / 60:.2f} min")
+    log(f"[{'SUCCESS' if audit_ok else 'WARNING'}] {symbol}: {len(master):,} candles in {(time.time() - t_start) / 60:.2f} min")
     return audit_ok
 
 
@@ -335,7 +403,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     ap.add_argument("--workers", type=int, default=16)
     ap.add_argument("--footprint-days", type=int, default=0, help="days of aggTrades tick footprint to fetch (0 = none)")
     ap.add_argument("--all-footprint", action="store_true", help="fetch aggTrades for the full slice")
-    ap.add_argument("--clean-cache", action="store_true", help="delete the raw download cache after a successful export")
+    ap.add_argument("--clean-cache", dest="clean_cache", action="store_true", default=True,
+                    help="delete intermediate raw download cache continuously after each successful export (default: True)")
+    ap.add_argument("--no-clean-cache", dest="clean_cache", action="store_false",
+                    help="preserve raw download cache for offline debugging")
     ap.add_argument("--force", action="store_true", help="rebuild even if fresh, contract-compliant output exists")
     ap.add_argument("--start-year", type=int, help=argparse.SUPPRESS)   # legacy no-ops
     ap.add_argument("--end-year", type=int, help=argparse.SUPPRESS)
@@ -350,7 +421,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             ok = run_pipeline(
                 symbol=sym, start_date_str=args.start_date, target_dir=args.target_dir, cache_dir=args.cache_dir,
                 max_workers=args.workers, footprint_days=args.footprint_days, all_footprint=args.all_footprint,
-                clean_cache=False, force=args.force, run_audit=True,
+                clean_cache=args.clean_cache, force=args.force, run_audit=True,
             )
             results[sym] = "SUCCESS" if ok else "REJECTED"
         except Exception as exc:
@@ -378,7 +449,7 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     if args.clean_cache and audit_ok and os.path.isdir(args.cache_dir):
         shutil.rmtree(args.cache_dir, ignore_errors=True)
-        _log(f"[CLEANUP] cache removed: {args.cache_dir}")
+        _log(f"[CLEANUP] Final cache purge completed: {args.cache_dir}")
     return 0 if audit_ok and all(v == "SUCCESS" for v in results.values()) else 1
 
 

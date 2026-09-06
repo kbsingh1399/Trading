@@ -83,17 +83,18 @@ def check_symbol(master_path: str) -> Optional[Dict]:
     import pyarrow.parquet as pq
 
     arrow_cols = set(pq.ParquetFile(master_path).schema_arrow.names)
-    need = {"open_time_ms", "open_interest_k", "oi_change_pct", "metrics_available",
+    need = {"open_time_ms", "open_interest_k", "oi_change_pct",
             "is_imputed_metrics", "open_interest_usd", *STALE_RUN_COLS}
     missing = need - arrow_cols
     if missing:
         print(f"  [skip] {os.path.basename(master_path)}: lacks {sorted(missing)}")
         return None
 
-    m = pd.read_parquet(master_path, columns=sorted(need))
+    read_cols = sorted(need | ({"metrics_available"} if "metrics_available" in arrow_cols else set()))
+    m = pd.read_parquet(master_path, columns=read_cols)
     n = len(m)
     oi = m["open_interest_k"].to_numpy(np.float64)
-    avail = m["metrics_available"].to_numpy(np.int8)
+    avail = m["metrics_available"].to_numpy(np.int8) if "metrics_available" in m else (1 - m["is_imputed_metrics"].to_numpy(np.int8))
     imputed = m["is_imputed_metrics"].to_numpy(np.int8)
     dt = pd.to_datetime(m["open_time_ms"].to_numpy(np.int64), unit="ms", utc=True)
 

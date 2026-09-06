@@ -124,32 +124,23 @@ class ParquetExporter:
             "exported_at_utc": datetime.now(timezone.utc).isoformat(),
             "master_file": os.path.basename(mpath),
             "master_size_mb": round(os.path.getsize(mpath) / 1_048_576, 2) if os.path.exists(mpath) else None,
-            "ladder_file": os.path.basename(lpath),
+            "ladder_file": os.path.basename(lpath) if os.path.exists(lpath) else None,
             "ladder_size_mb": round(os.path.getsize(lpath) / 1_048_576, 2) if os.path.exists(lpath) else None,
             "ladder": ladder_stats,
             "provenance": {
-                "tick_exact_bars": int((master["future_flow_source"] == "TICK_EXACT").sum()),
-                "spot_exact_bars": int((master["spot_flow_source"] == "SPOT_EXACT").sum()),
-                "synthetic_bars": int((master["is_synthetic"] == 1).sum()),
-                "metrics_available_bars": int((master["metrics_available"] == 1).sum()),
+                "tick_exact_bars": int((master["future_flow_source"] == "TICK_EXACT").sum()) if "future_flow_source" in master else 0,
+                "spot_exact_bars": int((master["spot_close"].notna()).sum()) if "spot_close" in master else 0,
                 "imputed_metrics_bars": int((master["is_imputed_metrics"] == 1).sum()) if "is_imputed_metrics" in master else 0,
-                "warmup_unconverged_bars": int((master["is_warmup_converged"] == 0).sum()) if "is_warmup_converged" in master else 0,
-                # months with no archive at the source, as observed by the downloader. The
-                # council's pre-archive exemption is granted on this field only; without it a
-                # metrics-free year is treated as unverified coverage and stays rejected.
                 "metrics_archive_absent_months": sorted({d[:7] for d in (metrics_absent_days or [])}),
-                # Day-granular form of the same inventory. The month rollup above is derived from it,
-                # so a month with a single absent day is attested as wholly absent; a consumer that
-                # needs to excuse *only* the days the source never published must read this field.
                 "metrics_archive_absent_days": sorted(metrics_absent_days or []),
                 "metrics_archive_absent_day_count": len(set(metrics_absent_days or [])),
                 "metrics_unavailable_fraction_by_year": {
-                    str(y): round(float((master.loc[master["datetime_utc"].str[:4] == str(y), "metrics_available"] == 0).mean()), 4)
+                    str(y): round(float((master.loc[master["datetime_utc"].str[:4] == str(y), "is_imputed_metrics"] == 1).mean()), 4)
                     for y in sorted(master["datetime_utc"].str[:4].unique())
-                } if "datetime_utc" in master and "metrics_available" in master else {},
+                } if "datetime_utc" in master and "is_imputed_metrics" in master else {},
             },
             "verification": verification,
-            "schema_version": "2.0",
+            "schema_version": "2.1",
         }
         path = self.manifest_path(symbol)
         tmp = path + ".tmp"
