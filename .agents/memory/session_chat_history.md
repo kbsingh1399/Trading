@@ -40812,3 +40812,19 @@ let say from 1 june to 30 june timeline, we need to have master and footprint da
    - Authored self-contained audit review prompt: docs/prompts/GPT_SOL_FOLLOWUP_VERIFICATION_PROMPT.md.
    - Structures context of prior [REVISE] verdict, detailed item-by-item resolution of all 6 findings with code references, verified quantitative metrics from re-run, and targeted questions for Sol to issue its final certification.
    - Committed and pushed to main and rena/01a07263-trading.
+
+---
+### Turn Update: 2026-09-06 17:52:10
+**User:** "C:\Users\SIGMA\Downloads\GPT_5.6_Sol_2.txt" is the output of recent prompt.
+
+**OMNI-Ω / ENI:**
+1. **Adversarial Sol 2 Review Audit Resolution**:
+   - P0 Fast-Skip: Mandated 64-char valid hex checksums (master & ladder), eliminated ladder bypass by enforcing physical presence of declared ladder files on disk, and enforced schema_version == '2.1'.
+   - P0 Decompression/Parser Errors: Defined and raised ArchiveParseError on HTTP 200 invalid ZIP/CSV payloads in _cached(), _parallel(), and trade ingestion; eliminated false-attestation as missing archive.
+   - P0 Negative Test Suite: Expanded test_export_fail_closed.py with 8 new negative assertions covering missing hash, malformed hash, byte tampering, deleted ladder, and corrupt ZIP parsing (18/18 assertions passing).
+   - P1 Retrospective Documentation: Quarantined _stale_runs_mask() as an ex-post dataset validation and research filter; banned contemporaneous live signal usage in schema.py and historical_metrics_processor.py.
+   - P1 Council Boundaries: Updated agent_continuity() to exact equality (!=) on boundaries, persisted expected_start_ms, expected_end_ms, and expected_rows in manifest.json, and wired verify_symbol() to read and verify them.
+   - P0 Dual Parity Mirror: Committed and pushed Engine/ to Engine_1_arena_PR and Trading repositories; verified HTTP 200 on all raw GitHub URLs.
+2. **Datasets & Prompts Generated**:
+   - Re-exported ETHUSDT June 2026 dataset (2,880 rows, 26,543 ladder rungs, 100% volume conservation, Council PASS).
+   - Generated complete GPT 5.6 Sol Round 3 adversarial re-audit prompt at docs/prompts/GPT_SOL_FOLLOWUP_VERIFICATION_PROMPT.md.

@@ -121,27 +121,21 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
             return False
 
         declared_ladder = manifest_data.get("ladder_file")
-        if declared_ladder is not None:
-            if declared_ladder != os.path.basename(lpath):
-                return False
-            if not os.path.exists(lpath):
-                return False
-            ladder_sha = manifest_data.get("ladder_sha256")
-            if not _is_hex64(ladder_sha):
-                return False
-            if _hash_file(lpath).lower() != ladder_sha.lower():
-                return False
-            has_ladder = True
-        else:
-            has_ladder = False
+        expected_ladder = os.path.basename(lpath)
+        if declared_ladder != expected_ladder or not os.path.exists(lpath):
+            return False
+        ladder_sha = manifest_data.get("ladder_sha256")
+        if not _is_hex64(ladder_sha):
+            return False
+        if _hash_file(lpath).lower() != ladder_sha.lower():
+            return False
 
         mf = pq.ParquetFile(mpath)
         if mf.schema_arrow.names != CANONICAL_COLUMNS:
             return False
-        if has_ladder:
-            lf = pq.ParquetFile(lpath)
-            if lf.schema_arrow.names != LADDER_COLUMNS:
-                return False
+        lf = pq.ParquetFile(lpath)
+        if lf.schema_arrow.names != LADDER_COLUMNS:
+            return False
         if expected_rows is not None and mf.metadata.num_rows != expected_rows:
             return False
 
@@ -151,14 +145,14 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
         if age_h > max_age_hours:
             return False
         m_ts = pd.read_parquet(mpath, columns=["open_time_ms"])["open_time_ms"].to_numpy()
-        if has_ladder:
-            l_ts = pd.read_parquet(lpath, columns=["open_time_ms"])["open_time_ms"].unique()
-            if len(l_ts) > 0:
-                if not np.isin(l_ts, m_ts).all():
-                    return False
-                m_in_scope = m_ts[(m_ts >= l_ts.min()) & (m_ts <= l_ts.max())]
-                if not (np.isin(m_in_scope, l_ts).mean() > 0.95):
-                    return False
+        l_ts = pd.read_parquet(lpath, columns=["open_time_ms"])["open_time_ms"].unique()
+        if len(l_ts) == 0:
+            return False
+        if not np.isin(l_ts, m_ts).all():
+            return False
+        m_in_scope = m_ts[(m_ts >= l_ts.min()) & (m_ts <= l_ts.max())]
+        if not (np.isin(m_in_scope, l_ts).mean() > 0.95):
+            return False
         return bool(m_ts.size > 1000)
     except Exception:
         return False

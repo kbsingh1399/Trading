@@ -644,23 +644,63 @@ def verify_symbol(target_dir: str, symbol: str, log: Callable[[str], None] = pri
     mpath = os.path.join(target_dir, master_filename(symbol))
     lpath = os.path.join(target_dir, ladder_filename(symbol))
     ppath = os.path.join(target_dir, manifest_filename(symbol))
+
     if not os.path.exists(mpath):
-        return CouncilReport(symbol, False, 0, 0, [Finding("Council", "missing", f"{mpath} not found")], {})
-    master = pd.read_parquet(mpath)
-    ladder = pd.read_parquet(lpath) if os.path.exists(lpath) else None
+        return CouncilReport(symbol, False, 0, 0, [Finding("Council", "missing_master", f"{mpath} not found")], {})
+    if not os.path.exists(lpath):
+        return CouncilReport(symbol, False, 0, 0, [Finding("Council", "missing_ladder", f"{lpath} not found")], {})
+
+    # Manifest is mandatory for artifact certification
+    if not os.path.exists(ppath):
+        return CouncilReport(symbol, False, 0, 0, [Finding("Council", "missing_manifest", f"Manifest {ppath} not found (manifest is mandatory for certification)")], {})
+
+    try:
+        with open(ppath, "r", encoding="utf-8") as fh:
+            mdata = json.load(fh)
+    except Exception as exc:
+        return CouncilReport(symbol, False, 0, 0, [Finding("Council", "unreadable_manifest", f"Manifest {ppath} unreadable or corrupt JSON: {exc}")], {})
+
+    exp_start_ms = mdata.get("expected_start_ms")
+    exp_end_ms = mdata.get("expected_end_ms")
+    exp_rows = mdata.get("expected_rows")
+
+    manifest_findings: List[Finding] = []
+    if exp_start_ms is None or not isinstance(exp_start_ms, int):
+        manifest_findings.append(Finding("Council", "manifest_expected_start", f"expected_start_ms missing or not int: {exp_start_ms!r}"))
+    if exp_end_ms is None or not isinstance(exp_end_ms, int):
+        manifest_findings.append(Finding("Council", "manifest_expected_end", f"expected_end_ms missing or not int: {exp_end_ms!r}"))
+    if exp_rows is None or not isinstance(exp_rows, int):
+        manifest_findings.append(Finding("Council", "manifest_expected_rows", f"expected_rows missing or not int: {exp_rows!r}"))
+
+    if isinstance(exp_start_ms, int) and isinstance(exp_end_ms, int) and isinstance(exp_rows, int):
+        calc_exp_first = (exp_start_ms // BAR_MS) * BAR_MS
+        calc_exp_last = (exp_end_ms // BAR_MS) * BAR_MS
+        calc_rows = int(((calc_exp_last - calc_exp_first) // BAR_MS) + 1)
+        if exp_rows != calc_rows:
+            manifest_findings.append(Finding("Council", "manifest_rows_inconsistent",
+                                             f"manifest expected_rows ({exp_rows}) != calculated from expected_start/end ({calc_rows})"))
+
+    try:
+        master = pd.read_parquet(mpath)
+        ladder = pd.read_parquet(lpath)
+    except Exception as exc:
+        return CouncilReport(symbol, False, 0, 0, [Finding("Council", "unreadable_parquet", f"Failed to read parquet: {exc}")], {})
+
+    if isinstance(exp_rows, int) and len(master) != exp_rows:
+        manifest_findings.append(Finding("Council", "master_rows_mismatch",
+                                         f"master length ({len(master)}) != manifest expected_rows ({exp_rows})"))
+
     attested = _attested_absent_months(symbol, target_dir)
-    exp_start_ms = None
-    exp_end_ms = None
-    if os.path.exists(ppath):
-        try:
-            with open(ppath, "r", encoding="utf-8") as fh:
-                mdata = json.load(fh)
-                exp_start_ms = mdata.get("expected_start_ms")
-                exp_end_ms = mdata.get("expected_end_ms")
-        except Exception:
-            pass
-    return run_council(master, ladder, symbol, log, attested_months=attested,
-                       expected_start_ms=exp_start_ms, expected_end_ms=exp_end_ms)
+    report = run_council(master, ladder, symbol, log, attested_months=attested,
+                         expected_start_ms=exp_start_ms if isinstance(exp_start_ms, int) else None,
+                         expected_end_ms=exp_end_ms if isinstance(exp_end_ms, int) else None)
+
+    if manifest_findings:
+        report.findings.extend(manifest_findings)
+        report.passed = False
+        report.agent_status["Council:ManifestContract"] = f"FAIL ({len(manifest_findings)})"
+
+    return report
 
 
 def verify_all_parquets(target_dir: str = DEFAULT_TARGET, symbols: Optional[List[str]] = None, log: Callable[[str], None] = print) -> bool:
