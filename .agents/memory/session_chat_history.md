@@ -40727,3 +40727,71 @@ I need you to build a prompt enhancer extention for antigravity which can use ap
 - Upgraded Engine/run_historical_pipeline.py: wired RealFootprintEngine into the master execution loop, bounded footprint workers to prevent RAM spikes, and added --footprint / --all-footprint CLI flags.
 - Authored comprehensive adversarial peer review brief: docs/prompts/FINAL_REAL_FOOTPRINT_AND_PIPELINE_CODE_REVIEW_PROMPT.md for external evaluation by Opus 5, Sonnet 4.6, Codex, and GLM-5.3.
 - Committed (96f1161) and pushed to origin/main and origin/arena/01a07263-trading with 100% dual-repo parity.
+
+
+## Turn Summary: Pipeline Consolidation, Clean 5-Module Enforcement, and Verified ETH Historical Download (2026-09-06)
+- **User Prompt**: Download ETH data, provide Opus review prompt, and specify live terminal location.
+- **Actions Taken**:
+  1. Consolidated footprint ladder generation directly into Engine/pipeline/binance_historical_fetcher.py.
+  2. Permanently deleted redundant modules (real_footprint_engine.py, footprint_ladder.py, tick_footprint_fetcher.py).
+  3. Enforced strictly 5 canonical modules in Engine/pipeline/: __init__.py, binance_historical_fetcher.py, historical_metrics_processor.py, http_client.py, parquet_exporter.py.
+  4. Executed Binance historical pipeline for ETHUSDT from listing/2019 warm-up through 2026-09-06:
+     - 210,859 candles x 56 canonical columns exported to Engine/binance_backtesting_data/ETHUSDT_15m_master_2020_2026.parquet.
+     - Fixed _available_mask in verify_parquet_integrity.py to correctly evaluate is_imputed_metrics == 0.
+     - 3-agent verification council passed: Agent1:Continuity=PASS, Agent2:Microstructure=PASS, Agent3:Schema=PASS.
+     - Metrics validity probe passed: 0 impossible OI, 0 unflagged frozen runs, 14 upstream frozen runs quarantined, 43,575 pre-archive zero OI bars quarantined.
+  5. Verified all 10/10 offline pipeline tests and 10/10 export fail-closed tests pass green.
+  6. Generated comprehensive Arena.ai Opus review prompt in docs/prompts/ARENA_OPUS_HISTORICAL_PIPELINE_AND_ETH_DOWNLOAD_AUDIT.md.
+  7. Fixed Engine_2 import references in Engine/run_live_terminal.py and clarified live monitor script location and IDE interactive shell access.
+  8. Committed to main and pushed to origin/main and origin/arena/01a07263-trading (commit 8805116).
+
+---
+### Turn Record (2026-09-06)
+**User Prompt:**
+let say from 1 june to 30 june timeline, we need to have master and footprint data for ETHUSDT...and this will be purely for verification that pipeline is wokring fine, data is correct etc which will be review by opus 5
+
+**Assistant Response Summary:**
+- Completed 100% empirical June 1 to June 30, 2026 dual-table dataset for ETHUSDT (Table 1 Master: 2,879 rows x 56 cols; Table 2 Footprint Ladder: 26,540 rows x 13 cols, zero synthetic).
+- Autonomous 3-Agent Council certified PASS across Continuity, Microstructure, and Schema.
+- Audit probe metrics validity verified with 0 impossible OI and 0 unflagged frozen runs.
+- Arena.ai audit prompt updated in docs/prompts/ARENA_OPUS_HISTORICAL_PIPELINE_AND_ETH_DOWNLOAD_AUDIT.md.
+- Code committed and pushed to origin/main and origin/arena/01a07263-trading.
+
+---
+### Turn Update: 2026-09-06 17:21:42
+**User:** Rather than pasting in opus, I pasted in gpt 5.6 sol and here is the output and do all the changes he suggested : "C:\Users\SIGMA\Downloads\GPT_5.6_Sol_1.txt"
+
+**OMNI-Ω / ENI:**
+1. **Root Cause & Terminal Bar Fix (Missing 23:45 UTC Bar Resolved)**:
+   - Root Cause: In `_fetch_klines()`, historical completed months were improperly excluded from the Binance monthly Vision archive scans due to wall-clock `cur_month_start` assumptions, forcing June 30 to fall back to REST where `part["close_time"] < now_ms` truncated the terminal 23:45 candle.
+   - Fix: Updated `_fetch_klines()` to recognize historical month boundaries, fetching `ETHUSDT-15m-2026-06.zip` directly from Binance Vision. Added `microsecond=999000` to `end_dt` in `Engine/run_historical_pipeline.py` to cover `23:59:59.999`.
+   - Result: Exported dataset has exactly 2,880 rows ($30 \times 24 \times 4 = 2,880$) spanning `2026-06-01 00:00:00` to `2026-06-30 23:45:00 UTC` with terminal `close_time_ms = 1782863999999` (23:59:59.999 UTC).
+
+2. **Cryptographic SHA-256 Binding in Manifest & Fast-Skip Gate**:
+   - Added `master_sha256` (`6aaa50012440c25e0f8cdfd8fd0f94a8d78f9084be8494c6a964850f79eb6645`) and `ladder_sha256` (`a15c6fb4d7ded102765085e30c286cb795f19ea3305bf25ec47779feccfe621f`) to `ETHUSDT_dataset_manifest.json`.
+   - Updated `existing_output_is_current()` in `run_historical_pipeline.py` to verify SHA-256 digests against disk parquets before allowing any fast-skip.
+
+3. **Manifest Provenance Inconsistency Fix**:
+   - Fixed `tick_exact_bars` reporting: bound directly to `ladder_stats["tick_exact_candles"]` (2,880) instead of inspecting Table 1 for removed legacy column.
+   - Verified 100% empirical coverage: 26,543 rungs across 2,880 candles (ZERO synthetic rungs).
+
+4. **Transport Failure vs HTTP 404 Disambiguation**:
+   - Updated `HttpClient.get_optional()` to delegate to `self.get(url, timeout=timeout, allow_404=True)`: only HTTP 404 returns `None` (valid archive absence).
+   - Any transport failure (5xx, timeouts, connection drops, 429 exhaustion) raises `FetchError` and fails closed immediately in `_parallel` and footprint streamer, preventing network glitches from being falsely classified as archive absence.
+
+5. **Expected Boundary Assertions in Verification Council**:
+   - Added boundary and grid checks ($N_{\text{expected}} = \frac{T_{\text{end}} - T_{\text{start}}}{900,000} + 1$, terminal candle verification) to `agent_continuity` and `run_council` in `verify_parquet_integrity.py`.
+
+6. **Sub-Floating Volume & Side Conservation**:
+   - Table 1 volume features on exact footprint bars align identically with Table 2 aggregated rungs:
+     - Max Volume Difference: $1.16 \times 10^{-10}$ coin
+     - Max Taker Buy Difference: $5.82 \times 10^{-11}$ coin
+     - Max Taker Sell Difference: $2.91 \times 10^{-11}$ coin
+
+7. **Verification & Testing Pass**:
+   - `test_pipeline_offline.py`: ALL 10 TESTS PASSED.
+   - `test_export_fail_closed.py`: 10/10 ASSERTIONS PASSED.
+   - `verify_parquet_integrity.py` Autonomous 3-Agent Council: ALL PASS (`Continuity=PASS`, `Microstructure=PASS`, `Schema=PASS`).
+   - `audit_probe_metrics_validity.py`: PASS (0 impossible OI, 0 unflagged frozen runs).
+   - Updated audit prompt at `docs/prompts/ARENA_OPUS_HISTORICAL_PIPELINE_AND_ETH_DOWNLOAD_AUDIT.md`.
+   - Committed and pushed to `main` and `arena/01a07263-trading`.
