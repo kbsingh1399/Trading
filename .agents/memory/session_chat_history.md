@@ -40679,3 +40679,25 @@ I need you to build a prompt enhancer extention for antigravity which can use ap
 - Computed SHA-256 checksums for master parquet (53034704340b6b81aff7fc0de30bbf630bd9ce3e8f135678de2c8f13392044a6) and ladder parquet (a1502358c959b20c7405bf4ee406223329ff5ec2f2ca75b452e6a9ffd9c1a771).
 - Updated BTCUSDT_dataset_manifest.json with SHA256 checksums, commit SHA, and release classification (CONDITIONAL_ACCEPT).
 - Committed and pushed commit 275db7a to origin/main and origin/arena/01a07263-trading in 100% parity.
+---
+**User:** //goal /brainstorm /orchestrate and also what is this time stamp...and we donot need second image columns and is spot values are real in thrid image...and do we need column in 4th image...delete them if not required...Ensure that no synthetic data except liquidation because for that we don't have...rest....Each data need to be download and should be well strucuted. use multiple data skills / and if we download we should have a cotnious cleanup of raw files as well so that we our local directory space didn't shoot up...
+**Assistant:**
+- Addressed 4 Image Queries:
+  1. Timestamp (`open_time_ms`): Explained Unix epoch milliseconds format (900,000 ms cadence).
+  2. Image 2: Pruned redundant audit string columns (`future_flow_source`, `spot_flow_source`, `poc_source`) and constant flags (`is_synthetic`, `metrics_available`).
+  3. Image 3: Confirmed spot prices (~$11.6k in Sept 2020) are 100% real trade prices from Binance Spot API (`/api/v3/klines`).
+  4. Image 4: Clarified `Rec` is Tad UI viewer row index; deleted constant `is_warmup_converged` (100% 1s); retained 1-bit `is_imputed_metrics` quality mask for 2022 Binance outage.
+- Zero Synthetic Footprint Mandate:
+  - Deleted `BTCUSDT_15m_footprint_ladder.parquet` and pruned all synthetic footprint columns (`fp_poc_vol_ratio`, `fp_stacked_buy_imb`, `fp_stacked_sell_imb`, `fp_delta`, `fp_poc`, `max_trade_vol_btc`, etc.).
+  - Preserved modeled institutional liquidation metrics (`long_liq_usd`, `short_liq_usd`, `long_liq_zs`, `short_liq_zs`, `liq_imbalance_ratio`) as explicitly requested.
+  - Contract reduced from 72 columns to 56 clean canonical columns.
+- Continuous Raw Cache Cleanup & Disk Space Protection:
+  - Added `cleanup_symbol_raw_cache()` to immediately delete intermediate raw downloaded chunks per symbol upon successful export.
+  - Added `check_disk_space()` governor (5GB threshold) before fetching.
+  - Defaulted `clean_cache=True` in `run_pipeline()` and CLI (`--clean-cache` / `--no-clean-cache`).
+  - Purged leftover root `data_cache/` (reclaimed ~30 MB).
+  - Updated `existing_output_is_current()` to verify single-table master datasets without requiring synthetic ladders.
+  - Re-exported clean `BTCUSDT_15m_master_2020_2026.parquet` (210,848 rows x 56 cols, 86.54 MB).
+  - Passed Autonomous 3-Agent Council and Metrics Validity Probe.
+  - Committed (`c723485`) and pushed to `origin/main` and `origin/arena/01a07263-trading` with 100% `.agents` parity.
+
