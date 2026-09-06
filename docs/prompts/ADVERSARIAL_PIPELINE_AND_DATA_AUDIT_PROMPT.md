@@ -1,5 +1,87 @@
-﻿# ADVERSARIAL PIPELINE & DATA QUALITY AUDIT
+# ADVERSARIAL PIPELINE & DATA QUALITY AUDIT
 ## Institutional Quantitative Backtesting Infrastructure — Fault-Finding Brief
+
+---
+
+## GITHUB ACCESS — ALL FILES AVAILABLE HERE
+
+**Repo**: `https://github.com/kbsingh1399/Trading`
+**Commit**: `1d85dcb` (HEAD = `main` = `arena/01a07263-trading` — byte-for-byte identical mirrors)
+
+Use these raw URLs to fetch files directly. Replace `{SYMBOL}` with any of the 18 symbols below.
+
+### Pipeline Code (fetch and read these first)
+
+```
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_historical_pipeline.py
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/schema.py
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/historical_metrics_processor.py
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/footprint_ladder.py
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/parquet_exporter.py
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/binance_historical_fetcher.py
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/verification/verify_parquet_integrity.py
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/canonical_indicators.py
+```
+
+### Dataset Manifests (JSON — readable without parquet tooling)
+
+18 symbols: `ADA APT ARB AVAX BCH BNB BTC DOGE DOT ETH LINK LTC NEAR OP SOL SUI TRX XRP`
+
+```
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/{SYMBOL}_dataset_manifest.json
+```
+
+Direct links for key symbols:
+```
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/BTCUSDT_dataset_manifest.json
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/ETHUSDT_dataset_manifest.json
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/SOLUSDT_dataset_manifest.json
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/SUIUSDT_dataset_manifest.json
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/TRXUSDT_dataset_manifest.json
+```
+
+### Verification Report
+```
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/verification_report.json
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/verification/forensic_audit_all18.json
+```
+
+### Certification Reports
+```
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/docs/PIPELINE_CERTIFICATION_ROUND5.md
+```
+
+### Parquet Files (binary — requires pandas/pyarrow to read)
+
+Master parquets (~50-98 MB each):
+```
+https://github.com/kbsingh1399/Trading/raw/main/Engine/binance_backtesting_data/{SYMBOL}USDT_15m_master_2020_2026.parquet
+```
+
+Footprint ladder parquets (~10-18 MB each):
+```
+https://github.com/kbsingh1399/Trading/raw/main/Engine/binance_backtesting_data/{SYMBOL}USDT_15m_footprint_ladder.parquet
+```
+
+Example (BTC):
+```
+https://github.com/kbsingh1399/Trading/raw/main/Engine/binance_backtesting_data/BTCUSDT_15m_master_2020_2026.parquet
+https://github.com/kbsingh1399/Trading/raw/main/Engine/binance_backtesting_data/BTCUSDT_15m_footprint_ladder.parquet
+```
+
+### Strategy File
+```
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/s1_liquidation_cascade.py
+```
+
+### Agent Rules (universe definitions live here)
+```
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/.agents/AGENTS.md
+```
+
+---
+
+> **Recommended audit sequence**: (1) Fetch `schema.py` to confirm SYMBOLS list, (2) fetch all 18 manifests to read provenance without downloading parquets, (3) download BTC master parquet to run Python probes, (4) fetch pipeline source files to trace indicator computation.
 
 ---
 
