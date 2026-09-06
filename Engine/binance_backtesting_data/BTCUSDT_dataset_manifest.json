@@ -128,5 +128,18 @@
     "findings": [],
     "repair_rounds": 0
   },
-  "schema_version": "2.0"
+  "schema_version": "2.0",
+  "checksums": {
+    "master_sha256": "53034704340b6b81aff7fc0de30bbf630bd9ce3e8f135678de2c8f13392044a6",
+    "ladder_sha256": "a1502358c959b20c7405bf4ee406223329ff5ec2f2ca75b452e6a9ffd9c1a771",
+    "commit_sha": "aa055f8"
+  },
+  "release_classification": {
+    "master_15m_status": "ACCEPTED",
+    "footprint_ladder_status": "SYNTHETIC_ONLY",
+    "mandatory_strategy_gates": [
+      "df['spot_flow_source'] == 'SPOT_EXACT'",
+      "df['is_imputed_metrics'] == 0"
+    ]
+  }
 }
