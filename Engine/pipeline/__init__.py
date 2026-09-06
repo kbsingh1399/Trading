@@ -4,6 +4,7 @@ Consolidated under BinanceHistoricalFetcher.
 """
 
 from .binance_historical_fetcher import (
+    ArchiveParseError,
     BinanceHistoricalFetcher,
     aggregate_trades_to_ladder,
     assemble_ladder,
@@ -15,6 +16,7 @@ from .http_client import FetchError, HttpClient
 from .parquet_exporter import ParquetExporter, SchemaError
 
 __all__ = [
+    "ArchiveParseError",
     "BinanceHistoricalFetcher",
     "HistoricalMetricsProcessor",
     "ParquetExporter",

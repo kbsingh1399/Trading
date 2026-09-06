@@ -16,6 +16,8 @@ import os
 import sys
 import tempfile
 
+from datetime import datetime, timezone
+
 import pandas as pd
 
 ENGINE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -24,8 +26,7 @@ if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
 import Engine.run_historical_pipeline as rp  # noqa: E402
-from Engine.core.schema import master_filename  # noqa: E402
-from Engine.core.schema import master_filename  # noqa: E402
+from Engine.core.schema import ladder_filename, manifest_filename, master_filename  # noqa: E402
 from Engine.pipeline.binance_historical_fetcher import build_ladder_from_trades  # noqa: E402
 from Engine.pipeline.parquet_exporter import ParquetExporter, SchemaError  # noqa: E402
 from Engine.verification.test_pipeline_offline import make_streams, make_trades  # noqa: E402
@@ -90,7 +91,7 @@ def _run(d, boom):
 def test_manifest_failure_leaves_no_partial_artifacts() -> None:
     print("\n1. a manifest write that dies after the parquets are on disk")
 
-    def boom(self, master, symbol, ladder_stats, verification, metrics_absent_days=None):
+    def boom(*args, **kwargs):
         raise SchemaError("simulated: manifest rejected")
 
     with tempfile.TemporaryDirectory() as d:
@@ -137,6 +138,73 @@ def test_certificate_is_what_grants_the_skip() -> None:
               f"{os.path.getsize(mpath) / 1_048_576:.1f} MB)")
 
 
+def test_manifest_hash_and_ladder_contract() -> None:
+    print("\n4. fast-skip rejects missing/invalid SHA256, file tampering, and missing declared ladders")
+    with tempfile.TemporaryDirectory() as d:
+        _run(d, None)
+        mpath = os.path.join(d, master_filename("DOGEUSDT"))
+        lpath = os.path.join(d, ladder_filename("DOGEUSDT"))
+        ppath = os.path.join(d, manifest_filename("DOGEUSDT"))
+
+        check("baseline: current", rp.existing_output_is_current(d, "DOGEUSDT", max_age_hours=1e9))
+
+        with open(ppath, encoding="utf-8") as fh:
+            valid_man = json.load(fh)
+
+        # 4a: Missing master_sha256
+        man_no_sha = dict(valid_man)
+        man_no_sha["master_sha256"] = None
+        with open(ppath, "w", encoding="utf-8") as fh:
+            json.dump(man_no_sha, fh)
+        check("missing master_sha256 -> rejected", not rp.existing_output_is_current(d, "DOGEUSDT", max_age_hours=1e9))
+
+        # 4b: Malformed / short hash
+        man_bad_sha = dict(valid_man)
+        man_bad_sha["master_sha256"] = "abc123not64hex"
+        with open(ppath, "w", encoding="utf-8") as fh:
+            json.dump(man_bad_sha, fh)
+        check("malformed master_sha256 -> rejected", not rp.existing_output_is_current(d, "DOGEUSDT", max_age_hours=1e9))
+
+        # 4c: Tampered master file bytes
+        with open(ppath, "w", encoding="utf-8") as fh:
+            json.dump(valid_man, fh)
+        with open(mpath, "ab") as fh:
+            fh.write(b"\x00\x00\x00corrupt")
+        check("tampered master file bytes -> rejected", not rp.existing_output_is_current(d, "DOGEUSDT", max_age_hours=1e9))
+
+        # Restore file by re-running
+        _run(d, None)
+        check("re-export restored current status", rp.existing_output_is_current(d, "DOGEUSDT", max_age_hours=1e9))
+
+        # 4d: Ladder deleted when declared in manifest
+        check("ladder exists on disk after export", os.path.exists(lpath))
+        if os.path.exists(lpath):
+            os.remove(lpath)
+            check("ladder deleted while declared in manifest -> rejected", not rp.existing_output_is_current(d, "DOGEUSDT", max_age_hours=1e9))
+
+
+def test_corrupt_archive_raises_archive_parse_error() -> None:
+    print("\n5. corrupt archive (HTTP 200 with invalid zip/csv) raises ArchiveParseError")
+    from Engine.pipeline.binance_historical_fetcher import BinanceHistoricalFetcher, ArchiveParseError
+
+    class _FakeHttp:
+        def get_optional(self, url: str):
+            return b"THIS_IS_NOT_A_VALID_ZIP_ARCHIVE_DATA"
+
+    with tempfile.TemporaryDirectory() as d:
+        cf = BinanceHistoricalFetcher(cache_dir=os.path.join(d, "cache"), max_workers=1, http=_FakeHttp(), log=QUIET)
+        raised = False
+        try:
+            cf.fetch_metrics("BTCUSDT", "2024-01-01", now=datetime(2024, 1, 2, tzinfo=timezone.utc))
+        except ArchiveParseError as exc:
+            raised = True
+            check("ArchiveParseError raised on corrupt archive", True, f"{exc}")
+        except Exception as exc:
+            check(f"Unexpected exception {type(exc).__name__}", False, f"{exc}")
+        if not raised:
+            check("ArchiveParseError was NOT raised", False)
+
+
 if __name__ == "__main__":
     print("=" * 92)
     print("Fail-closed export gate")
@@ -144,6 +212,8 @@ if __name__ == "__main__":
     test_manifest_failure_leaves_no_partial_artifacts()
     test_exporter_honour_leaves_a_certified_pair()
     test_certificate_is_what_grants_the_skip()
+    test_manifest_hash_and_ladder_contract()
+    test_corrupt_archive_raises_archive_parse_error()
     print("\n" + "=" * 92)
     print(f"{sum(results)}/{len(results)} assertions passed")
     print("=" * 92)

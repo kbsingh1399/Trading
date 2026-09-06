@@ -64,6 +64,16 @@ def _stale_runs_mask(values: np.ndarray, threshold: int, oi_moves: np.ndarray, m
     """
     Flags entire runs of >= threshold identical values where open interest is moving >= min_moving.
     Matches the exact detection contract of audit_probe_metrics_validity.
+
+    WARNING (RETROSPECTIVE RESEARCH FLAG ONLY - STRICT CAUSAL SEPARATION):
+    This function flags runs of >= threshold identical values across the entire run retroactively
+    from bar 0 to bar L-1. Therefore, bars 0..threshold-1 are flagged ex-post based on the future
+    knowledge that the run eventually reaches length >= threshold.
+
+    This flag (`is_imputed_metrics`) is strictly an EX-POST DATA QUALITY & QUARANTINE FILTER for
+    dataset validation and retrospective backtesting universe pruning. It MUST NEVER be used as a
+    contemporaneous, point-in-time predictive signal or live trading trigger, as that would
+    constitute future lookahead leakage.
     """
     n = len(values)
     if n < threshold:

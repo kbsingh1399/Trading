@@ -84,7 +84,7 @@ CANONICAL_COLUMNS: List[str] = [
     "long_liq_zs",            # float64 rolling-96 z-score of |long_liq_usd|
     "short_liq_zs",           # float64 rolling-96 z-score of short_liq_usd
     "liq_imbalance_ratio",    # float64 (short - |long|) / (short + |long|) in [-1, 1]
-    "is_imputed_metrics",     # int8 1 = ex-post data-quality quarantine (official metrics missing/frozen/imputed, e.g. 2022 API outage or Binance reporting halt). Safe for causal backtesting filtering.
+    "is_imputed_metrics",     # int8 1 = ex-post data-quality quarantine (official metrics missing/frozen/imputed, e.g. 2022 API outage or Binance reporting halt). RETROSPECTIVE ONLY: not for contemporaneous live signals.
 ]
 
 # Backward compatibility aliases

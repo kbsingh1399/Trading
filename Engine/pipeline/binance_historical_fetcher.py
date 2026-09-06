@@ -37,6 +37,12 @@ from ..core.canonical_indicators import nice_bin_step, session_day_index
 from ..core.schema import FIXED_MERGE_STEPS, LADDER_COLUMNS, LADDER_DTYPES, RUNG_SOURCE_SYNTHETIC, RUNG_SOURCE_TICK
 from .http_client import FetchError, HttpClient
 
+
+class ArchiveParseError(RuntimeError):
+    """Raised when an HTTP 200 response contains corrupt, truncated, or unparseable archive data."""
+    pass
+
+
 BAR_MS = 900_000
 DAY_MS = 86_400_000
 MAX_RUNGS = 512
@@ -523,8 +529,8 @@ class BinanceHistoricalFetcher:
         try:
             df = parser(_unzip_first(data))
         except Exception as exc:
-            self.log(f"  [WARN] parse failure {url}: {exc}")
-            return None
+            self.log(f"  [FATAL PARSE ERROR] {url}: {exc}")
+            raise ArchiveParseError(f"Corrupt archive or parse failure {url}: {exc}") from exc
         tmp = path + ".tmp"
         df.to_parquet(tmp, index=False)
         os.replace(tmp, path)
@@ -543,6 +549,9 @@ class BinanceHistoricalFetcher:
                     out[k] = fut.result()
                 except FetchError as exc:
                     self.log(f"  [FATAL TRANSPORT ERROR] {label} {k}: {exc}")
+                    raise
+                except ArchiveParseError as exc:
+                    self.log(f"  [FATAL PARSE ERROR] {label} {k}: {exc}")
                     raise
                 done += 1
                 if done % 200 == 0 or done == len(keys):
@@ -982,8 +991,8 @@ class BinanceHistoricalFetcher:
             self.log(f"  [FATAL TRANSPORT ERROR] {symbol} {date_str} aggTrades: {e}")
             raise
         except Exception as e:
-            self.log(f"  [FOOTPRINT] error streaming aggTrades for {symbol} {date_str}: {e}")
-            return None
+            self.log(f"  [FATAL PARSE ERROR] error streaming aggTrades for {symbol} {date_str}: {e}")
+            raise ArchiveParseError(f"Corrupt aggTrades zip or parse failure {symbol} {date_str}: {e}") from e
 
     def _aggregate_trades_to_ladder(
         self,

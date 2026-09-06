@@ -121,12 +121,21 @@ class ParquetExporter:
         return path
 
     def write_manifest(self, master: pd.DataFrame, symbol: str, ladder_stats: Dict[str, Any],
-                       verification: Dict[str, Any], metrics_absent_days: Optional[List[str]] = None) -> str:
+                       verification: Dict[str, Any], metrics_absent_days: Optional[List[str]] = None,
+                       expected_start_ms: Optional[int] = None,
+                       expected_end_ms: Optional[int] = None,
+                       expected_rows: Optional[int] = None) -> str:
         mpath, lpath = self.master_path(symbol), self.ladder_path(symbol)
+        exp_start = int(expected_start_ms) if expected_start_ms is not None else (int(master["open_time_ms"].iloc[0]) if not master.empty else None)
+        exp_end = int(expected_end_ms) if expected_end_ms is not None else (int(master["open_time_ms"].iloc[-1]) if not master.empty else None)
+        exp_rows = int(expected_rows) if expected_rows is not None else int(len(master))
         manifest = {
             "symbol": symbol,
             "timeframe": "15m",
             "total_rows": int(len(master)),
+            "expected_rows": exp_rows,
+            "expected_start_ms": exp_start,
+            "expected_end_ms": exp_end,
             "columns": list(master.columns),
             "column_count": int(len(master.columns)),
             "start_time_utc": str(master["datetime_utc"].iloc[0]),
@@ -136,7 +145,7 @@ class ParquetExporter:
             "master_sha256": _file_sha256(mpath),
             "master_size_mb": round(os.path.getsize(mpath) / 1_048_576, 2) if os.path.exists(mpath) else None,
             "ladder_file": os.path.basename(lpath) if os.path.exists(lpath) else None,
-            "ladder_sha256": _file_sha256(lpath),
+            "ladder_sha256": _file_sha256(lpath) if os.path.exists(lpath) else None,
             "ladder_size_mb": round(os.path.getsize(lpath) / 1_048_576, 2) if os.path.exists(lpath) else None,
             "ladder": ladder_stats,
             "provenance": {

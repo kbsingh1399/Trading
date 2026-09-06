@@ -66,6 +66,7 @@ from Engine.core.schema import (  # noqa: E402
     LADDER_DTYPES,
     STRING_VOCAB,
     ladder_filename,
+    manifest_filename,
     master_filename,
 )
 
@@ -144,12 +145,12 @@ def agent_continuity(master: pd.DataFrame, ladder: Optional[pd.DataFrame],
         return [Finding(A, "empty", "master has zero rows")]
     if expected_start_ms is not None and n > 0:
         exp_first = (expected_start_ms // BAR_MS) * BAR_MS
-        if ts[0] > exp_first:
-            out.append(Finding(A, "start_boundary", f"first candle {ts[0]} ({pd.to_datetime(ts[0], unit='ms', utc=True)}) > expected start {exp_first} ({pd.to_datetime(exp_first, unit='ms', utc=True)})"))
+        if ts[0] != exp_first:
+            out.append(Finding(A, "start_boundary", f"first candle {ts[0]} ({pd.to_datetime(ts[0], unit='ms', utc=True)}) != expected start {exp_first} ({pd.to_datetime(exp_first, unit='ms', utc=True)})"))
     if expected_end_ms is not None and n > 0:
         exp_last = (expected_end_ms // BAR_MS) * BAR_MS
-        if ts[-1] < exp_last:
-            out.append(Finding(A, "end_boundary", f"last candle {ts[-1]} ({pd.to_datetime(ts[-1], unit='ms', utc=True)}) < expected terminal {exp_last} ({pd.to_datetime(exp_last, unit='ms', utc=True)})"))
+        if ts[-1] != exp_last:
+            out.append(Finding(A, "end_boundary", f"last candle {ts[-1]} ({pd.to_datetime(ts[-1], unit='ms', utc=True)}) != expected terminal {exp_last} ({pd.to_datetime(exp_last, unit='ms', utc=True)})"))
     if n > 1:
         d = np.diff(ts)
         f = _finding(A, "monotonic", "open_time_ms not strictly increasing", np.append(False, d <= 0), ts)
@@ -642,12 +643,24 @@ def run_council(master: pd.DataFrame, ladder: Optional[pd.DataFrame], symbol: st
 def verify_symbol(target_dir: str, symbol: str, log: Callable[[str], None] = print) -> CouncilReport:
     mpath = os.path.join(target_dir, master_filename(symbol))
     lpath = os.path.join(target_dir, ladder_filename(symbol))
+    ppath = os.path.join(target_dir, manifest_filename(symbol))
     if not os.path.exists(mpath):
         return CouncilReport(symbol, False, 0, 0, [Finding("Council", "missing", f"{mpath} not found")], {})
     master = pd.read_parquet(mpath)
     ladder = pd.read_parquet(lpath) if os.path.exists(lpath) else None
     attested = _attested_absent_months(symbol, target_dir)
-    return run_council(master, ladder, symbol, log, attested_months=attested)
+    exp_start_ms = None
+    exp_end_ms = None
+    if os.path.exists(ppath):
+        try:
+            with open(ppath, "r", encoding="utf-8") as fh:
+                mdata = json.load(fh)
+                exp_start_ms = mdata.get("expected_start_ms")
+                exp_end_ms = mdata.get("expected_end_ms")
+        except Exception:
+            pass
+    return run_council(master, ladder, symbol, log, attested_months=attested,
+                       expected_start_ms=exp_start_ms, expected_end_ms=exp_end_ms)
 
 
 def verify_all_parquets(target_dir: str = DEFAULT_TARGET, symbols: Optional[List[str]] = None, log: Callable[[str], None] = print) -> bool:

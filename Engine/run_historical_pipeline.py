@@ -92,22 +92,17 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
         import json
         with open(ppath, encoding="utf-8") as fh:
             manifest_data = json.load(fh)
-            if not manifest_data.get("verification", {}).get("passed", False):
-                return False
-            expected_rows = manifest_data.get("total_rows")
+        if not manifest_data.get("verification", {}).get("passed", False):
+            return False
+        if manifest_data.get("schema_version") != "2.1":
+            return False
+        if manifest_data.get("master_file") != os.path.basename(mpath):
+            return False
+        expected_rows = manifest_data.get("total_rows")
     except Exception:
         return False
+
     try:
-        mf = pq.ParquetFile(mpath)
-        if mf.schema_arrow.names != CANONICAL_COLUMNS:
-            return False
-        has_ladder = os.path.exists(lpath)
-        if has_ladder:
-            lf = pq.ParquetFile(lpath)
-            if lf.schema_arrow.names != LADDER_COLUMNS:
-                return False
-        if expected_rows is not None and mf.metadata.num_rows != expected_rows:
-            return False
         import hashlib
         def _hash_file(p: str) -> str:
             h = hashlib.sha256()
@@ -116,10 +111,40 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
                     h.update(chunk)
             return h.hexdigest()
 
-        if manifest_data.get("master_sha256") and _hash_file(mpath) != manifest_data["master_sha256"]:
+        def _is_hex64(s: Any) -> bool:
+            return isinstance(s, str) and len(s) == 64 and all(c in "0123456789abcdefABCDEF" for c in s)
+
+        master_sha = manifest_data.get("master_sha256")
+        if not _is_hex64(master_sha):
             return False
-        if has_ladder and manifest_data.get("ladder_sha256") and _hash_file(lpath) != manifest_data["ladder_sha256"]:
+        if _hash_file(mpath).lower() != master_sha.lower():
             return False
+
+        declared_ladder = manifest_data.get("ladder_file")
+        if declared_ladder is not None:
+            if declared_ladder != os.path.basename(lpath):
+                return False
+            if not os.path.exists(lpath):
+                return False
+            ladder_sha = manifest_data.get("ladder_sha256")
+            if not _is_hex64(ladder_sha):
+                return False
+            if _hash_file(lpath).lower() != ladder_sha.lower():
+                return False
+            has_ladder = True
+        else:
+            has_ladder = False
+
+        mf = pq.ParquetFile(mpath)
+        if mf.schema_arrow.names != CANONICAL_COLUMNS:
+            return False
+        if has_ladder:
+            lf = pq.ParquetFile(lpath)
+            if lf.schema_arrow.names != LADDER_COLUMNS:
+                return False
+        if expected_rows is not None and mf.metadata.num_rows != expected_rows:
+            return False
+
         last = mf.read_row_group(mf.num_row_groups - 1, columns=["close_time_ms"]).column(0).to_numpy()
         now_utc_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
         age_h = max(0.0, (now_utc_ms - int(last[-1])) / 3_600_000)
@@ -352,8 +377,13 @@ def run_pipeline(
                     os.remove(lpath)
                 except OSError:
                     pass
-        manifest_path = exporter.write_manifest(master, symbol, ladder_stats, {**report.to_dict(), "repair_rounds": rounds},
-                                                metrics_absent_days=getattr(fetcher, "metrics_absent_days", None))
+        manifest_path = exporter.write_manifest(
+            master, symbol, ladder_stats, {**report.to_dict(), "repair_rounds": rounds},
+            metrics_absent_days=getattr(fetcher, "metrics_absent_days", None),
+            expected_start_ms=exp_start_ms,
+            expected_end_ms=exp_end_ms,
+            expected_rows=int(((exp_end_ms - exp_start_ms) // 900_000) + 1) if (exp_start_ms is not None and exp_end_ms is not None) else len(master),
+        )
         written.append(manifest_path)
     except Exception as exc:
         # Fail closed here too: an export that died between the two writes would otherwise leave a
