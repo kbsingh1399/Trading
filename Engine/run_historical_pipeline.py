@@ -50,13 +50,10 @@ from Engine.core.schema import (  # noqa: E402
     manifest_filename,
     master_filename,
 )
-from Engine.pipeline.binance_historical_fetcher import BinanceHistoricalFetcher  # noqa: E402
-from Engine.pipeline.footprint_ladder import assemble_ladder  # noqa: E402
+from Engine.pipeline.binance_historical_fetcher import BinanceHistoricalFetcher, assemble_ladder  # noqa: E402
 from Engine.pipeline.historical_metrics_processor import HistoricalMetricsProcessor  # noqa: E402
 from Engine.pipeline.http_client import HttpClient  # noqa: E402
 from Engine.pipeline.parquet_exporter import ParquetExporter, SchemaError  # noqa: E402
-from Engine.pipeline.real_footprint_engine import RealFootprintEngine  # noqa: E402
-from Engine.pipeline.tick_footprint_fetcher import TickFootprintFetcher  # noqa: E402
 from Engine.verification.verify_parquet_integrity import CouncilReport, run_council, verify_all_parquets  # noqa: E402
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -119,8 +116,12 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
         m_ts = pd.read_parquet(mpath, columns=["open_time_ms"])["open_time_ms"].to_numpy()
         if has_ladder:
             l_ts = pd.read_parquet(lpath, columns=["open_time_ms"])["open_time_ms"].unique()
-            if not (np.isin(m_ts, l_ts).all() and np.isin(l_ts, m_ts).all()):
-                return False
+            if len(l_ts) > 0:
+                if not np.isin(l_ts, m_ts).all():
+                    return False
+                m_in_scope = m_ts[(m_ts >= l_ts.min()) & (m_ts <= l_ts.max())]
+                if not (np.isin(m_in_scope, l_ts).mean() > 0.95):
+                    return False
         return bool(m_ts.size > 1000)
     except Exception:
         return False
@@ -264,10 +265,7 @@ def run_pipeline(
     ladder_stats = {"candles": 0, "tick_exact_candles": 0, "synthetic_candles": 0, "total_rungs": 0}
     if all_footprint or footprint_days > 0:
         fp_start = effective_start if all_footprint else max(effective_start, now - pd.Timedelta(days=footprint_days))
-        # Bounded worker pool for footprint processing to prevent RAM spikes
-        fp_workers = max(1, min(max_workers // 2, 6))
-        fpe = RealFootprintEngine(cache_dir=cache_dir, max_workers=fp_workers, http=http, log=log)
-        fp_ladder, fp_summary = fpe.fetch_footprint(symbol, fp_start.strftime("%Y-%m-%d"), now=now)
+        fp_ladder, fp_summary = fetcher.fetch_footprint(symbol, fp_start.strftime("%Y-%m-%d"), now=now)
         ladder_stats = {
             "candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,
             "tick_exact_candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,

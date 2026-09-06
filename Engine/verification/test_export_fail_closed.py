@@ -25,7 +25,8 @@ if REPO_ROOT not in sys.path:
 
 import Engine.run_historical_pipeline as rp  # noqa: E402
 from Engine.core.schema import master_filename  # noqa: E402
-from Engine.pipeline.tick_footprint_fetcher import build_ladder_from_trades  # noqa: E402
+from Engine.core.schema import master_filename  # noqa: E402
+from Engine.pipeline.binance_historical_fetcher import build_ladder_from_trades  # noqa: E402
 from Engine.pipeline.parquet_exporter import ParquetExporter, SchemaError  # noqa: E402
 from Engine.verification.test_pipeline_offline import make_streams, make_trades  # noqa: E402
 
@@ -43,8 +44,9 @@ def check(label, cond, detail=""):
 class _FakeFetcher:
     """Mirrors the orchestrator's fetch calls onto synthetic streams."""
 
-    def __init__(self, streams):
+    def __init__(self, streams, fp=(None, None)):
         self.s = streams
+        self.fp = fp
 
     def fetch_futures_klines(self, symbol, start_date, now=None):
         return self.s[0].copy()
@@ -58,6 +60,12 @@ class _FakeFetcher:
     def fetch_funding_rates(self, symbol, start_time_ms):
         return self.s[2].copy()
 
+    def fetch_footprint(self, symbol, start_date, now=None):
+        fp_ladder, fp_summary = self.fp
+        l_df = fp_ladder.copy() if fp_ladder is not None else pd.DataFrame()
+        s_df = fp_summary.copy() if fp_summary is not None else pd.DataFrame()
+        return l_df, s_df
+
 
 def _run(d, boom):
     """Run the orchestrator into d, with write_manifest replaced by `boom` (may raise)."""
@@ -65,16 +73,9 @@ def _run(d, boom):
     trades = make_trades(kl.iloc[2000:2050])
     fp_summary, fp_ladder = build_ladder_from_trades(trades, 0.00003)
 
-    class FakeFootprint:
-        def __init__(self, *a, **k):
-            pass
-
-        def fetch_footprint(self, symbol, start_date, now=None):
-            return fp_summary.copy(), fp_ladder.copy()
-
-    fetcher_cls = lambda *a, **k: _FakeFetcher((kl, spot, funding, metrics))  # noqa: E731
-    orig = (rp.BinanceHistoricalFetcher, rp.TickFootprintFetcher, ParquetExporter.write_manifest)
-    rp.BinanceHistoricalFetcher, rp.TickFootprintFetcher = fetcher_cls, FakeFootprint
+    fetcher_cls = lambda *a, **k: _FakeFetcher((kl, spot, funding, metrics), fp=(fp_ladder, fp_summary))  # noqa: E731
+    orig = (rp.BinanceHistoricalFetcher, ParquetExporter.write_manifest)
+    rp.BinanceHistoricalFetcher = fetcher_cls
     if boom is not None:
         ParquetExporter.write_manifest = boom
     try:
@@ -82,8 +83,8 @@ def _run(d, boom):
                                cache_dir=os.path.join(d, "cache"), max_workers=2, footprint_days=5,
                                run_audit=True, log=QUIET, force=True)
     finally:
-        rp.BinanceHistoricalFetcher, rp.TickFootprintFetcher = orig[0], orig[1]
-        ParquetExporter.write_manifest = orig[2]
+        rp.BinanceHistoricalFetcher = orig[0]
+        ParquetExporter.write_manifest = orig[1]
 
 
 def test_manifest_failure_leaves_no_partial_artifacts() -> None:

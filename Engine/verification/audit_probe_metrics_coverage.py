@@ -36,7 +36,7 @@ import pandas as pd
 if __package__ in (None, ""):
     sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from Engine.pipeline.footprint_ladder import assemble_ladder  # noqa: E402
+from Engine.pipeline.binance_historical_fetcher import assemble_ladder  # noqa: E402
 from Engine.pipeline.historical_metrics_processor import HistoricalMetricsProcessor  # noqa: E402
 from Engine.verification.verify_parquet_integrity import run_council  # noqa: E402
 

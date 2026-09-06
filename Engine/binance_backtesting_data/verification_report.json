@@ -1,8 +1,8 @@
 {
-  "BTCUSDT": {
-    "symbol": "BTCUSDT",
+  "ETHUSDT": {
+    "symbol": "ETHUSDT",
     "passed": true,
-    "master_rows": 210848,
+    "master_rows": 210859,
     "ladder_rows": 0,
     "agent_status": {
       "Agent1:Continuity": "PASS",

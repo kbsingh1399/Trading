@@ -20,7 +20,11 @@ PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-from Engine_2.run_historical_pipeline import run_pipeline, ENGINE_1_CRYPTO_SYMBOLS
+try:
+    from Engine.run_historical_pipeline import run_pipeline, ENGINE_1_CRYPTO_SYMBOLS
+except ImportError:
+    from Engine_2.run_historical_pipeline import run_pipeline, ENGINE_1_CRYPTO_SYMBOLS
+
 
 ASSET_LISTING_DATES = {
     "BTCUSDT": "2020-09-01",
@@ -117,7 +121,10 @@ def main():
     if args.sync:
         preflight_sync_missing_data(target_dir=args.target_dir)
 
-    from Engine_2.live.binance_live_monitor import main as live_main
+    try:
+        from Engine.live.binance_live_monitor import main as live_main
+    except ImportError:
+        from Engine_2.live.binance_live_monitor import main as live_main
     live_main()
 
 if __name__ == "__main__":

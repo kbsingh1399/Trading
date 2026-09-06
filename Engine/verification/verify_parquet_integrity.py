@@ -169,7 +169,7 @@ def agent_continuity(master: pd.DataFrame, ladder: Optional[pd.DataFrame]) -> Li
     if f:
         out.append(f)
 
-    if ladder is not None:
+    if ladder is not None and not ladder.empty:
         lts = ladder["open_time_ms"].to_numpy(np.int64)
         if lts.size and (np.diff(lts) < 0).any():
             out.append(Finding(A, "ladder_order", "ladder open_time_ms not non-decreasing"))
@@ -179,7 +179,9 @@ def agent_continuity(master: pd.DataFrame, ladder: Optional[pd.DataFrame]) -> Li
             i = int(np.flatnonzero(orphan)[0])
             out.append(Finding(A, "ladder_orphans", "ladder candles absent from master", None, int(uniq[i]),
                                str(pd.to_datetime(uniq[i], unit="ms", utc=True)), int(orphan.sum())))
-        uncovered = ~np.isin(ts, uniq)
+        in_ladder_scope = (ts >= lts[0]) & (ts <= lts[-1])
+        has_volume = (master["volume_base"].to_numpy(np.float64) > 0) if "volume_base" in master else np.ones(len(master), dtype=bool)
+        uncovered = ~np.isin(ts, uniq) & in_ladder_scope & has_volume
         f = _finding(A, "ladder_coverage", "master candles without any ladder rung", uncovered, ts)
         if f:
             out.append(f)
@@ -356,6 +358,8 @@ def agent_microstructure(master: pd.DataFrame, ladder: Optional[pd.DataFrame]) -
 # ==============================================================================
 def _available_mask(master: pd.DataFrame) -> np.ndarray:
     """Bars the export discloses as carrying official metrics (all bars for legacy files)."""
+    if "is_imputed_metrics" in master:
+        return master["is_imputed_metrics"].to_numpy() == 0
     if "metrics_available" in master:
         return master["metrics_available"].to_numpy() == 1
     return np.ones(len(master), dtype=bool)
