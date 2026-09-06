@@ -18,7 +18,7 @@
 ## GITHUB ACCESS — ALL FILES AVAILABLE HERE
 
 **Repo**: `https://github.com/kbsingh1399/Trading`
-**Branch**: `main` (Mirrored to `arena/01a07263-trading`)
+**Commit**: `aab702b` (HEAD = `main` = `arena/01a07263-trading` — byte-for-byte identical mirrors)
 
 Use these raw URLs to fetch files directly.
 
