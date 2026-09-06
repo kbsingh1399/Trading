@@ -18,7 +18,7 @@
 ## GITHUB ACCESS — ALL FILES AVAILABLE HERE
 
 **Repo**: `https://github.com/kbsingh1399/Trading`
-**Commit**: `aab702b` (HEAD = `main` = `arena/01a07263-trading` — byte-for-byte identical mirrors)
+**Branch**: `main` (Mirrored to `arena/01a07263-trading` — byte-for-byte identical mirrors)
 
 Use these raw URLs to fetch files directly.
 
@@ -356,12 +356,12 @@ gaps = df['open_time_ms'].diff().dropna()
 print("Non-standard gaps:", (gaps != 900_000).sum())
 print("Gap counts:", gaps.value_counts().head(5))
 
-# Task 4: session_vwap causality
+# Task 4: session_vwap causality (anchored at 00:00 UTC using typical price (H+L+C)/3)
+df['tp'] = (df['high'] + df['low'] + df['close']) / 3.0
 df['day'] = df['open_time_ms'] // 86_400_000
-df['expected_vwap'] = (
-    df.groupby('day', group_keys=False)
-    .apply(lambda g: (g['close'] * g['volume_base']).cumsum() / g['volume_base'].cumsum())
-)
+pv = (df['tp'] * df['volume_base']).groupby(df['day']).cumsum()
+cv = df['volume_base'].groupby(df['day']).cumsum()
+df['expected_vwap'] = np.where(cv > 1e-9, pv / cv, df['close'])
 mismatch = (df['session_vwap'] - df['expected_vwap']).abs() > 1e-6
 print("session_vwap lookahead mismatches:", mismatch.sum())
 
