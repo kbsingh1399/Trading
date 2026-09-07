@@ -30,7 +30,7 @@ import sys
 import time
 import traceback
 from datetime import datetime, timezone
-from typing import Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -320,42 +320,78 @@ def run_pipeline(
 
     http = HttpClient()
     fetcher = BinanceHistoricalFetcher(cache_dir=cache_dir, max_workers=max_workers, http=http, log=log)
-
-    t0 = time.time()
-    klines = fetcher.fetch_futures_klines(symbol, warmup_start.strftime("%Y-%m-%d"), end_dt)
-    spot = fetcher.fetch_spot_klines(symbol, warmup_start.strftime("%Y-%m-%d"), end_dt)
-    metrics = fetcher.fetch_metrics(symbol, effective_start.strftime("%Y-%m-%d"), end_dt)
-    funding = fetcher.fetch_funding_rates(symbol, int(warmup_start.timestamp() * 1000))
-    log(f"[OK] {symbol}: streams fetched in {time.time() - t0:.1f}s | http={http.stats}")
-
-    fp_summary, fp_ladder = pd.DataFrame(), pd.DataFrame()
-    ladder_stats = {"candles": 0, "tick_exact_candles": 0, "synthetic_candles": 0, "total_rungs": 0}
-    if all_footprint or footprint_days > 0:
-        fp_start = effective_start if all_footprint else max(effective_start, end_dt - pd.Timedelta(days=footprint_days))
-        fp_ladder, fp_summary = fetcher.fetch_footprint(
-            symbol, fp_start.strftime("%Y-%m-%d"), end_date_str=end_date_str, now=end_dt
-        )
-        ladder_stats = {
-            "candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,
-            "tick_exact_candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,
-            "synthetic_candles": 0,
-            "total_rungs": len(fp_ladder),
-        }
-        log(f"[OK] {symbol}: 100% real tick footprint fetched: {ladder_stats['total_rungs']:,} rungs across {ladder_stats['tick_exact_candles']:,} candles (ZERO synthetic)")
-
-    t1 = time.time()
     processor = HistoricalMetricsProcessor(log=log)
-    master = processor.process_master_dataset(
-        klines, metrics, funding, fp_summary, spot, symbol=symbol,
-        export_start_ms=int(effective_start.timestamp() * 1000),
-        export_end_ms=int(end_dt.timestamp() * 1000) if end_date_str else None,
-    )
-    log(f"[OK] {symbol}: {len(master):,} bars x {len(master.columns)} cols computed in {time.time() - t1:.1f}s "
-        f"({master['datetime_utc'].iloc[0]} -> {master['datetime_utc'].iloc[-1]})")
 
-    t2 = time.time()
-    ladder, ladder_stats = assemble_ladder(master, fp_ladder if not fp_ladder.empty else None, allow_synthetic=False)
-    log(f"[OK] {symbol}: ladder assembled in {time.time() - t2:.1f}s | {ladder_stats}")
+    master, ladder = None, None
+    mpath = os.path.join(target_dir, master_filename(symbol))
+    lpath = os.path.join(target_dir, ladder_filename(symbol))
+    ladder_stats = {
+        "candles": 0, "tick_exact_candles": 0, "synthetic_candles": 0,
+        "total_rungs": 0, "tick_rungs": 0, "synthetic_rungs": 0
+    }
+
+    # ---- Fast Incremental Append Path ----
+    if not force and not end_date_str and os.path.exists(mpath):
+        try:
+            from Engine.pipeline.incremental_append import perform_incremental_append
+            incr_res = perform_incremental_append(
+                symbol=symbol, master_path=mpath, ladder_path=lpath,
+                fetcher=fetcher, processor=processor, end_dt=end_dt,
+                all_footprint=all_footprint, footprint_days=footprint_days, log=log
+            )
+            if incr_res is not None:
+                master, ladder = incr_res
+                if ladder is not None and not ladder.empty:
+                    ladder_stats = {
+                        "candles": int(ladder["open_time_ms"].nunique()),
+                        "tick_exact_candles": int(ladder["open_time_ms"].nunique()),
+                        "synthetic_candles": 0,
+                        "total_rungs": len(ladder),
+                        "tick_rungs": len(ladder),
+                        "synthetic_rungs": 0,
+                    }
+        except Exception as exc:
+            log(f"[INCR] {symbol}: incremental append error ({exc}); falling back to full rebuild")
+            master, ladder = None, None
+
+    # ---- Full Rebuild Path (when incremental append is not applicable) ----
+    if master is None:
+        t0 = time.time()
+        klines = fetcher.fetch_futures_klines(symbol, warmup_start.strftime("%Y-%m-%d"), end_dt)
+        spot = fetcher.fetch_spot_klines(symbol, warmup_start.strftime("%Y-%m-%d"), end_dt)
+        metrics = fetcher.fetch_metrics(symbol, effective_start.strftime("%Y-%m-%d"), end_dt)
+        funding = fetcher.fetch_funding_rates(symbol, int(warmup_start.timestamp() * 1000))
+        log(f"[OK] {symbol}: streams fetched in {time.time() - t0:.1f}s | http={http.stats}")
+
+        fp_summary, fp_ladder = pd.DataFrame(), pd.DataFrame()
+        if all_footprint or footprint_days > 0:
+            fp_start = effective_start if all_footprint else max(effective_start, end_dt - pd.Timedelta(days=footprint_days))
+            fp_ladder, fp_summary = fetcher.fetch_footprint(
+                symbol, fp_start.strftime("%Y-%m-%d"), end_date_str=end_date_str, now=end_dt
+            )
+            ladder_stats = {
+                "candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,
+                "tick_exact_candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,
+                "synthetic_candles": 0,
+                "total_rungs": len(fp_ladder),
+                "tick_rungs": len(fp_ladder),
+                "synthetic_rungs": 0,
+            }
+            log(f"[OK] {symbol}: 100% real tick footprint fetched: {ladder_stats['total_rungs']:,} rungs across {ladder_stats['tick_exact_candles']:,} candles (ZERO synthetic)")
+
+        t1 = time.time()
+        master = processor.process_master_dataset(
+            klines, metrics, funding, fp_summary, spot, symbol=symbol,
+            export_start_ms=int(effective_start.timestamp() * 1000),
+            export_end_ms=int(end_dt.timestamp() * 1000) if end_date_str else None,
+        )
+        log(f"[OK] {symbol}: {len(master):,} bars x {len(master.columns)} cols computed in {time.time() - t1:.1f}s "
+            f"({master['datetime_utc'].iloc[0]} -> {master['datetime_utc'].iloc[-1]})")
+
+        t2 = time.time()
+        ladder, lstats = assemble_ladder(master, fp_ladder if not fp_ladder.empty else None, allow_synthetic=False)
+        ladder_stats.update(lstats)
+        log(f"[OK] {symbol}: ladder assembled in {time.time() - t2:.1f}s | {ladder_stats}")
 
 
     # ------------------------------------------------------------ council gate
@@ -385,6 +421,12 @@ def run_pipeline(
         return False
 
     # ------------------------------------------------------------ export
+    free_gb = check_disk_space(target_dir, min_free_gb=min_free_disk_gb, log=log)
+    est_gb = (len(master) * len(CANONICAL_COLUMNS) * 8) / (1024 ** 3) * 1.6
+    if free_gb < max(min_free_disk_gb, est_gb):
+        log(f"[REJECT] {symbol}: export refused - {free_gb:.2f} GB free < required {max(min_free_disk_gb, est_gb):.2f} GB (fail-closed, no partial artifacts)")
+        return False
+
     t3 = time.time()
     exporter = ParquetExporter(target_dir)
     written = []

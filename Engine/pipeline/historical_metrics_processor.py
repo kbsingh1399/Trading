@@ -259,7 +259,10 @@ class HistoricalMetricsProcessor:
         if funding_df is not None and not funding_df.empty:
             fm = _asof_backward(ct, funding_df, "fundingTime", ["fundingRate"])
             fr = fm["fundingRate"].to_numpy(np.float64)
-            fr = np.where(np.isnan(fr), 0.0001, fr)
+            stale = fm["_age_ms"].to_numpy(np.float64) > FUNDING_MAX_STALENESS_MS
+            fr = np.where(np.isnan(fr) | stale, 0.0001, fr)
+            if stale.any():
+                log(f"[PROCESSOR] {symbol}: {int(stale.sum())} bars with funding older than {FUNDING_MAX_STALENESS_MS / 3_600_000:.0f}h -> default 0.01% (stale-guarded)")
             out["funding_rate_pct"] = fr * 100.0
         else:
             out["funding_rate_pct"] = 0.01

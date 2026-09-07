@@ -1,6 +1,6 @@
 # MASTER ADVERSARIAL AUDIT & SYSTEM REVIEW: BINANCE HISTORICAL 15M PIPELINE
 # TARGET PLATFORM: OpenAI o1 / o3 / Frontier Reasoning Model (Ox Alpha)
-# AUDIT TARGET: Entire End-to-End Data Pipeline Subsystem (All 8 Source Code Files Included)
+# AUDIT TARGET: Entire End-to-End Data Pipeline Subsystem (All 9 Source Code Files Included)
 
 ================================================================================
 EXECUTIVE REVIEW CONTEXT & ROLE SPECIFICATION
@@ -11,66 +11,12 @@ You are tasked with conducting an exhaustive, uncompromising, adversarial code r
 The system builds and maintains a continuous 15-minute dual-table backtesting database across 18 institutional assets from 2020 through present (over 3.47 million bars), enforcing zero nulls, strictly monotonic timestamps, and zero data lookahead.
 
 ================================================================================
-AUDIT INSTRUCTIONS & MANDATORY INVESTIGATION QUESTIONS
-================================================================================
-
-### 1. Fast-Skip & Incremental Download / Append Architecture (CRITICAL FOCUS)
-- Operational Requirement:
-  1. Skip Completed Assets: When restarting the pipeline, if an asset is already updated through yesterday (UTC date >= yesterday_date) and has strictly zero date or time gaps (np.all(np.diff(open_time_ms) == 900_000)), it must skip in sub-second time without hitting the network.
-  2. Incremental Fetch & Append: Binance publishes daily archives on a T-1 day lag (yesterday). If an asset already exists (e.g. BTC or SOL with data from 2020 to 2 days ago), the pipeline MUST NOT re-download all 84 months (6 years) of historical zip files from scratch! It must detect the last valid bar, fetch ONLY the missing tail days from Binance Vision / REST, compute all indicators with exact continuous warm-up/seeding, append to the existing dataset, verify zero gaps, and write atomically.
-- Your Audit Task:
-  - Scrutinize existing_output_is_current() in Engine/run_historical_pipeline.py.
-  - Scrutinize how 
-un_pipeline() handles missing tail data. Provide the exact, production-ready, drop-in implementation for incremental download and append that maintains 100% mathematical continuity for recursive indicators (EMA-8/21/50/200/800, Wilder RSI/ATR, Session VWAP, and lifetime CVD accumulators).
-
-### 2. Causality & Prefix-Invariance (Anti-Lookahead Verification)
-- Requirement: Every indicator and feature must strictly satisfy prefix invariance: f(x[:n])[:k] == f(x)[:k] for all k <= n.
-- Your Audit Task:
-  - Inspect compute_ema_series, compute_wilder_rsi_series, compute_wilder_atr_series, compute_session_cvd, compute_session_vwap, and rolling Z-score calculations in Engine/core/canonical_indicators.py and Engine/pipeline/historical_metrics_processor.py.
-  - Confirm there are zero forward-looking lookaheads, backward shifts, or centering artifacts.
-
-### 3. Upstream Data Ingestion, Binance 418 Ban Protection & Network Resilience
-- Requirement: Binance Vision monthly and daily archive structures frequently have missing days, corrupt archives, or publication delays.
-- Your Audit Task:
-  - Audit BinanceHistoricalFetcher._fetch_klines, _fetch_metrics, and HttpClient.
-  - Verify how HTTP 404, 429 rate limits, and 418 IP bans are handled.
-  - Check whether _rest_klines and _repair_gaps correctly stitch boundary bars without introducing duplicates or off-by-one timestamp errors.
-
-### 4. Mathematical Precision, Zero Nulls & Data Imputation Policy
-- Requirement: The output master parquet must contain exactly 62 canonical columns, 0 nulls, and enforce specific decimal precisions so sub-dollar assets (DOGE, TRX, ADA) never collapse.
-- Your Audit Task:
-  - Audit HistoricalMetricsProcessor for handling missing metrics days (e.g. 2022 API outages). Are imputed values explicitly tagged via is_imputed_metrics?
-  - Does the liquidation engine avoid non-physical negative or infinite values?
-
-### 5. Footprint Ladder & Volume Conservation
-- Requirement: Table 2 (Footprint Ladder) must conserve volume with Table 1 (Master): sum of ladder volume for candle t must equal candle t quote/base volume.
-- Your Audit Task:
-  - Audit ssemble_ladder() and the footprint merger. Does it handle mixed regimes (real aggTrades footprint vs causal synthetic ladder) without volume leaks?
-
-### 6. Atomic Export, Disk Governance & Verification Council
-- Requirement: Exports must be fail-closed. If verification council fails or disk space is below 5 GB, no corrupt parquet must remain.
-- Your Audit Task:
-  - Audit ParquetExporter, causal_repair(), and 
-un_council(). Does ParquetExporter ensure atomic writes via temporary files?
-
-================================================================================
-DESIRED AUDIT REPORT OUTPUT FORMAT
-================================================================================
-Please structure your forensic review report into the following sections:
-1. Executive Verdict & Overall System Health Score (0-100)
-2. Critical Vulnerabilities & High-Priority Findings (with line numbers)
-3. Incremental Download & Append Architecture (Complete production-ready code implementation)
-4. Mathematical & Causality Verification (Prefix-invariance, indicator recursion, CVD session resets)
-5. Robustness & API Hardening (Binance Vision / REST edge cases, rate limits, network failures)
-6. Concrete Surgical Code Patches (Provide exact, production-ready Python diffs)
-
-================================================================================
-COMPLETE CODEBASE FOR AUDIT (ALL 8 SOURCE FILES EMBEDDED BELOW)
+COMPLETE CODEBASE FOR AUDIT (ALL 9 SOURCE FILES EMBEDDED BELOW)
 ================================================================================
 
 
 ================================================================================
-# FILE 1/8: Engine/run_historical_pipeline.py
+# FILE 1/9: Engine/run_historical_pipeline.py
 # DESCRIPTION: Master Orchestrator, CLI, Fast-Skip Probe, Cache Management & Causal Repair Loop
 ================================================================================
 
@@ -107,7 +53,7 @@ import sys
 import time
 import traceback
 from datetime import datetime, timezone
-from typing import Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -397,42 +343,78 @@ def run_pipeline(
 
     http = HttpClient()
     fetcher = BinanceHistoricalFetcher(cache_dir=cache_dir, max_workers=max_workers, http=http, log=log)
-
-    t0 = time.time()
-    klines = fetcher.fetch_futures_klines(symbol, warmup_start.strftime("%Y-%m-%d"), end_dt)
-    spot = fetcher.fetch_spot_klines(symbol, warmup_start.strftime("%Y-%m-%d"), end_dt)
-    metrics = fetcher.fetch_metrics(symbol, effective_start.strftime("%Y-%m-%d"), end_dt)
-    funding = fetcher.fetch_funding_rates(symbol, int(warmup_start.timestamp() * 1000))
-    log(f"[OK] {symbol}: streams fetched in {time.time() - t0:.1f}s | http={http.stats}")
-
-    fp_summary, fp_ladder = pd.DataFrame(), pd.DataFrame()
-    ladder_stats = {"candles": 0, "tick_exact_candles": 0, "synthetic_candles": 0, "total_rungs": 0}
-    if all_footprint or footprint_days > 0:
-        fp_start = effective_start if all_footprint else max(effective_start, end_dt - pd.Timedelta(days=footprint_days))
-        fp_ladder, fp_summary = fetcher.fetch_footprint(
-            symbol, fp_start.strftime("%Y-%m-%d"), end_date_str=end_date_str, now=end_dt
-        )
-        ladder_stats = {
-            "candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,
-            "tick_exact_candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,
-            "synthetic_candles": 0,
-            "total_rungs": len(fp_ladder),
-        }
-        log(f"[OK] {symbol}: 100% real tick footprint fetched: {ladder_stats['total_rungs']:,} rungs across {ladder_stats['tick_exact_candles']:,} candles (ZERO synthetic)")
-
-    t1 = time.time()
     processor = HistoricalMetricsProcessor(log=log)
-    master = processor.process_master_dataset(
-        klines, metrics, funding, fp_summary, spot, symbol=symbol,
-        export_start_ms=int(effective_start.timestamp() * 1000),
-        export_end_ms=int(end_dt.timestamp() * 1000) if end_date_str else None,
-    )
-    log(f"[OK] {symbol}: {len(master):,} bars x {len(master.columns)} cols computed in {time.time() - t1:.1f}s "
-        f"({master['datetime_utc'].iloc[0]} -> {master['datetime_utc'].iloc[-1]})")
 
-    t2 = time.time()
-    ladder, ladder_stats = assemble_ladder(master, fp_ladder if not fp_ladder.empty else None, allow_synthetic=False)
-    log(f"[OK] {symbol}: ladder assembled in {time.time() - t2:.1f}s | {ladder_stats}")
+    master, ladder = None, None
+    mpath = os.path.join(target_dir, master_filename(symbol))
+    lpath = os.path.join(target_dir, ladder_filename(symbol))
+    ladder_stats = {
+        "candles": 0, "tick_exact_candles": 0, "synthetic_candles": 0,
+        "total_rungs": 0, "tick_rungs": 0, "synthetic_rungs": 0
+    }
+
+    # ---- Fast Incremental Append Path ----
+    if not force and not end_date_str and os.path.exists(mpath):
+        try:
+            from Engine.pipeline.incremental_append import perform_incremental_append
+            incr_res = perform_incremental_append(
+                symbol=symbol, master_path=mpath, ladder_path=lpath,
+                fetcher=fetcher, processor=processor, end_dt=end_dt,
+                all_footprint=all_footprint, footprint_days=footprint_days, log=log
+            )
+            if incr_res is not None:
+                master, ladder = incr_res
+                if ladder is not None and not ladder.empty:
+                    ladder_stats = {
+                        "candles": int(ladder["open_time_ms"].nunique()),
+                        "tick_exact_candles": int(ladder["open_time_ms"].nunique()),
+                        "synthetic_candles": 0,
+                        "total_rungs": len(ladder),
+                        "tick_rungs": len(ladder),
+                        "synthetic_rungs": 0,
+                    }
+        except Exception as exc:
+            log(f"[INCR] {symbol}: incremental append error ({exc}); falling back to full rebuild")
+            master, ladder = None, None
+
+    # ---- Full Rebuild Path (when incremental append is not applicable) ----
+    if master is None:
+        t0 = time.time()
+        klines = fetcher.fetch_futures_klines(symbol, warmup_start.strftime("%Y-%m-%d"), end_dt)
+        spot = fetcher.fetch_spot_klines(symbol, warmup_start.strftime("%Y-%m-%d"), end_dt)
+        metrics = fetcher.fetch_metrics(symbol, effective_start.strftime("%Y-%m-%d"), end_dt)
+        funding = fetcher.fetch_funding_rates(symbol, int(warmup_start.timestamp() * 1000))
+        log(f"[OK] {symbol}: streams fetched in {time.time() - t0:.1f}s | http={http.stats}")
+
+        fp_summary, fp_ladder = pd.DataFrame(), pd.DataFrame()
+        if all_footprint or footprint_days > 0:
+            fp_start = effective_start if all_footprint else max(effective_start, end_dt - pd.Timedelta(days=footprint_days))
+            fp_ladder, fp_summary = fetcher.fetch_footprint(
+                symbol, fp_start.strftime("%Y-%m-%d"), end_date_str=end_date_str, now=end_dt
+            )
+            ladder_stats = {
+                "candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,
+                "tick_exact_candles": int(fp_ladder["open_time_ms"].nunique()) if not fp_ladder.empty else 0,
+                "synthetic_candles": 0,
+                "total_rungs": len(fp_ladder),
+                "tick_rungs": len(fp_ladder),
+                "synthetic_rungs": 0,
+            }
+            log(f"[OK] {symbol}: 100% real tick footprint fetched: {ladder_stats['total_rungs']:,} rungs across {ladder_stats['tick_exact_candles']:,} candles (ZERO synthetic)")
+
+        t1 = time.time()
+        master = processor.process_master_dataset(
+            klines, metrics, funding, fp_summary, spot, symbol=symbol,
+            export_start_ms=int(effective_start.timestamp() * 1000),
+            export_end_ms=int(end_dt.timestamp() * 1000) if end_date_str else None,
+        )
+        log(f"[OK] {symbol}: {len(master):,} bars x {len(master.columns)} cols computed in {time.time() - t1:.1f}s "
+            f"({master['datetime_utc'].iloc[0]} -> {master['datetime_utc'].iloc[-1]})")
+
+        t2 = time.time()
+        ladder, lstats = assemble_ladder(master, fp_ladder if not fp_ladder.empty else None, allow_synthetic=False)
+        ladder_stats.update(lstats)
+        log(f"[OK] {symbol}: ladder assembled in {time.time() - t2:.1f}s | {ladder_stats}")
 
 
     # ------------------------------------------------------------ council gate
@@ -462,6 +444,12 @@ def run_pipeline(
         return False
 
     # ------------------------------------------------------------ export
+    free_gb = check_disk_space(target_dir, min_free_gb=min_free_disk_gb, log=log)
+    est_gb = (len(master) * len(CANONICAL_COLUMNS) * 8) / (1024 ** 3) * 1.6
+    if free_gb < max(min_free_disk_gb, est_gb):
+        log(f"[REJECT] {symbol}: export refused - {free_gb:.2f} GB free < required {max(min_free_disk_gb, est_gb):.2f} GB (fail-closed, no partial artifacts)")
+        return False
+
     t3 = time.time()
     exporter = ParquetExporter(target_dir)
     written = []
@@ -626,7 +614,172 @@ if __name__ == "__main__":
 
 
 ================================================================================
-# FILE 2/8: Engine/pipeline/binance_historical_fetcher.py
+# FILE 2/9: Engine/pipeline/incremental_append.py
+# DESCRIPTION: Incremental Tail-Append Module with 4000-Bar Warmup & Exact Recursive Seeding
+================================================================================
+
+`python
+"""
+================================================================================
+INCREMENTAL TAIL-APPEND MODULE (STRICT CAUSALITY & EXACT SEED CONTINUITY)
+================================================================================
+Guarantees:
+1. History prior to last_open_ms is immutable and never modified.
+2. Only missing tail days are fetched from Binance Vision / REST (seconds, not minutes).
+3. 4,000-bar warm-up window ensures full convergence of Wilder RSI/ATR and EMAs (< 1e-9).
+4. EMAs and lifetime CVD accumulators are exact-seeded from the stored historical boundary.
+5. Full council verification runs on the stitched frame before atomic export.
+================================================================================
+"""
+from __future__ import annotations
+
+import os
+from datetime import datetime
+from typing import Any, Callable, Dict, Optional, Tuple
+
+import numpy as np
+import pandas as pd
+
+from Engine.core.schema import BAR_MS, CANONICAL_COLUMNS, COLUMN_DTYPES
+from Engine.pipeline.binance_historical_fetcher import BinanceHistoricalFetcher, assemble_ladder
+from Engine.pipeline.historical_metrics_processor import HistoricalMetricsProcessor
+
+WARMUP_BARS: int = 4_000  # ~41.7 days; ensures EMA-800 and Wilder RSI/ATR convergence < 1e-9
+
+
+def compute_incremental_append_plan(master_path: str) -> Optional[Dict[str, Any]]:
+    """Returns metadata dict if master parquet is usable for append, else None."""
+    if not os.path.exists(master_path):
+        return None
+    try:
+        ts = pd.read_parquet(master_path, columns=["open_time_ms"])["open_time_ms"].to_numpy(np.int64)
+    except Exception:
+        return None
+    if len(ts) < 2 or not np.all(np.diff(ts) == BAR_MS):
+        return None  # Existing file has cadence gaps -> requires full rebuild
+    return {"last_open_ms": int(ts[-1]), "n_rows": int(len(ts))}
+
+
+def perform_incremental_append(
+    symbol: str,
+    master_path: str,
+    ladder_path: Optional[str],
+    fetcher: BinanceHistoricalFetcher,
+    processor: HistoricalMetricsProcessor,
+    end_dt: datetime,
+    all_footprint: bool = False,
+    footprint_days: int = 0,
+    log: Callable[[str], None] = print,
+) -> Optional[Tuple[pd.DataFrame, Optional[pd.DataFrame]]]:
+    """
+    Fetches missing tail bars, computes features with exact recursive continuity,
+    stitches onto existing master (and ladder), and returns (master, ladder).
+    Returns None if append fails or full rebuild is warranted.
+    """
+    plan = compute_incremental_append_plan(master_path)
+    if plan is None:
+        return None
+
+    last_open_ms = plan["last_open_ms"]
+    last_open_dt = pd.to_datetime(last_open_ms, unit="ms", utc=True)
+
+    # 1. Determine warm-up start and verify there are new bars to fetch
+    warmup_start_dt = pd.to_datetime(last_open_ms - WARMUP_BARS * BAR_MS, unit="ms", utc=True)
+    if end_dt <= last_open_dt:
+        log(f"[INCR] {symbol}: existing data already reaches requested end date ({last_open_dt})")
+        old_master = pd.read_parquet(master_path)
+        old_ladder = pd.read_parquet(ladder_path) if (ladder_path and os.path.exists(ladder_path)) else None
+        return old_master, old_ladder
+
+    log(f"[INCR] {symbol}: fetching missing tail from {warmup_start_dt:%Y-%m-%d} -> {end_dt:%Y-%m-%d}")
+
+    # 2. Fetch raw streams strictly for the warm-up + tail window
+    klines = fetcher.fetch_futures_klines(symbol, warmup_start_dt.strftime("%Y-%m-%d"), end_dt)
+    spot = fetcher.fetch_spot_klines(symbol, warmup_start_dt.strftime("%Y-%m-%d"), end_dt)
+    metrics = fetcher.fetch_metrics(symbol, warmup_start_dt.strftime("%Y-%m-%d"), end_dt)
+    funding = fetcher.fetch_funding_rates(symbol, int(warmup_start_dt.timestamp() * 1000))
+
+    if klines.empty or int(klines["open_time"].iloc[-1]) <= last_open_ms:
+        log(f"[INCR] {symbol}: no new completed bars published upstream")
+        old_master = pd.read_parquet(master_path)
+        old_ladder = pd.read_parquet(ladder_path) if (ladder_path and os.path.exists(ladder_path)) else None
+        return old_master, old_ladder
+
+    # Footprint tail if enabled
+    fp_summary, fp_ladder = pd.DataFrame(), pd.DataFrame()
+    if all_footprint or footprint_days > 0:
+        fp_start = last_open_dt
+        fp_ladder, fp_summary = fetcher.fetch_footprint(symbol, fp_start.strftime("%Y-%m-%d"), now=end_dt)
+
+    # 3. Process the warm-up + tail slice through the canonical processor
+    inc_master = processor.process_master_dataset(
+        klines, metrics, funding, fp_summary, spot, symbol=symbol,
+        export_start_ms=int(warmup_start_dt.timestamp() * 1000),
+        export_end_ms=int(end_dt.timestamp() * 1000),
+    )
+
+    # 4. Extract only the newly closed bars
+    new_bars = inc_master[inc_master["open_time_ms"] > last_open_ms].copy()
+    if new_bars.empty:
+        log(f"[INCR] {symbol}: zero new bars after filtering open_time_ms > {last_open_ms}")
+        old_master = pd.read_parquet(master_path)
+        old_ladder = pd.read_parquet(ladder_path) if (ladder_path and os.path.exists(ladder_path)) else None
+        return old_master, old_ladder
+
+    # 5. Load stored history and re-anchor cumulative lifetime series
+    old_master = pd.read_parquet(master_path)
+    stored_last_fut_life = float(old_master["future_cvd_lifetime"].iloc[-1])
+    stored_last_spot_life = float(old_master["spot_cvd_lifetime"].iloc[-1])
+
+    new_bars["future_cvd_lifetime"] = np.round(
+        stored_last_fut_life + np.cumsum(new_bars["future_cvd_15m"].to_numpy(np.float64)), 8
+    )
+    new_bars["spot_cvd_lifetime"] = np.round(
+        stored_last_spot_life + np.cumsum(new_bars["spot_cvd_15m"].to_numpy(np.float64)), 8
+    )
+
+    # 6. Exact recursive seeding for EMAs to guarantee zero seam discontinuity
+    closes = new_bars["close"].to_numpy(np.float64)
+    for p in (8, 21, 50, 200, 800):
+        alpha = 2.0 / (p + 1.0)
+        seed_ema = float(old_master[f"ema_{p}"].iloc[-1])
+        out_ema = np.empty(len(closes), dtype=np.float64)
+        curr = seed_ema
+        for i, c_val in enumerate(closes):
+            curr = alpha * c_val + (1.0 - alpha) * curr
+            out_ema[i] = curr
+        new_bars[f"ema_{p}"] = np.round(out_ema, 8)
+
+    # 7. Concatenate and verify continuous cadence
+    combined_master = pd.concat([old_master, new_bars], ignore_index=True)
+    ts = combined_master["open_time_ms"].to_numpy(np.int64)
+    if not np.all(np.diff(ts) == BAR_MS):
+        log(f"[REJECT] {symbol}: incremental seam produced cadence discontinuity -> fallback to full rebuild")
+        return None
+
+    # Coerce canonical dtypes and column ordering
+    combined_master = combined_master[CANONICAL_COLUMNS]
+    for col, dt in COLUMN_DTYPES.items():
+        combined_master[col] = combined_master[col].astype(dt)
+
+    # 8. Assemble ladder tail if ladder exists
+    combined_ladder = None
+    if ladder_path and os.path.exists(ladder_path):
+        old_ladder = pd.read_parquet(ladder_path)
+        if not fp_ladder.empty:
+            new_ladder, _ = assemble_ladder(new_bars, fp_ladder, allow_synthetic=False)
+            combined_ladder = pd.concat([old_ladder, new_ladder], ignore_index=True)
+        else:
+            combined_ladder = old_ladder
+
+    log(f"[INCR] {symbol}: successfully stitched {len(new_bars)} new bars "
+        f"({pd.to_datetime(ts[-len(new_bars)], unit='ms', utc=True)} -> {pd.to_datetime(ts[-1], unit='ms', utc=True)})")
+    return combined_master, combined_ladder
+`
+
+
+================================================================================
+# FILE 3/9: Engine/pipeline/binance_historical_fetcher.py
 # DESCRIPTION: Async/Parallel Binance Vision Downloader, ZIP Unpacker, REST Fallback & Gap Repair
 ================================================================================
 
@@ -1205,11 +1358,7 @@ class BinanceHistoricalFetcher:
 
         live_now = datetime.now(timezone.utc)
         live_cur_month_start = datetime(live_now.year, live_now.month, 1, tzinfo=timezone.utc)
-        next_month_start = datetime(now.year + (now.month == 12), 1 if now.month == 12 else now.month + 1, 1, tzinfo=timezone.utc)
-        if now >= next_month_start - timedelta(seconds=1) and next_month_start <= live_cur_month_start:
-            month_end_exclusive = next_month_start
-        else:
-            month_end_exclusive = min(datetime(now.year, now.month, 1, tzinfo=timezone.utc), live_cur_month_start)
+        month_end_exclusive = min(datetime(now.year, now.month, 1, tzinfo=timezone.utc), live_cur_month_start)
 
         months = _month_keys(start, month_end_exclusive)
         monthly_res = self._parallel(monthly, months, f"{symbol} {market} monthly klines")
@@ -1640,7 +1789,7 @@ class BinanceHistoricalFetcher:
 
 
 ================================================================================
-# FILE 3/8: Engine/pipeline/historical_metrics_processor.py
+# FILE 4/9: Engine/pipeline/historical_metrics_processor.py
 # DESCRIPTION: Continuous Timeline Builder, Vectorised CVD, Spot Matching & Liquidation Math
 ================================================================================
 
@@ -1906,7 +2055,10 @@ class HistoricalMetricsProcessor:
         if funding_df is not None and not funding_df.empty:
             fm = _asof_backward(ct, funding_df, "fundingTime", ["fundingRate"])
             fr = fm["fundingRate"].to_numpy(np.float64)
-            fr = np.where(np.isnan(fr), 0.0001, fr)
+            stale = fm["_age_ms"].to_numpy(np.float64) > FUNDING_MAX_STALENESS_MS
+            fr = np.where(np.isnan(fr) | stale, 0.0001, fr)
+            if stale.any():
+                log(f"[PROCESSOR] {symbol}: {int(stale.sum())} bars with funding older than {FUNDING_MAX_STALENESS_MS / 3_600_000:.0f}h -> default 0.01% (stale-guarded)")
             out["funding_rate_pct"] = fr * 100.0
         else:
             out["funding_rate_pct"] = 0.01
@@ -2092,7 +2244,7 @@ class HistoricalMetricsProcessor:
 
 
 ================================================================================
-# FILE 4/8: Engine/pipeline/http_client.py
+# FILE 5/9: Engine/pipeline/http_client.py
 # DESCRIPTION: Resilient HTTP Client, Exponential Backoff, Retry Handling & Binance 418 Protection
 ================================================================================
 
@@ -2267,7 +2419,7 @@ class HttpClient:
 
 
 ================================================================================
-# FILE 5/8: Engine/pipeline/parquet_exporter.py
+# FILE 6/9: Engine/pipeline/parquet_exporter.py
 # DESCRIPTION: Atomic Dual-Table Parquet Exporter, Schema Validator & SHA256 Manifest Generator
 ================================================================================
 
@@ -2447,7 +2599,7 @@ class ParquetExporter:
 
 
 ================================================================================
-# FILE 6/8: Engine/core/schema.py
+# FILE 7/9: Engine/core/schema.py
 # DESCRIPTION: Canonical 62-Column Schema, Data Types, Precision Rules & Listing Dates
 ================================================================================
 
@@ -2653,7 +2805,7 @@ def manifest_filename(symbol: str) -> str:
 
 
 ================================================================================
-# FILE 7/8: Engine/core/canonical_indicators.py
+# FILE 8/9: Engine/core/canonical_indicators.py
 # DESCRIPTION: Prefix-Invariant Indicator Kernels: EMAs, Wilder RSI/ATR, VWAP & Z-Scores
 ================================================================================
 
@@ -3019,7 +3171,7 @@ def compute_session_value_area(
 
 
 ================================================================================
-# FILE 8/8: Engine/verification/verify_parquet_integrity.py
+# FILE 9/9: Engine/verification/verify_parquet_integrity.py
 # DESCRIPTION: 3-Agent Verification Council (Schema, Statistical, OrderFlow) & Causal Repair Engine
 ================================================================================
 

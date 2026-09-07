@@ -572,11 +572,7 @@ class BinanceHistoricalFetcher:
 
         live_now = datetime.now(timezone.utc)
         live_cur_month_start = datetime(live_now.year, live_now.month, 1, tzinfo=timezone.utc)
-        next_month_start = datetime(now.year + (now.month == 12), 1 if now.month == 12 else now.month + 1, 1, tzinfo=timezone.utc)
-        if now >= next_month_start - timedelta(seconds=1) and next_month_start <= live_cur_month_start:
-            month_end_exclusive = next_month_start
-        else:
-            month_end_exclusive = min(datetime(now.year, now.month, 1, tzinfo=timezone.utc), live_cur_month_start)
+        month_end_exclusive = min(datetime(now.year, now.month, 1, tzinfo=timezone.utc), live_cur_month_start)
 
         months = _month_keys(start, month_end_exclusive)
         monthly_res = self._parallel(monthly, months, f"{symbol} {market} monthly klines")
