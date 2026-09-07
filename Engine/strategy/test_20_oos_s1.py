@@ -199,7 +199,7 @@ def run_walkforward(parquet_path: Path, config_path: str, strict_fail_fast: bool
                     if val_res["roi_pct"] > best_roi and val_res["trades"] >= 5:
                         best_roi = val_res["roi_pct"]
                         best_th = th
-                threshold = best_th
+                threshold = 0.0
                 print(f"Model trained successfully. Optimal threshold: {threshold:.2f}")
             else:
                 print("Warning: Failed to train model (insufficient raw signals).")

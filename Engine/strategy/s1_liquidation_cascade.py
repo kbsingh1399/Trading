@@ -52,14 +52,14 @@ class LiquidationCascadeSimulator:
         
         atr = df_test["atr_14"].clip(lower=cl * 0.002).values
         
-        # Pre-compute SMC metrics
-        hi_s = pd.Series(hi)
-        lo_s = pd.Series(lo)
-        pdh = hi_s.rolling(96).max().shift(1).bfill().values
-        pdl = lo_s.rolling(96).min().shift(1).bfill().values
-        
-        bullish_fvg = ((lo_s > hi_s.shift(2)) & (cl > op)).values
-        bearish_fvg = ((hi_s < lo_s.shift(2)) & (cl < op)).values
+        # Extract ML Alpha Invariants
+        long_liq_zs = df_test.get("long_liq_zs", pd.Series(np.zeros(T))).values
+        short_liq_zs = df_test.get("short_liq_zs", pd.Series(np.zeros(T))).values
+        zc_div = df_test.get("zc_div", pd.Series(np.zeros(T))).values
+        delta_spot = df_test.get("delta_spot", pd.Series(np.zeros(T))).values
+        delta_fut = df_test.get("delta_fut", pd.Series(np.zeros(T))).values
+        rsi = df_test.get("rsi_14", pd.Series(np.full(T, 50.0))).values
+        vwap_z = df_test.get("vwap_zscore", pd.Series(np.zeros(T))).values
         
         realized = self.risk.initial_capital
         peak = realized
@@ -73,11 +73,7 @@ class LiquidationCascadeSimulator:
         pos_max_r = 0.0
         pos_rr = 1.0
         
-        setup_state = 'WAITING'
-        sweep_bar = 0
-        sweep_extreme = 0.0
-        fvg_top = 0.0
-        fvg_bot = 0.0
+        # Removed SMC state tracking
         
         trades: List[Dict] = []
         equity_curve = np.full(T, realized)
@@ -163,42 +159,9 @@ class LiquidationCascadeSimulator:
                 sig_long = False
                 sig_short = False
                 
-                # State Machine for SMC (PDH/PDL Sweep -> FVG -> Retest)
-                if setup_state == 'WAITING' or (t - sweep_bar) > 48:
-                    setup_state = 'WAITING'
-                    if hi[t] > pdh[t]:
-                        setup_state = 'SWEPT_PDH'
-                        sweep_bar = t
-                        sweep_extreme = hi[t]
-                    elif lo[t] < pdl[t]:
-                        setup_state = 'SWEPT_PDL'
-                        sweep_bar = t
-                        sweep_extreme = lo[t]
-                        
-                elif setup_state == 'SWEPT_PDH':
-                    sweep_extreme = max(sweep_extreme, hi[t])
-                    if bearish_fvg[t]:
-                        fvg_top = lo[t-2]
-                        fvg_bot = hi[t]
-                        setup_state = 'BEARISH_FVG_FORMED'
-                        
-                elif setup_state == 'SWEPT_PDL':
-                    sweep_extreme = min(sweep_extreme, lo[t])
-                    if bullish_fvg[t]:
-                        fvg_top = lo[t]
-                        fvg_bot = hi[t-2]
-                        setup_state = 'BULLISH_FVG_FORMED'
-                        
-                # Entry Logic: Pullback into FVG
-                if setup_state == 'BULLISH_FVG_FORMED':
-                    if lo[t] <= fvg_top and hi[t] >= fvg_bot:
-                        sig_long = True
-                        setup_state = 'WAITING' # Reset
-                        
-                elif setup_state == 'BEARISH_FVG_FORMED':
-                    if hi[t] >= fvg_bot and lo[t] <= fvg_top:
-                        sig_short = True
-                        setup_state = 'WAITING' # Reset
+                # Enforce Canonical Confluence Signal (Z >= 1.2 per AGENTS.md)
+                sig_long = (long_liq_zs[t] > 1.2) and (zc_div[t] > 0.8) and (delta_spot[t] > 0) and (delta_fut[t] < 0) and (rsi[t] < 40) and (vwap_z[t] < -0.5)
+                sig_short = (short_liq_zs[t] > 1.2) and (zc_div[t] < -0.8) and (delta_spot[t] < 0) and (delta_fut[t] > 0) and (rsi[t] > 60) and (vwap_z[t] > 0.5)
                     
                 # Filter using the XGBoost Model function if provided
                 if filter_func is not None:
@@ -207,10 +170,10 @@ class LiquidationCascadeSimulator:
 
                 if sig_long:
                     px = cl[t] * (1.0 + self.fric.entry_slippage)
-                    # Structural Stop Loss: Below the sweep extreme
-                    stop_px = sweep_extreme - (px * 0.001)
+                    # Structural Stop Loss: 1.5x ATR below entry
+                    stop_px = px - (atr[t] * 1.5)
                     r_ = px - stop_px
-                    if r_ <= 0: r_ = atr[t] * 1.5
+                    if r_ <= 0: r_ = px * 0.005 # Fallback
                     target_px = px + (r_ * self.ratchet.min_target_r)
                     
                     pos_side = 1; pos_entry = px; pos_stop = stop_px
@@ -219,10 +182,10 @@ class LiquidationCascadeSimulator:
                     
                 elif sig_short:
                     px = cl[t] * (1.0 - self.fric.entry_slippage)
-                    # Structural Stop Loss: Above the sweep extreme
-                    stop_px = sweep_extreme + (px * 0.001)
+                    # Structural Stop Loss: 1.5x ATR above entry
+                    stop_px = px + (atr[t] * 1.5)
                     r_ = stop_px - px
-                    if r_ <= 0: r_ = atr[t] * 1.5
+                    if r_ <= 0: r_ = px * 0.005 # Fallback
                     target_px = px - (r_ * self.ratchet.min_target_r)
                     
                     pos_side = -1; pos_entry = px; pos_stop = stop_px

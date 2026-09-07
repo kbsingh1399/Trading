@@ -74,3 +74,5 @@ graphify-out/cache/
 
 # Local backup directory for previous backtesting data
 Engine/binance_backtesting_data_backup/
+
+graphify-out/
