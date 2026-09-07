@@ -1,9 +1,9 @@
-# MASTER ADVERSARIAL AUDIT & SYSTEM REVIEW: BINANCE HISTORICAL 15M PIPELINE
-# TARGET PLATFORM: OpenAI o1 / o3 / Frontier Reasoning Model (Ox Alpha)
-# AUDIT TARGET: Entire End-to-End Data Pipeline Subsystem (All 9 Source Code Files Included)
+# MASTER ADVERSARIAL FORENSIC AUDIT: BINANCE HISTORICAL 15M DUAL-TABLE PIPELINE
+# TARGET PLATFORM: OpenAI o1 / o3 / Frontier Reasoning Model (Ox Alpha) - FRESH SESSION
+# AUDIT SCOPE: Complete End-to-End Ingestion, Math, Incremental Append, Council & Export (All 9 Source Files Included)
 
 ================================================================================
-EXECUTIVE REVIEW CONTEXT & ROLE SPECIFICATION
+EXECUTIVE AUDIT CONTEXT & ROLE SPECIFICATION
 ================================================================================
 You are an elite quantitative systems architect, senior Python high-frequency infrastructure engineer, and forensic data auditor.
 You are tasked with conducting an exhaustive, uncompromising, adversarial code review of this institutional-grade historical data pipeline for Binance USDT-M Perpetuals and Spot data.
@@ -11,7 +11,71 @@ You are tasked with conducting an exhaustive, uncompromising, adversarial code r
 The system builds and maintains a continuous 15-minute dual-table backtesting database across 18 institutional assets from 2020 through present (over 3.47 million bars), enforcing zero nulls, strictly monotonic timestamps, and zero data lookahead.
 
 ================================================================================
-COMPLETE CODEBASE FOR AUDIT (ALL 9 SOURCE FILES EMBEDDED BELOW)
+CORE ARCHITECTURAL REQUIREMENTS & MANDATORY AUDIT QUESTIONS
+================================================================================
+
+### 1. Fast-Skip & Incremental Tail-Append Architecture (PRIMARY INVESTIGATION)
+- System Requirement:
+  1. Fast Skip for Completed Assets: When restarting the pipeline, if an asset is already up to date through yesterday (UTC date >= yesterday_date) and has strictly zero date or time gaps (np.all(np.diff(open_time_ms) == 900_000)), it must skip in sub-second time without hitting the network.
+  2. Incremental Tail Append for Missing Days: Binance publishes daily archives on a T-1 day lag (yesterday). If an asset already exists (e.g. BTC or SOL with data from 2020 to 2 days ago), the pipeline MUST NOT re-download all 84 months (6 years) of historical zip files from scratch! It must detect the last valid bar, fetch ONLY the missing tail days from Binance Vision / REST, compute all indicators with exact continuous warm-up/seeding, append to the existing dataset, verify zero gaps, and write atomically.
+- Your Audit Task:
+  - Scrutinize existing_output_is_current() in Engine/run_historical_pipeline.py.
+  - Scrutinize Engine/pipeline/incremental_append.py:
+    * Does perform_incremental_append() correctly fetch only the missing days plus a 4,000-bar warm-up window?
+    * Is the 4,000-bar warm-up window sufficient for Wilder RSI/ATR convergence? (Mathematical note: (13/14)^4000 = 1.3e-131, effectively zero residual).
+    * Are the recursive EMAs (8, 21, 50, 200, 800) exact-seeded from the stored historical boundary to ensure zero seam discontinuity?
+    * Are the cumulative lifetime CVD accumulators (uture_cvd_lifetime and spot_cvd_lifetime) re-anchored algebraically without drift?
+    * Does the seam cadence verification (
+p.all(np.diff(ts) == BAR_MS)) properly trigger a fallback to full rebuild if upstream data has gaps?
+
+### 2. Causality & Prefix-Invariance (Anti-Lookahead Verification)
+- Requirement: Every indicator and feature must strictly satisfy prefix invariance: f(x[:n])[:k] == f(x)[:k] for all k <= n.
+- Your Audit Task:
+  - Inspect compute_ema_series, compute_wilder_rsi_series, compute_wilder_atr_series, compute_session_cvd, compute_session_vwap, and rolling Z-score calculations in Engine/core/canonical_indicators.py and Engine/pipeline/historical_metrics_processor.py.
+  - Confirm there are zero forward-looking lookaheads, backward shifts, or centering artifacts.
+  - Verify that _stale_runs_mask is used strictly as an ex-post quarantine flag (is_imputed_metrics) and never leaked into causal calculations.
+
+### 3. Upstream Data Ingestion, Binance 418 Ban Protection & Network Resilience
+- Requirement: Binance Vision monthly and daily archive structures frequently have missing days, corrupt archives, or publication delays.
+- Your Audit Task:
+  - Audit BinanceHistoricalFetcher._fetch_klines, _fetch_metrics, and HttpClient.
+  - Verify how HTTP 404, 429 rate limits, and 418 IP bans are handled.
+  - Check whether _rest_klines and _repair_gaps correctly stitch boundary bars without introducing duplicates or off-by-one timestamp errors.
+  - Verify that the month-boundary calculation (month_end_exclusive) handles archive lag cleanly.
+
+### 4. Mathematical Precision, Zero Nulls & Data Imputation Policy
+- Requirement: The output master parquet must contain exactly 62 canonical columns, 0 nulls, and enforce specific decimal precisions so sub-dollar assets (DOGE, TRX, ADA) never collapse.
+- Your Audit Task:
+  - Audit HistoricalMetricsProcessor for handling missing metrics days. Are imputed values explicitly tagged via is_imputed_metrics?
+  - Does the liquidation engine avoid non-physical negative or infinite values?
+  - Is FUNDING_MAX_STALENESS_MS = 16 * 3_600_000 enforced with a fallback to default 0.01%?
+
+### 5. Footprint Ladder & Volume Conservation
+- Requirement: Table 2 (Footprint Ladder) must conserve volume with Table 1 (Master): sum of ladder volume for candle t must equal candle t quote/base volume.
+- Your Audit Task:
+  - Audit ssemble_ladder() and the footprint merger. Does it handle mixed regimes (real aggTrades footprint vs causal synthetic ladder) without volume leaks?
+  - Are ladder stats keys unified (	ick_rungs, synthetic_rungs)?
+
+### 6. Atomic Export, Disk Governance & Verification Council
+- Requirement: Exports must be fail-closed. If verification council fails or disk space is below 5 GB, no corrupt parquet must remain.
+- Your Audit Task:
+  - Audit ParquetExporter, causal_repair(), and 
+un_council(). Does ParquetExporter ensure atomic writes via temporary files?
+  - Is check_disk_space() enforced before export to reject low-disk runs fail-closed?
+
+================================================================================
+DESIRED AUDIT REPORT OUTPUT FORMAT
+================================================================================
+Please structure your forensic review report into the following sections:
+1. Executive Verdict & Overall System Health Score (0-100)
+2. Critical Vulnerabilities & High-Priority Findings (with exact file and line numbers)
+3. Incremental Append & Fast-Skip Architecture Assessment (Mathematical proof of continuity & seam stability)
+4. Mathematical & Causality Verification (Prefix-invariance, indicator recursion, CVD session resets)
+5. Robustness & API Hardening (Binance Vision / REST edge cases, rate limits, network failures)
+6. Concrete Surgical Recommendations & Any Remaining Micro-Patches
+
+================================================================================
+COMPLETE PIPELINE CODEBASE (ALL 9 SOURCE FILES EMBEDDED BELOW)
 ================================================================================
 
 
