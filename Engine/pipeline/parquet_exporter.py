@@ -71,11 +71,28 @@ def _arrow_schema(columns: List[str], dtypes: Dict[str, str]) -> pa.Schema:
     return pa.schema([pa.field(c, m[dtypes[c]], nullable=False) for c in columns])
 
 
+def _fsync_dir(dir_path: str) -> None:
+    """Best-effort fsync on parent directory (POSIX directory fd sync, safe no-op on non-POSIX)."""
+    try:
+        if hasattr(os, "O_DIRECTORY"):
+            fd = os.open(dir_path, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(fd)
+            finally:
+                os.close(fd)
+    except Exception:
+        pass
+
+
 def _atomic_write(df: pd.DataFrame, path: str, schema: pa.Schema, row_group_size: Optional[int]) -> None:
     table = pa.Table.from_pandas(df, schema=schema, preserve_index=False)
     tmp = path + ".tmp"
-    pq.write_table(table, tmp, compression="snappy", row_group_size=row_group_size, use_dictionary=True, write_statistics=True)
+    with open(tmp, "wb") as f:
+        pq.write_table(table, f, compression="snappy", row_group_size=row_group_size, use_dictionary=True, write_statistics=True)
+        f.flush()
+        os.fsync(f.fileno())
     os.replace(tmp, path)
+    _fsync_dir(os.path.dirname(os.path.abspath(path)))
 
 def _file_sha256(path: str) -> Optional[str]:
     if not os.path.exists(path):
@@ -261,8 +278,12 @@ class ParquetExporter:
 
             with open(staging_man_path, "w", encoding="utf-8") as fh:
                 json.dump(manifest, fh, indent=2)
+                fh.flush()
+                os.fsync(fh.fileno())
 
-            # 4. Atomic promotion: all staging files exist; promote in rapid sequence with manifest last!
+            # 4. Atomic promotion with durability (R3-C3 fix):
+            # All staging files are fully written and fsync'd.
+            # Promote via os.replace in rapid sequence with manifest last as the canonical commit certificate!
             os.replace(staging_mpath, mpath)
             if has_ladder:
                 os.replace(staging_lpath, lpath)
@@ -272,6 +293,7 @@ class ParquetExporter:
                 except OSError:
                     pass
             os.replace(staging_man_path, man_path)
+            _fsync_dir(self.output_dir)
 
             return mpath, (lpath if has_ladder else None), man_path
 
@@ -284,4 +306,35 @@ class ParquetExporter:
                     except OSError:
                         pass
             raise
+
+
+def verify_dataset_hashes(manifest_path: str) -> bool:
+    """
+    Reader-side integrity and durability enforcement (R3-C3).
+    Validates that on-disk master and ladder files match the SHA-256 hashes recorded in the manifest.
+    Returns False if manifest is missing, corrupt, or if any hash mismatch is detected.
+    """
+    if not os.path.exists(manifest_path):
+        return False
+    try:
+        with open(manifest_path, "r", encoding="utf-8") as fh:
+            man = json.load(fh)
+        target_dir = os.path.dirname(os.path.abspath(manifest_path))
+        m_file = man.get("master_file")
+        m_sha = man.get("master_sha256")
+        if not m_file or not m_sha:
+            return False
+        m_path = os.path.join(target_dir, m_file)
+        if _file_sha256(m_path) != m_sha:
+            return False
+
+        l_file = man.get("ladder_file")
+        l_sha = man.get("ladder_sha256")
+        if l_file and l_sha:
+            l_path = os.path.join(target_dir, l_file)
+            if _file_sha256(l_path) != l_sha:
+                return False
+        return True
+    except Exception:
+        return False
 

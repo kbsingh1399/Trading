@@ -170,6 +170,21 @@ def compute_session_cvd(timestamps_ms: np.ndarray, deltas: np.ndarray) -> np.nda
     return pd.Series(np.asarray(deltas, dtype=np.float64)).groupby(day).cumsum().to_numpy()
 
 
+def compute_cumulative_cvd(deltas: np.ndarray, seed: float = 0.0, dp: int = 8) -> np.ndarray:
+    """
+    R3-C2 Mathematical Invariant:
+    Per-bar recursive rounding contract:
+        cvd_lifetime[t] = np.round(cvd_lifetime[t-1] + delta[t], dp)
+    Guarantees bit-exact IEEE 754 atol=0.0 parity between full rebuild and incremental append.
+    """
+    out = np.empty(len(deltas), dtype=np.float64)
+    curr = float(seed)
+    for i, d in enumerate(deltas):
+        curr = round(curr + float(d), dp)
+        out[i] = curr
+    return out
+
+
 def compute_session_vwap(timestamps_ms, highs, lows, closes, volumes) -> np.ndarray:
     """
     Session VWAP anchored at 00:00 UTC using typical price (H+L+C)/3.

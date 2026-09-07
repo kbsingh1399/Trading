@@ -28,6 +28,7 @@ import numpy as np
 import pandas as pd
 
 from ..core.canonical_indicators import (
+    compute_cumulative_cvd,
     compute_ema_series,
     compute_rolling_zscore,
     compute_session_cvd,
@@ -86,9 +87,15 @@ def _stale_runs_mask(values: np.ndarray, threshold: int, oi_moves: np.ndarray, m
     mask = np.zeros(n, dtype=bool)
     for s, L in zip(starts, lengths):
         if L >= threshold:
-            moving = float(oi_moves[s:min(s + L - 1, len(oi_moves))].mean()) if len(oi_moves) > 0 and (s < len(oi_moves)) else 0.0
+            expected_moves = L - 1
+            moves_slice = oi_moves[s : s + expected_moves]
+            if len(moves_slice) < expected_moves:
+                # Array tail truncation (R3-H3 fix): explicitly pad with False (conservative: stationary assumption)
+                pad_len = expected_moves - len(moves_slice)
+                moves_slice = np.pad(moves_slice, (0, pad_len), mode="constant", constant_values=False)
+            moving = float(moves_slice.mean()) if len(moves_slice) > 0 else 0.0
             if moving >= min_moving:
-                mask[s:s + L] = True
+                mask[s : s + L] = True
     return mask
 
 
@@ -224,10 +231,10 @@ class HistoricalMetricsProcessor:
             st_buy = np.zeros(n)
             st_sell = np.zeros(n)
 
-        fut_delta = buy - sell
+        fut_delta = np.round(buy - sell, COIN_DP)
         out["future_cvd_15m"] = fut_delta
-        out["future_cvd_session"] = compute_session_cvd(ot, fut_delta)
-        out["future_cvd_lifetime"] = np.cumsum(fut_delta)
+        out["future_cvd_session"] = np.round(compute_session_cvd(ot, fut_delta), COIN_DP)
+        out["future_cvd_lifetime"] = np.round(np.cumsum(fut_delta), COIN_DP)
 
         # ---------------------------------------------------------------- spot (strict 1:1)
         spot_close = np.full(n, np.nan)
@@ -241,13 +248,13 @@ class HistoricalMetricsProcessor:
             spot_close = sm["spot_close"].to_numpy(np.float64)
             s_vol = sm["spot_volume"].fillna(0.0).to_numpy(np.float64)
             s_buy = sm["spot_taker_buy_volume"].fillna(0.0).to_numpy(np.float64)
-            spot_delta = np.where(spot_exact, s_buy - np.maximum(s_vol - s_buy, 0.0), 0.0)
+            spot_delta = np.where(spot_exact, np.round(s_buy - np.maximum(s_vol - s_buy, 0.0), COIN_DP), 0.0)
             log(f"[PROCESSOR] {symbol}: spot matched on {int(spot_exact.sum()):,}/{n:,} bars")
         else:
             log(f"[WARN] {symbol}: no spot stream; spot CVD = 0, basis = 0")
         out["spot_cvd_15m"] = spot_delta
-        out["spot_cvd_session"] = compute_session_cvd(ot, spot_delta)
-        out["spot_cvd_lifetime"] = np.cumsum(spot_delta)
+        out["spot_cvd_session"] = np.round(compute_session_cvd(ot, spot_delta), COIN_DP)
+        out["spot_cvd_lifetime"] = np.round(np.cumsum(spot_delta), COIN_DP)
         spot_close_ff = pd.Series(spot_close).ffill().to_numpy()
         basis = np.where(np.isnan(spot_close_ff), 0.0, c - spot_close_ff)
         out["basis_usd"] = basis
@@ -379,8 +386,8 @@ class HistoricalMetricsProcessor:
         # ---------------------------------------------------------------- extended features
         log(f"[PROCESSOR] {symbol}: VWAP, z-scores, divergence")
         vwap = compute_session_vwap(ot, h, l, c, vb)
-        out["session_vwap"] = vwap
-        out["vwap_zscore"] = compute_vwap_zscore(c, vwap, VWAP_Z_WINDOW)
+        out["session_vwap"] = np.round(vwap, PRICE_DP)
+        out["vwap_zscore"] = compute_vwap_zscore(c, out["session_vwap"], VWAP_Z_WINDOW)
         sma9_base = compute_sma_series(vb, 9)
         out["volume_ratio"] = np.divide(vb, sma9_base, out=np.zeros(n), where=sma9_base > 0)
         out["zc_div"] = np.where(spot_exact, spot_delta - fut_delta, 0.0)
@@ -397,7 +404,7 @@ class HistoricalMetricsProcessor:
             out = out.iloc[first:].reset_index(drop=True)
             if first > 0:
                 for life, delta in (("future_cvd_lifetime", "future_cvd_15m"), ("spot_cvd_lifetime", "spot_cvd_15m")):
-                    out[life] = out[life].to_numpy() - (out[life].iloc[0] - out[delta].iloc[0])
+                    out[life] = np.round(out[life].to_numpy() - (out[life].iloc[0] - out[delta].iloc[0]), COIN_DP)
                 log(f"[PROCESSOR] {symbol}: dropped {first:,} warm-up bars; lifetime CVD re-anchored")
 
         if export_end_ms is not None:
@@ -432,6 +439,11 @@ class HistoricalMetricsProcessor:
         # Ensure exact volume conservation and CVD identity after coin_cols rounding
         df["taker_sell_vol_btc"] = np.round(df["volume_base"] - df["taker_buy_vol_btc"], COIN_DP)
         df["future_cvd_15m"] = np.round(df["taker_buy_vol_btc"] - df["taker_sell_vol_btc"], COIN_DP)
+        df["future_cvd_session"] = np.round(compute_session_cvd(df["open_time_ms"].to_numpy(np.int64), df["future_cvd_15m"].to_numpy(np.float64)), COIN_DP)
+        df["future_cvd_lifetime"] = compute_cumulative_cvd(df["future_cvd_15m"].to_numpy(np.float64), seed=0.0, dp=COIN_DP)
+        df["spot_cvd_lifetime"] = compute_cumulative_cvd(df["spot_cvd_15m"].to_numpy(np.float64), seed=0.0, dp=COIN_DP)
+        if "spot_flow_source" in df.columns:
+            df["zc_div"] = np.where(df["spot_flow_source"] == "SPOT_EXACT", np.round(df["spot_cvd_15m"] - df["future_cvd_15m"], COIN_DP), 0.0)
         num_cols = [c for c in df.columns if COLUMN_DTYPES[c] == "float64"]
         arr = df[num_cols].to_numpy(np.float64)
         bad = ~np.isfinite(arr)

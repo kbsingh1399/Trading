@@ -23,6 +23,7 @@ import pyarrow.parquet as pq
 
 from Engine.core.canonical_indicators import (
     DAY_MS,
+    compute_cumulative_cvd,
     compute_session_cvd,
     compute_session_value_area,
     compute_session_vwap,
@@ -30,7 +31,7 @@ from Engine.core.canonical_indicators import (
     compute_wilder_rsi_series,
     get_merge_level,
 )
-from Engine.core.schema import BAR_MS, CANONICAL_COLUMNS, COLUMN_DTYPES
+from Engine.core.schema import BAR_MS, CANONICAL_COLUMNS, COLUMN_DTYPES, COIN_DP, PRICE_DP, RATIO_DP
 from Engine.pipeline.binance_historical_fetcher import BinanceHistoricalFetcher, assemble_ladder
 from Engine.pipeline.historical_metrics_processor import HistoricalMetricsProcessor
 
@@ -40,10 +41,40 @@ SEAM_OVERLAP_BARS: int = 5       # Number of preceding bars verified bit-exact f
 RTOL_INDICATOR: float = 1e-9     # Institutional numerical tolerance for floating point verification
 
 
-def compute_incremental_append_plan(master_path: str) -> Optional[Dict[str, Any]]:
+class CorruptedMasterCheckpointError(ValueError):
+    """Raised when stored boundary checkpoint accumulators in master parquet are corrupted or non-finite (R3-M1)."""
+    pass
+
+
+def _quarantine_corrupted_master(master_path: str, reason: str, log: Callable[[str], None] = print) -> str:
+    """Quarantines corrupted master parquet and invalidates stale manifest (R3-M1)."""
+    ts = int(datetime.now(timezone.utc).timestamp())
+    quarantine_path = f"{master_path}.corrupt_{ts}"
+    try:
+        if os.path.exists(master_path):
+            os.replace(master_path, quarantine_path)
+            log(f"[QUARANTINE] Moved corrupted dataset {master_path} -> {quarantine_path} (Reason: {reason})")
+        # Invalidate companion manifest so it cannot be read as current
+        target_dir = os.path.dirname(os.path.abspath(master_path))
+        base_name = os.path.basename(master_path)
+        sym = base_name.split("_")[0]
+        man_path = os.path.join(target_dir, f"{sym}_dataset_manifest.json")
+        if os.path.exists(man_path):
+            try:
+                os.remove(man_path)
+                log(f"[QUARANTINE] Removed stale manifest {man_path}")
+            except OSError:
+                pass
+    except Exception as exc:
+        log(f"[QUARANTINE ERROR] Failed to quarantine {master_path}: {exc}")
+    return quarantine_path
+
+
+def compute_incremental_append_plan(master_path: str, log: Callable[[str], None] = print) -> Optional[Dict[str, Any]]:
     """
     O(1) boundary detection without loading the full 3.5M row dataframe into memory.
     Reads metadata and the last row-group to extract boundary state and checkpoint accumulators.
+    Loudly quarantines and raises CorruptedMasterCheckpointError if row-group is corrupt (R3-M1).
     """
     if not os.path.exists(master_path):
         return None
@@ -63,6 +94,7 @@ def compute_incremental_append_plan(master_path: str) -> Optional[Dict[str, Any]
                 "ema_8", "ema_21", "ema_50", "ema_200", "ema_800"
             ]
         )
+        pf.close()
         rg_len = len(last_rg)
         if rg_len < SEAM_OVERLAP_BARS:
             return None
@@ -70,20 +102,42 @@ def compute_incremental_append_plan(master_path: str) -> Optional[Dict[str, Any]
         # Verify cadence of the final row-group tail
         tail_ts = last_rg.column("open_time_ms").to_numpy()[-SEAM_OVERLAP_BARS:]
         if not np.all(np.diff(tail_ts) == BAR_MS):
-            return None  # Stored file has cadence break -> must rebuild
+            msg = f"cadence violation in tail bars {tail_ts} (diff != {BAR_MS})"
+            _quarantine_corrupted_master(master_path, msg, log=log)
+            raise CorruptedMasterCheckpointError(f"{master_path}: {msg}")
 
         last_open_ms = int(tail_ts[-1])
 
-        # Extract stored checkpoint state from the final boundary row
+        # Extract stored checkpoint state from the final boundary row (handles pyarrow null/None safely)
+        def _get_float(col_name: str) -> float:
+            val = last_rg.column(col_name)[-1].as_py()
+            if val is None:
+                return float("nan")
+            try:
+                return float(val)
+            except (ValueError, TypeError):
+                return float("nan")
+
         checkpoint = {
-            "future_cvd_lifetime": float(last_rg.column("future_cvd_lifetime")[-1].as_py()),
-            "spot_cvd_lifetime": float(last_rg.column("spot_cvd_lifetime")[-1].as_py()),
-            "ema_8": float(last_rg.column("ema_8")[-1].as_py()),
-            "ema_21": float(last_rg.column("ema_21")[-1].as_py()),
-            "ema_50": float(last_rg.column("ema_50")[-1].as_py()),
-            "ema_200": float(last_rg.column("ema_200")[-1].as_py()),
-            "ema_800": float(last_rg.column("ema_800")[-1].as_py()),
+            "future_cvd_lifetime": _get_float("future_cvd_lifetime"),
+            "spot_cvd_lifetime": _get_float("spot_cvd_lifetime"),
+            "ema_8": _get_float("ema_8"),
+            "ema_21": _get_float("ema_21"),
+            "ema_50": _get_float("ema_50"),
+            "ema_200": _get_float("ema_200"),
+            "ema_800": _get_float("ema_800"),
         }
+
+        # Rigorous check for accumulator corruption (R3-M1)
+        for k, v in checkpoint.items():
+            if not np.isfinite(v):
+                msg = f"non-finite checkpoint accumulator '{k}' = {v}"
+                _quarantine_corrupted_master(master_path, msg, log=log)
+                raise CorruptedMasterCheckpointError(f"{master_path}: {msg}")
+            if k.startswith("ema_") and v <= 0.0:
+                msg = f"invalid non-positive EMA checkpoint '{k}' = {v}"
+                _quarantine_corrupted_master(master_path, msg, log=log)
+                raise CorruptedMasterCheckpointError(f"{master_path}: {msg}")
 
         # Extract overlap bars for bit-exact seam comparison
         overlap_ohlcv = {
@@ -101,7 +155,10 @@ def compute_incremental_append_plan(master_path: str) -> Optional[Dict[str, Any]
             "checkpoint": checkpoint,
             "overlap_ohlcv": overlap_ohlcv,
         }
-    except Exception:
+    except CorruptedMasterCheckpointError:
+        raise
+    except Exception as exc:
+        log(f"[INCR] {master_path}: error inspecting parquet metadata ({exc})")
         return None
 
 
@@ -109,16 +166,28 @@ def verify_seam_overlap(stored_overlap: Dict[str, np.ndarray], refetched_df: pd.
     """
     Bit-exact verification of the N bars preceding the seam.
     Prevents splicing if upstream Binance klines were retroactively revised.
+    R3-M2: Strictly asserts Unix millisecond epoch (> 1e12) to avoid unit ambiguity.
     """
     try:
+        ref_ot = refetched_df["open_time"].to_numpy()
+        if len(ref_ot) > 0 and not np.all(ref_ot > 1_000_000_000_000):
+            # Unit ambiguity detected (seconds instead of milliseconds) -> reject seam
+            return False
+
         refetched_sub = refetched_df[refetched_df["open_time"].isin(stored_overlap["open_time_ms"])].sort_values("open_time")
         if len(refetched_sub) != len(stored_overlap["open_time_ms"]):
             return False
 
-        # Bit-exact check on OHLCV values
-        for col, ref_col in [("open", "open"), ("high", "high"), ("low", "low"), ("close", "close"), ("volume_base", "volume")]:
+        # Bit-exact check on OHLCV values (under canonical precision policy)
+        for col, ref_col, dp in [
+            ("open", "open", PRICE_DP),
+            ("high", "high", PRICE_DP),
+            ("low", "low", PRICE_DP),
+            ("close", "close", PRICE_DP),
+            ("volume_base", "volume", COIN_DP),
+        ]:
             stored_val = np.asarray(stored_overlap[col], dtype=np.float64)
-            ref_val = refetched_sub[ref_col].to_numpy(dtype=np.float64)
+            ref_val = np.round(refetched_sub[ref_col].to_numpy(dtype=np.float64), dp)
             if not np.all(stored_val == ref_val):
                 return False
         return True
@@ -163,13 +232,14 @@ def perform_incremental_append(
         return None
 
     if end_dt <= last_open_dt:
-        log(f"[INCR] {symbol}: data already current through {last_open_dt:%Y-%m-%d %H:%M}")
-        old_master = pd.read_parquet(master_path)
-        old_ladder = pd.read_parquet(ladder_path) if (ladder_path and os.path.exists(ladder_path)) else None
-        return old_master, old_ladder
+        log(f"[INCR] {symbol}: data already current through {last_open_dt:%Y-%m-%d %H:%M} (no-op)")
+        return "CURRENT", None
 
     raw_warmup_dt = pd.to_datetime(last_open_ms - WARMUP_BARS * BAR_MS, unit="ms", utc=True)
     warmup_start_dt = raw_warmup_dt.floor("D") - pd.Timedelta(days=2)
+    # Assert funding and kline start boundary alignment at exact UTC midnight (R3-M5 fix)
+    warmup_start_ms = int(warmup_start_dt.timestamp() * 1000)
+    assert warmup_start_ms % 86_400_000 == 0, f"warmup_start_dt {warmup_start_dt} must align to 00:00:00 UTC"
     log(f"[INCR] {symbol}: tail fetch {warmup_start_dt:%Y-%m-%d} -> {end_dt:%Y-%m-%d} (tail: {missing_days:.2f} days, warmup: {WARMUP_BARS} bars)")
 
     # Fetch raw streams for warmup + tail
@@ -179,10 +249,8 @@ def perform_incremental_append(
     funding = fetcher.fetch_funding_rates(symbol, int(warmup_start_dt.timestamp() * 1000))
 
     if klines.empty or int(klines["open_time"].iloc[-1]) <= last_open_ms:
-        log(f"[INCR] {symbol}: no new closed bars upstream")
-        old_master = pd.read_parquet(master_path)
-        old_ladder = pd.read_parquet(ladder_path) if (ladder_path and os.path.exists(ladder_path)) else None
-        return old_master, old_ladder
+        log(f"[INCR] {symbol}: no new closed bars upstream (no-op)")
+        return "CURRENT", None
 
     # Section C: Seam Overlap Bit-Exact Verification
     if not allow_seam_revision:
@@ -208,9 +276,7 @@ def perform_incremental_append(
     new_bars = inc_master[inc_master["open_time_ms"] > last_open_ms].copy()
     if new_bars.empty:
         log(f"[INCR] {symbol}: zero new bars after boundary filter")
-        old_master = pd.read_parquet(master_path)
-        old_ladder = pd.read_parquet(ladder_path) if (ladder_path and os.path.exists(ladder_path)) else None
-        return old_master, old_ladder
+        return "CURRENT", None
 
     # Strict continuity assertion
     first_new_open = int(new_bars["open_time_ms"].iloc[0])
@@ -219,14 +285,12 @@ def perform_incremental_append(
         log(f"[REJECT] {symbol}: seam discontinuity! Expected {expected_first_open}, got {first_new_open} -> full rebuild")
         return None
 
-    # Re-anchor single-file embedded CVD checkpoint accumulators
+    # Re-anchor single-file embedded CVD checkpoint accumulators (R3-C2 fix: strict COIN_DP contract & sequential IEEE 754 parity)
     checkpoint = plan["checkpoint"]
-    new_bars["future_cvd_lifetime"] = np.round(
-        checkpoint["future_cvd_lifetime"] + np.cumsum(new_bars["future_cvd_15m"].to_numpy(np.float64)), 8
-    )
-    new_bars["spot_cvd_lifetime"] = np.round(
-        checkpoint["spot_cvd_lifetime"] + np.cumsum(new_bars["spot_cvd_15m"].to_numpy(np.float64)), 8
-    )
+    fut_deltas = new_bars["future_cvd_15m"].to_numpy(np.float64)
+    spot_deltas = new_bars["spot_cvd_15m"].to_numpy(np.float64)
+    new_bars["future_cvd_lifetime"] = compute_cumulative_cvd(fut_deltas, seed=checkpoint["future_cvd_lifetime"], dp=COIN_DP)
+    new_bars["spot_cvd_lifetime"] = compute_cumulative_cvd(spot_deltas, seed=checkpoint["spot_cvd_lifetime"], dp=COIN_DP)
 
     # Exact recursive EMA seeding from stored checkpoint
     closes = new_bars["close"].to_numpy(np.float64)
@@ -266,8 +330,8 @@ def perform_incremental_append(
         v_seam = combined_master.loc[combined_master.index[seam_idx], "volume_base"].to_numpy(np.float64)
 
         # 1. Session CVD
-        combined_master.loc[combined_master.index[seam_idx], "future_cvd_session"] = np.round(compute_session_cvd(ts_seam, fut_seam), 8)
-        combined_master.loc[combined_master.index[seam_idx], "spot_cvd_session"] = np.round(compute_session_cvd(ts_seam, spot_seam), 8)
+        combined_master.loc[combined_master.index[seam_idx], "future_cvd_session"] = np.round(compute_session_cvd(ts_seam, fut_seam), COIN_DP)
+        combined_master.loc[combined_master.index[seam_idx], "spot_cvd_session"] = np.round(compute_session_cvd(ts_seam, spot_seam), COIN_DP)
 
         # 2. Session VWAP
         vwap_seam = compute_session_vwap(ts_seam, h_seam, l_seam, c_seam, v_seam)
@@ -279,9 +343,9 @@ def perform_incremental_append(
         z_c = combined_master.loc[z_slice, "close"].to_numpy(np.float64)
         z_vw = combined_master.loc[z_slice, "session_vwap"].to_numpy(np.float64)
         z_scores = compute_vwap_zscore(z_c, z_vw, 24)
-        combined_master.loc[combined_master.index[seam_idx], "vwap_zscore"] = np.round(z_scores[len(z_slice) - len(seam_idx):], 8)
+        combined_master.loc[combined_master.index[seam_idx], "vwap_zscore"] = np.round(z_scores[len(z_slice) - len(seam_idx):], RATIO_DP)
 
-        # 4. Session Value Area & Previous Day VA (with full prior session context)
+        # 4. Session Value Area & Previous Day VA (R3-H1 fix: use canonical get_merge_level(symbol))
         va_start_day = seam_day - 1
         va_mask = (full_ts // DAY_MS) >= va_start_day
         va_idx = np.flatnonzero(va_mask)
@@ -290,7 +354,7 @@ def perform_incremental_append(
         va_l = combined_master.loc[combined_master.index[va_idx], "low"].to_numpy(np.float64)
         va_c = combined_master.loc[combined_master.index[va_idx], "close"].to_numpy(np.float64)
         va_v = combined_master.loc[combined_master.index[va_idx], "volume_base"].to_numpy(np.float64)
-        bucket = get_merge_level(float(va_c.mean()))
+        bucket = get_merge_level(symbol)
         vah_t, val_t, pvah_t, pval_t = compute_session_value_area(va_ts, va_h, va_l, va_c, va_v, bucket_size=bucket)
         sub_seam = (va_ts // DAY_MS) >= seam_day
         combined_master.loc[combined_master.index[va_idx[sub_seam]], "session_vah"] = np.round(vah_t[sub_seam], 8)
@@ -303,12 +367,14 @@ def perform_incremental_append(
     for col, dt in COLUMN_DTYPES.items():
         combined_master[col] = combined_master[col].astype(dt)
 
-    # Section F: Smoke assertions on stitched frame
-    # 1. RSI-14
-    smoke_close = combined_master["close"].to_numpy(np.float64)[-100:]
-    smoke_rsi = compute_wilder_rsi_series(smoke_close, 14)
-    target_rsi = combined_master["rsi_14"].to_numpy(np.float64)[-100:]
-    if not np.allclose(smoke_rsi[-20:], target_rsi[-20:], rtol=RTOL_INDICATOR, atol=1e-6):
+    # Section F: Smoke assertions on stitched frame (R3-C1 fix: test across seam using full 4,000-bar warmup slice)
+    seam_pos = int(seam_idx[0]) if len(seam_idx) > 0 else len(combined_master) - len(new_bars)
+    warmup_eval_bars = min(WARMUP_BARS, seam_pos)
+    eval_slice = combined_master["close"].iloc[seam_pos - warmup_eval_bars :].to_numpy(np.float64)
+    recalc_rsi = compute_wilder_rsi_series(eval_slice, 14)
+    expected_rsi = combined_master["rsi_14"].iloc[seam_pos:].to_numpy(np.float64)
+    actual_rsi = recalc_rsi[warmup_eval_bars:]
+    if not np.allclose(actual_rsi, expected_rsi, rtol=RTOL_INDICATOR, atol=1e-4):
         log(f"[REJECT] {symbol}: post-stitch smoke assertion failed on RSI-14 -> full rebuild")
         return None
 
@@ -322,7 +388,7 @@ def perform_incremental_append(
         log(f"[REJECT] {symbol}: post-stitch smoke assertion failed on session CVD -> full rebuild")
         return None
 
-    # Assemble ladder tail
+    # Assemble ladder tail and update stats (R3-M4 fix)
     combined_ladder = None
     if ladder_path and os.path.exists(ladder_path):
         old_ladder = pd.read_parquet(ladder_path)

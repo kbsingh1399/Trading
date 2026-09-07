@@ -72,12 +72,12 @@ def make_streams(n_bars: int = 96 * 45, seed: int = 7, price0: float = 0.085, ga
     t0 = 1_598_918_400_000  # 2020-09-01 00:00 UTC
     ot = t0 + np.arange(n_bars, dtype=np.int64) * BAR_MS
     ret = rng.normal(0, 0.003, n_bars)
-    close = price0 * np.exp(np.cumsum(ret))
+    close = np.round(price0 * np.exp(np.cumsum(ret)), 8)
     open_ = np.empty_like(close)
-    open_[0] = price0
+    open_[0] = np.round(price0, 8)
     open_[1:] = close[:-1]
-    high = np.maximum(open_, close) * (1 + np.abs(rng.normal(0, 0.0015, n_bars)))
-    low = np.minimum(open_, close) * (1 - np.abs(rng.normal(0, 0.0015, n_bars)))
+    high = np.round(np.maximum(open_, close) * (1 + np.abs(rng.normal(0, 0.0015, n_bars))), 8)
+    low = np.round(np.minimum(open_, close) * (1 - np.abs(rng.normal(0, 0.0015, n_bars))), 8)
     vol = rng.gamma(2.0, 2_000_000, n_bars)
     tb = vol * np.clip(rng.normal(0.5, 0.08, n_bars), 0.1, 0.9)
     cnt = np.maximum(1, (vol / 900).astype(np.int64))
@@ -524,6 +524,152 @@ def test_metrics_validity_and_quarantine_regression(kl, spot, funding, metrics):
     print("  [PASS] regression: _stale_runs_mask, oi_impossible_zero, and causal imputation invariants verified")
 
 
+def test_corrupted_checkpoint_quarantine_negative_control():
+    """R3-M1 & Round 3 Negative Control: corrupt final row-group ema_50; assert pipeline quarantines loudly."""
+    from Engine.pipeline.incremental_append import compute_incremental_append_plan, CorruptedMasterCheckpointError
+    import tempfile, shutil
+
+    tdir = tempfile.mkdtemp()
+    try:
+        kl, spot, funding, metrics = make_streams(n_bars=300, price0=50000.0, gap_at=None)
+        proc = HistoricalMetricsProcessor(log=QUIET)
+        m = proc.process_master_dataset(kl, metrics, funding, None, spot, symbol="BTCUSDT")
+
+        exp = ParquetExporter(tdir)
+        mpath = exp.export_master(m, "BTCUSDT")
+        man_path = exp.manifest_path("BTCUSDT")
+        with open(man_path, "w", encoding="utf-8") as f:
+            f.write('{"symbol": "BTCUSDT"}')
+
+        # Corrupt the master file: set ema_50 in last row group to NaN
+        df_corrupt = pd.read_parquet(mpath)
+        df_corrupt.loc[len(df_corrupt) - 1, "ema_50"] = np.nan
+        df_corrupt.to_parquet(mpath, engine="pyarrow")
+
+        # Calling compute_incremental_append_plan must raise CorruptedMasterCheckpointError
+        quarantined = False
+        try:
+            compute_incremental_append_plan(mpath, log=QUIET)
+        except CorruptedMasterCheckpointError as exc:
+            quarantined = True
+            assert "non-finite checkpoint accumulator" in str(exc) or "ema_50" in str(exc)
+
+        assert quarantined, "Corrupted ema_50 in final row group failed to raise CorruptedMasterCheckpointError!"
+        assert not os.path.exists(mpath), "Original corrupt master was not moved/quarantined!"
+        assert not os.path.exists(man_path), "Stale manifest was not removed during quarantine!"
+
+        # Verify a .corrupt_* file was created
+        corrupt_files = [f for f in os.listdir(tdir) if ".corrupt_" in f]
+        assert len(corrupt_files) == 1, f"Expected 1 quarantined file, found {corrupt_files}"
+        print("  [PASS] negative control: corrupted ema_50 row-group quarantined loudly with stale manifest eviction")
+    finally:
+        shutil.rmtree(tdir, ignore_errors=True)
+
+
+def test_multisymbol_bit_parity_full_vs_incremental():
+    """
+    Round 3 Invariant Verification:
+    Full-rebuild vs incremental tail append bit-parity on >=3 symbols:
+    1. BTCUSDT (High-CVD institutional perp, merge level $25.0)
+    2. ETHUSDT (High-volume perp, merge level $1.0)
+    3. DOGEUSDT (Sub-dollar asset ~0.085, merge level $0.0005)
+    Asserts:
+    - atol=0.0 on future_cvd_lifetime, spot_cvd_lifetime
+    - atol=0.0 on future_cvd_session, spot_cvd_session
+    - atol=0.0 on session_vah, session_val, prev_day_vah, prev_day_val
+    - rtol=1e-9, atol=1e-6 on rsi_14, session_vwap, vwap_zscore, and all EMAs
+    """
+    from Engine.pipeline.incremental_append import perform_incremental_append
+    import tempfile, shutil
+
+    symbols_config = [
+        ("BTCUSDT", 50000.0, 7),
+        ("ETHUSDT", 3000.0, 13),
+        ("DOGEUSDT", 0.085, 21),
+    ]
+
+    for symbol, p0, seed in symbols_config:
+        tdir = tempfile.mkdtemp()
+        try:
+            total_bars = 4500
+            split_bar = 4000  # 500-bar append (~5.2 days)
+            kl, spot, funding, metrics = make_streams(n_bars=total_bars, seed=seed, price0=p0, gap_at=None)
+
+            proc = HistoricalMetricsProcessor(log=QUIET)
+            # Full rebuild reference
+            full_ref = proc.process_master_dataset(kl, metrics, funding, None, spot, symbol=symbol)
+
+            # Export stored old_master up to split_bar
+            kl_old = kl.iloc[:split_bar].copy()
+            spot_old = spot[spot["open_time"] <= kl_old["open_time"].iloc[-1]].copy()
+            funding_old = funding[funding["fundingTime"] <= kl_old["open_time"].iloc[-1]].copy()
+            metrics_old = metrics[metrics["timestamp_ms"] <= kl_old["open_time"].iloc[-1]].copy()
+
+            m_old = proc.process_master_dataset(kl_old, metrics_old, funding_old, None, spot_old, symbol=symbol)
+            exp = ParquetExporter(tdir)
+            mpath = exp.export_master(m_old, symbol)
+
+            # Mock fetcher returning the remaining slice for incremental append
+            class MockFetcher:
+                def __init__(self):
+                    self.metrics_absent_days = []
+                def fetch_futures_klines(self, s, start_s, end_dt):
+                    s_ms = int(pd.to_datetime(start_s, utc=True).timestamp() * 1000)
+                    e_ms = int(end_dt.timestamp() * 1000)
+                    return kl[(kl["open_time"] >= s_ms) & (kl["open_time"] <= e_ms)].copy()
+                def fetch_spot_klines(self, s, start_s, end_dt):
+                    s_ms = int(pd.to_datetime(start_s, utc=True).timestamp() * 1000)
+                    e_ms = int(end_dt.timestamp() * 1000)
+                    return spot[(spot["open_time"] >= s_ms) & (spot["open_time"] <= e_ms)].copy()
+                def fetch_metrics(self, s, start_s, end_dt):
+                    s_ms = int(pd.to_datetime(start_s, utc=True).timestamp() * 1000)
+                    e_ms = int(end_dt.timestamp() * 1000)
+                    return metrics[(metrics["timestamp_ms"] >= s_ms) & (metrics["timestamp_ms"] <= e_ms)].copy()
+                def fetch_funding_rates(self, s, start_ms):
+                    return funding[funding["fundingTime"] >= start_ms].copy()
+                def fetch_footprint(self, *a, **k):
+                    return pd.DataFrame(), pd.DataFrame()
+
+            end_dt = pd.to_datetime(int(kl["open_time"].iloc[-1]), unit="ms", utc=True)
+            res = perform_incremental_append(
+                symbol=symbol, master_path=mpath, ladder_path=None,
+                fetcher=MockFetcher(), processor=proc, end_dt=end_dt, log=QUIET
+            )
+            assert res is not None and res != "CURRENT", f"Incremental append failed for {symbol}"
+            m_incr, _ = res
+
+            assert len(m_incr) == len(full_ref), f"Length mismatch: {len(m_incr)} vs {len(full_ref)}"
+            assert np.all(m_incr["open_time_ms"].to_numpy() == full_ref["open_time_ms"].to_numpy()), "open_time_ms mismatch"
+
+            # Check appends on the newly appended bars
+            appended_slice = slice(split_bar, len(m_incr))
+
+            # 1. Exact atol=0.0 on CVD columns
+            for cvd_col in ("future_cvd_lifetime", "spot_cvd_lifetime", "future_cvd_session", "spot_cvd_session"):
+                incr_val = m_incr[cvd_col].iloc[appended_slice].to_numpy(np.float64)
+                ref_val = full_ref[cvd_col].iloc[appended_slice].to_numpy(np.float64)
+                max_diff = np.abs(incr_val - ref_val).max()
+                assert max_diff == 0.0, f"{symbol} {cvd_col} atol=0 violated! max_diff = {max_diff}"
+
+            # 2. Exact atol=0.0 on Value Area columns
+            for va_col in ("session_vah", "session_val", "prev_day_vah", "prev_day_val"):
+                incr_val = m_incr[va_col].iloc[appended_slice].to_numpy(np.float64)
+                ref_val = full_ref[va_col].iloc[appended_slice].to_numpy(np.float64)
+                max_diff = np.abs(incr_val - ref_val).max()
+                assert max_diff == 0.0, f"{symbol} {va_col} atol=0 violated! max_diff = {max_diff}"
+
+            # 3. rtol=1e-9, atol=1e-6 on floating point indicators
+            for ind_col in ("rsi_14", "session_vwap", "vwap_zscore", "ema_8", "ema_21", "ema_50", "ema_200", "ema_800"):
+                incr_val = m_incr[ind_col].iloc[appended_slice].to_numpy(np.float64)
+                ref_val = full_ref[ind_col].iloc[appended_slice].to_numpy(np.float64)
+                assert np.allclose(incr_val, ref_val, rtol=1e-9, atol=1e-6), f"{symbol} {ind_col} precision failed!"
+
+        finally:
+            shutil.rmtree(tdir, ignore_errors=True)
+
+    print("  [PASS] 3-symbol bit-parity: BTCUSDT, ETHUSDT, DOGEUSDT (full rebuild vs 45-day incremental append atol=0 on CVD & VA)")
+
+
 def main() -> int:
     t0 = time.time()
     print("OFFLINE PIPELINE TEST SUITE")
@@ -534,6 +680,8 @@ def main() -> int:
     test_event_join_uses_close_time(kl, spot, funding, metrics)
     test_negative_controls(master, ladder)
     test_metrics_validity_and_quarantine_regression(kl, spot, funding, metrics)
+    test_corrupted_checkpoint_quarantine_negative_control()
+    test_multisymbol_bit_parity_full_vs_incremental()
     test_orchestrator_end_to_end()
     test_repair_gate()
     test_fetcher_against_mock_binance()

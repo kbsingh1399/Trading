@@ -346,23 +346,37 @@ def run_pipeline(
     # ---- Fast Incremental Append Path ----
     if not force and not end_date_str and os.path.exists(mpath):
         try:
-            from Engine.pipeline.incremental_append import perform_incremental_append
+            from Engine.pipeline.incremental_append import perform_incremental_append, CorruptedMasterCheckpointError
             incr_res = perform_incremental_append(
                 symbol=symbol, master_path=mpath, ladder_path=lpath,
                 fetcher=fetcher, processor=processor, end_dt=end_dt,
                 all_footprint=all_footprint, footprint_days=footprint_days, log=log
             )
-            if incr_res is not None:
+            if incr_res == "CURRENT" or (isinstance(incr_res, tuple) and incr_res[0] == "CURRENT"):
+                log(f"[SKIP] {symbol}: dataset already current through target end date (no-op fast return, R3-M3)")
+                return True
+            elif incr_res is not None:
                 master, ladder = incr_res
                 if ladder is not None and not ladder.empty:
+                    old_stats = {}
+                    if os.path.exists(ppath):
+                        try:
+                            import json
+                            with open(ppath, "r", encoding="utf-8") as fh:
+                                old_stats = json.load(fh).get("ladder", {})
+                        except Exception:
+                            old_stats = {}
                     ladder_stats = {
                         "candles": int(ladder["open_time_ms"].nunique()),
-                        "tick_exact_candles": int(ladder["open_time_ms"].nunique()),
-                        "synthetic_candles": 0,
+                        "tick_exact_candles": int(ladder["open_time_ms"].nunique()) - int(old_stats.get("synthetic_candles", 0)),
+                        "synthetic_candles": int(old_stats.get("synthetic_candles", 0)),
                         "total_rungs": len(ladder),
-                        "tick_rungs": len(ladder),
-                        "synthetic_rungs": 0,
+                        "tick_rungs": len(ladder) - int(old_stats.get("synthetic_rungs", 0)),
+                        "synthetic_rungs": int(old_stats.get("synthetic_rungs", 0)),
                     }
+        except CorruptedMasterCheckpointError as exc:
+            log(f"[QUARANTINE ALERT] {symbol}: checkpoint corruption detected ({exc}); quarantined, forcing clean full rebuild")
+            master, ladder = None, None
         except Exception as exc:
             log(f"[INCR] {symbol}: incremental append error ({exc}); falling back to full rebuild")
             master, ladder = None, None

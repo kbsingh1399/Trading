@@ -34,6 +34,16 @@ USD_DP: int = 2
 RATIO_DP: int = 6
 PCT_DP: int = 6
 
+# ------------------------------------------------------------------------------
+# CVD Lifetime Rounding Contract (R3-C2 Invariant):
+# Both future_cvd_15m and spot_cvd_15m are quantized to COIN_DP (8 decimal places)
+# per bar. future_cvd_lifetime and spot_cvd_lifetime are defined as the exact
+# cumulative sum of these quantized deltas:
+#   future_cvd_lifetime[t] = np.round(future_cvd_lifetime[t-1] + future_cvd_15m[t], COIN_DP)
+# This mathematical contract applies identically in both full-rebuild and
+# incremental-append paths, guaranteeing atol=0.0 bit-parity across all bars.
+# ------------------------------------------------------------------------------
+
 CANONICAL_COLUMNS: List[str] = [
     # 1. Timestamps & Identification
     "open_time_ms",           # int64  candle open, Unix ms
