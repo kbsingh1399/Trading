@@ -2,38 +2,36 @@
 ================================================================================
 SMC MARCO TRADES ENGINE (Liquidity Sweep & Trap)
 ================================================================================
-Institutional quantitative strategy for BTCUSDT (15m timeframe).
-Based on the Maro Trade's Liquidity Playbook.
-Identifies key HTF swing highs/lows (liquidity pools), waits for a sweep,
-and enters on the rejection/trap with institutional confluence.
+Institutional quantitative strategy for Binance USDT-M Perpetuals (15m).
+Based on Marco Trade's Liquidity Playbook:
+- Identifies key HTF swing highs/lows (liquidity pools).
+- Waits for a stop-run sweep of the pool.
+- Enforces institutional absorption and trap close back inside the level.
+- Structural invalidation stop with mean-reversion ratchet.
+================================================================================
 """
 
 from __future__ import annotations
 import numpy as np
 import pandas as pd
-from typing import Dict, Callable, List
-from dataclasses import dataclass
+from typing import Dict, Callable
+from Engine.core.execution_kernel import ExecutionKernel, RiskConfig, FrictionConfig, RatchetConfig
 
-@dataclass(frozen=True)
-class RiskConfig:
-    initial_capital: float = 5000.0
-    base_risk: float = 25.0              # 0.50% base risk
-    house_money_risk: float = 50.0       # 1.00% max 2x risk
-    drawdown_defense_risk: float = 15.0  # 0.30% risk
-    drawdown_limit: float = 0.045        # 4.5% ($225) hard drawdown stop
-
-@dataclass(frozen=True)
-class FrictionConfig:
-    taker_fee: float = 0.0008            # 8 bps
-    entry_slippage: float = 0.0010       # 10 bps
-    exit_slippage: float = 0.0015        # 15 bps
+DEFAULT_RATCHET = RatchetConfig(
+    arm0_r=0.7,
+    lock0_r=0.20,
+    arm1_r=1.2,
+    lock1_r=0.70,
+    min_target_r=1.8,
+    time_decay_bars=40,
+    time_decay_r=0.20
+)
 
 class SMCMarcoSimulator:
-    def __init__(self, risk_cfg: RiskConfig = RiskConfig(), fric_cfg: FrictionConfig = FrictionConfig()):
-        self.risk = risk_cfg
-        self.fric = fric_cfg
+    def __init__(self, risk_cfg: RiskConfig = RiskConfig(), fric_cfg: FrictionConfig = FrictionConfig(), ratchet_cfg: RatchetConfig = DEFAULT_RATCHET):
+        self.kernel = ExecutionKernel(risk_cfg, fric_cfg, ratchet_cfg)
         
-    def run(self, df_test: pd.DataFrame, training_mode: bool = False, filter_func: Callable[[int, str], bool] = None) -> Dict:
+    def generate_signals(self, df_test: pd.DataFrame, filter_func: Callable[[int, str], bool] = None) -> pd.DataFrame:
         T = len(df_test)
         op = df_test["open"].values
         hi = df_test["high"].values
@@ -41,187 +39,93 @@ class SMCMarcoSimulator:
         cl = df_test["close"].values
         atr = df_test["atr_14"].clip(lower=cl * 0.002).values
         
-        long_liq_zs = df_test["long_liq_zs"].values
-        short_liq_zs = df_test["short_liq_zs"].values
-        zc_div = df_test["zc_div"].values
-        spot_cvd = df_test["spot_cvd_15m"].values
-        fut_cvd = df_test["future_cvd_15m"].values
-        rsi = df_test["rsi_14"].values
-        vwap_z = df_test["vwap_zscore"].values
+        long_liq_zs = df_test.get("long_liq_zs", pd.Series(np.zeros(T))).values
+        short_liq_zs = df_test.get("short_liq_zs", pd.Series(np.zeros(T))).values
+        zc_div = df_test.get("zc_div", pd.Series(np.zeros(T))).values
+        vwap_z = df_test.get("vwap_zscore", pd.Series(np.zeros(T))).values
+        ema_200 = df_test.get("ema_200", pd.Series(np.zeros(T))).values
         
-        realized = self.risk.initial_capital
-        peak = realized
-        pos_side = 0
-        pos_entry = 0.0
-        pos_stop = 0.0
-        pos_target = 0.0
-        pos_qty = 0.0
-        pos_risk = 0.0
-        pos_bar = 0
-        pos_max_r = 0.0
-        pos_rr = 1.0
-        
-        trades: List[Dict] = []
-        equity_curve = np.full(T, realized)
+        signals = np.zeros(T, dtype=int)
+        raw_r = np.zeros(T, dtype=float)
         
         # Track active liquidity pools
-        # A pool is a dictionary: {"price": float, "type": 1 (high)/ -1 (low), "age": int}
         liquidity_pools = []
         
-        for t in range(24, T):
-            if pos_side != 0:
-                o_, h_, l_, c_ = op[t], hi[t], lo[t], cl[t]
-                exit_px = 0.0
-                exit_reason = ""
-                
-                if pos_side == 1:
-                    if o_ <= pos_stop: exit_px = o_ * (1.0 - self.fric.exit_slippage); exit_reason = "STOP_OPEN"
-                    elif o_ >= pos_target: exit_px = o_; exit_reason = "TARGET_OPEN"
-                    elif l_ <= pos_stop: exit_px = pos_stop * (1.0 - self.fric.exit_slippage); exit_reason = "STOP_BAR"
-                    elif h_ >= pos_target: exit_px = pos_target; exit_reason = "TARGET_BAR"
-                        
-                elif pos_side == -1:
-                    if o_ >= pos_stop: exit_px = o_ * (1.0 + self.fric.exit_slippage); exit_reason = "STOP_OPEN"
-                    elif o_ <= pos_target: exit_px = o_; exit_reason = "TARGET_OPEN"
-                    elif h_ >= pos_stop: exit_px = pos_stop * (1.0 + self.fric.exit_slippage); exit_reason = "STOP_BAR"
-                    elif l_ <= pos_target: exit_px = pos_target; exit_reason = "TARGET_BAR"
-                        
-                # Microstructure Ratchet
-                if exit_reason:
-                    gross = pos_qty * (exit_px - pos_entry) if pos_side == 1 else pos_qty * (pos_entry - exit_px)
-                    fees = pos_qty * (pos_entry + exit_px) * self.fric.taker_fee
-                    net_pnl = gross - fees
-                    realized += net_pnl
-                    trades.append({
-                        "entry_bar": pos_bar, "exit_bar": t,
-                        "side": "LONG" if pos_side == 1 else "SHORT",
-                        "entry": pos_entry, "exit": exit_px, "pnl": net_pnl,
-                        "r": net_pnl / pos_risk if pos_risk > 0 else 0.0,
-                        "reason": exit_reason
-                    })
-                    pos_side = 0
-                else:
-                    r_gain = (hi[t] - pos_entry) / pos_rr if pos_side == 1 else (pos_entry - lo[t]) / pos_rr
-                    if r_gain > pos_max_r: pos_max_r = r_gain
-                    req_slip = pos_entry * (self.fric.taker_fee + self.fric.exit_slippage)
-                    if pos_side == 1:
-                        if pos_max_r >= 1.5:
-                            pos_stop = max(pos_stop, pos_entry + 0.8 * pos_rr + req_slip)
-                        elif pos_max_r >= 0.8:
-                            pos_stop = max(pos_stop, pos_entry + 0.15 * pos_rr + req_slip)
-                    elif pos_side == -1:
-                        if pos_max_r >= 1.5:
-                            pos_stop = min(pos_stop, pos_entry - (0.8 * pos_rr + req_slip))
-                        elif pos_max_r >= 0.8:
-                            pos_stop = min(pos_stop, pos_entry - (0.15 * pos_rr + req_slip))
-                    
-                    if (t - pos_bar) >= 24 and pos_max_r < 0.2: # time decay
-                        pos_side = 0 # market exit
-                        gross = pos_qty * (cl[t] - pos_entry) if pos_side == 1 else pos_qty * (pos_entry - cl[t])
-                        fees = pos_qty * (pos_entry + cl[t]) * self.fric.taker_fee
-                        net_pnl = gross - fees
-                        realized += net_pnl
-                        trades.append({
-                            "entry_bar": pos_bar, "exit_bar": t,
-                            "side": "LONG" if pos_side == 1 else "SHORT",
-                            "entry": pos_entry, "exit": cl[t], "pnl": net_pnl,
-                            "r": net_pnl / pos_risk if pos_risk > 0 else 0.0,
-                            "reason": "TIME_DECAY"
-                        })
+        for t in range(25, T):
+            trend_up = ema_200[t] >= ema_200[t-12]
+            trend_down = ema_200[t] <= ema_200[t-12]
             
-            unreal = 0.0
-            if pos_side == 1: unreal = pos_qty * (cl[t] - pos_entry)
-            elif pos_side == -1: unreal = pos_qty * (pos_entry - cl[t])
-            equity = realized + unreal
-            if equity > peak: peak = equity
-            equity_curve[t] = equity
-            
-            if pos_side == 0 and t < T - 1:
-                net_profit = realized - self.risk.initial_capital
-                current_dd = (peak - equity) / peak if peak > 0 else 0.0
-                
-                if current_dd >= self.risk.drawdown_limit:
-                    continue
-                elif current_dd > 0.025:
-                    trade_risk = self.risk.drawdown_defense_risk
-                elif net_profit > 50.0:
-                    trade_risk = self.risk.house_money_risk
-                else:
-                    trade_risk = self.risk.base_risk
-                    
-                # 1. Identify Liquidity Pools (Swing Highs and Lows)
-                # A 10-bar pivot high/low
+            # 1. Identify Liquidity Pools (8-bar center pivot to maintain freshness without lookahead)
+            if t >= 16:
+                center_hi = hi[t-8]
+                center_lo = lo[t-8]
                 is_swing_high = True
                 is_swing_low = True
-                for i in range(1, 3):
-                    if hi[t-3] <= hi[t-10-i] or hi[t-3] <= hi[t-10+i]:
+                for i in range(1, 9):
+                    if center_hi <= hi[t-8-i] or center_hi <= hi[t-8+i]:
                         is_swing_high = False
-                    if lo[t-3] >= lo[t-10-i] or lo[t-3] >= lo[t-10+i]:
+                    if center_lo >= lo[t-8-i] or center_lo >= lo[t-8+i]:
                         is_swing_low = False
-                
+                        
                 if is_swing_high:
-                    liquidity_pools.append({"price": hi[t-3], "type": 1, "age": 0})
+                    liquidity_pools.append({"price": center_hi, "type": 1, "age": 0})
                 if is_swing_low:
-                    liquidity_pools.append({"price": lo[t-3], "type": -1, "age": 0})
+                    liquidity_pools.append({"price": center_lo, "type": -1, "age": 0})
                     
-                for pool in liquidity_pools:
-                    pool["age"] += 1
+            for pool in liquidity_pools:
+                pool["age"] += 1
                 
-                # Prune pools older than 100 bars
-                liquidity_pools = [p for p in liquidity_pools if p["age"] <= 100]
+            # Prune pools older than 64 bars (16 hours)
+            liquidity_pools = [p for p in liquidity_pools if p["age"] <= 64]
+            
+            sig_long = False
+            sig_short = False
+            stop_dist = 0.0
+            
+            swept_pools = []
+            
+            has_absorption_l = (long_liq_zs[t] > 0.8) or (zc_div[t] > 0.3) or (vwap_z[t] < -0.5)
+            has_absorption_s = (short_liq_zs[t] > 0.8) or (zc_div[t] < -0.3) or (vwap_z[t] > 0.5)
+            
+            for i, pool in enumerate(liquidity_pools):
+                # Sell-side liquidity sweep (Trap below lows)
+                if pool["type"] == -1 and trend_up and has_absorption_l:
+                    if lo[t] < pool["price"] and cl[t] > pool["price"] and cl[t] > op[t]:
+                        sig_long = True
+                        s_dist = (cl[t] - lo[t]) + 0.1 * atr[t]
+                        s_dist = max(s_dist, cl[t] * 0.006)
+                        s_dist = min(s_dist, atr[t] * 1.5)
+                        stop_dist = s_dist
+                        swept_pools.append(i)
+                        break
+                # Buy-side liquidity sweep (Trap above highs)
+                elif pool["type"] == 1 and trend_down and has_absorption_s:
+                    if hi[t] > pool["price"] and cl[t] < pool["price"] and cl[t] < op[t]:
+                        sig_short = True
+                        s_dist = (hi[t] - cl[t]) + 0.1 * atr[t]
+                        s_dist = max(s_dist, cl[t] * 0.006)
+                        s_dist = min(s_dist, atr[t] * 1.5)
+                        stop_dist = s_dist
+                        swept_pools.append(i)
+                        break
+                        
+            for i in sorted(swept_pools, reverse=True):
+                if i < len(liquidity_pools):
+                    liquidity_pools.pop(i)
+                    
+            if filter_func is not None:
+                if sig_long and not filter_func(t, 'LONG'): sig_long = False
+                if sig_short and not filter_func(t, 'SHORT'): sig_short = False
                 
-                # 2. Check for Sweep and Trap
-                sig_long = False
-                sig_short = False
+            if sig_long and not sig_short:
+                signals[t] = 1
+                raw_r[t] = stop_dist
+            elif sig_short and not sig_long:
+                signals[t] = -1
+                raw_r[t] = stop_dist
                 
-                for pool in liquidity_pools:
-                    if pool["type"] == -1: # Sell-side liquidity (lows)
-                        # Price sweeps below the pool, but closes back above it (Trap)
-                        if lo[t] < pool["price"] and cl[t] > pool["price"]:
-                            if long_liq_zs[t] > 0.5 and zc_div[t] > -0.5 and rsi[t] < 60:
-                                sig_long = True
-                                pool["age"] = 999 
-                                break
-                    elif pool["type"] == 1: # Buy-side liquidity (highs)
-                        # Price sweeps above the pool, but closes back below it (Trap)
-                        if hi[t] > pool["price"] and cl[t] < pool["price"]:
-                            if short_liq_zs[t] > 0.5 and zc_div[t] < 0.0 and rsi[t] > 40:
-                                sig_short = True
-                                pool["age"] = 999 
-                                break
-                            
-                if filter_func is not None:
-                    if sig_long and not filter_func(t, 'LONG'): sig_long = False
-                    if sig_short and not filter_func(t, 'SHORT'): sig_short = False
-
-                if sig_long:
-                    px = cl[t] * (1.0 + self.fric.entry_slippage)
-                    r_ = atr[t] * 4.0 
-                    pos_side = 1; pos_entry = px; pos_stop = px - r_
-                    pos_target = px + (r_ * 2.5) 
-                    pos_risk = trade_risk; pos_qty = trade_risk / r_; pos_bar = t; pos_max_r = 0.0; pos_rr = r_
-                elif sig_short:
-                    px = cl[t] * (1.0 - self.fric.entry_slippage)
-                    r_ = atr[t] * 4.0
-                    pos_side = -1; pos_entry = px; pos_stop = px + r_
-                    pos_target = px - (r_ * 2.5)
-                    pos_risk = trade_risk; pos_qty = trade_risk / r_; pos_bar = t; pos_max_r = 0.0; pos_rr = r_
-
-        tot = len(trades)
-        wins = [tr for tr in trades if tr["pnl"] > 0]
-        wr = len(wins) / tot * 100.0 if tot > 0 else 0.0
-        net_pnl = realized - self.risk.initial_capital
-        roi = net_pnl / self.risk.initial_capital * 100.0
-        peaks = np.maximum.accumulate(equity_curve)
-        with np.errstate(divide='ignore', invalid='ignore'):
-            dds = np.where(peaks > 0, (peaks - equity_curve) / peaks * 100.0, 0.0)
-        max_dd = np.max(dds) if len(dds) > 0 else 0.0
+        return pd.DataFrame({'side': signals, 'raw_r': raw_r}, index=df_test.index)
         
-        return {
-            "roi_pct": roi,
-            "max_dd_pct": max_dd,
-            "win_rate_pct": wr,
-            "trades": tot,
-            "net_pnl": net_pnl,
-            "trades_list": trades
-        }
+    def run(self, df_test: pd.DataFrame, training_mode: bool = False, filter_func: Callable[[int, str], bool] = None) -> dict:
+        signals_df = self.generate_signals(df_test, filter_func)
+        return self.kernel.run(df_test, signals_df, training_mode)

@@ -2,231 +2,140 @@
 ================================================================================
 SMC TRADER MAYNE ENGINE (HTF POI + LTF Breaker Block)
 ================================================================================
-Institutional quantitative strategy for BTCUSDT (15m timeframe).
-Uses HTF structure sweeps and LTF Breaker Blocks with institutional confluence.
+Institutional quantitative strategy for Binance USDT-M Perpetuals (15m).
+Based on Trader Mayne's HTF POI and Breaker Block mechanics:
+- Identifies higher-timeframe trend/POI via EMA 200 trajectory.
+- Tracks liquidity sweep followed by structural market structure break (MSB).
+- Enters on retest/mitigation of the resulting Breaker Block zone.
+- Structural invalidation stop with mean-reversion ratchet.
+================================================================================
 """
 
 from __future__ import annotations
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Callable
-from dataclasses import dataclass
+from typing import Dict, Callable
+from Engine.core.execution_kernel import ExecutionKernel, RiskConfig, FrictionConfig, RatchetConfig
 
-@dataclass(frozen=True)
-class RiskConfig:
-    initial_capital: float = 5000.0
-    base_risk: float = 25.0              # 0.50% base risk
-    house_money_risk: float = 50.0       # 1.00% max 2x risk
-    drawdown_defense_risk: float = 15.0  # 0.30% risk
-    drawdown_limit: float = 0.045        # 4.5% ($225) hard drawdown stop
-
-@dataclass(frozen=True)
-class FrictionConfig:
-    taker_fee: float = 0.0008            # 8 bps
-    entry_slippage: float = 0.0010       # 10 bps
-    exit_slippage: float = 0.0015        # 15 bps
+DEFAULT_RATCHET = RatchetConfig(
+    arm0_r=0.85,
+    lock0_r=0.45,
+    arm1_r=1.25,
+    lock1_r=0.85,
+    min_target_r=1.75,
+    time_decay_bars=36,
+    time_decay_r=0.20
+)
 
 class SMCMayneSimulator:
-    def __init__(self, risk_cfg: RiskConfig = RiskConfig(), fric_cfg: FrictionConfig = FrictionConfig(), stop_atr: float = 4.0, rsi_long: float = 40.0, rsi_short: float = 60.0, liq_thresh: float = 1.8, zc_thresh: float = 0.8, vwap_thresh: float = 0.5):
-        self.risk = risk_cfg
-        self.fric = fric_cfg
-        self.stop_atr = stop_atr
-        self.rsi_long = rsi_long
-        self.rsi_short = rsi_short
-        self.liq_thresh = liq_thresh
-        self.zc_thresh = zc_thresh
-        self.vwap_thresh = vwap_thresh
+    def __init__(self, risk_cfg: RiskConfig = RiskConfig(), fric_cfg: FrictionConfig = FrictionConfig(), ratchet_cfg: RatchetConfig = DEFAULT_RATCHET):
+        self.kernel = ExecutionKernel(risk_cfg, fric_cfg, ratchet_cfg)
         
-    def run(self, df_test: pd.DataFrame, training_mode: bool = False, filter_func: Callable[[int, str], bool] = None) -> Dict:
+    def generate_signals(self, df_test: pd.DataFrame, filter_func: Callable[[int, str], bool] = None) -> pd.DataFrame:
         T = len(df_test)
         op = df_test["open"].values
         hi = df_test["high"].values
         lo = df_test["low"].values
         cl = df_test["close"].values
         atr = df_test["atr_14"].clip(lower=cl * 0.002).values
-        # Parse timestamp to detect day changes
-        dt = pd.to_datetime(df_test["datetime_utc"])
-        days = dt.dt.date.values
-        long_liq_zs = df_test["long_liq_zs"].values
-        short_liq_zs = df_test["short_liq_zs"].values
-        long_liq_roll = pd.Series(long_liq_zs).rolling(4).max().fillna(0).values
-        short_liq_roll = pd.Series(short_liq_zs).rolling(4).max().fillna(0).values
-        zc_div = df_test["zc_div"].values
-        spot_cvd = df_test["spot_cvd_15m"].values
-        fut_cvd = df_test["future_cvd_15m"].values
-        rsi = df_test["rsi_14"].values
-        vwap_z = df_test["vwap_zscore"].values
-        oi_change_pct = df_test["oi_change_pct"].values
         
-        # HTF Trend Proxy
-        ema_200 = df_test["ema_200"].values
-        ema_800 = df_test["ema_800"].values
+        long_liq_zs = df_test.get("long_liq_zs", pd.Series(np.zeros(T))).values
+        short_liq_zs = df_test.get("short_liq_zs", pd.Series(np.zeros(T))).values
+        zc_div = df_test.get("zc_div", pd.Series(np.zeros(T))).values
+        vwap_z = df_test.get("vwap_zscore", pd.Series(np.zeros(T))).values
+        vol_ratio = df_test.get("volume_ratio", pd.Series(np.ones(T))).values
+        ema_200 = df_test.get("ema_200", pd.Series(np.zeros(T))).values
         
-        realized = self.risk.initial_capital
-        peak = realized
-        pos_side = 0
-        pos_entry = 0.0
-        pos_stop = 0.0
-        pos_target = 0.0
-        pos_qty = 0.0
-        pos_risk = 0.0
-        pos_bar = 0
-        pos_max_r = 0.0
-        pos_rr = 1.0
+        signals = np.zeros(T, dtype=int)
+        raw_r = np.zeros(T, dtype=float)
         
-        trades: List[Dict] = []
-        equity_curve = np.full(T, realized)
+        # Track active Breaker Blocks: {"top": float, "bottom": float, "type": 1 or -1, "age": int}
+        breaker_blocks = []
         
-        # Removed active_breakers tracking
-        for t in range(24, T):
-            if pos_side != 0:
-                o_, h_, l_, c_ = op[t], hi[t], lo[t], cl[t]
-                exit_px = 0.0
-                exit_reason = ""
-                
-                if pos_side == 1:
-                    if o_ <= pos_stop: exit_px = o_ * (1.0 - self.fric.exit_slippage); exit_reason = "STOP_OPEN"
-                    elif o_ >= pos_target: exit_px = o_; exit_reason = "TARGET_OPEN"
-                    elif l_ <= pos_stop: exit_px = pos_stop * (1.0 - self.fric.exit_slippage); exit_reason = "STOP_BAR"
-                    elif h_ >= pos_target: exit_px = pos_target; exit_reason = "TARGET_BAR"
-                    
-                    r_gain = (h_ - pos_entry) / pos_rr
-                    if r_gain > pos_max_r: pos_max_r = r_gain
-                    if not exit_reason and (t - pos_bar) >= 24 and pos_max_r < 0.2:
-                        exit_px = c_ * (1.0 - self.fric.exit_slippage); exit_reason = "TIME_DECAY"
-                        
-                elif pos_side == -1:
-                    if o_ >= pos_stop: exit_px = o_ * (1.0 + self.fric.exit_slippage); exit_reason = "STOP_OPEN"
-                    elif o_ <= pos_target: exit_px = o_; exit_reason = "TARGET_OPEN"
-                    elif h_ >= pos_stop: exit_px = pos_stop * (1.0 + self.fric.exit_slippage); exit_reason = "STOP_BAR"
-                    elif l_ <= pos_target: exit_px = pos_target; exit_reason = "TARGET_BAR"
-                    
-                    r_gain = (pos_entry - l_) / pos_rr
-                    if r_gain > pos_max_r: pos_max_r = r_gain
-                    if not exit_reason and (t - pos_bar) >= 24 and pos_max_r < 0.2:
-                        exit_px = c_ * (1.0 + self.fric.exit_slippage); exit_reason = "TIME_DECAY"
-                        
-                if exit_reason:
-                    gross = pos_qty * (exit_px - pos_entry) if pos_side == 1 else pos_qty * (pos_entry - exit_px)
-                    fees = pos_qty * (pos_entry + exit_px) * self.fric.taker_fee
-                    net_pnl = gross - fees
-                    realized += net_pnl
-                    trades.append({
-                        "entry_bar": pos_bar, "exit_bar": t,
-                        "side": "LONG" if pos_side == 1 else "SHORT",
-                        "entry": pos_entry, "exit": exit_px, "pnl": net_pnl,
-                        "r": net_pnl / pos_risk if pos_risk > 0 else 0.0,
-                        "reason": exit_reason, "rr": pos_rr
+        for t in range(25, T):
+            trend_up = ema_200[t] >= ema_200[t-12]
+            trend_down = ema_200[t] <= ema_200[t-12]
+            
+            # Age active breaker blocks
+            for bb in breaker_blocks:
+                bb["age"] += 1
+            breaker_blocks = [bb for bb in breaker_blocks if bb["age"] <= 48] # Keep up to 12 hours
+            
+            # 1. Detect Breaker Block Formation:
+            # Bullish Breaker: Prior swing high formed at t-8 to t-4, price swept lower low at t-2/t-3,
+            # then candle t-1 broke with displacement above the prior swing high.
+            # That broken swing high now flips to support (Bullish Breaker).
+            if t >= 16:
+                prior_swing_high = np.max(hi[t-12:t-4])
+                prior_swing_low = np.min(lo[t-4:t-1])
+                # Check for displacement breakout above prior swing high
+                if cl[t-1] > prior_swing_high and op[t-1] <= prior_swing_high and (vol_ratio[t-1] > 1.2 or short_liq_zs[t-1] > 0.8):
+                    breaker_blocks.append({
+                        "top": prior_swing_high,
+                        "bottom": max(prior_swing_high - 0.5 * atr[t], prior_swing_low),
+                        "type": 1,
+                        "age": 0
                     })
-                    pos_side = 0
-                else:
-                    if pos_side == 1:
-                        if pos_max_r >= 1.5:
-                            pos_stop = max(pos_stop, pos_entry + 0.80 * pos_rr)
-                        elif pos_max_r >= 0.8:
-                            pos_stop = max(pos_stop, pos_entry + 0.15 * pos_rr)
-                    elif pos_side == -1:
-                        if pos_max_r >= 1.5:
-                            pos_stop = min(pos_stop, pos_entry - 0.80 * pos_rr)
-                        elif pos_max_r >= 0.8:
-                            pos_stop = min(pos_stop, pos_entry - 0.15 * pos_rr)
-            
-            unreal = 0.0
-            if pos_side == 1: unreal = pos_qty * (cl[t] - pos_entry)
-            elif pos_side == -1: unreal = pos_qty * (pos_entry - cl[t])
-            equity = realized + unreal
-            if equity > peak: peak = equity
-            equity_curve[t] = equity
-            
-            if pos_side == 0 and t < T - 1:
-                net_profit = realized - self.risk.initial_capital
-                current_dd = (peak - equity) / peak if peak > 0 else 0.0
-                
-                if current_dd >= self.risk.drawdown_limit and not training_mode:
-                    continue
-                elif current_dd > 0.025:
-                    trade_risk = self.risk.drawdown_defense_risk
-                elif net_profit > 50.0:
-                    trade_risk = self.risk.house_money_risk
-                else:
-                    trade_risk = self.risk.base_risk
                     
-                delta_spot = spot_cvd[t]
-                delta_fut = fut_cvd[t]
-                
-                # Invariant Alpha Confluence (Liquidity Sweep)
-                # Ensure we are trading in the direction of the HTF trend (ema_800)
-                # But allowing mean reversion if the dip sweeps below ema_200
-                long_sweep = (long_liq_roll[t] > self.liq_thresh and zc_div[t] > self.zc_thresh and rsi[t] < self.rsi_long and vwap_z[t] < -self.vwap_thresh and delta_spot > 0 and delta_fut < 0)
-                short_sweep = (short_liq_roll[t] > self.liq_thresh and zc_div[t] < -self.zc_thresh and rsi[t] > self.rsi_short and vwap_z[t] > self.vwap_thresh and delta_spot < 0 and delta_fut > 0)
-                
-                # HTF Trend alignment (15m ema_800 is 200-hour EMA)
-                trend_up = cl[t] > ema_800[t]
-                trend_down = cl[t] < ema_800[t]
-                
-                sig_long = long_sweep and trend_up
-                sig_short = short_sweep and trend_down
-                
-                if filter_func is not None:
-                    if sig_long and not filter_func(t, "LONG"): sig_long = False
-                    if sig_short and not filter_func(t, "SHORT"): sig_short = False
+                # Bearish Breaker: Prior swing low formed at t-12 to t-4, price swept higher high at t-4 to t-2,
+                # then candle t-1 broke with displacement below the prior swing low.
+                prior_swing_low_bear = np.min(lo[t-12:t-4])
+                prior_swing_high_bear = np.max(hi[t-4:t-1])
+                if cl[t-1] < prior_swing_low_bear and op[t-1] >= prior_swing_low_bear and (vol_ratio[t-1] > 1.2 or long_liq_zs[t-1] > 0.8):
+                    breaker_blocks.append({
+                        "top": min(prior_swing_low_bear + 0.5 * atr[t], prior_swing_high_bear),
+                        "bottom": prior_swing_low_bear,
+                        "type": -1,
+                        "age": 0
+                    })
+                    
+            sig_long = False
+            sig_short = False
+            stop_dist = 0.0
+            
+            has_absorption_l = (long_liq_zs[t] > 0.8) or (zc_div[t] > 0.3) or (vwap_z[t] < -0.4) or (vol_ratio[t] > 1.2)
+            has_absorption_s = (short_liq_zs[t] > 0.8) or (zc_div[t] < -0.3) or (vwap_z[t] > 0.4) or (vol_ratio[t] > 1.2)
+            
+            # 2. Retest and Mitigation of Breaker Block
+            for bb in breaker_blocks:
+                if bb["age"] > 0:
+                    # Bullish Breaker Retest
+                    if bb["type"] == 1 and trend_up and has_absorption_l:
+                        # Price tests breaker zone and closes green
+                        if lo[t] <= bb["top"] and cl[t] >= bb["bottom"] and cl[t] > op[t]:
+                            sig_long = True
+                            s_dist = (cl[t] - bb["bottom"]) + 0.2 * atr[t]
+                            s_dist = max(s_dist, atr[t] * 1.5)
+                            s_dist = min(s_dist, atr[t] * 2.5)
+                            stop_dist = s_dist
+                            bb["age"] = 999
+                            break
                             
-                if sig_long and not sig_short:
-                    px = cl[t] * (1.0 + self.fric.entry_slippage)
-                    
-                    r_ = atr[t] * self.stop_atr
-                    
-                    # Mathematical friction boundary
-                    min_r = px * 0.005
-                    if r_ < min_r: r_ = min_r
-                    
-                    if r_ <= px * 0.06: # Reject trades with excessively wide stops (>6%)
-                        # Fixed 2.5R target (ACTIVE_CONTEXT invariant)
-                        tp_dist = 2.5 * r_
-                        
-                        pos_side = 1; pos_entry = px; pos_stop = px - r_
-                        pos_target = px + tp_dist 
-                        
-                        # Adjust qty for friction so gross loss + friction = trade_risk
-                        loss_per_unit = (px - pos_stop*(1.0 - self.fric.exit_slippage)) + px*self.fric.taker_fee + pos_stop*(1.0 - self.fric.exit_slippage)*self.fric.taker_fee
-                        pos_qty = trade_risk / loss_per_unit
-                        
-                        pos_risk = trade_risk; pos_bar = t; pos_max_r = 0.0; pos_rr = r_
+                    # Bearish Breaker Retest
+                    elif bb["type"] == -1 and trend_down and has_absorption_s:
+                        # Price tests breaker zone from below and closes red
+                        if hi[t] >= bb["bottom"] and cl[t] <= bb["top"] and cl[t] < op[t]:
+                            sig_short = True
+                            s_dist = (bb["top"] - cl[t]) + 0.2 * atr[t]
+                            s_dist = max(s_dist, atr[t] * 1.5)
+                            s_dist = min(s_dist, atr[t] * 2.5)
+                            stop_dist = s_dist
+                            bb["age"] = 999
+                            break
+                            
+            if filter_func is not None:
+                if sig_long and not filter_func(t, 'LONG'): sig_long = False
+                if sig_short and not filter_func(t, 'SHORT'): sig_short = False
                 
-                elif sig_short and not sig_long:
-                    px = cl[t] * (1.0 - self.fric.entry_slippage)
-                    
-                    r_ = atr[t] * self.stop_atr
-                    
-                    min_r = px * 0.005
-                    if r_ < min_r: r_ = min_r
-                    
-                    if r_ <= px * 0.06: 
-                        tp_dist = 2.5 * r_
-                        
-                        pos_side = -1; pos_entry = px; pos_stop = px + r_
-                        pos_target = px - tp_dist
-                        
-                        loss_per_unit = (pos_stop*(1.0 + self.fric.exit_slippage) - px) + px*self.fric.taker_fee + pos_stop*(1.0 + self.fric.exit_slippage)*self.fric.taker_fee
-                        pos_qty = trade_risk / loss_per_unit
-                        
-                        pos_risk = trade_risk; pos_bar = t; pos_max_r = 0.0; pos_rr = r_
-
-        tot = len(trades)
-        wins = [tr for tr in trades if tr["pnl"] > 0]
-        wr = len(wins) / tot * 100.0 if tot > 0 else 0.0
-        net_pnl = realized - self.risk.initial_capital
-        roi = net_pnl / self.risk.initial_capital * 100.0
-        peaks = np.maximum.accumulate(equity_curve)
-        with np.errstate(divide='ignore', invalid='ignore'):
-            dds = np.where(peaks > 0, (peaks - equity_curve) / peaks * 100.0, 0.0)
-        max_dd = np.max(dds) if len(dds) > 0 else 0.0
+            if sig_long and not sig_short:
+                signals[t] = 1
+                raw_r[t] = stop_dist
+            elif sig_short and not sig_long:
+                signals[t] = -1
+                raw_r[t] = stop_dist
+                
+        return pd.DataFrame({'side': signals, 'raw_r': raw_r}, index=df_test.index)
         
-        return {
-            "roi_pct": roi,
-            "max_dd_pct": max_dd,
-            "win_rate_pct": wr,
-            "trades": tot,
-            "net_pnl": net_pnl,
-            "trades_list": trades
-        }
+    def run(self, df_test: pd.DataFrame, training_mode: bool = False, filter_func: Callable[[int, str], bool] = None) -> dict:
+        signals_df = self.generate_signals(df_test, filter_func)
+        return self.kernel.run(df_test, signals_df, training_mode)

@@ -1,0 +1,185 @@
+{
+  "retrospective_flag": {
+    "prefix_flagged": 0,
+    "extended_prefix_flagged": 287
+  },
+  "processor_prefix_changes_287_of_400_with_stub_liquidation": {},
+  "missing_spot_rows": [
+    {
+      "spot_cvd_15m": 0.0,
+      "future_cvd_15m": -10.0,
+      "zc_div": 0.0,
+      "spot_close": 100.28815113,
+      "basis_usd": -0.17532202
+    },
+    {
+      "spot_cvd_15m": 0.0,
+      "future_cvd_15m": -10.0,
+      "zc_div": 0.0,
+      "spot_close": 100.28815113,
+      "basis_usd": -0.52558527
+    }
+  ],
+  "exported_source_flags": {
+    "spot_flow_source": false,
+    "is_synthetic": false,
+    "metrics_available": false
+  },
+  "no_metrics": {
+    "error_type": "UnboundLocalError",
+    "message": "cannot access local variable 'is_valid_metrics' where it is not associated with a value"
+  },
+  "nonfinite_finalise": {
+    "before": null,
+    "after_rsi": 0.0
+  },
+  "gap_repair": [
+    {
+      "open_time": 1609459200000,
+      "open": 99.88864720189768,
+      "high": 100.08864720189769,
+      "low": 99.68864720189768,
+      "close": 99.88864720189768,
+      "volume": 100.0,
+      "is_synthetic": 0
+    },
+    {
+      "open_time": 1609460100000,
+      "open": 99.88864720189768,
+      "high": 99.88864720189768,
+      "low": 99.88864720189768,
+      "close": 99.88864720189768,
+      "volume": 0.0,
+      "is_synthetic": 1
+    },
+    {
+      "open_time": 1609461000000,
+      "open": 99.88882786212444,
+      "high": 100.12062228982113,
+      "low": 99.68882786212444,
+      "close": 99.92062228982113,
+      "volume": 100.0,
+      "is_synthetic": 0
+    },
+    {
+      "open_time": 1609461900000,
+      "open": 99.92062228982113,
+      "high": 100.12062228982113,
+      "low": 99.49789079051142,
+      "close": 99.69789079051142,
+      "volume": 100.0,
+      "is_synthetic": 0
+    }
+  ],
+  "backward_join": [
+    {
+      "stamp": 100,
+      "value": 1,
+      "_age_ms": 0
+    },
+    {
+      "stamp": 100,
+      "value": 1,
+      "_age_ms": 99
+    },
+    {
+      "stamp": 200,
+      "value": 9,
+      "_age_ms": 0
+    }
+  ],
+  "liquidation_artifacts": {
+    "loaded": true,
+    "type": "ExtraTreesRegressor",
+    "features": [
+      "w_down",
+      "w_up",
+      "body",
+      "range_pct",
+      "vol",
+      "base_vol",
+      "trades",
+      "taker_buy",
+      "taker_sell",
+      "taker_delta",
+      "w_down_sq",
+      "w_up_sq",
+      "w_down_cube",
+      "w_up_cube",
+      "w_down_x_vol",
+      "w_up_x_vol",
+      "w_down_sq_x_vol",
+      "w_up_sq_x_vol",
+      "taker_sell_x_wdown",
+      "taker_buy_x_wup",
+      "w_down_lag1",
+      "w_up_lag1",
+      "w_down_x_vol_lag1",
+      "w_up_x_vol_lag1",
+      "taker_sell_lag1",
+      "taker_buy_lag1",
+      "w_down_lag2",
+      "w_up_lag2",
+      "w_down_x_vol_lag2",
+      "w_up_x_vol_lag2",
+      "taker_sell_lag2",
+      "taker_buy_lag2",
+      "w_down_lag3",
+      "w_up_lag3",
+      "w_down_x_vol_lag3",
+      "w_up_x_vol_lag3",
+      "taker_sell_lag3",
+      "taker_buy_lag3"
+    ],
+    "public_metadata_keys": [
+      "bootstrap",
+      "ccp_alpha",
+      "class_weight",
+      "criterion",
+      "estimator",
+      "estimator_",
+      "estimator_params",
+      "estimators_",
+      "max_depth",
+      "max_features",
+      "max_leaf_nodes",
+      "max_samples",
+      "min_impurity_decrease",
+      "min_samples_leaf",
+      "min_samples_split",
+      "min_weight_fraction_leaf",
+      "monotonic_cst",
+      "n_estimators",
+      "n_features_in_",
+      "n_jobs",
+      "n_outputs_",
+      "oob_score",
+      "random_state",
+      "verbose",
+      "warm_start"
+    ],
+    "prefix_max_abs": [
+      0.0,
+      0.0
+    ],
+    "warnings": []
+  },
+  "DOGEUSDT_lifetime_roundoff": {
+    "max_abs": 6.103515625e-05,
+    "beyond_two_ulps_and_rounding": 0
+  },
+  "TRXUSDT_lifetime_roundoff": {
+    "max_abs": 1.52587890625e-05,
+    "beyond_two_ulps_and_rounding": 0
+  },
+  "XRPUSDT_lifetime_roundoff": {
+    "max_abs": 2.1362327970564365e-05,
+    "beyond_two_ulps_and_rounding": 4378
+  },
+  "usdc_recent_probe_history_rewrite": {
+    "same_historical_timestamp_ms": 1704153600000,
+    "short_request_oi": 150.0,
+    "extended_request_oi": 100.0,
+    "source": "mock archive responses; real fetch_metrics implementation; no network"
+  }
+}

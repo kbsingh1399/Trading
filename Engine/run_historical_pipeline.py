@@ -80,7 +80,7 @@ def _parse_date(s: str) -> datetime:
 # ------------------------------------------------------------------------------
 # Fast-skip probe: only trust existing output if it satisfies the full contract
 # ------------------------------------------------------------------------------
-def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: float) -> bool:
+def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: float = 24.0) -> bool:
     import pyarrow.parquet as pq
     mpath = os.path.join(target_dir, master_filename(symbol))
     lpath = os.path.join(target_dir, ladder_filename(symbol))
@@ -140,11 +140,25 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
             return False
 
         last = mf.read_row_group(mf.num_row_groups - 1, columns=["close_time_ms"]).column(0).to_numpy()
-        now_utc_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
-        age_h = max(0.0, (now_utc_ms - int(last[-1])) / 3_600_000)
-        if age_h > max_age_hours:
+        now_utc = datetime.now(timezone.utc)
+        yesterday_date = (now_utc - pd.Timedelta(days=1)).date()
+        last_dt = pd.to_datetime(int(last[-1]), unit="ms", utc=True)
+        last_date = last_dt.date()
+
+        # Binance publishes historical archives on a T-1 day lag (yesterday).
+        # Asset is up to date if data reaches yesterday (last_date >= yesterday_date).
+        if last_date < yesterday_date:
             return False
+
         m_ts = pd.read_parquet(mpath, columns=["open_time_ms"])["open_time_ms"].to_numpy()
+        if len(m_ts) <= 1000:
+            return False
+
+        # Verify continuous 15m cadence with strictly zero date or time gaps (900,000 ms per bar)
+        diffs = np.diff(m_ts)
+        if not np.all(diffs == 900_000):
+            return False
+
         l_ts = pd.read_parquet(lpath, columns=["open_time_ms"])["open_time_ms"].unique()
         if len(l_ts) == 0:
             return False
@@ -153,7 +167,7 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
         m_in_scope = m_ts[(m_ts >= l_ts.min()) & (m_ts <= l_ts.max())]
         if not (np.isin(m_in_scope, l_ts).mean() > 0.95):
             return False
-        return bool(m_ts.size > 1000)
+        return True
     except Exception:
         return False
 
@@ -296,7 +310,7 @@ def run_pipeline(
         warmup_start = max(_parse_date(WARMUP_START_DATE), listing)
 
     if not force and not end_date_str and existing_output_is_current(target_dir, symbol, skip_if_fresh_hours):
-        log(f"[SKIP] {symbol}: existing dual-table output satisfies contract and is < {skip_if_fresh_hours:.0f}h old")
+        log(f"[SKIP] {symbol}: dual-table dataset is complete through yesterday with zero date/time gaps")
         return True
 
     log("=" * 96)

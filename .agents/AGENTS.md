@@ -87,7 +87,10 @@ When `AGENTS.md` is loaded, execute sequentially without asking:
    - All exploratory scripts, debug probes, and one-off backtests MUST reside strictly inside root `scratch/`.
    - Secondary scratch folders (e.g. `Engine/scratch/`) are strictly FORBIDDEN.
    - User confirmation is required before promoting scratch code into production.
-5. **Always-On Gemini Web2API Service (Token Preservation)**:
+5. **Single Strategy File Mandate (Strict)**: 
+   - Do not create fragmented, random, or duplicate junk files (`test_s1.py`, `run_ml_s1.py`, `v2_strat.py`, etc.). 
+   - There must be ONE single file for each strategy (e.g. `s1_liquidation_cascade.py`). All logic updates, ML overlays, and tests must happen by mutating that exact single file.
+6. **Always-On Gemini Web2API Service (Token Preservation)**:
    - Always verify and run `http://localhost:8081` (`python .agents/scripts/start_web2api.py` or `.ps1`) to run auxiliary multi-agent councils with zero coordinator token consumption.
 
 ---

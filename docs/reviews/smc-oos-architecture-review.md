@@ -1,0 +1,54 @@
+# SMC / institutional ML architecture review
+
+Reviewed 2026-09-07. This is a code and diagnostic review, not a claim of successful OOS validation. Strategy and optimizer source files were not changed.
+
+## Verified current state
+
+The specified Engine/binance_backtesting_data directory contains 11 master parquets and 2,319,913 rows, as read from live parquet metadata. Missing requested assets: SOL, AVAX, SUI, NEAR, APT, OP, ARB. This does not establish that those assets are absent elsewhere.
+
+The existing ETH_optimization_report.json records zero passes for all eight simulators and zero closed trades for S2 in all 20 windows. It is historical diagnostic evidence, not a fresh performance certificate.
+
+ETH has all required CVD/confluence columns. A fresh selected-column scan found 658 long and 363 short raw confluence bars across its 210,889 rows. Each full OOS calendar month contains raw candidates. A bounded reproduction of the optimizer's current W1 long filter, using its exact feature list and fixed parameters with one training thread, found 11 candidates in the optimizer's truncated interval, scores 0.05259–0.35340, a 0.74315 cutoff, and zero approvals. This demonstrates filter starvation in W1, not a complete causal backtest.
+
+## Confirmed defects and immediate changes
+
+1. OOS selection leakage: optimize_individual_assets.py:161 computes a threshold from the entire OOS prediction distribution. Calibrate thresholds using chronological, purged validation inside training, then freeze before each OOS window. Never select a percentile from the future test month.
+
+2. Corrupt long time-decay accounting: s2_institutional_ml.py:126 clears pos_side before calculating directional PnL and recording direction. A synthetic execution by the independent reviewer reproduced an actual $3.00 long loss reported as a $0.333 profit and SHORT trade. Equivalent reset-before-accounting code occurs in seven simulators. Preserve position state through settlement, then clear it; centralize settlement to eliminate copies.
+
+3. Label/execution mismatch: optimizer:19 uses current-open entry, current-bar extremes, a 5 ATR target and 1.5 ATR stop, with no execution costs or ratchets. That is 3.33 stop-distance R, not 5R. S2 uses 3 ATR stops and a 2.5R target. Generate labels with the same deterministic execution logic as trading: signal at close, entry at next open, specified friction, next-bar-effective ratchets, and 24-bar decay. Exclude the last 96 censored training observations rather than assigning them zero.
+
+4. Invalid portfolio equivalence: optimizer:48 runs one asset at a time, and each simulator resets its own account. Build one chronological account across the specified universe, with shared cash, at most two concurrent positions, deterministic signal arbitration, and aggregate mark-to-market risk. Preserve the user's $25 base-risk instruction; explicitly version any proposed house-money/defense policy rather than silently importing conflicting historical settings.
+
+5. Risk and boundary accounting: S2:140–159 only blocks entries when flat and does not enforce the hard drawdown stop on existing exposure. Sizing excludes fees and stop slippage. Final open positions are omitted from realized ROI and trade counts at :192–200. Implement cost-aware admission sizing, entry-fee debits, portfolio liquidation value, breach handling, and explicit window-end settlement. Gap execution can exceed a stop budget; do not clamp reported losses to $225.
+
+6. Window truncation: optimizer:96–103 parses inclusive date-only end dates as midnight, omitting the final 95 quarter-hour bars. Use UTC half-open intervals through the following midnight. Represent unavailable-history windows explicitly; never silently skip them while reporting a denominator of 20.
+
+7. Training population mismatch: optimizer:120–121 requires bullish candles for long training and bearish candles for short training, while S2 inference does not. Train on actual eligible candidate events. Evaluate the mandatory confluence without ML first, then assess the filter on net expectancy using only purged IS validation. Fit shared labels/models once per asset/window rather than repeatedly inside the eight-strategy loop.
+
+## Data provenance gate
+
+Engine/core/schema.py:83 and pipeline/historical_metrics_processor.py:383 define zc_div as raw spot-minus-futures base-asset flow, not a standardized score. Its threshold therefore has asset-dependent units. Preserve the mandated rule in the baseline; add clearly named, backward-looking normalized features for ML and document any proposed signal-contract revision separately.
+
+ETH's live selected-column scan found 74,284 imputed-metrics rows. No null values in the inspected columns does not mean all inputs were directly observed. schema.py labels is_imputed_metrics retrospective; it must not become a contemporaneous signal without proving availability timing.
+
+Historical liquidations are generated by MathematicalLiquidationModel, not directly recorded liquidation events. Its source header describes calibration on June–August 2026 and its constructor loads trained model artifacts without an as-of cutoff. Those artifacts exist. Whether they generated each current parquet remains unverified. Record model hashes and training cutoffs; prevent future-calibrated upstream features from entering earlier OOS windows. Downstream purging alone is insufficient.
+
+## Proposed implementation and verification order
+
+First repair data contracts, event timing, settlement, costs, risk, and calendar boundaries. Verify long/short decay, simultaneous stop/target touches, next-bar ratchets, gap fills, terminal settlement, and shared exposure using deterministic cases.
+
+Then replace the label generator with execution-consistent net outcomes and build training-only validation/calibration. Preserve the strict 72-hour cutoff and require each included label to resolve within its permitted training interval.
+
+Next run the fixed confluence without ML under the shared account and record the funnel from raw eligibility through model approval, exposure rejection, fills, and exits. Add a shallow candidate-conditioned model only if training validation supports it. Regime features and pooled cross-asset learning are later experiments, not substitutes for correctness.
+
+Freeze one causal procedure and publish reproducible source/data/config/model hashes and cutoff timestamps. Existing repeatedly inspected OOS windows are development evidence; subsequent claims of independent generalization require untouched or prospective data. No passing result is asserted here.
+
+## Boot and orchestration status
+
+Canonical AGENTS.md, ACTIVE_CONTEXT, graph memory, roadmap, checklist, universal directives, and requested training/feature skills were read. Karpathy guidelines were applied. Graphify query ran but returned no matching S2 nodes. Second Brain query ran; stale historical claims were not treated as evidence. The prescribed DeepSeek wrapper failed; a corrected headless configuration check exited zero. This is configuration validation, not a strategy test. Gemini helper started and its models endpoint passed health verification. RAM initially exceeded 85%, then fell to about 81.1%; the broad process-killing cleaner was not run.
+
+The prescribed cross-repository synchronization was rejected by automatic approval review because it can overwrite files based on timestamps. A safe read-only comparison found matching hashes for four selected boot/context files in the two legacy repositories; full parity is not certified. RTK.md and several routed baseline documents were not found in the searched current-workspace locations.
+
+Orchestration: two independent reviewers completed ML/implementation and optimizer/QA reviews; the third data reviewer hit its usage limit. The coordinator completed the metadata, provenance, and candidate-filter diagnostics locally. No full 20-window backtest or full security/lint scan was performed.
+

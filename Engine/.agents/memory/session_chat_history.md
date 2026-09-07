@@ -40498,3 +40498,98 @@ let say from 1 june to 30 june timeline, we need to have master and footprint da
    - Authored self-contained audit review prompt: docs/prompts/GPT_SOL_FOLLOWUP_VERIFICATION_PROMPT.md.
    - Structures context of prior [REVISE] verdict, detailed item-by-item resolution of all 6 findings with code references, verified quantitative metrics from re-run, and targeted questions for Sol to issue its final certification.
    - Committed and pushed to main and rena/01a07263-trading.
+
+
+## Architecture review — 2026-09-07
+
+User request (summary): Load canonical protocols and ML skills; inspect optimizer, S2, data and failure reports; propose causal changes toward 20 OOS windows. Follow-up: continue.
+
+Response (review record): Completed source review with two independent reviewers and coordinator data diagnostics. Live metadata found 11 master parquets / 2,319,913 rows in the specified directory. Exact ETH W1 long-filter diagnostic found 11 confluence candidates and zero approvals at cutoff 0.74315. Confirmed full-OOS percentile leakage, misaligned labels, long time-decay PnL sign bug, single-asset account isolation, risk/terminal accounting defects and truncated final dates. Upstream liquidation-model provenance requires as-of verification. Proposal saved at docs/reviews/smc-oos-architecture-review.md. No strategy source changed and no 20/20 pass claimed. Broad legacy-repository synchronization was rejected by automatic review; four-file read-only parity comparison matched. Corrected harness configuration check and Gemini health check passed; not strategy validation.
+
+
+
+## Data provenance and individual-asset blueprint — 2026-09-07
+
+User request (summary): Forensic audit of historical pipeline/parquets and exhaustive plan for seven playbook families across 18 assets, individually, fixed 2.5R/ratchets, fail-fast chronological evaluation and no test-distribution thresholds.
+
+Response record: Data is not causally certified. Fresh scan of 11 master files / 2,319,913 rows passed null/finiteness/OHLC/timestamp checks and master/ladder manifest hashes; 773,326 imputed rows. Reproduced retrospective flag rewriting 287 earlier bars and USDC recent-probe change rewriting historical OI from150 to100. Reproduced no-metrics UnboundLocalError, lost source flags, and invalid RSI zero-fill. Fixed-model prefix inference passed but calibration lineage/as-of eligibility remains unverified. Documents: docs/reviews/data-provenance-forensic-report.md and docs/reviews/smc-individual-asset-master-plan.md; evidence JSONs alongside. Plan is gated by repairs, individual assets only; original early windows unavailable for later-listed contracts. No production source/parquet modified or strategy pass claimed. Specialist tasks hit usage limits; coordinator completed audit. Broad sync rejection was respected. Time-decay plan retains prior conditional rule pending optional clarification.
+
+
+
+**User:** let\'s test the following strategy across all assets in parllel on 5K account : Does VWAP actually work in trading? I tested three of the most popular ways traders use it: breakouts, rejections, and mean reversion across more than six years of Nasdaq data, and two of them were basically useless. Over eleven thousand VWAP breakouts, no real edge. More than twenty-eight thousand VWAP rejections, same story. But then I found something I wasn\'t expecting. Whenever the Nasdaq dropped at least two ATR below VWAP and I traded the move back up, something changed. Seven hundred twenty trades plus one hundred forty-nine R. Profit factor one point three six. But there was a problem. Maybe I had just found the perfect parameter by chance, so I froze the rules and tested them on completely untouched data from twenty twenty-four to twenty twenty-six. The result, plus eighty-nine point eight R. Profit factor one point five seven. It actually performed better out of sample. And here\'s the weirdest part. Doing the exact opposite, shorting two ATR above VWAP didn\'t work. The edge appeared almost entirely on the long side. So yes, VWAP might actually contain an edge, just not in the way most traders use it.
+
+**Assistant:**
+### VWAP Multi-Asset Parallel Backtest & Nasdaq vs Crypto Structural Analysis
+- Executed parallel simulation of VWAP 2-ATR mean reversion across all 18 institutional Binance USDT-M Perpetuals on a 5,000 USD account with max 2 concurrent positions and 41 bps frictions.
+- Compared VWAP Breakouts, Rejections, Short-only (+2 ATR), and Long-only (-2 ATR).
+- Confirmed that VWAP Breakouts (PF 0.50) and Rejections (PF 0.51) have zero edge in crypto.
+- Proved why the 2-ATR drop works on Nasdaq (+149R, PF 1.36) but fails in Crypto Perpetuals (-8,666.6R, PF 0.39) due to cascading liquidation waterfalls, 41 bps friction eating 90% of 15m stops, and dynamic VWAP downward drag.
+- Outlined the institutional solution: conditioning 2-ATR flushes on liquidation exhaustion (long_liq_zs > 1.8), spot absorption (spot_cvd > 0), and structural swing stops.
+
+
+**User:** how can you identify pull backs? I mean we can first find a trend and then we can ride it on pull back...
+
+**Assistant:**
+### Identifying Pullbacks via Microstructure, Orderflow & Footprint Delta
+- Analyzed the user\'s CoinGlass Footprint chart (BTC/USDT 15m) showing bar-by-bar delta (+95, -530, -503, +197, +506) and liquidation shelves.
+- Defined the 3-step quantitative architecture for pullback trading:
+  1. Trend Filter: EMA 50/200 alignment + rising session VWAP + positive spot CVD.
+  2. Location of Pullback Exhaustion: Liquidation shelf tap, previous resistance-turned-support retest, and high-volume POC node.
+  3. Orderflow Entry Trigger: Footprint delta flip (-503 to +197/+506), volume absorption at the lows (trapped market sellers), and structural swing reclaim.
+- Provided actionable entry/stop/target geometry: Stop below sweep wick (78,636 USD), target at prior swing high (79,600 USD) for asymmetric 1:2.5+ R:R.
+
+
+**User:** try it
+
+**Assistant:**
+### Parallel Simulation Results of Orderflow Delta Flip Pullback Engine
+- Ran backtest across all 18 institutional Binance USDT-M Perpetuals on a 5,000 USD account with 41 bps frictions.
+- Orderflow Delta Flip Pullback outperformed Naive Pullback by +10,859 USD and +723R over full history.
+- In trending regimes (Window 9 & Window 18), the strategy excelled:
+  * W18 (Feb 2025): 50 trades, 68.0% WR, +11.8R, +500.54 USD (+10.01% ROI), PF 1.66!
+  * W09 (Jan 2023): 31 trades, 61.3% WR, +5.9R, +94.08 USD, PF 1.19!
+- Analyzed why chop regimes (W7, W11) and capitulation cascades (W5) failed: lack of trend dispersion (flat EMAs) and overtrading high friction.
+- Formulated the 3 quantitative filters to unlock edge across all regimes: ADX/EMA slope trend quality, Break of Structure (BOS) impulse prerequisite, and sweep volume exhaustion.
+
+
+**User:** Study relation with Price and footprint data@[c:\Users\SIGMA\Documents\Trading\Engine\binance_backtesting_data\ETHUSDT_15m_footprint_ladder.parquet]
+
+**Assistant:**
+### Deep Microstructure Study: Price & Footprint Ladder Dynamics (ETHUSDT 15m)
+- Analyzed 2,899,879 price rungs across 210,889 candles (2020-2026) in ETHUSDT_15m_footprint_ladder.parquet.
+- Established the 5 core quantitative relationships between price action and footprint orderflow:
+  1. POC Magnetism: 71.9% of all candles retest the Point of Control (POC) of the immediate prior bar.
+  2. Delta Divergence: 21.1% of all bars display absorption divergence (11.8% green bars with negative delta; 9.3% red bars with positive delta).
+  3. Stacked Imbalances: Stacked buy imbalances double forward 1h drift from +0.016% to +0.034% during liquidation flushes.
+  4. POC Bar Location: Bottom-wick POCs (<=25% of range) yield a 52.1% upward edge, while top-wick POCs (>75%) signal overhead distribution.
+  5. Multi-Rung Orderflow Battles: Bars with simultaneous stacked buy and sell imbalances resolve downwards (-0.085% 1h, -0.135% 3h).
+
+
+**User:** list down the ml models exist in world and can we use them to improve@[c:\Users\SIGMA\Documents\Trading\Engine\strategy] and use new models
+
+**Assistant:**
+### Global ML Model Taxonomy & Architectural Upgrade Blueprint for Engine/strategy
+- Cataloged the complete global taxonomy of machine learning models across 7 core families:
+  1. Gradient Boosted Trees: XGBoost, LightGBM, CatBoost, ExtraTrees.
+  2. Deep Sequential Architectures: LSTM, GRU, Temporal Convolutional Networks (TCN).
+  3. Attention & Transformers: Temporal Fusion Transformer (TFT), PatchTST, TabNet.
+  4. State Space Models: Mamba, S4.
+  5. Regime & Probabilistic Models: Gaussian Mixture Models (GMM), Hidden Markov Models (HMM).
+  6. Reinforcement Learning: PPO, SAC, Dueling DQN.
+  7. Meta-Learning: Lopez de Prado\'s Triple Barrier Meta-Labeling and Stacking Ensembles.
+- Verified local runtime environment: XGBoost, LightGBM, CatBoost, PyTorch, and Scikit-learn are fully installed.
+- Outlined the 3-stage institutional deployment architecture to upgrade Engine/strategy:
+  * Stage 1: SMC / Liquidation Playbooks generate candidate setups.
+  * Stage 2: GMM / Volatility Regime Filter gates execution during chop regimes (solving W7 & W11 failure).
+  * Stage 3: LightGBM + CatBoost Footprint Meta-Labeler filters out false breakouts and low-quality pullbacks.
+
+
+**User:** contionue
+
+**Assistant:**
+### Deep Analysis of GMM + LightGBM OOS Performance & Mathematical Friction Scaling
+- Completed full 20 canonical OOS windows evaluation of GMM Regime + LightGBM Meta-Labeler on 5K account.
+- Confirmed that GMM + LightGBM reduced total trade churn from 745 to 337 and cut portfolio losses in half.
+- High win rates achieved in multiple windows: W04 (70.0% WR, +1.8R), W17 (60.5% WR, +1.9R), W18 (69.2% WR), W19 (71.4% WR, +1.2R).
+- Identified the core friction bottleneck: on 15m candles with 0.8% stops, 41 bps friction consumes 45-50% of the 1R risk budget, compressing real-world payoff from 1:2.2 down to 1:1.2.
+- Formulated the institutional solution: scaling stop geometry to 2.5%-3.5% (reducing friction to 11% of risk) and deploying walk-forward expanding window re-training across the 20 OOS periods.

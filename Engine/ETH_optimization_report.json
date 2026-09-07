@@ -1,0 +1,1322 @@
+{
+    "LiquidationCascade": {
+        "passes": 0,
+        "windows": [
+            {
+                "window": "May 2021 Great Liquidation Crash",
+                "roi": -1.5058587826042094,
+                "max_dd": 1.7675874683752324,
+                "win_rate": 52.94117647058824,
+                "trades": 17,
+                "pass": false
+            },
+            {
+                "window": "September 2021 El Salvador Flash Crash",
+                "roi": 0.8483755860860037,
+                "max_dd": 1.4759939480436306,
+                "win_rate": 69.23076923076923,
+                "trades": 13,
+                "pass": false
+            },
+            {
+                "window": "November 2021 Cycle Peak Reversal",
+                "roi": -2.076145373692616,
+                "max_dd": 2.9211450596894806,
+                "win_rate": 30.0,
+                "trades": 10,
+                "pass": false
+            },
+            {
+                "window": "January 2022 Fed Macro Tightening",
+                "roi": -0.7970960206263953,
+                "max_dd": 1.2427041602328213,
+                "win_rate": 50.0,
+                "trades": 4,
+                "pass": false
+            },
+            {
+                "window": "May 2022 Terra-Luna Systemic Shock",
+                "roi": -2.483992388808183,
+                "max_dd": 2.946701069256305,
+                "win_rate": 56.52173913043478,
+                "trades": 23,
+                "pass": false
+            },
+            {
+                "window": "June 2022 3AC & Celsius Capitulation",
+                "roi": -0.3142680926333014,
+                "max_dd": 1.4336007385099765,
+                "win_rate": 56.25,
+                "trades": 16,
+                "pass": false
+            },
+            {
+                "window": "September 2022 ETH Merge Chop & Grind",
+                "roi": -2.839080586160126,
+                "max_dd": 2.839080586160126,
+                "win_rate": 42.857142857142854,
+                "trades": 14,
+                "pass": false
+            },
+            {
+                "window": "November 2022 FTX Collapse Bottom",
+                "roi": -0.5512210305806547,
+                "max_dd": 0.7330043610091153,
+                "win_rate": 50.0,
+                "trades": 4,
+                "pass": false
+            },
+            {
+                "window": "January 2023 Bullish Short Squeeze Recovery",
+                "roi": -0.9006325098084744,
+                "max_dd": 1.0664684222947334,
+                "win_rate": 33.33333333333333,
+                "trades": 3,
+                "pass": false
+            },
+            {
+                "window": "March 2023 SVB Bank Run & USDC Depeg",
+                "roi": -2.2900701183765158,
+                "max_dd": 2.49476274751735,
+                "win_rate": 14.285714285714285,
+                "trades": 7,
+                "pass": false
+            },
+            {
+                "window": "June 2023 BlackRock Spot ETF Momentum",
+                "roi": 0.2407144983569378,
+                "max_dd": 0.6356134845704025,
+                "win_rate": 66.66666666666666,
+                "trades": 3,
+                "pass": false
+            },
+            {
+                "window": "August 2023 Mid-Summer Flash Liquidation",
+                "roi": -0.9437295789069685,
+                "max_dd": 1.0,
+                "win_rate": 33.33333333333333,
+                "trades": 3,
+                "pass": false
+            },
+            {
+                "window": "October 2023 Uptober Spot ETF Ignition",
+                "roi": -1.501737764728059,
+                "max_dd": 1.5964167899627009,
+                "win_rate": 33.33333333333333,
+                "trades": 6,
+                "pass": false
+            },
+            {
+                "window": "January 2024 Spot ETF Approval Shakeout",
+                "roi": 0.3286820706346043,
+                "max_dd": 0.4206825983563262,
+                "win_rate": 100.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "March 2024 Pre-Halving All-Time High Run",
+                "roi": -1.4819872961511464,
+                "max_dd": 1.4992014846409714,
+                "win_rate": 25.0,
+                "trades": 4,
+                "pass": false
+            },
+            {
+                "window": "August 2024 Global Carry Trade Liquidation",
+                "roi": -1.2102702614445116,
+                "max_dd": 1.633379903259826,
+                "win_rate": 40.0,
+                "trades": 5,
+                "pass": false
+            },
+            {
+                "window": "November 2024 US Election Mega Breakout",
+                "roi": -2.1298460432800495,
+                "max_dd": 2.1298460432800495,
+                "win_rate": 0.0,
+                "trades": 5,
+                "pass": false
+            },
+            {
+                "window": "February 2025 Post-Inauguration Consolidation",
+                "roi": -1.1366494086967576,
+                "max_dd": 1.4945694729824803,
+                "win_rate": 50.0,
+                "trades": 12,
+                "pass": false
+            },
+            {
+                "window": "July 2025 Mid-Year Volatility Expansion",
+                "roi": -1.2638664755517675,
+                "max_dd": 1.8072556874350694,
+                "win_rate": 33.33333333333333,
+                "trades": 6,
+                "pass": false
+            },
+            {
+                "window": "March 2026 Late-Cycle Microstructure Shock",
+                "roi": -1.4059136569523072,
+                "max_dd": 1.4910022167381893,
+                "win_rate": 40.0,
+                "trades": 5,
+                "pass": false
+            }
+        ]
+    },
+    "SMCMayne": {
+        "passes": 0,
+        "windows": [
+            {
+                "window": "May 2021 Great Liquidation Crash",
+                "roi": -2.219563545117635,
+                "max_dd": 3.5107526967337876,
+                "win_rate": 47.82608695652174,
+                "trades": 23,
+                "pass": false
+            },
+            {
+                "window": "September 2021 El Salvador Flash Crash",
+                "roi": -2.907800966180548,
+                "max_dd": 2.907800966180548,
+                "win_rate": 25.0,
+                "trades": 12,
+                "pass": false
+            },
+            {
+                "window": "November 2021 Cycle Peak Reversal",
+                "roi": -1.3613454715064108,
+                "max_dd": 2.044852038926019,
+                "win_rate": 40.0,
+                "trades": 10,
+                "pass": false
+            },
+            {
+                "window": "January 2022 Fed Macro Tightening",
+                "roi": -2.423019950270136,
+                "max_dd": 3.3884195104469312,
+                "win_rate": 33.33333333333333,
+                "trades": 12,
+                "pass": false
+            },
+            {
+                "window": "May 2022 Terra-Luna Systemic Shock",
+                "roi": -4.017938502986872,
+                "max_dd": 4.500471777806963,
+                "win_rate": 33.33333333333333,
+                "trades": 27,
+                "pass": false
+            },
+            {
+                "window": "June 2022 3AC & Celsius Capitulation",
+                "roi": 0.4833794757382384,
+                "max_dd": 1.8074919281233146,
+                "win_rate": 61.111111111111114,
+                "trades": 18,
+                "pass": false
+            },
+            {
+                "window": "September 2022 ETH Merge Chop & Grind",
+                "roi": -4.753808190706004,
+                "max_dd": 4.766003353965828,
+                "win_rate": 33.33333333333333,
+                "trades": 30,
+                "pass": false
+            },
+            {
+                "window": "November 2022 FTX Collapse Bottom",
+                "roi": -0.5,
+                "max_dd": 0.5,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "January 2023 Bullish Short Squeeze Recovery",
+                "roi": -4.508976155125819,
+                "max_dd": 4.508976155125819,
+                "win_rate": 15.789473684210526,
+                "trades": 19,
+                "pass": false
+            },
+            {
+                "window": "March 2023 SVB Bank Run & USDC Depeg",
+                "roi": -0.21529160578646042,
+                "max_dd": 0.9922140133486899,
+                "win_rate": 50.0,
+                "trades": 4,
+                "pass": false
+            },
+            {
+                "window": "June 2023 BlackRock Spot ETF Momentum",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "August 2023 Mid-Summer Flash Liquidation",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "October 2023 Uptober Spot ETF Ignition",
+                "roi": -0.5,
+                "max_dd": 0.5,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "January 2024 Spot ETF Approval Shakeout",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "March 2024 Pre-Halving All-Time High Run",
+                "roi": 0.16751291966167628,
+                "max_dd": 0.5621814513404697,
+                "win_rate": 50.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "August 2024 Global Carry Trade Liquidation",
+                "roi": -0.43940388321540014,
+                "max_dd": 0.8821422317666937,
+                "win_rate": 66.66666666666666,
+                "trades": 3,
+                "pass": false
+            },
+            {
+                "window": "November 2024 US Election Mega Breakout",
+                "roi": -0.7184995217640244,
+                "max_dd": 1.4069790331719378,
+                "win_rate": 33.33333333333333,
+                "trades": 6,
+                "pass": false
+            },
+            {
+                "window": "February 2025 Post-Inauguration Consolidation",
+                "roi": -1.213280339258763,
+                "max_dd": 1.70360549647584,
+                "win_rate": 46.15384615384615,
+                "trades": 13,
+                "pass": false
+            },
+            {
+                "window": "July 2025 Mid-Year Volatility Expansion",
+                "roi": -0.5,
+                "max_dd": 0.5,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "March 2026 Late-Cycle Microstructure Shock",
+                "roi": 0.2591836616348519,
+                "max_dd": 0.08129460808744686,
+                "win_rate": 100.0,
+                "trades": 2,
+                "pass": false
+            }
+        ]
+    },
+    "SMCKane": {
+        "passes": 0,
+        "windows": [
+            {
+                "window": "May 2021 Great Liquidation Crash",
+                "roi": -1.0,
+                "max_dd": 1.0171359320558313,
+                "win_rate": 0.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "September 2021 El Salvador Flash Crash",
+                "roi": -0.5,
+                "max_dd": 0.5,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "November 2021 Cycle Peak Reversal",
+                "roi": -0.4791724288746445,
+                "max_dd": 0.90269281220652,
+                "win_rate": 50.0,
+                "trades": 4,
+                "pass": false
+            },
+            {
+                "window": "January 2022 Fed Macro Tightening",
+                "roi": -0.9204200669219972,
+                "max_dd": 0.9847266559344132,
+                "win_rate": 33.33333333333333,
+                "trades": 3,
+                "pass": false
+            },
+            {
+                "window": "May 2022 Terra-Luna Systemic Shock",
+                "roi": -1.4239474784349113,
+                "max_dd": 2.163082276777932,
+                "win_rate": 20.0,
+                "trades": 5,
+                "pass": false
+            },
+            {
+                "window": "June 2022 3AC & Celsius Capitulation",
+                "roi": -1.2235225343810088,
+                "max_dd": 1.5137919102643536,
+                "win_rate": 25.0,
+                "trades": 4,
+                "pass": false
+            },
+            {
+                "window": "September 2022 ETH Merge Chop & Grind",
+                "roi": -3.5759481660949493,
+                "max_dd": 3.6655804368114513,
+                "win_rate": 26.666666666666668,
+                "trades": 15,
+                "pass": false
+            },
+            {
+                "window": "November 2022 FTX Collapse Bottom",
+                "roi": 0.041077036981205316,
+                "max_dd": 0.24365477595948115,
+                "win_rate": 50.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "January 2023 Bullish Short Squeeze Recovery",
+                "roi": -3.0587442424424807,
+                "max_dd": 3.0587442424424807,
+                "win_rate": 25.0,
+                "trades": 8,
+                "pass": false
+            },
+            {
+                "window": "March 2023 SVB Bank Run & USDC Depeg",
+                "roi": -0.3568919424367232,
+                "max_dd": 0.5552071485662237,
+                "win_rate": 50.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "June 2023 BlackRock Spot ETF Momentum",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "August 2023 Mid-Summer Flash Liquidation",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "October 2023 Uptober Spot ETF Ignition",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "January 2024 Spot ETF Approval Shakeout",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "March 2024 Pre-Halving All-Time High Run",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "August 2024 Global Carry Trade Liquidation",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "November 2024 US Election Mega Breakout",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "February 2025 Post-Inauguration Consolidation",
+                "roi": -0.5,
+                "max_dd": 0.6341275099610227,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "July 2025 Mid-Year Volatility Expansion",
+                "roi": 0.04419544148990099,
+                "max_dd": 0.19046310798310515,
+                "win_rate": 100.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "March 2026 Late-Cycle Microstructure Shock",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            }
+        ]
+    },
+    "SMCMarci": {
+        "passes": 0,
+        "windows": [
+            {
+                "window": "May 2021 Great Liquidation Crash",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "September 2021 El Salvador Flash Crash",
+                "roi": -0.5765976613957354,
+                "max_dd": 0.5765976613957354,
+                "win_rate": 0.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "November 2021 Cycle Peak Reversal",
+                "roi": -0.6258815387397044,
+                "max_dd": 0.7629596252602224,
+                "win_rate": 0.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "January 2022 Fed Macro Tightening",
+                "roi": -1.0,
+                "max_dd": 1.1059728011701642,
+                "win_rate": 0.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "May 2022 Terra-Luna Systemic Shock",
+                "roi": -3.1626367103775013,
+                "max_dd": 3.29591743909301,
+                "win_rate": 25.0,
+                "trades": 12,
+                "pass": false
+            },
+            {
+                "window": "June 2022 3AC & Celsius Capitulation",
+                "roi": 0.3785550132437311,
+                "max_dd": 0.7382641218310749,
+                "win_rate": 50.0,
+                "trades": 4,
+                "pass": false
+            },
+            {
+                "window": "September 2022 ETH Merge Chop & Grind",
+                "roi": -1.6859482859735,
+                "max_dd": 2.020146831261463,
+                "win_rate": 27.27272727272727,
+                "trades": 11,
+                "pass": false
+            },
+            {
+                "window": "November 2022 FTX Collapse Bottom",
+                "roi": -0.1970868948696443,
+                "max_dd": 0.19745484321078613,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "January 2023 Bullish Short Squeeze Recovery",
+                "roi": -3.0,
+                "max_dd": 3.0,
+                "win_rate": 0.0,
+                "trades": 6,
+                "pass": false
+            },
+            {
+                "window": "March 2023 SVB Bank Run & USDC Depeg",
+                "roi": -0.5290457142880405,
+                "max_dd": 1.2427281699856,
+                "win_rate": 33.33333333333333,
+                "trades": 3,
+                "pass": false
+            },
+            {
+                "window": "June 2023 BlackRock Spot ETF Momentum",
+                "roi": -0.5,
+                "max_dd": 0.5,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "August 2023 Mid-Summer Flash Liquidation",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "October 2023 Uptober Spot ETF Ignition",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "January 2024 Spot ETF Approval Shakeout",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "March 2024 Pre-Halving All-Time High Run",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "August 2024 Global Carry Trade Liquidation",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "November 2024 US Election Mega Breakout",
+                "roi": 0.5834355712518482,
+                "max_dd": 0.31730632594839303,
+                "win_rate": 66.66666666666666,
+                "trades": 3,
+                "pass": false
+            },
+            {
+                "window": "February 2025 Post-Inauguration Consolidation",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "July 2025 Mid-Year Volatility Expansion",
+                "roi": 0.5055937101434939,
+                "max_dd": 0.2782423880149508,
+                "win_rate": 100.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "March 2026 Late-Cycle Microstructure Shock",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            }
+        ]
+    },
+    "SMCMarco": {
+        "passes": 0,
+        "windows": [
+            {
+                "window": "May 2021 Great Liquidation Crash",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "September 2021 El Salvador Flash Crash",
+                "roi": 0.004665139768349036,
+                "max_dd": 0.6673365635304254,
+                "win_rate": 50.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "November 2021 Cycle Peak Reversal",
+                "roi": 0.2782281816540308,
+                "max_dd": 0.5322911496734103,
+                "win_rate": 50.0,
+                "trades": 4,
+                "pass": false
+            },
+            {
+                "window": "January 2022 Fed Macro Tightening",
+                "roi": -0.8507790782262419,
+                "max_dd": 0.8507790782262419,
+                "win_rate": 33.33333333333333,
+                "trades": 3,
+                "pass": false
+            },
+            {
+                "window": "May 2022 Terra-Luna Systemic Shock",
+                "roi": -0.2781343305701012,
+                "max_dd": 0.7619112525223235,
+                "win_rate": 50.0,
+                "trades": 6,
+                "pass": false
+            },
+            {
+                "window": "June 2022 3AC & Celsius Capitulation",
+                "roi": -1.4224313057631843,
+                "max_dd": 2.091071217613644,
+                "win_rate": 16.666666666666664,
+                "trades": 6,
+                "pass": false
+            },
+            {
+                "window": "September 2022 ETH Merge Chop & Grind",
+                "roi": -3.6390572420442915,
+                "max_dd": 3.7708574584069177,
+                "win_rate": 30.0,
+                "trades": 20,
+                "pass": false
+            },
+            {
+                "window": "November 2022 FTX Collapse Bottom",
+                "roi": -0.6970868948696444,
+                "max_dd": 0.6970868948696444,
+                "win_rate": 0.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "January 2023 Bullish Short Squeeze Recovery",
+                "roi": -0.6206554432799749,
+                "max_dd": 0.9149969133420564,
+                "win_rate": 50.0,
+                "trades": 6,
+                "pass": false
+            },
+            {
+                "window": "March 2023 SVB Bank Run & USDC Depeg",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "June 2023 BlackRock Spot ETF Momentum",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "August 2023 Mid-Summer Flash Liquidation",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "October 2023 Uptober Spot ETF Ignition",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "January 2024 Spot ETF Approval Shakeout",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "March 2024 Pre-Halving All-Time High Run",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "August 2024 Global Carry Trade Liquidation",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "November 2024 US Election Mega Breakout",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "February 2025 Post-Inauguration Consolidation",
+                "roi": 0.07476142957262709,
+                "max_dd": 0.07510536066230468,
+                "win_rate": 100.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "July 2025 Mid-Year Volatility Expansion",
+                "roi": -0.10478846527537827,
+                "max_dd": 0.2606716125339881,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "March 2026 Late-Cycle Microstructure Shock",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            }
+        ]
+    },
+    "SMCEdgeful": {
+        "passes": 0,
+        "windows": [
+            {
+                "window": "May 2021 Great Liquidation Crash",
+                "roi": 2.7574290106751507,
+                "max_dd": 2.944072330378639,
+                "win_rate": 68.96551724137932,
+                "trades": 29,
+                "pass": false
+            },
+            {
+                "window": "September 2021 El Salvador Flash Crash",
+                "roi": -4.613013208467782,
+                "max_dd": 4.613013208467782,
+                "win_rate": 24.0,
+                "trades": 25,
+                "pass": false
+            },
+            {
+                "window": "November 2021 Cycle Peak Reversal",
+                "roi": -1.5453590056506983,
+                "max_dd": 2.094152384079035,
+                "win_rate": 56.25,
+                "trades": 16,
+                "pass": false
+            },
+            {
+                "window": "January 2022 Fed Macro Tightening",
+                "roi": -1.8366442159810865,
+                "max_dd": 2.9510140399683165,
+                "win_rate": 56.25,
+                "trades": 16,
+                "pass": false
+            },
+            {
+                "window": "May 2022 Terra-Luna Systemic Shock",
+                "roi": -4.284315923269624,
+                "max_dd": 4.5910109733914855,
+                "win_rate": 51.162790697674424,
+                "trades": 43,
+                "pass": false
+            },
+            {
+                "window": "June 2022 3AC & Celsius Capitulation",
+                "roi": -2.925551429991065,
+                "max_dd": 4.527171536691648,
+                "win_rate": 43.333333333333336,
+                "trades": 30,
+                "pass": false
+            },
+            {
+                "window": "September 2022 ETH Merge Chop & Grind",
+                "roi": -4.5927700981359525,
+                "max_dd": 4.5927700981359525,
+                "win_rate": 14.285714285714285,
+                "trades": 14,
+                "pass": false
+            },
+            {
+                "window": "November 2022 FTX Collapse Bottom",
+                "roi": -1.6058628827438952,
+                "max_dd": 2.050874416569659,
+                "win_rate": 16.666666666666664,
+                "trades": 6,
+                "pass": false
+            },
+            {
+                "window": "January 2023 Bullish Short Squeeze Recovery",
+                "roi": -4.622561427670589,
+                "max_dd": 4.622561427670589,
+                "win_rate": 15.0,
+                "trades": 20,
+                "pass": false
+            },
+            {
+                "window": "March 2023 SVB Bank Run & USDC Depeg",
+                "roi": -2.520487048866835,
+                "max_dd": 2.520487048866835,
+                "win_rate": 12.5,
+                "trades": 8,
+                "pass": false
+            },
+            {
+                "window": "June 2023 BlackRock Spot ETF Momentum",
+                "roi": -0.5,
+                "max_dd": 0.5,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "August 2023 Mid-Summer Flash Liquidation",
+                "roi": 0.06417315368311392,
+                "max_dd": 0.18412184342406385,
+                "win_rate": 100.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "October 2023 Uptober Spot ETF Ignition",
+                "roi": -2.0,
+                "max_dd": 2.0,
+                "win_rate": 0.0,
+                "trades": 4,
+                "pass": false
+            },
+            {
+                "window": "January 2024 Spot ETF Approval Shakeout",
+                "roi": -0.5,
+                "max_dd": 0.5,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "March 2024 Pre-Halving All-Time High Run",
+                "roi": -1.3266929848071232,
+                "max_dd": 1.726257571217492,
+                "win_rate": 33.33333333333333,
+                "trades": 6,
+                "pass": false
+            },
+            {
+                "window": "August 2024 Global Carry Trade Liquidation",
+                "roi": -0.5013093664143888,
+                "max_dd": 1.2696553313456207,
+                "win_rate": 57.14285714285714,
+                "trades": 7,
+                "pass": false
+            },
+            {
+                "window": "November 2024 US Election Mega Breakout",
+                "roi": -2.0898188596423823,
+                "max_dd": 3.7891608013861933,
+                "win_rate": 52.38095238095239,
+                "trades": 21,
+                "pass": false
+            },
+            {
+                "window": "February 2025 Post-Inauguration Consolidation",
+                "roi": -2.879036019849318,
+                "max_dd": 3.787574139865648,
+                "win_rate": 48.275862068965516,
+                "trades": 29,
+                "pass": false
+            },
+            {
+                "window": "July 2025 Mid-Year Volatility Expansion",
+                "roi": -2.3036850815367322,
+                "max_dd": 2.771278714465811,
+                "win_rate": 16.666666666666664,
+                "trades": 6,
+                "pass": false
+            },
+            {
+                "window": "March 2026 Late-Cycle Microstructure Shock",
+                "roi": -0.4868750910991366,
+                "max_dd": 0.7545161842416375,
+                "win_rate": 60.0,
+                "trades": 5,
+                "pass": false
+            }
+        ]
+    },
+    "SMCUsmanNoah": {
+        "passes": 0,
+        "windows": [
+            {
+                "window": "May 2021 Great Liquidation Crash",
+                "roi": -0.5,
+                "max_dd": 0.5,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "September 2021 El Salvador Flash Crash",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "November 2021 Cycle Peak Reversal",
+                "roi": -0.5,
+                "max_dd": 0.6401730496625642,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "January 2022 Fed Macro Tightening",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "May 2022 Terra-Luna Systemic Shock",
+                "roi": -0.38595483391040036,
+                "max_dd": 0.7468263204629749,
+                "win_rate": 50.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "June 2022 3AC & Celsius Capitulation",
+                "roi": -0.5,
+                "max_dd": 0.5,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "September 2022 ETH Merge Chop & Grind",
+                "roi": 0.36210288140664487,
+                "max_dd": 0.2887638781757403,
+                "win_rate": 100.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "November 2022 FTX Collapse Bottom",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "January 2023 Bullish Short Squeeze Recovery",
+                "roi": 0.04258559045996663,
+                "max_dd": 0.21386270654449643,
+                "win_rate": 100.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "March 2023 SVB Bank Run & USDC Depeg",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "June 2023 BlackRock Spot ETF Momentum",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "August 2023 Mid-Summer Flash Liquidation",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "October 2023 Uptober Spot ETF Ignition",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "January 2024 Spot ETF Approval Shakeout",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "March 2024 Pre-Halving All-Time High Run",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "August 2024 Global Carry Trade Liquidation",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "November 2024 US Election Mega Breakout",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "February 2025 Post-Inauguration Consolidation",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "July 2025 Mid-Year Volatility Expansion",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "March 2026 Late-Cycle Microstructure Shock",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            }
+        ]
+    },
+    "S2InstitutionalML": {
+        "passes": 0,
+        "windows": [
+            {
+                "window": "May 2021 Great Liquidation Crash",
+                "roi": -0.21698826833358906,
+                "max_dd": 0.8448247922458912,
+                "win_rate": 66.66666666666666,
+                "trades": 3,
+                "pass": false
+            },
+            {
+                "window": "September 2021 El Salvador Flash Crash",
+                "roi": -0.4596905569358569,
+                "max_dd": 0.739774160182747,
+                "win_rate": 50.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "November 2021 Cycle Peak Reversal",
+                "roi": 2.3379533336560416,
+                "max_dd": 0.5065733539323357,
+                "win_rate": 100.0,
+                "trades": 5,
+                "pass": false
+            },
+            {
+                "window": "January 2022 Fed Macro Tightening",
+                "roi": -0.36617422184863246,
+                "max_dd": 0.5,
+                "win_rate": 50.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "May 2022 Terra-Luna Systemic Shock",
+                "roi": -0.3330571673568738,
+                "max_dd": 0.7715964508508266,
+                "win_rate": 33.33333333333333,
+                "trades": 3,
+                "pass": false
+            },
+            {
+                "window": "June 2022 3AC & Celsius Capitulation",
+                "roi": -0.34598802134447393,
+                "max_dd": 2.1262606384041267,
+                "win_rate": 70.0,
+                "trades": 10,
+                "pass": false
+            },
+            {
+                "window": "September 2022 ETH Merge Chop & Grind",
+                "roi": -0.47256526717554154,
+                "max_dd": 1.489797412934622,
+                "win_rate": 62.5,
+                "trades": 8,
+                "pass": false
+            },
+            {
+                "window": "November 2022 FTX Collapse Bottom",
+                "roi": -1.0388461010246284,
+                "max_dd": 1.2901251268485694,
+                "win_rate": 25.0,
+                "trades": 4,
+                "pass": false
+            },
+            {
+                "window": "January 2023 Bullish Short Squeeze Recovery",
+                "roi": 0.043952976134860364,
+                "max_dd": 0.7883779185606793,
+                "win_rate": 66.66666666666666,
+                "trades": 3,
+                "pass": false
+            },
+            {
+                "window": "March 2023 SVB Bank Run & USDC Depeg",
+                "roi": 0.40519473693826513,
+                "max_dd": 0.2950217465747942,
+                "win_rate": 100.0,
+                "trades": 3,
+                "pass": false
+            },
+            {
+                "window": "June 2023 BlackRock Spot ETF Momentum",
+                "roi": 0.6133891901794232,
+                "max_dd": 0.0,
+                "win_rate": 100.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "August 2023 Mid-Summer Flash Liquidation",
+                "roi": -0.05499608369946145,
+                "max_dd": 0.746233427523457,
+                "win_rate": 50.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "October 2023 Uptober Spot ETF Ignition",
+                "roi": -0.3923603793594339,
+                "max_dd": 0.6593668061800609,
+                "win_rate": 50.0,
+                "trades": 2,
+                "pass": false
+            },
+            {
+                "window": "January 2024 Spot ETF Approval Shakeout",
+                "roi": 0.2717193220937406,
+                "max_dd": 0.1438358171646469,
+                "win_rate": 100.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "March 2024 Pre-Halving All-Time High Run",
+                "roi": 0.0,
+                "max_dd": 0.0,
+                "win_rate": 0.0,
+                "trades": 0,
+                "pass": false
+            },
+            {
+                "window": "August 2024 Global Carry Trade Liquidation",
+                "roi": -0.5,
+                "max_dd": 0.5,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "November 2024 US Election Mega Breakout",
+                "roi": -0.6415830122818261,
+                "max_dd": 0.6415830122818261,
+                "win_rate": 0.0,
+                "trades": 1,
+                "pass": false
+            },
+            {
+                "window": "February 2025 Post-Inauguration Consolidation",
+                "roi": -0.038555133496865894,
+                "max_dd": 0.8180508137263315,
+                "win_rate": 50.0,
+                "trades": 6,
+                "pass": false
+            },
+            {
+                "window": "July 2025 Mid-Year Volatility Expansion",
+                "roi": -0.05309205775285591,
+                "max_dd": 0.7112802213642505,
+                "win_rate": 66.66666666666666,
+                "trades": 6,
+                "pass": false
+            },
+            {
+                "window": "March 2026 Late-Cycle Microstructure Shock",
+                "roi": 0.35676147705573386,
+                "max_dd": 0.46725576884895265,
+                "win_rate": 100.0,
+                "trades": 3,
+                "pass": false
+            }
+        ]
+    }
+}
