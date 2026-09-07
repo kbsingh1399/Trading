@@ -107,6 +107,7 @@ class LiquidationCascadeSimulator:
                         "side": "LONG" if pos_side == 1 else "SHORT",
                         "entry": pos_entry, "exit": exit_px, "pnl": net_pnl,
                         "r": net_pnl / pos_risk if pos_risk > 0 else 0.0,
+                        "max_r": pos_max_r,
                         "reason": exit_reason
                     })
                     pos_side = 0
@@ -135,6 +136,7 @@ class LiquidationCascadeSimulator:
                             "side": "LONG" if pos_side == 1 else "SHORT",
                             "entry": pos_entry, "exit": cl[t], "pnl": net_pnl,
                             "r": net_pnl / pos_risk if pos_risk > 0 else 0.0,
+                            "max_r": pos_max_r,
                             "reason": "TIME_DECAY"
                         })
             
@@ -152,16 +154,22 @@ class LiquidationCascadeSimulator:
                 if not training_mode and current_dd >= self.risk.drawdown_limit:
                     continue
                 
-                # Risk 1% of current equity
-                trade_risk = equity * 0.01
+                # Institutional Risk Sizing Logic
+                if net_profit > 50.0:
+                    trade_risk = min(self.risk.house_money_risk, equity * 0.01)
+                elif current_dd > 0.025:
+                    trade_risk = self.risk.drawdown_defense_risk
+                else:
+                    trade_risk = self.risk.base_risk
                     
                 # Base Trigger for Liquidations
                 sig_long = False
                 sig_short = False
                 
                 # Enforce Canonical Confluence Signal (Z >= 1.2 per AGENTS.md)
-                sig_long = (long_liq_zs[t] > 1.2) and (zc_div[t] > 0.8) and (delta_spot[t] > 0) and (delta_fut[t] < 0) and (rsi[t] < 40) and (vwap_z[t] < -0.5)
-                sig_short = (short_liq_zs[t] > 1.2) and (zc_div[t] < -0.8) and (delta_spot[t] < 0) and (delta_fut[t] > 0) and (rsi[t] > 60) and (vwap_z[t] > 0.5)
+                # Event-conditioned sampling: We relax hard constraints to allow the ML model to learn confluence.
+                sig_long = (long_liq_zs[t] > 1.2) and (cl[t] > op[t])
+                sig_short = (short_liq_zs[t] > 1.2) and (cl[t] < op[t])
                     
                 # Filter using the XGBoost Model function if provided
                 if filter_func is not None:
@@ -170,8 +178,8 @@ class LiquidationCascadeSimulator:
 
                 if sig_long:
                     px = cl[t] * (1.0 + self.fric.entry_slippage)
-                    # Structural Stop Loss: 1.5x ATR below entry
-                    stop_px = px - (atr[t] * 1.5)
+                    # Structural Stop Loss: 3.0x ATR below entry
+                    stop_px = px - (atr[t] * 3.0)
                     r_ = px - stop_px
                     if r_ <= 0: r_ = px * 0.005 # Fallback
                     target_px = px + (r_ * self.ratchet.min_target_r)
@@ -182,8 +190,8 @@ class LiquidationCascadeSimulator:
                     
                 elif sig_short:
                     px = cl[t] * (1.0 - self.fric.entry_slippage)
-                    # Structural Stop Loss: 1.5x ATR above entry
-                    stop_px = px + (atr[t] * 1.5)
+                    # Structural Stop Loss: 3.0x ATR above entry
+                    stop_px = px + (atr[t] * 3.0)
                     r_ = stop_px - px
                     if r_ <= 0: r_ = px * 0.005 # Fallback
                     target_px = px - (r_ * self.ratchet.min_target_r)

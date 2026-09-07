@@ -13,6 +13,7 @@ try:
 except ImportError:
     from sklearn.ensemble import RandomForestClassifier
     HAS_XGB = False
+from sklearn.metrics import precision_score, recall_score
 
 from s1_liquidation_cascade import LiquidationCascadeSimulator, RiskConfig, FrictionConfig, RatchetConfig
 
@@ -33,7 +34,8 @@ def extract_features(df: pd.DataFrame, t: int) -> np.ndarray:
         df["delta_fut"].iloc[t],
         df["volume_ratio"].iloc[t],
         df["ls_ratio_global"].iloc[t] if "ls_ratio_global" in df.columns else 1.0,
-        df["atr_14"].iloc[t] / df["close"].iloc[t] * 100.0 # ATR %
+        df["atr_14"].iloc[t] / df["close"].iloc[t] * 100.0, # ATR %
+        (df["close"].iloc[t] - df["ema_200"].iloc[t]) / df["ema_200"].iloc[t] * 100.0 # EMA 200 Dist %
     ])
 
 def train_model(simulator, df_train: pd.DataFrame):
@@ -48,9 +50,9 @@ def train_model(simulator, df_train: pd.DataFrame):
         features = extract_features(df_train, idx)
         X.append(features)
         
-        # Target: 1 if trade hit at least 1.0R (solid base hit), 0 otherwise
-        r = tr.get("r", 0.0)
-        if r >= 1.0:
+        # Target: 1 if trade hit at least 1.5R maximum excursion (explosive continuation), 0 otherwise
+        max_r = tr.get("max_r", 0.0)
+        if max_r >= 1.5:
             y.append(1)
         else:
             y.append(0)
@@ -90,11 +92,14 @@ def train_model(simulator, df_train: pd.DataFrame):
             
         model.fit(X_tr, y_tr)
         preds = model.predict(X_va)
-        return f1_score(y_va, preds, zero_division=0)
+        prec = precision_score(y_va, preds, zero_division=0)
+        rec = recall_score(y_va, preds, zero_division=0)
+        # F0.5 score: heavily weights precision over recall to avoid false positives
+        return ((1 + 0.5**2) * prec * rec) / ((0.5**2 * prec) + rec) if (prec + rec) > 0 else 0.0
         
     optuna.logging.set_verbosity(optuna.logging.WARNING)
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=15)
+    study.optimize(objective, n_trials=30)
     
     best_params = study.best_params
     best_params['scale_pos_weight'] = pos_weight
@@ -189,7 +194,7 @@ def run_walkforward(parquet_path: Path, config_path: str, strict_fail_fast: bool
                 # Optimize threshold on the most recent 10k bars of the training set
                 best_roi = -999
                 best_th = 0.50
-                for th in [0.35, 0.40, 0.45, 0.50, 0.55, 0.60]:
+                for th in [0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70]:
                     def val_filter(t: int, side: str) -> bool:
                         X_t = extract_features(df_train[-10000:], t).reshape(1, -1)
                         prob = model.predict_proba(X_t)[0][1]
@@ -199,7 +204,7 @@ def run_walkforward(parquet_path: Path, config_path: str, strict_fail_fast: bool
                     if val_res["roi_pct"] > best_roi and val_res["trades"] >= 5:
                         best_roi = val_res["roi_pct"]
                         best_th = th
-                threshold = 0.0
+                threshold = best_th
                 print(f"Model trained successfully. Optimal threshold: {threshold:.2f}")
             else:
                 print("Warning: Failed to train model (insufficient raw signals).")
