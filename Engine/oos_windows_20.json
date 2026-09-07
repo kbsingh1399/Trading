@@ -1,0 +1,162 @@
+[
+  {
+    "window_id": 1,
+    "name": "May 2021 Great Liquidation Crash",
+    "start_date": "2021-05-01",
+    "end_date": "2021-05-31",
+    "regime": "Bearish Extreme Liquidation Shock",
+    "description": "Historical $64k to $30k capitulation cascade with record long liquidations and cascading margin calls."
+  },
+  {
+    "window_id": 2,
+    "name": "September 2021 El Salvador Flash Crash",
+    "start_date": "2021-09-01",
+    "end_date": "2021-09-30",
+    "regime": "Flash Crash & High Volatility Rebound",
+    "description": "Rapid multi-billion dollar long flush on 'legal tender' announcement followed by institutional absorption."
+  },
+  {
+    "window_id": 3,
+    "name": "November 2021 Cycle Peak Reversal",
+    "start_date": "2021-11-01",
+    "end_date": "2021-11-30",
+    "regime": "Blowoff Top & Distribution Reversal",
+    "description": "Bitcoin reaches $69k cycle ATH with massive short liquidation squeeze followed by aggressive spot distribution."
+  },
+  {
+    "window_id": 4,
+    "name": "January 2022 Fed Macro Tightening",
+    "start_date": "2022-01-01",
+    "end_date": "2022-01-31",
+    "regime": "Macro Trending Bear Cascade",
+    "description": "Macro-driven selloff from $47k to $33k with continuous open interest destruction."
+  },
+  {
+    "window_id": 5,
+    "name": "May 2022 Terra-Luna Systemic Shock",
+    "start_date": "2022-05-01",
+    "end_date": "2022-05-31",
+    "regime": "Systemic Credit Contagion Cascade",
+    "description": "Unprecedented algorithmic stablecoin death spiral causing multi-billion dollar cascading long liquidations."
+  },
+  {
+    "window_id": 6,
+    "name": "June 2022 3AC & Celsius Capitulation",
+    "start_date": "2022-06-01",
+    "end_date": "2022-06-30",
+    "regime": "Major Institutional Capitulation Flush",
+    "description": "Cascading liquidation of crypto hedge funds driving BTC from $30k down to $17.5k with extreme volume."
+  },
+  {
+    "window_id": 7,
+    "name": "September 2022 ETH Merge Chop & Grind",
+    "start_date": "2022-09-01",
+    "end_date": "2022-09-30",
+    "regime": "Low-Volatility Rangebound Grind",
+    "description": "Sideways compression around $19k-$20k with frequent false breakout traps and range mean-reversion."
+  },
+  {
+    "window_id": 8,
+    "name": "November 2022 FTX Collapse Bottom",
+    "start_date": "2022-11-01",
+    "end_date": "2022-11-30",
+    "regime": "Exchange Insolvency Black Swan",
+    "description": "FTX bankruptcy crash to $15.5k cycle low with massive negative funding and peak panic."
+  },
+  {
+    "window_id": 9,
+    "name": "January 2023 Bullish Short Squeeze Recovery",
+    "start_date": "2023-01-01",
+    "end_date": "2023-01-31",
+    "regime": "Aggressive Mean Reversion Short Squeeze",
+    "description": "V-shaped recovery from $16.5k to $23k driving massive short liquidation cascade across perpetuals."
+  },
+  {
+    "window_id": 10,
+    "name": "March 2023 SVB Bank Run & USDC Depeg",
+    "start_date": "2023-03-01",
+    "end_date": "2023-03-31",
+    "regime": "Banking Shock to Massive Flight-to-Quality",
+    "description": "Initial panic drop to $19.5k followed by historic short squeeze to $28k on bank bailout news."
+  },
+  {
+    "window_id": 11,
+    "name": "June 2023 BlackRock Spot ETF Momentum",
+    "start_date": "2023-06-01",
+    "end_date": "2023-06-30",
+    "regime": "Institutional Narrative Breakout",
+    "description": "Breakout from $25k to $31k on BlackRock spot ETF filing with sustained positive CVD."
+  },
+  {
+    "window_id": 12,
+    "name": "August 2023 Mid-Summer Flash Liquidation",
+    "start_date": "2023-08-01",
+    "end_date": "2023-08-31",
+    "regime": "Extreme Flash Liquidation Flush",
+    "description": "August 17 sudden $29k to $25k flush wiping out over $1B in long open interest in a single 4-hour window."
+  },
+  {
+    "window_id": 13,
+    "name": "October 2023 Uptober Spot ETF Ignition",
+    "start_date": "2023-10-01",
+    "end_date": "2023-10-31",
+    "regime": "Strong Trending Momentum Breakout",
+    "description": "Explosive breakout from $27k to $35k on Cointelegraph fake ETF tweet followed by genuine institutional buying."
+  },
+  {
+    "window_id": 14,
+    "name": "January 2024 Spot ETF Approval Shakeout",
+    "start_date": "2024-01-01",
+    "end_date": "2024-01-31",
+    "regime": "Sell-the-News Cascade & Rotation",
+    "description": "Bitcoin ETF launch day peak ($48.9k) followed by Grayscale GBTC redemption selloff to $38.5k."
+  },
+  {
+    "window_id": 15,
+    "name": "March 2024 Pre-Halving All-Time High Run",
+    "start_date": "2024-03-01",
+    "end_date": "2024-03-31",
+    "regime": "High-Volatility Euphoric Bull Expansion",
+    "description": "Rapid acceleration through prior ATH to $73.7k with intense intraday volatility and 10%+ daily swings."
+  },
+  {
+    "window_id": 16,
+    "name": "August 2024 Global Carry Trade Liquidation",
+    "start_date": "2024-08-01",
+    "end_date": "2024-08-31",
+    "regime": "Global Macro Liquidity Shock",
+    "description": "August 5 'Black Monday' Japanese Yen carry trade unwind crashing BTC from $65k to $49k in 72 hours."
+  },
+  {
+    "window_id": 17,
+    "name": "November 2024 US Election Mega Breakout",
+    "start_date": "2024-11-01",
+    "end_date": "2024-11-30",
+    "regime": "Historic Unidirectional Bull Trend",
+    "description": "Record-breaking post-election rally from $68k to $98k with massive institutional ETF inflows."
+  },
+  {
+    "window_id": 18,
+    "name": "February 2025 Post-Inauguration Consolidation",
+    "start_date": "2025-02-01",
+    "end_date": "2025-02-28",
+    "regime": "High-Level Range Chop & False Breakouts",
+    "description": "Consolidation near all-time highs with frequent stop-hunts above and below value area boundaries."
+  },
+  {
+    "window_id": 19,
+    "name": "July 2025 Mid-Year Volatility Expansion",
+    "start_date": "2025-07-01",
+    "end_date": "2025-07-31",
+    "regime": "Derivative Expiry Volatility Shakeout",
+    "description": "Quarterly options/futures expiry rollover creating localized liquidation cascades and microstructure resets."
+  },
+  {
+    "window_id": 20,
+    "name": "March 2026 Late-Cycle Microstructure Shock",
+    "start_date": "2026-03-01",
+    "end_date": "2026-03-31",
+    "regime": "Mature Cycle Cascade & Absorption",
+    "description": "High-frequency liquidation cascade testing modern algorithmic absorption and delta divergence."
+  }
+]

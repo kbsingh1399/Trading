@@ -949,6 +949,7 @@ class BinanceHistoricalFetcher:
         month_summary = pd.concat(daily_summaries, ignore_index=True).sort_values("open_time_ms").reset_index(drop=True)
 
         try:
+            os.makedirs(os.path.dirname(cache_ladder_path), exist_ok=True)
             month_ladder.to_parquet(cache_ladder_path, compression="zstd", index=False)
             month_summary.to_parquet(cache_summary_path, compression="zstd", index=False)
         except Exception as e:

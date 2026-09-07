@@ -78,7 +78,10 @@ When `AGENTS.md` is loaded, execute sequentially without asking:
 
 # PART 4: COMMIT, SCRATCH & WEB2API EXECUTION GATES
 1. **Execution Over Inspection**: Prove code works by live execution, not diff inspection.
-2. **Zero Polling**: Never execute tight loops on `manage_task` with `status`. Rely on reactive wakeups.
+2. **NEVER POLL & Token Preservation Mandate (Strict)**: 
+   - Never execute tight loops on `manage_task` with `status`. Rely strictly on automatic reactive wakeups.
+   - **Never poll for Goal Verification** in a recursive or tight loop. Do not repeatedly ping for status.
+   - NEVER use the `/schedule` timer tool to wake up from a background task. Rely PURELY on the system's automatic background task wakeup event. Save tokens.
 3. **Turn-Ending Session Append (Strict Mandate)**: Append prompt and final response to `session_chat_history.md` in both repos at every turn end.
 4. **Single Scratch Folder Policy (Strict Mandate)**:
    - All exploratory scripts, debug probes, and one-off backtests MUST reside strictly inside root `scratch/`.
@@ -115,3 +118,32 @@ Windows: W1–W4 (2021), W5–W8 (2022), W9–W12 (2023), W13–W16 (2024), W17�
 - **Daemon**: `python gemini_web2api.py` (`http://localhost:8081`, Auth: `Bearer sk-gemini`).
 - **Endpoints**: `/v1/chat/completions`, `/v1/models`. Models: `gemini-3.7-flash`, `gemini-3.5-flash-thinking`, `gemini-3.1-pro`.
 - **Dispatcher**: `from .agents.scripts.web2api_multi_agent import run_parallel_council`.
+
+---
+
+# PART 9: UNIFIED MACHINE LEARNING & AI SKILLS ROUTER (TOKEN-EFFICIENT INSTANTIATION)
+
+> 🧠 **MANDATORY AUTOMATIC ACTIVATION**: Whenever the user prompt mentions "ml", "machine learning", "model", "training", "feature engineering", "predict", "classifier", or related quant ML concepts, the agent MUST automatically activate this unified ML architecture.
+> 
+> **TOKEN-SAVING ZERO-AMNESIA PROTOCOL**:
+> To eliminate context bloat and prevent reading dozens of repetitive markdown files into context, the agent must reference this canonical matrix. On any ML task, the agent dynamically identifies the active sub-domain, physically loads ONLY the corresponding primary target skill via `view_file`, and displays the loaded skills in the mandatory top header:
+> `> 📚 **Active Skills Loaded & Applied:** @[primary-skill-1], @[primary-skill-2]`
+
+### 9.1 The Institutional ML Sub-Domain Routing Matrix
+
+| ML Sub-Domain | Primary Target Skill | Secondary / Auxiliary Skills | Core Invariant Directives (Zero-Token Recall) |
+|---|---|---|---|
+| **1. Feature Engineering & Data Transforms** | `@[engineering-features-for-machine-learning]` | `@[ml-data-pipeline-architecture]` | Stationary transformations only (relative z-scores, percentage ratios). Footprint ladder aggregation (`fp_stacked_buy`, `fp_stacked_sell`, `fp_delta_ratio`). Strictly backward-looking rolling operators; zero forward-looking leakage. |
+| **2. Model Training & Hyperparameter Tuning** | `@[training-machine-learning-models]` | `@[agent-data-ml-model]`, `@[building-automl-pipelines]`, `@[ml-best-practices]`, `@[mlflow-tracking-setup]` | Event-conditioned sampling on volatility/liquidation triggers (`Z >= 1.2`). Shallow tree depth (`max_depth <= 4`) with combined L1/L2 regularization (`reg_alpha >= 1.0`, `reg_lambda >= 3.0`) to avoid high-frequency noise memorization. Cross-validation strictly causal with 72h purge. |
+| **3. Model Evaluation & Explainability** | `@[evaluating-machine-learning-models]` | `@[explaining-machine-learning-models]` | Asymmetric triple-barrier evaluation (+2.0R to +5.0R vs -1.0R). Precision-recall on rare liquidation tails. SHAP and gain-based feature attribution. Brier calibration scores. Mark-to-market drawdown verification. |
+| **4. MLOps, Pipelines & Codebase Architecture** | `@[machine-learning-ops-ml-pipeline]` | `@[ai-ml]`, `@[mlops-engineer]`, `@[mle-workflow]`, `@[ml-pipeline-workflow]`, `@[ml-adoption-playbook]`, `@[ml-engineer]` | End-to-end data contracts (`schema.py`). Dual-table Parquet partitioning (Master + Footprint Ladder). Sub-second vectorized aggregation. Zero circular imports; modular SRP architecture. |
+| **5. Model Serving & Live Deployment** | `@[deploying-machine-learning-models]` | `@[flask-ml-api-creator]`, `@[azure-ml-deployer]` | Strictly causal bar $j+1$ execution. Microstructure ratchets armed at bar $j$ close, effective bar $j+1$ open only. Low-latency inference (< 2ms per bar). Safe fallback rules on missing feeds. |
+| **6. Cloud & BigQuery ML** | `@[bigquery-ai-ml]` | `@[bigquery-ml-model-creator]`, `@[azure-ai-ml-py]` | `AI.DETECT_ANOMALIES`, `AI.FORECAST`, serverless scalable feature transforms, BigFrames compliance. |
+
+### 9.2 Execution & Instantiation Rules
+1. **Dynamic Instantiation**: When "ml" or "machine learning" is detected, map the request to one or more rows above.
+2. **Physical Load**: Execute `view_file` on the corresponding `SKILL.md` (e.g. `.agents/skills/engineering-features-for-machine-learning/SKILL.md` and `.agents/skills/training-machine-learning-models/SKILL.md`).
+3. **Proof of Compliance**: Format the mandatory response header with the loaded skills:
+   `> 📚 **Active Skills Loaded & Applied:** @[skill-1], @[skill-2]`
+4. **AST Synchronization**: After creating or modifying any ML feature or model code, synchronize AST nodes via `python -m graphify update .` to maintain live knowledge graph parity.
+

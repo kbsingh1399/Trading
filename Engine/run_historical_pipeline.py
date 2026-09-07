@@ -181,10 +181,20 @@ def cleanup_symbol_raw_cache(cache_dir: str, symbol: str, log: Callable[[str], N
     removed = 0
     sym_lower = symbol.lower()
     sym_upper = symbol.upper()
+    targets = {sym_lower, sym_upper}
+    if sym_upper.endswith("USDT"):
+        base = sym_upper[:-4]
+        targets.add(f"{base.lower()}usdc")
+        targets.add(f"{base.upper()}USDC")
+    elif sym_upper.endswith("USDC"):
+        base = sym_upper[:-4]
+        targets.add(f"{base.lower()}usdt")
+        targets.add(f"{base.upper()}USDT")
+
     for root, _, files in os.walk(cache_dir):
         for f in files:
             f_lower = f.lower()
-            if sym_lower in f_lower or sym_upper in f or f.endswith(".tmp"):
+            if any(t in f_lower for t in targets) or f.endswith(".tmp"):
                 p = os.path.join(root, f)
                 try:
                     os.remove(p)
@@ -192,7 +202,7 @@ def cleanup_symbol_raw_cache(cache_dir: str, symbol: str, log: Callable[[str], N
                 except OSError:
                     pass
     if removed > 0:
-        log(f"[CLEANUP] continuous raw cleanup: removed {removed} intermediate cache files for {symbol} from {cache_dir}")
+        log(f"[CLEANUP] continuous raw cleanup: removed {removed} intermediate cache files for {symbol} (including USDC) from {cache_dir}")
     return removed
 
 
@@ -235,7 +245,13 @@ def causal_repair(master: pd.DataFrame, ladder: pd.DataFrame, report: CouncilRep
         changed = True
         log("  [REPAIR] enforced liquidation polarity")
 
-    if {"ladder_coverage", "ladder_orphans", "ladder_poc", "ladder_dup_rung", "ladder_volume_conservation"} & checks:
+    if "ladder_coverage" in checks:
+        if ladder is not None and not ladder.empty:
+            ladder, stats = assemble_ladder(m, ladder, allow_synthetic=True)
+            changed = True
+            log(f"  [REPAIR] ladder coverage causally synthesized for missing empirical bars: {stats}")
+
+    if {"ladder_orphans", "ladder_poc", "ladder_dup_rung", "ladder_volume_conservation"} & checks:
         if ladder is not None and not ladder.empty:
             ladder, stats = assemble_ladder(m, ladder, allow_synthetic=False)
             bad_ts = {f.open_time_ms for f in report.findings if f.check in ("ladder_poc", "ladder_volume_conservation") and f.open_time_ms}
