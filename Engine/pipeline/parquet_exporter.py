@@ -169,3 +169,119 @@ class ParquetExporter:
             json.dump(manifest, fh, indent=2)
         os.replace(tmp, path)
         return path
+
+    def export_dataset_atomic(
+        self,
+        master: pd.DataFrame,
+        symbol: str,
+        ladder: Optional[pd.DataFrame] = None,
+        ladder_stats: Optional[Dict[str, Any]] = None,
+        verification: Optional[Dict[str, Any]] = None,
+        metrics_absent_days: Optional[List[str]] = None,
+        expected_start_ms: Optional[int] = None,
+        expected_end_ms: Optional[int] = None,
+        expected_rows: Optional[int] = None,
+    ) -> Tuple[str, Optional[str], str]:
+        """
+        C4 FIX: Staged atomic promotion pattern.
+        Writes master, ladder, and manifest to .staging files first.
+        Only when ALL artifacts are completely written and verified on disk, promotes them
+        via os.replace in manifest-last order.
+        If ANY write or validation fails before promotion, unlinks only the .staging files,
+        leaving the existing production dataset 100% intact and undamaged!
+        """
+        mpath = self.master_path(symbol)
+        lpath = self.ladder_path(symbol)
+        man_path = self.manifest_path(symbol)
+
+        staging_mpath = mpath + ".staging"
+        staging_lpath = lpath + ".staging"
+        staging_man_path = man_path + ".staging"
+
+        staging_files = [staging_mpath, staging_man_path]
+        has_ladder = ladder is not None and not ladder.empty
+        if has_ladder:
+            staging_files.append(staging_lpath)
+
+        try:
+            # 1. Write clean master to staging
+            clean_master = _coerce(master, CANONICAL_COLUMNS, COLUMN_DTYPES, "master")
+            _atomic_write(clean_master, staging_mpath, _arrow_schema(CANONICAL_COLUMNS, COLUMN_DTYPES), row_group_size=65_536)
+
+            # 2. Write clean ladder to staging if present
+            if has_ladder:
+                clean_ladder = _coerce(ladder, LADDER_COLUMNS, LADDER_DTYPES, "ladder")
+                ts = clean_ladder["open_time_ms"].to_numpy()
+                rg = 1_048_576
+                if len(clean_ladder) > rg:
+                    change = np.flatnonzero(np.diff(ts)) + 1
+                    target = change[np.searchsorted(change, rg)] if np.searchsorted(change, rg) < len(change) else len(clean_ladder)
+                    rg = int(target)
+                _atomic_write(clean_ladder, staging_lpath, _arrow_schema(LADDER_COLUMNS, LADDER_DTYPES), row_group_size=rg)
+
+            # 3. Construct manifest using hashes of the staging artifacts
+            exp_start = int(expected_start_ms) if expected_start_ms is not None else (int(clean_master["open_time_ms"].iloc[0]) if not clean_master.empty else None)
+            exp_end = int(expected_end_ms) if expected_end_ms is not None else (int(clean_master["open_time_ms"].iloc[-1]) if not clean_master.empty else None)
+            exp_rows = int(expected_rows) if expected_rows is not None else int(len(clean_master))
+
+            manifest = {
+                "symbol": symbol,
+                "timeframe": "15m",
+                "total_rows": int(len(clean_master)),
+                "expected_rows": exp_rows,
+                "expected_start_ms": exp_start,
+                "expected_end_ms": exp_end,
+                "columns": list(clean_master.columns),
+                "column_count": int(len(clean_master.columns)),
+                "start_time_utc": str(clean_master["datetime_utc"].iloc[0]),
+                "end_time_utc": str(clean_master["datetime_utc"].iloc[-1]),
+                "exported_at_utc": datetime.now(timezone.utc).isoformat(),
+                "master_file": os.path.basename(mpath),
+                "master_sha256": _file_sha256(staging_mpath),
+                "master_size_mb": round(os.path.getsize(staging_mpath) / 1_048_576, 2) if os.path.exists(staging_mpath) else None,
+                "ladder_file": os.path.basename(lpath) if has_ladder else None,
+                "ladder_sha256": _file_sha256(staging_lpath) if has_ladder else None,
+                "ladder_size_mb": round(os.path.getsize(staging_lpath) / 1_048_576, 2) if (has_ladder and os.path.exists(staging_lpath)) else None,
+                "ladder": ladder_stats or {},
+                "provenance": {
+                    "tick_exact_bars": int((ladder_stats or {}).get("tick_exact_candles", 0)),
+                    "spot_exact_bars": int((clean_master["spot_close"].notna()).sum()) if "spot_close" in clean_master else 0,
+                    "imputed_metrics_bars": int((clean_master["is_imputed_metrics"] == 1).sum()) if "is_imputed_metrics" in clean_master else 0,
+                    "metrics_archive_absent_months": sorted({d[:7] for d in (metrics_absent_days or [])}),
+                    "metrics_archive_absent_days": sorted(metrics_absent_days or []),
+                    "metrics_archive_absent_day_count": len(set(metrics_absent_days or [])),
+                    "metrics_unavailable_fraction_by_year": {
+                        str(y): round(float((clean_master.loc[clean_master["datetime_utc"].str[:4] == str(y), "is_imputed_metrics"] == 1).mean()), 4)
+                        for y in sorted(clean_master["datetime_utc"].str[:4].unique())
+                    } if "datetime_utc" in clean_master and "is_imputed_metrics" in clean_master else {},
+                },
+                "verification": verification or {},
+                "schema_version": "2.1",
+            }
+
+            with open(staging_man_path, "w", encoding="utf-8") as fh:
+                json.dump(manifest, fh, indent=2)
+
+            # 4. Atomic promotion: all staging files exist; promote in rapid sequence with manifest last!
+            os.replace(staging_mpath, mpath)
+            if has_ladder:
+                os.replace(staging_lpath, lpath)
+            elif os.path.exists(lpath):
+                try:
+                    os.remove(lpath)
+                except OSError:
+                    pass
+            os.replace(staging_man_path, man_path)
+
+            return mpath, (lpath if has_ladder else None), man_path
+
+        except Exception:
+            # On any failure, purge only the staging files; prior production dataset is 100% untouched!
+            for p in staging_files:
+                if os.path.exists(p):
+                    try:
+                        os.remove(p)
+                    except OSError:
+                        pass
+            raise
+

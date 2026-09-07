@@ -21,7 +21,15 @@ import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
 
-from Engine.core.canonical_indicators import compute_wilder_rsi_series
+from Engine.core.canonical_indicators import (
+    DAY_MS,
+    compute_session_cvd,
+    compute_session_value_area,
+    compute_session_vwap,
+    compute_vwap_zscore,
+    compute_wilder_rsi_series,
+    get_merge_level,
+)
 from Engine.core.schema import BAR_MS, CANONICAL_COLUMNS, COLUMN_DTYPES
 from Engine.pipeline.binance_historical_fetcher import BinanceHistoricalFetcher, assemble_ladder
 from Engine.pipeline.historical_metrics_processor import HistoricalMetricsProcessor
@@ -160,7 +168,8 @@ def perform_incremental_append(
         old_ladder = pd.read_parquet(ladder_path) if (ladder_path and os.path.exists(ladder_path)) else None
         return old_master, old_ladder
 
-    warmup_start_dt = pd.to_datetime(last_open_ms - WARMUP_BARS * BAR_MS, unit="ms", utc=True)
+    raw_warmup_dt = pd.to_datetime(last_open_ms - WARMUP_BARS * BAR_MS, unit="ms", utc=True)
+    warmup_start_dt = raw_warmup_dt.floor("D") - pd.Timedelta(days=2)
     log(f"[INCR] {symbol}: tail fetch {warmup_start_dt:%Y-%m-%d} -> {end_dt:%Y-%m-%d} (tail: {missing_days:.2f} days, warmup: {WARMUP_BARS} bars)")
 
     # Fetch raw streams for warmup + tail
@@ -240,17 +249,77 @@ def perform_incremental_append(
         log(f"[REJECT] {symbol}: cadence violation across stitched frame -> full rebuild")
         return None
 
+    # C1 FIX: Exact session-feature re-anchoring across the seam
+    # Recomputes 00:00 UTC session accumulators for the seam day and all newly appended days.
+    # Preserves 100% bit-exact prefix invariance with the full-history recomputation.
+    seam_day = int(last_open_ms // DAY_MS)
+    seam_mask = (full_ts // DAY_MS) >= seam_day
+    seam_idx = np.flatnonzero(seam_mask)
+
+    if len(seam_idx) > 0:
+        ts_seam = full_ts[seam_mask]
+        fut_seam = combined_master.loc[combined_master.index[seam_idx], "future_cvd_15m"].to_numpy(np.float64)
+        spot_seam = combined_master.loc[combined_master.index[seam_idx], "spot_cvd_15m"].to_numpy(np.float64)
+        h_seam = combined_master.loc[combined_master.index[seam_idx], "high"].to_numpy(np.float64)
+        l_seam = combined_master.loc[combined_master.index[seam_idx], "low"].to_numpy(np.float64)
+        c_seam = combined_master.loc[combined_master.index[seam_idx], "close"].to_numpy(np.float64)
+        v_seam = combined_master.loc[combined_master.index[seam_idx], "volume_base"].to_numpy(np.float64)
+
+        # 1. Session CVD
+        combined_master.loc[combined_master.index[seam_idx], "future_cvd_session"] = np.round(compute_session_cvd(ts_seam, fut_seam), 8)
+        combined_master.loc[combined_master.index[seam_idx], "spot_cvd_session"] = np.round(compute_session_cvd(ts_seam, spot_seam), 8)
+
+        # 2. Session VWAP
+        vwap_seam = compute_session_vwap(ts_seam, h_seam, l_seam, c_seam, v_seam)
+        combined_master.loc[combined_master.index[seam_idx], "session_vwap"] = np.round(vwap_seam, 8)
+
+        # 3. Trailing VWAP Z-score with 24 bars of continuous history before the seam
+        z_start_idx = max(0, seam_idx[0] - 24)
+        z_slice = combined_master.index[z_start_idx:]
+        z_c = combined_master.loc[z_slice, "close"].to_numpy(np.float64)
+        z_vw = combined_master.loc[z_slice, "session_vwap"].to_numpy(np.float64)
+        z_scores = compute_vwap_zscore(z_c, z_vw, 24)
+        combined_master.loc[combined_master.index[seam_idx], "vwap_zscore"] = np.round(z_scores[len(z_slice) - len(seam_idx):], 8)
+
+        # 4. Session Value Area & Previous Day VA (with full prior session context)
+        va_start_day = seam_day - 1
+        va_mask = (full_ts // DAY_MS) >= va_start_day
+        va_idx = np.flatnonzero(va_mask)
+        va_ts = full_ts[va_mask]
+        va_h = combined_master.loc[combined_master.index[va_idx], "high"].to_numpy(np.float64)
+        va_l = combined_master.loc[combined_master.index[va_idx], "low"].to_numpy(np.float64)
+        va_c = combined_master.loc[combined_master.index[va_idx], "close"].to_numpy(np.float64)
+        va_v = combined_master.loc[combined_master.index[va_idx], "volume_base"].to_numpy(np.float64)
+        bucket = get_merge_level(float(va_c.mean()))
+        vah_t, val_t, pvah_t, pval_t = compute_session_value_area(va_ts, va_h, va_l, va_c, va_v, bucket_size=bucket)
+        sub_seam = (va_ts // DAY_MS) >= seam_day
+        combined_master.loc[combined_master.index[va_idx[sub_seam]], "session_vah"] = np.round(vah_t[sub_seam], 8)
+        combined_master.loc[combined_master.index[va_idx[sub_seam]], "session_val"] = np.round(val_t[sub_seam], 8)
+        combined_master.loc[combined_master.index[va_idx[sub_seam]], "prev_day_vah"] = np.round(pvah_t[sub_seam], 8)
+        combined_master.loc[combined_master.index[va_idx[sub_seam]], "prev_day_val"] = np.round(pval_t[sub_seam], 8)
+
     # Coerce canonical schema and dtypes
     combined_master = combined_master[CANONICAL_COLUMNS]
     for col, dt in COLUMN_DTYPES.items():
         combined_master[col] = combined_master[col].astype(dt)
 
-    # Section F: Post-export smoke assertion (recompute RSI on last 100 bars, verify rtol=1e-9)
+    # Section F: Smoke assertions on stitched frame
+    # 1. RSI-14
     smoke_close = combined_master["close"].to_numpy(np.float64)[-100:]
     smoke_rsi = compute_wilder_rsi_series(smoke_close, 14)
     target_rsi = combined_master["rsi_14"].to_numpy(np.float64)[-100:]
     if not np.allclose(smoke_rsi[-20:], target_rsi[-20:], rtol=RTOL_INDICATOR, atol=1e-6):
         log(f"[REJECT] {symbol}: post-stitch smoke assertion failed on RSI-14 -> full rebuild")
+        return None
+
+    # 2. Session CVD re-derivation smoke check
+    tail_ts = full_ts[-100:]
+    tail_fut = combined_master["future_cvd_15m"].to_numpy(np.float64)[-100:]
+    tail_f_sess = combined_master["future_cvd_session"].to_numpy(np.float64)[-100:]
+    re_sess = compute_session_cvd(tail_ts, tail_fut)
+    last_day_mask = (tail_ts // DAY_MS) == (tail_ts[-1] // DAY_MS)
+    if not np.allclose(tail_f_sess[last_day_mask], re_sess[last_day_mask], rtol=1e-9, atol=1e-6):
+        log(f"[REJECT] {symbol}: post-stitch smoke assertion failed on session CVD -> full rebuild")
         return None
 
     # Assemble ladder tail

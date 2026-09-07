@@ -86,7 +86,7 @@ def _stale_runs_mask(values: np.ndarray, threshold: int, oi_moves: np.ndarray, m
     mask = np.zeros(n, dtype=bool)
     for s, L in zip(starts, lengths):
         if L >= threshold:
-            moving = float(oi_moves[s:min(s + L, n - 1)].mean()) if n > 1 else 0.0
+            moving = float(oi_moves[s:min(s + L - 1, len(oi_moves))].mean()) if len(oi_moves) > 0 and (s < len(oi_moves)) else 0.0
             if moving >= min_moving:
                 mask[s:s + L] = True
     return mask

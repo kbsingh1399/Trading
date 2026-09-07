@@ -145,9 +145,13 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
         last_dt = pd.to_datetime(int(last[-1]), unit="ms", utc=True)
         last_date = last_dt.date()
 
-        # Binance publishes historical archives on a T-1 day lag (yesterday).
-        # Asset is up to date if data reaches yesterday (last_date >= yesterday_date).
-        if last_date < yesterday_date:
+        # If max_age_hours is provided (> 0), verify file age is within max_age_hours (H1 fix).
+        # Otherwise, Binance publishes archives on T-1 lag, so verify data reaches yesterday.
+        if max_age_hours is not None and max_age_hours > 0:
+            age_hours = (now_utc - last_dt).total_seconds() / 3600.0
+            if age_hours > max_age_hours:
+                return False
+        elif last_date < yesterday_date:
             return False
 
         m_ts = pd.read_parquet(mpath, columns=["open_time_ms"])["open_time_ms"].to_numpy()
@@ -176,7 +180,10 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
 # Continuous raw cache cleanup & disk space governance
 # ------------------------------------------------------------------------------
 def check_disk_space(path: str, min_free_gb: float = 5.0, log: Callable[[str], None] = _log) -> float:
-    """Checks available free disk space on the volume containing path."""
+    """
+    Checks available free disk space on the volume containing path.
+    Fail-closed: returns -1.0 sentinel on exception (H2 fix).
+    """
     try:
         target = path if os.path.exists(path) else os.path.dirname(os.path.abspath(path))
         total, used, free = shutil.disk_usage(target)
@@ -184,28 +191,33 @@ def check_disk_space(path: str, min_free_gb: float = 5.0, log: Callable[[str], N
         if free_gb < min_free_gb:
             log(f"[DISK WARNING] Low free space on {target}: {free_gb:.2f} GB free (threshold: {min_free_gb:.1f} GB)")
         return free_gb
-    except Exception:
-        return 999.0
+    except Exception as exc:
+        log(f"[DISK ERROR] Failed to determine disk usage for {path}: {exc} (fail-closed)")
+        return -1.0
 
 
 def cleanup_symbol_raw_cache(cache_dir: str, symbol: str, log: Callable[[str], None] = _log) -> int:
-    """Removes intermediate raw downloaded chunks (.parquet, .tmp, .zip, .csv) for a symbol to prevent disk bloat."""
+    """
+    Removes intermediate raw downloaded chunks (.parquet, .tmp, .zip, .csv) for a symbol to prevent disk bloat.
+    C3 FIX: Explicitly protects persistent cache directories ('funding' and 'footprint')
+    so that multi-year funding histories and monthly footprint ladders are never deleted across incremental runs!
+    """
     if not os.path.isdir(cache_dir):
         return 0
     removed = 0
     sym_lower = symbol.lower()
-    sym_upper = symbol.upper()
-    targets = {sym_lower, sym_upper}
-    if sym_upper.endswith("USDT"):
-        base = sym_upper[:-4]
-        targets.add(f"{base.lower()}usdc")
-        targets.add(f"{base.upper()}USDC")
-    elif sym_upper.endswith("USDC"):
-        base = sym_upper[:-4]
-        targets.add(f"{base.lower()}usdt")
-        targets.add(f"{base.upper()}USDT")
+    base_lower = sym_lower[:-4] if sym_lower.endswith(("usdt", "usdc")) else sym_lower
+    targets = {sym_lower, f"{base_lower}usdt", f"{base_lower}usdc"}
 
-    for root, _, files in os.walk(cache_dir):
+    protected_subdirs = {"funding", "footprint"}
+
+    for root, dirs, files in os.walk(cache_dir):
+        # Do not recurse into or inspect protected persistent cache subdirectories
+        dirs[:] = [d for d in dirs if d.lower() not in protected_subdirs]
+        rel_root = os.path.relpath(root, cache_dir).replace("\\", "/").lower()
+        if any(p in rel_root.split("/") for p in protected_subdirs):
+            continue
+
         for f in files:
             f_lower = f.lower()
             if any(t in f_lower for t in targets) or f.endswith(".tmp"):
@@ -216,7 +228,7 @@ def cleanup_symbol_raw_cache(cache_dir: str, symbol: str, log: Callable[[str], N
                 except OSError:
                     pass
     if removed > 0:
-        log(f"[CLEANUP] continuous raw cleanup: removed {removed} intermediate cache files for {symbol} (including USDC) from {cache_dir}")
+        log(f"[CLEANUP] continuous raw cleanup: removed {removed} intermediate cache files for {symbol} (preserved persistent funding/footprint caches)")
     return removed
 
 
@@ -325,6 +337,7 @@ def run_pipeline(
     master, ladder = None, None
     mpath = os.path.join(target_dir, master_filename(symbol))
     lpath = os.path.join(target_dir, ladder_filename(symbol))
+    ppath = os.path.join(target_dir, manifest_filename(symbol))
     ladder_stats = {
         "candles": 0, "tick_exact_candles": 0, "synthetic_candles": 0,
         "total_rungs": 0, "tick_rungs": 0, "synthetic_rungs": 0
@@ -395,9 +408,21 @@ def run_pipeline(
 
 
     # ------------------------------------------------------------ council gate
-    attested_months = None
-    if hasattr(fetcher, "metrics_absent_days") and fetcher.metrics_absent_days:
-        attested_months = {d[:7] for d in fetcher.metrics_absent_days}
+    # C2 FIX: Union stored manifest absent days with tail window absent days
+    # to maintain the permanent unbroken historical attestation chain!
+    stored_absent_days: List[str] = []
+    if os.path.exists(ppath):
+        try:
+            import json
+            with open(ppath, encoding="utf-8") as fh:
+                old_man = json.load(fh)
+            stored_absent_days = old_man.get("provenance", {}).get("metrics_archive_absent_days", []) or []
+        except Exception:
+            stored_absent_days = []
+
+    fetcher_absent = getattr(fetcher, "metrics_absent_days", None) or []
+    combined_absent_days = sorted(set(stored_absent_days) | set(fetcher_absent))
+    attested_months = {d[:7] for d in combined_absent_days} if combined_absent_days else None
 
     exp_start_ms = int(effective_start.timestamp() * 1000)
     exp_end_ms = int(end_dt.timestamp() * 1000) if end_date_str else None
@@ -421,48 +446,36 @@ def run_pipeline(
         return False
 
     # ------------------------------------------------------------ export
+    # H2 FIX: Fail-closed disk space gate
     free_gb = check_disk_space(target_dir, min_free_gb=min_free_disk_gb, log=log)
     est_gb = (len(master) * len(CANONICAL_COLUMNS) * 8) / (1024 ** 3) * 1.6
-    if free_gb < max(min_free_disk_gb, est_gb):
-        log(f"[REJECT] {symbol}: export refused - {free_gb:.2f} GB free < required {max(min_free_disk_gb, est_gb):.2f} GB (fail-closed, no partial artifacts)")
+    if free_gb < 0.0 or free_gb < max(min_free_disk_gb, est_gb):
+        log(f"[REJECT] {symbol}: export refused - disk check failed or {free_gb:.2f} GB free < required {max(min_free_disk_gb, est_gb):.2f} GB (fail-closed, no partial artifacts)")
         return False
 
+    # C4 FIX: Staged atomic export.
+    # Writes master, ladder, and manifest to .staging files first.
+    # Only promotes once all writes and SHA hashes succeed.
+    # If any write fails before promotion, cleans up only .staging files, leaving previous production dataset 100% intact!
     t3 = time.time()
     exporter = ParquetExporter(target_dir)
-    written = []
     try:
-        mpath = exporter.export_master(master, symbol)
-        written.append(mpath)
-        if ladder is not None and not ladder.empty:
-            lpath = exporter.export_ladder(ladder, symbol)
-            written.append(lpath)
-        else:
-            lpath = exporter.ladder_path(symbol)
-            if os.path.exists(lpath):
-                try:
-                    os.remove(lpath)
-                except OSError:
-                    pass
-        manifest_path = exporter.write_manifest(
-            master, symbol, ladder_stats, {**report.to_dict(), "repair_rounds": rounds},
-            metrics_absent_days=getattr(fetcher, "metrics_absent_days", None),
+        mpath, lpath, manifest_path = exporter.export_dataset_atomic(
+            master=master,
+            symbol=symbol,
+            ladder=ladder,
+            ladder_stats=ladder_stats,
+            verification={**report.to_dict(), "repair_rounds": rounds},
+            metrics_absent_days=combined_absent_days,
             expected_start_ms=exp_start_ms,
             expected_end_ms=exp_end_ms,
             expected_rows=int(((exp_end_ms - exp_start_ms) // 900_000) + 1) if (exp_start_ms is not None and exp_end_ms is not None) else len(master),
         )
-        written.append(manifest_path)
     except Exception as exc:
-        # Fail closed here too: an export that died between the two writes would otherwise leave a
-        # master/ladder pair that existing_output_is_current() could later treat as current.
-        for p in written:
-            try:
-                os.remove(p)
-            except OSError:
-                pass
         if isinstance(exc, SchemaError):
-            log(f"[REJECT] {symbol}: schema validation failed at export: {exc}; removed {len(written)} partial artifact(s)")
+            log(f"[REJECT] {symbol}: schema validation failed at export: {exc}; staging cleaned up")
             return False
-        log(f"[REJECT] {symbol}: export failed ({type(exc).__name__}: {exc}); removed {len(written)} partial artifact(s)")
+        log(f"[REJECT] {symbol}: export failed ({type(exc).__name__}: {exc}); staging cleaned up")
         raise
 
     audit_ok = True

@@ -37,7 +37,8 @@ class FetchError(RuntimeError):
 class HttpClient:
     _global_cooldown_until: float = 0.0
     _global_lock: threading.Lock = threading.Lock()
-    _global_not_found: Set[str] = set()
+    _global_not_found: dict[str, float] = {}
+    _not_found_ttl: float = 600.0  # 10 minutes TTL for 404 cache to handle archive lag
 
     def __init__(
         self,
@@ -101,9 +102,14 @@ class HttpClient:
         Returns the response body, or ``None`` on a 404 when ``allow_404``.
         Raises ``FetchError`` after exhausting retries on any other failure.
         """
+        now_mono = time.monotonic()
         with HttpClient._global_lock:
-            if url in HttpClient._global_not_found:
-                return None
+            ts = HttpClient._global_not_found.get(url)
+            if ts is not None:
+                if now_mono - ts < HttpClient._not_found_ttl:
+                    return None
+                else:
+                    del HttpClient._global_not_found[url]
         with self._lock:
             if url in self._not_found:
                 return None
@@ -122,7 +128,7 @@ class HttpClient:
                 last_exc = e
                 if e.code == 404:
                     with HttpClient._global_lock:
-                        HttpClient._global_not_found.add(url)
+                        HttpClient._global_not_found[url] = time.monotonic()
                     with self._lock:
                         self.stats["not_found"] += 1
                         self._not_found.add(url)
