@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import os
 from datetime import datetime, timezone
+from enum import Enum
 from typing import Any, Callable, Dict, Optional, Tuple
 
 import numpy as np
@@ -23,6 +24,7 @@ import pyarrow.parquet as pq
 
 from Engine.core.canonical_indicators import (
     DAY_MS,
+    compute_canonical_ema,
     compute_cumulative_cvd,
     compute_session_cvd,
     compute_session_value_area,
@@ -41,19 +43,32 @@ SEAM_OVERLAP_BARS: int = 5       # Number of preceding bars verified bit-exact f
 RTOL_INDICATOR: float = 1e-9     # Institutional numerical tolerance for floating point verification
 
 
+class AppendStatus(str, Enum):
+    """R4-M3 Strongly typed append status sentinels."""
+    CURRENT = "CURRENT"
+    REBUILD_REQUIRED = "REBUILD_REQUIRED"
+
+
 class CorruptedMasterCheckpointError(ValueError):
-    """Raised when stored boundary checkpoint accumulators in master parquet are corrupted or non-finite (R3-M1)."""
+    """Raised when stored boundary checkpoint accumulators or parquet structure is corrupted (R3-M1, R4-C1, R4-H2)."""
     pass
 
 
 def _quarantine_corrupted_master(master_path: str, reason: str, log: Callable[[str], None] = print) -> str:
-    """Quarantines corrupted master parquet and invalidates stale manifest (R3-M1)."""
+    """Quarantines corrupted master parquet and invalidates stale manifest (R3-M1, R4-C1)."""
     ts = int(datetime.now(timezone.utc).timestamp())
     quarantine_path = f"{master_path}.corrupt_{ts}"
-    try:
-        if os.path.exists(master_path):
+    if os.path.exists(master_path):
+        try:
             os.replace(master_path, quarantine_path)
             log(f"[QUARANTINE] Moved corrupted dataset {master_path} -> {quarantine_path} (Reason: {reason})")
+        except Exception as exc:
+            log(f"[QUARANTINE ERROR] Failed to replace {master_path} -> {quarantine_path}: {exc}")
+            raise RuntimeError(f"Failed to quarantine corrupted master dataset {master_path}: {exc}") from exc
+
+        if not os.path.exists(quarantine_path):
+            raise RuntimeError(f"Quarantine verification failed: target {quarantine_path} does not exist after replace")
+
         # Invalidate companion manifest so it cannot be read as current
         target_dir = os.path.dirname(os.path.abspath(master_path))
         base_name = os.path.basename(master_path)
@@ -63,10 +78,8 @@ def _quarantine_corrupted_master(master_path: str, reason: str, log: Callable[[s
             try:
                 os.remove(man_path)
                 log(f"[QUARANTINE] Removed stale manifest {man_path}")
-            except OSError:
-                pass
-    except Exception as exc:
-        log(f"[QUARANTINE ERROR] Failed to quarantine {master_path}: {exc}")
+            except OSError as e:
+                log(f"[QUARANTINE WARN] Failed to remove manifest {man_path}: {e}")
     return quarantine_path
 
 
@@ -74,27 +87,28 @@ def compute_incremental_append_plan(master_path: str, log: Callable[[str], None]
     """
     O(1) boundary detection without loading the full 3.5M row dataframe into memory.
     Reads metadata and the last row-group to extract boundary state and checkpoint accumulators.
-    Loudly quarantines and raises CorruptedMasterCheckpointError if row-group is corrupt (R3-M1).
+    Guarantees descriptor closure via try/finally and loudly quarantines corrupted files (R4-C1, R4-H2).
     """
     if not os.path.exists(master_path):
         return None
     try:
-        pf = pq.ParquetFile(master_path)
-        num_rg = pf.num_row_groups
-        total_rows = pf.metadata.num_rows
-        if total_rows < SEAM_OVERLAP_BARS + 1 or num_rg == 0:
-            return None
+        with open(master_path, "rb") as f:
+            pf = pq.ParquetFile(f)
+            num_rg = pf.num_row_groups
+            total_rows = pf.metadata.num_rows
+            if total_rows < SEAM_OVERLAP_BARS + 1 or num_rg == 0:
+                return None
 
-        # Read only the final row-group
-        last_rg = pf.read_row_group(
-            num_rg - 1,
-            columns=[
-                "open_time_ms", "open", "high", "low", "close", "volume_base",
-                "future_cvd_lifetime", "spot_cvd_lifetime",
-                "ema_8", "ema_21", "ema_50", "ema_200", "ema_800"
-            ]
-        )
-        pf.close()
+            # Read only the final row-group
+            last_rg = pf.read_row_group(
+                num_rg - 1,
+                columns=[
+                    "open_time_ms", "open", "high", "low", "close", "volume_base",
+                    "future_cvd_lifetime", "spot_cvd_lifetime",
+                    "ema_8", "ema_21", "ema_50", "ema_200", "ema_800"
+                ]
+            )
+
         rg_len = len(last_rg)
         if rg_len < SEAM_OVERLAP_BARS:
             return None
@@ -158,8 +172,11 @@ def compute_incremental_append_plan(master_path: str, log: Callable[[str], None]
     except CorruptedMasterCheckpointError:
         raise
     except Exception as exc:
-        log(f"[INCR] {master_path}: error inspecting parquet metadata ({exc})")
-        return None
+        if isinstance(exc, FileNotFoundError):
+            return None
+        msg = f"parquet metadata/footer inspection failed: {exc}"
+        _quarantine_corrupted_master(master_path, msg, log=log)
+        raise CorruptedMasterCheckpointError(f"{master_path}: corrupted parquet ({exc})") from exc
 
 
 def verify_seam_overlap(stored_overlap: Dict[str, np.ndarray], refetched_df: pd.DataFrame) -> bool:
@@ -233,13 +250,14 @@ def perform_incremental_append(
 
     if end_dt <= last_open_dt:
         log(f"[INCR] {symbol}: data already current through {last_open_dt:%Y-%m-%d %H:%M} (no-op)")
-        return "CURRENT", None
+        return AppendStatus.CURRENT, None
 
     raw_warmup_dt = pd.to_datetime(last_open_ms - WARMUP_BARS * BAR_MS, unit="ms", utc=True)
     warmup_start_dt = raw_warmup_dt.floor("D") - pd.Timedelta(days=2)
-    # Assert funding and kline start boundary alignment at exact UTC midnight (R3-M5 fix)
+    # Assert funding and kline start boundary alignment at exact UTC midnight (R3-M5, R4-M2 fix)
     warmup_start_ms = int(warmup_start_dt.timestamp() * 1000)
-    assert warmup_start_ms % 86_400_000 == 0, f"warmup_start_dt {warmup_start_dt} must align to 00:00:00 UTC"
+    if warmup_start_ms % 86_400_000 != 0:
+        raise ValueError(f"warmup_start_dt {warmup_start_dt} (ms={warmup_start_ms}) must align to 00:00:00 UTC (mod 86,400,000 == 0)")
     log(f"[INCR] {symbol}: tail fetch {warmup_start_dt:%Y-%m-%d} -> {end_dt:%Y-%m-%d} (tail: {missing_days:.2f} days, warmup: {WARMUP_BARS} bars)")
 
     # Fetch raw streams for warmup + tail
@@ -250,7 +268,7 @@ def perform_incremental_append(
 
     if klines.empty or int(klines["open_time"].iloc[-1]) <= last_open_ms:
         log(f"[INCR] {symbol}: no new closed bars upstream (no-op)")
-        return "CURRENT", None
+        return AppendStatus.CURRENT, None
 
     # Section C: Seam Overlap Bit-Exact Verification
     if not allow_seam_revision:
@@ -276,7 +294,7 @@ def perform_incremental_append(
     new_bars = inc_master[inc_master["open_time_ms"] > last_open_ms].copy()
     if new_bars.empty:
         log(f"[INCR] {symbol}: zero new bars after boundary filter")
-        return "CURRENT", None
+        return AppendStatus.CURRENT, None
 
     # Strict continuity assertion
     first_new_open = int(new_bars["open_time_ms"].iloc[0])
@@ -292,16 +310,11 @@ def perform_incremental_append(
     new_bars["future_cvd_lifetime"] = compute_cumulative_cvd(fut_deltas, seed=checkpoint["future_cvd_lifetime"], dp=COIN_DP)
     new_bars["spot_cvd_lifetime"] = compute_cumulative_cvd(spot_deltas, seed=checkpoint["spot_cvd_lifetime"], dp=COIN_DP)
 
-    # Exact recursive EMA seeding from stored checkpoint
+    # Exact recursive EMA seeding from stored checkpoint (R4-H1 fix: canonical per-bar recursion)
     closes = new_bars["close"].to_numpy(np.float64)
     for p in (8, 21, 50, 200, 800):
-        alpha = 2.0 / (p + 1.0)
-        curr = checkpoint[f"ema_{p}"]
-        out_ema = np.empty(len(closes), dtype=np.float64)
-        for i, c_val in enumerate(closes):
-            curr = alpha * c_val + (1.0 - alpha) * curr
-            out_ema[i] = curr
-        new_bars[f"ema_{p}"] = np.round(out_ema, 8)
+        seed = checkpoint[f"ema_{p}"]
+        new_bars[f"ema_{p}"] = compute_canonical_ema(closes, p, seed=seed, dp=8)
 
     # Load full stored history and concatenate
     old_master = pd.read_parquet(master_path)
@@ -374,7 +387,7 @@ def perform_incremental_append(
     recalc_rsi = compute_wilder_rsi_series(eval_slice, 14)
     expected_rsi = combined_master["rsi_14"].iloc[seam_pos:].to_numpy(np.float64)
     actual_rsi = recalc_rsi[warmup_eval_bars:]
-    if not np.allclose(actual_rsi, expected_rsi, rtol=RTOL_INDICATOR, atol=1e-4):
+    if not np.allclose(actual_rsi, expected_rsi, rtol=RTOL_INDICATOR, atol=1e-6):
         log(f"[REJECT] {symbol}: post-stitch smoke assertion failed on RSI-14 -> full rebuild")
         return None
 

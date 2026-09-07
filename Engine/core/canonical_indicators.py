@@ -64,12 +64,40 @@ def nice_bin_step(prices: np.ndarray, bps: float = 3.5) -> np.ndarray:
 # ------------------------------------------------------------------------------
 # Recursive smoothers
 # ------------------------------------------------------------------------------
-def compute_ema_series(prices: np.ndarray, period: int) -> np.ndarray:
-    """EMA seeded at bar 0 (ema[0] = price[0]), alpha = 2 / (period + 1)."""
+def compute_canonical_ema(prices: np.ndarray, period: int, seed: float | None = None, dp: int = 8) -> np.ndarray:
+    """
+    R4-H1 Canonical Per-Bar Recursive EMA Kernel with Symmetric Quantization.
+    Recursion:
+        alpha = 2.0 / (period + 1)
+        ema[0] = round(price[0], dp) if seed is None else float(seed)
+        ema[t] = round(alpha * price[t] + (1.0 - alpha) * ema[t-1], dp)
+    Guarantees 100% bit-exact (atol = 0.0) prefix invariance across arbitrary sequential incremental appends.
+    """
     x = np.asarray(prices, dtype=np.float64)
-    if x.size == 0:
-        return x.copy()
-    return pd.Series(x).ewm(span=period, adjust=False).mean().to_numpy()
+    n = x.size
+    out = np.empty(n, dtype=np.float64)
+    if n == 0:
+        return out
+    alpha = 2.0 / (period + 1.0)
+    one_minus_alpha = 1.0 - alpha
+    
+    if seed is None:
+        curr = round(float(x[0]), dp)
+        out[0] = curr
+        start_idx = 1
+    else:
+        curr = float(seed)
+        start_idx = 0
+        
+    for i in range(start_idx, n):
+        curr = round(alpha * float(x[i]) + one_minus_alpha * curr, dp)
+        out[i] = curr
+    return out
+
+
+def compute_ema_series(prices: np.ndarray, period: int, dp: int = 8) -> np.ndarray:
+    """EMA seeded at bar 0 (ema[0] = price[0]), alpha = 2 / (period + 1), adhering to canonical per-bar recursion."""
+    return compute_canonical_ema(prices, period, seed=None, dp=dp)
 
 
 def compute_wilder_rma_series(values: np.ndarray, period: int) -> np.ndarray:

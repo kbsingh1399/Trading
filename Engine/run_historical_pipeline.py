@@ -346,14 +346,14 @@ def run_pipeline(
     # ---- Fast Incremental Append Path ----
     if not force and not end_date_str and os.path.exists(mpath):
         try:
-            from Engine.pipeline.incremental_append import perform_incremental_append, CorruptedMasterCheckpointError
+            from Engine.pipeline.incremental_append import perform_incremental_append, CorruptedMasterCheckpointError, AppendStatus
             incr_res = perform_incremental_append(
                 symbol=symbol, master_path=mpath, ladder_path=lpath,
                 fetcher=fetcher, processor=processor, end_dt=end_dt,
                 all_footprint=all_footprint, footprint_days=footprint_days, log=log
             )
-            if incr_res == "CURRENT" or (isinstance(incr_res, tuple) and incr_res[0] == "CURRENT"):
-                log(f"[SKIP] {symbol}: dataset already current through target end date (no-op fast return, R3-M3)")
+            if incr_res == AppendStatus.CURRENT or (isinstance(incr_res, tuple) and incr_res[0] == AppendStatus.CURRENT):
+                log(f"[SKIP] {symbol}: dataset already current through target end date (no-op fast return, R3-M3, R4-M3)")
                 return True
             elif incr_res is not None:
                 master, ladder = incr_res

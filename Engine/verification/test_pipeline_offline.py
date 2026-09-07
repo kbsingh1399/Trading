@@ -145,11 +145,11 @@ def test_kernels():
         ref[i] = ref[i - 1] + (x[i] - ref[i - 1]) / 14
     assert np.abs(compute_wilder_rma_series(x, 14) - ref).max() < 1e-9
     e = np.empty_like(x)
-    e[0] = x[0]
+    e[0] = round(float(x[0]), 8)
     k = 2 / 801
     for i in range(1, x.size):
-        e[i] = x[i] * k + e[i - 1] * (1 - k)
-    assert np.abs(compute_ema_series(x, 800) - e).max() < 1e-9
+        e[i] = round(float(x[i]) * k + e[i - 1] * (1.0 - k), 8)
+    assert np.abs(compute_ema_series(x, 800) - e).max() == 0.0
     s = np.array([np.mean(x[max(0, i - 8): i + 1]) for i in range(x.size)])
     assert np.abs(compute_sma_series(x, 9) - s).max() < 1e-9
     ts = 1_598_918_400_000 + np.arange(x.size) * BAR_MS
@@ -658,8 +658,15 @@ def test_multisymbol_bit_parity_full_vs_incremental():
                 max_diff = np.abs(incr_val - ref_val).max()
                 assert max_diff == 0.0, f"{symbol} {va_col} atol=0 violated! max_diff = {max_diff}"
 
-            # 3. rtol=1e-9, atol=1e-6 on floating point indicators
-            for ind_col in ("rsi_14", "session_vwap", "vwap_zscore", "ema_8", "ema_21", "ema_50", "ema_200", "ema_800"):
+            # 3. Exact atol=0.0 on EMA columns (R4-H1 canonical recursion)
+            for ema_col in ("ema_8", "ema_21", "ema_50", "ema_200", "ema_800"):
+                incr_val = m_incr[ema_col].iloc[appended_slice].to_numpy(np.float64)
+                ref_val = full_ref[ema_col].iloc[appended_slice].to_numpy(np.float64)
+                max_diff = np.abs(incr_val - ref_val).max()
+                assert max_diff == 0.0, f"{symbol} {ema_col} atol=0 violated! max_diff = {max_diff}"
+
+            # 4. rtol=1e-9, atol=1e-6 on floating point indicators
+            for ind_col in ("rsi_14", "session_vwap", "vwap_zscore"):
                 incr_val = m_incr[ind_col].iloc[appended_slice].to_numpy(np.float64)
                 ref_val = full_ref[ind_col].iloc[appended_slice].to_numpy(np.float64)
                 assert np.allclose(incr_val, ref_val, rtol=1e-9, atol=1e-6), f"{symbol} {ind_col} precision failed!"
@@ -667,7 +674,150 @@ def test_multisymbol_bit_parity_full_vs_incremental():
         finally:
             shutil.rmtree(tdir, ignore_errors=True)
 
-    print("  [PASS] 3-symbol bit-parity: BTCUSDT, ETHUSDT, DOGEUSDT (full rebuild vs 45-day incremental append atol=0 on CVD & VA)")
+    print("  [PASS] 3-symbol bit-parity: BTCUSDT, ETHUSDT, DOGEUSDT (full rebuild vs 45-day incremental append atol=0 on CVD, VA & EMAs)")
+
+
+def test_corrupted_footer_quarantine_negative_control():
+    """R4-C1 & R4-H2 Negative Control: corrupt parquet footer/metadata; assert pipeline quarantines loudly."""
+    from Engine.pipeline.incremental_append import compute_incremental_append_plan, CorruptedMasterCheckpointError
+    import tempfile, shutil
+
+    tdir = tempfile.mkdtemp()
+    try:
+        kl, spot, funding, metrics = make_streams(n_bars=300, price0=50000.0, gap_at=None)
+        proc = HistoricalMetricsProcessor(log=QUIET)
+        m = proc.process_master_dataset(kl, metrics, funding, None, spot, symbol="BTCUSDT")
+
+        exp = ParquetExporter(tdir)
+        mpath = exp.export_master(m, "BTCUSDT")
+        man_path = exp.manifest_path("BTCUSDT")
+        with open(man_path, "w", encoding="utf-8") as f:
+            f.write('{"symbol": "BTCUSDT"}')
+
+        # Corrupt the parquet file by overwriting with garbage bytes (simulating truncated footer / disk fault)
+        with open(mpath, "wb") as f:
+            f.write(b"NOT_A_VALID_PARQUET_FILE_GARBAGE_BYTES_HEAD_TO_TAIL")
+
+        # Calling compute_incremental_append_plan must loudly quarantine and raise CorruptedMasterCheckpointError
+        quarantined = False
+        try:
+            compute_incremental_append_plan(mpath, log=QUIET)
+        except CorruptedMasterCheckpointError as exc:
+            quarantined = True
+            assert "corrupted parquet" in str(exc)
+
+        assert quarantined, "Corrupted parquet footer/header failed to raise CorruptedMasterCheckpointError!"
+        assert not os.path.exists(mpath), "Original corrupt master was not moved/quarantined!"
+        assert not os.path.exists(man_path), "Stale manifest was not removed during quarantine!"
+
+        # Verify quarantine target was created
+        corrupt_files = [f for f in os.listdir(tdir) if ".corrupt_" in f]
+        assert len(corrupt_files) == 1, f"Expected 1 quarantined file, found {corrupt_files}"
+        print("  [PASS] negative control: corrupted parquet footer/IO fault quarantined loudly with manifest eviction")
+    finally:
+        shutil.rmtree(tdir, ignore_errors=True)
+
+
+def test_ema_sequential_multiappend_bit_parity():
+    """
+    R4-H1 Multi-Append Invariant Verification:
+    Executes >=3 consecutive incremental appends across BTCUSDT, ETHUSDT, DOGEUSDT.
+    Asserts bit-exact atol=0.0 parity on all 5 EMAs against from-scratch rebuild.
+    """
+    from Engine.pipeline.incremental_append import perform_incremental_append
+    import tempfile, shutil
+
+    symbols_config = [
+        ("BTCUSDT", 50000.0, 42),
+        ("ETHUSDT", 3000.0, 99),
+        ("DOGEUSDT", 0.085, 123),
+    ]
+
+    for symbol, p0, seed in symbols_config:
+        tdir = tempfile.mkdtemp()
+        try:
+            total_bars = 4600
+            # 3 sequential appends:
+            # Base: 4000 bars
+            # Append 1: +200 bars (4000..4200)
+            # Append 2: +200 bars (4200..4400)
+            # Append 3: +200 bars (4400..4600)
+            kl, spot, funding, metrics = make_streams(n_bars=total_bars, seed=seed, price0=p0, gap_at=None)
+            proc = HistoricalMetricsProcessor(log=QUIET)
+            full_ref = proc.process_master_dataset(kl, metrics, funding, None, spot, symbol=symbol)
+
+            # Export initial base
+            base_split = 4000
+            kl_base = kl.iloc[:base_split].copy()
+            spot_base = spot[spot["open_time"] <= kl_base["open_time"].iloc[-1]].copy()
+            funding_base = funding[funding["fundingTime"] <= kl_base["open_time"].iloc[-1]].copy()
+            metrics_base = metrics[metrics["timestamp_ms"] <= kl_base["open_time"].iloc[-1]].copy()
+
+            m_base = proc.process_master_dataset(kl_base, metrics_base, funding_base, None, spot_base, symbol=symbol)
+            exp = ParquetExporter(tdir)
+            mpath = exp.export_master(m_base, symbol)
+
+            class MultiAppendMockFetcher:
+                def __init__(self, current_limit_idx):
+                    self.current_limit_idx = current_limit_idx
+                    self.metrics_absent_days = []
+                def fetch_futures_klines(self, s, start_s, end_dt):
+                    s_ms = int(pd.to_datetime(start_s, utc=True).timestamp() * 1000)
+                    e_ms = int(end_dt.timestamp() * 1000)
+                    sub = kl[(kl["open_time"] >= s_ms) & (kl["open_time"] <= e_ms)]
+                    return sub[sub["open_time"] <= kl["open_time"].iloc[self.current_limit_idx]].copy()
+                def fetch_spot_klines(self, s, start_s, end_dt):
+                    s_ms = int(pd.to_datetime(start_s, utc=True).timestamp() * 1000)
+                    e_ms = int(end_dt.timestamp() * 1000)
+                    sub = spot[(spot["open_time"] >= s_ms) & (spot["open_time"] <= e_ms)]
+                    return sub[sub["open_time"] <= kl["open_time"].iloc[self.current_limit_idx]].copy()
+                def fetch_metrics(self, s, start_s, end_dt):
+                    s_ms = int(pd.to_datetime(start_s, utc=True).timestamp() * 1000)
+                    e_ms = int(end_dt.timestamp() * 1000)
+                    sub = metrics[(metrics["timestamp_ms"] >= s_ms) & (metrics["timestamp_ms"] <= e_ms)]
+                    return sub[sub["timestamp_ms"] <= kl["open_time"].iloc[self.current_limit_idx]].copy()
+                def fetch_funding_rates(self, s, start_ms):
+                    return funding[funding["fundingTime"] >= start_ms].copy()
+                def fetch_footprint(self, *a, **k):
+                    return pd.DataFrame(), pd.DataFrame()
+
+            # Execute 3 consecutive appends
+            splits = [4200, 4400, 4600]
+            for split_idx in splits:
+                fetcher = MultiAppendMockFetcher(split_idx - 1)
+                end_dt = pd.to_datetime(int(kl["open_time"].iloc[split_idx - 1]), unit="ms", utc=True)
+                res = perform_incremental_append(
+                    symbol=symbol, master_path=mpath, ladder_path=None,
+                    fetcher=fetcher, processor=proc, end_dt=end_dt, log=QUIET
+                )
+                assert res is not None and isinstance(res[0], pd.DataFrame), f"Append failed at split {split_idx}"
+                m_curr, _ = res
+                # Re-export to simulate disk persistence between runs
+                mpath = exp.export_master(m_curr, symbol)
+
+            # Final stitched verification
+            m_final = pd.read_parquet(mpath)
+            assert len(m_final) == total_bars, f"Expected {total_bars}, got {len(m_final)}"
+
+            # Assert exact atol=0.0 across all 5 EMAs over the entire multi-append slice (4000..4600)
+            eval_slice = slice(base_split, total_bars)
+            for ema_col in ("ema_8", "ema_21", "ema_50", "ema_200", "ema_800"):
+                incr_ema = m_final[ema_col].iloc[eval_slice].to_numpy(np.float64)
+                ref_ema = full_ref[ema_col].iloc[eval_slice].to_numpy(np.float64)
+                max_diff = np.abs(incr_ema - ref_ema).max()
+                assert max_diff == 0.0, f"{symbol} {ema_col} sequential multi-append atol=0.0 failed! max_diff={max_diff}"
+
+            # Also verify CVD bit parity atol=0.0 across multi-appends
+            for cvd_col in ("future_cvd_lifetime", "spot_cvd_lifetime"):
+                incr_cvd = m_final[cvd_col].iloc[eval_slice].to_numpy(np.float64)
+                ref_cvd = full_ref[cvd_col].iloc[eval_slice].to_numpy(np.float64)
+                max_diff = np.abs(incr_cvd - ref_cvd).max()
+                assert max_diff == 0.0, f"{symbol} {cvd_col} multi-append atol=0.0 failed! max_diff={max_diff}"
+
+        finally:
+            shutil.rmtree(tdir, ignore_errors=True)
+
+    print("  [PASS] multi-append bit-parity: BTCUSDT, ETHUSDT, DOGEUSDT (3 sequential appends atol=0.0 on all 5 EMAs & CVD)")
 
 
 def main() -> int:
@@ -681,7 +831,9 @@ def main() -> int:
     test_negative_controls(master, ladder)
     test_metrics_validity_and_quarantine_regression(kl, spot, funding, metrics)
     test_corrupted_checkpoint_quarantine_negative_control()
+    test_corrupted_footer_quarantine_negative_control()
     test_multisymbol_bit_parity_full_vs_incremental()
+    test_ema_sequential_multiappend_bit_parity()
     test_orchestrator_end_to_end()
     test_repair_gate()
     test_fetcher_against_mock_binance()
