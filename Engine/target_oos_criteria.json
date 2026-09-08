@@ -3,8 +3,8 @@
     "min_roi_percent": 20.0,
     "max_dd_percent": 5.0,
     "min_winrate_percent": 40.0,
-    "min_r_multiple": 2.5,
-    "min_trades": 6
+    "min_r_multiple": 4,
+    "min_trades": 15
   },
   "execution_mode": {
     "parallel_assets": true,
