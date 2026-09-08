@@ -155,7 +155,20 @@ class PooledInstitutionalMetaLabeler:
         s3 = r1.rolling(96, min_periods=1).std(ddof=0).clip(lower=1e-12).fillna(1.0)
         F["ret_zs"] = ((r1 - m3) / s3).clip(-10, 10).fillna(0.0)
 
+        # --- Pre-computed order flow footprint features ---
+        fp_cols = [
+            "wick_sell_absorb", "wick_buy_exhaust", "has_stacked_buy",
+            "has_stacked_sell", "imb_ratio", "sell_impact",
+            "absorption_ratio", "delta_div_at_low", "poc_shift",
+            "avg_trade_size_zs", "ladder_compression", "reclaim_mid",
+            "higher_low_bars"
+        ]
+        for c_fp in fp_cols:
+            if c_fp in df.columns:
+                F[c_fp] = df[c_fp].astype(np.float64).fillna(0.0)
+
         return F
+
 
     # ==================================================================
     # TRIPLE-BARRIER LABELS (stop-first, causal, next-open entry)
