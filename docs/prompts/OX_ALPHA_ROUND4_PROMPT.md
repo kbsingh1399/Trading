@@ -1,82 +1,92 @@
-# OX ALPHA — ROUND 4: CONQUERING THE 20 OOS WINDOWS VIA TIMEFRAME EXPANSION & SMC ENSEMBLE
+# OX ALPHA — ROUND 4: UNIFYING SMC STRUCTURAL SETUPS WITH FOOTPRINT ORDER FLOW & ML META-LABELING
 
-> **BRIEFING FOR OX ALPHA QUANTITATIVE STRATEGIST:**
-> We have completed empirical testing of Round 3 and received a Tier-1 "A-" audit verdict from Arena.ai on our 18-asset dataset.
-> Here are the exact empirical results, the verified data properties, and the core structural hurdles we must solve to achieve the **+20% ROI / <5% DD per window target** across the 20 Out-of-Sample (OOS) windows.
-
----
-
-## 1. EMPIRICAL RESULTS & VALIDATIONS FROM ROUND 3
-
-### 1.1 Arena.ai Dataset Forensic Audit (Grade: A- / Tier-1 Pass)
-- **Scale:** 3,470,018 rows across 18 Binance USDT-M perpetual contracts (2020–2026).
-- **Contiguity:** 0 missing bars, 0 duplicate timestamps, strictly monotonic 15m intervals ($t_{i+1} - t_i = 900,000\text{ ms}$).
-- **Referential Integrity:** Ladder total volume matches Master volume bit-perfectly to machine epsilon ($4.4 \times 10^{-16}$).
-- **Causality:** 0 lookahead leaks; daily session boundary resets verified across 8,776 session starts.
-- **Epistemic Disclosure:** Early derivatives metrics (2020–2021 for ETH/DOGE/SOL) use default-anchored forward-fill (flagged by `is_imputed_metrics = 1`).
-
-### 1.2 Empirical Execution of S1v2 (Flush -> Reclaim State Machine)
-We implemented your Deliverable 2 (`FootprintLadderFeatures`), Deliverable 3 (`RegressionRMetaLabeler`), and Deliverable 4 (`S1LiquidationCascadeV2`).
-1. **Signal De-Clustering:** We eliminated consecutive-bar multi-fire signals during reclaims, reducing 45,025 correlated bar rows to **8,615 clean, distinct cascade events** across the 18 symbols.
-2. **Order Flow Alpha Lift (Feature Probe on Clean Events):**
-   - `reclaim_mid`: AUC = **0.5298** ($|\text{AUC} - 0.5| = 0.030$)
-   - `close_pos`: AUC = **0.5268**
-   - `poc_shift`: AUC = **0.5266**
-   - `ret_zs`: AUC = **0.5256**
-   - `sell_impact`: AUC = **0.5238**
-   - Top Pair (`reclaim_mid + poc_shift`): AUC = **0.5308**
-3. **Multivariate XGBoost / LightGBM CV-AUC:**
-   - 5-fold Purged Grouped Time-Split CV-AUC: **0.5255** (Fold 0: 0.546, Fold 1: 0.508, Fold 2: 0.536, Fold 3: 0.542, Fold 4: 0.496).
-   - Out-of-fold expectancy: $E[R] = -0.065\text{R}$.
-4. **Decision Tree Enforcement:**
-   - Because mean CV-AUC ($0.5255$) $< 0.55$ and $E[R] < 0$, your gate strictly evaluated to **`DEPLOY = FALSE` (0 trades, 0.0% PnL, 0.0% DD)**.
-   - **The gate worked as designed: it prevented capital loss.**
-
-### 1.3 The 8-Strategy Raw Benchmark Across All 20 OOS Windows
-When tested under real frictions (8 bps fee, 10 bps entry slippage, 15 bps exit slippage = 33 bps round trip), ALL 8 raw strategies without higher-timeframe filters lose capital over 20 windows:
-- `S1_LiqCascade`: 172 trades, ROI: -36.02%, Max DD: 3.29%, Win Rate: 19.8%
-- `S2_InstML`: 398 trades, ROI: -61.32%, Max DD: 4.74%, Win Rate: 38.9%
-- `SMC_Edgeful`: 465 trades, ROI: -90.03%, Max DD: 4.78%, Win Rate: 26.7%
-- `SMC_Kane`: 479 trades, ROI: -85.24%, Max DD: 4.60%, Win Rate: 29.2%
-- `SMC_Marci`: 314 trades, ROI: -52.21%, Max DD: 4.53%, Win Rate: 23.9%
-- `SMC_Marco`: 431 trades, ROI: -86.63%, Max DD: 4.67%, Win Rate: 19.0%
-- `SMC_Mayne`: 464 trades, ROI: -88.08%, Max DD: 4.77%, Win Rate: 25.4%
-- `SMC_UsmanNoah`: 76 trades, ROI: -18.52%, Max DD: 3.22%, Win Rate: 25.0%
+> **EXECUTIVE BRIEFING & SYSTEM SPECIFICATION FOR OX ALPHA QUANTITATIVE ARCHITECT:**
+> We have completed empirical testing of Round 3 and received a Tier-1 "A-" audit verdict from Arena.ai on our 18-asset Binance perpetual dataset (3.47M continuous 15m bars, 0 nulls, 0 lookahead leaks, bit-perfect volume conservation).
+>
+> Our empirical backtests revealed two foundational insights:
+> 1. **The 15m Pure Mean-Reversion Bottleneck:** High-frequency 15m cascade entries suffer from severe friction drag (33 bps fee/slippage consumes ~0.55R on tight 0.5% stops) and lack higher-timeframe trend context.
+> 2. **The SMC Structure Opportunity:** Our Smart Money Concepts (SMC) playbooks (`smc_usman_noah.py`, `smc_marci.py`, `smc_marco.py`, `smc_edgeful.py`) trade higher-timeframe structural levels (Previous Day High/Low sweeps, Daily Fair Value Gaps, and Breaker Blocks) where structural stops are 1.5%–2.5% away — **slashing friction drag from 0.55R down to 0.13R–0.18R**. However, when traded raw/blindly, they suffer from 20%–38% win rates because price frequently blows through unconfirmed levels.
+>
+> **The Core Mandate:** We want to build the **Unified Quantitative Architecture** that combines:
+> **[Raw SMC Macro Structure] $\longrightarrow$ [Footprint Order Flow Confirmation] $\longrightarrow$ [ML Continuous R-Meta-Labeling] $\longrightarrow$ [Causal Portfolio Execution]**
 
 ---
 
-## 2. THE MATHEMATICAL BOTTLENECK: THE 15-MINUTE FRICTION TRAP
+## 1. RAW GITHUB REPOSITORY REFERENCES (FETCH DIRECTLY)
 
-The core obstacle preventing ANY 15-minute strategy from hitting +20% ROI with <5% DD is **Friction Drag relative to Stop Distance**:
-- On 15m bars, a structural stop is typically 0.50% to 0.70% away ($1\text{R} \approx 0.6\%$).
-- 33 bps round-trip friction = $0.33\% / 0.60\% = \mathbf{0.55\text{R}}$ **loss per trade before price moves!**
-- With a 44% win rate and 2.0R target:
-  $$E[R] = (0.44 \times 2.0\text{R}) - (0.56 \times 1.0\text{R}) - 0.55\text{R} = 0.88 - 0.56 - 0.55 = \mathbf{-0.23\text{R}}$$
-- Friction consumes more than half of the risk budget per trade.
+All active production source files and manifests are committed and accessible via GitHub:
+`https://github.com/kbsingh1399/Trading`
+
+Key files to inspect:
+1. **Footprint Feature Extractor (Vectorized Order Flow Engine)**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/ml/footprint_features.py`
+2. **Continuous R-Regression Meta-Labeler**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/ml/rf_meta_labeler.py`
+3. **Cross-Asset Pooled Base Meta-Labeler**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/ml/pooled_meta_labeler.py`
+4. **SMC Usman Noah Engine (PDH/PDL Sweep + Reclaim)**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/smc_usman_noah.py`
+5. **SMC Marci Engine (Bollinger Band Pullback + Market Structure Shift)**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/smc_marci.py`
+6. **Multi-Asset Portfolio Execution Kernel (Max 2 Concurrent, Shared $5k Capital)**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/portfolio_execution_kernel.py`
+7. **Round 3 Walk-Forward Runner**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/runners/round3_runner.py`
+8. **Target Out-of-Sample Validation Criteria**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json`
 
 ---
 
-## 3. CORE QUESTIONS & BLUEPRINT REQUEST FOR ROUND 4
+## 2. EMPIRICAL BENCHMARKS & BASELINE NUMBERS
 
-We need Ox Alpha's concrete architecture and code to break through this mathematical ceiling:
+### 2.1 Raw SMC Performance (BTCUSDT, 20 OOS Windows, 33 bps Frictions, No Confirmation):
+When traded blindly on 15m klines without footprint confirmation or ML gating:
+- `SMC_UsmanNoah`: 76 trades | Cum ROI: -18.52% | Max DD: 3.22% | Win Rate: 25.0%
+- `SMC_Marci`: 314 trades | Cum ROI: -52.21% | Max DD: 4.53% | Win Rate: 23.9%
+- `SMC_Edgeful`: 465 trades | Cum ROI: -90.03% | Max DD: 4.78% | Win Rate: 26.7%
+- `SMC_Marco`: 431 trades | Cum ROI: -86.63% | Max DD: 4.67% | Win Rate: 19.0%
 
-### Question 1: Geometric Stop Expansion (1H / 4H Anchors)
-If we anchor our entry stop to the **1-Hour or 4-Hour structural swing low** (where $1\text{R} \approx 2.0\% - 2.5\%$) while using the 15m footprint ladder for precision entry timing:
-- Friction drops from $0.55\text{R}$ down to **$0.13\text{R}$** ($0.33\% / 2.5\%$).
-- How should the S1v2 reclaim state machine anchor its stop to HTF swing lows instead of the single 15m flush bar?
+### 2.2 Footprint Order Flow Probe Results (from Round 3 Clean Event Slices):
+When we joined `{symbol}_15m_footprint_ladder.parquet` order flow metrics, individual feature discrimination jumped:
+- `reclaim_mid`: AUC = **0.5298** ($|\text{AUC} - 0.5| = 0.030$)
+- `poc_shift`: AUC = **0.5266**
+- `close_pos`: AUC = **0.5268**
+- `sell_impact`: AUC = **0.5238**
+- Best pair (`reclaim_mid + poc_shift`): AUC = **0.5308**
 
-### Question 2: Higher-Timeframe (HTF) Regime & Trend Conditioning
-Post-liquidation bounces in a macro 4H bear market often stall at VWAP ($+0.5\text{R}$ to $+1.0\text{R}$) before cascading to new lows.
-- How should we causally condition the trade direction?
-  - E.g., Longs only when 4-Hour VWAP slope $> 0$ or price is below Daily VAL / Key D1 Liquidity Low?
-  - Shorts enabled when 4-Hour market structure breaks bearish?
+---
 
-### Question 3: Deploying the Meta-Labeler on SMC Playbooks
-Among the SMC playbooks, `smc_usman_noah.py` and `smc_marci.py` showed the lowest baseline drawdown (-18% and -52% vs -90% for others) and generate swing signals based on Fair Value Gaps and Breaker Blocks.
-- How can we plug our `RegressionRMetaLabeler` and `FootprintLadderFeatures` as a secondary gate on top of SMC structure signals?
-- What are the exact filter conditions to ensure trade count stays $\ge 6$ per 1-month window while boosting win rate $> 50\%$?
+## 3. ARCHITECTURAL BLUEPRINT REQUESTED FROM OX ALPHA
 
-### Question 4: Portfolio Allocation & Capital Scaling Across 18 Assets
-With a fixed \$5,000 capital, max 2 concurrent positions, and a 4.5% hard drawdown stop (\$225):
-- How should risk per trade be dynamically sized (e.g., base risk \$50 vs house money \$75) to achieve +20% net ROI (\$1,000 profit = +20R net) within the 4.5% drawdown constraint?
-- Provide concrete Python code for the multi-timeframe S1/SMC integration, the revised barrier configuration, and the portfolio allocation logic.
+We need Ox Alpha's concrete mathematical specifications, feature transformations, and Python code to execute this 3-tier synthesis:
+
+### Deliverable 1: The SMC Structure Event Generator (`SMCEventDetector`)
+Design a unified SMC event detector that consumes our 15m Master Table (56 columns) and identifies high-probability structural setups:
+- **Usman Noah PDH/PDL Liquidity Sweeps:** Price sweeps the Previous Day High (PDH) or Previous Day Low (PDL) and prints an initial reaction.
+- **Fair Value Gap (FVG) / Imbalance Retest:** 3-bar price displacement leaves an unmitigated FVG; price re-enters the FVG zone.
+- **Order Block (OB) / Breaker Mitigation:** Price pulls back into the origin of a displacement wave.
+- **Output:** Emits candidate coordinate `(timestamp, symbol, side, structural_level, invalidation_price, raw_r_dist)` where `raw_r_dist >= 1.5%` (ensuring friction $< 0.20\text{R}$).
+
+### Deliverable 2: The Footprint Order Flow Confirmation Gate (`FootprintConfirmation`)
+At the exact moment the SMC structural level is tested, how does the Footprint Ladder (`{symbol}_15m_footprint_ladder.parquet`) confirm that institutional absorption and trapped traders exist?
+- What are the exact thresholds on:
+  - `wick_sell_absorb` / `wick_buy_exhaust` (resting limit orders absorbing market aggressive flow at the extreme)?
+  - `poc_shift` (volume Point of Control migrating away from the sweep)?
+  - `sell_impact` / `absorption_ratio` (market selling expanding while price refuses to drop)?
+  - Stacked Imbalances (`is_stacked_buy_imb`, `is_stacked_sell_imb`)?
+- Emit a composite order flow confirmation score: `is_confirmed = True/False`.
+
+### Deliverable 3: Cross-Asset Pooled ML Meta-Labeling (`SMCRegressionMetaLabeler`)
+Fit our `RegressionRMetaLabeler` on the SMC-confirmed events across all 18 Binance assets:
+- **Feature Set:** Stationarized combination of SMC geometry (`dist_to_pdl_atr`, `fvg_depth_pct`, `reclaim_strength`), footprint order flow (`wick_sell_absorb`, `poc_shift`, `sell_impact`), and macro confluence (`zc_div`, `funding_rate_pct`, `vwap_zscore`).
+- **Target Variable:** Realized $R$-multiple under friction-adjusted barriers (`tp_r = 2.0R to 2.5R, sl_r = 1.0R + friction_R`).
+- **Causal WF-CV:** 72h purged / 24h embargoed grouped cross-validation.
+- **Expectancy Cut:** Calibration of $\tau_R$ such that $E[R \mid \hat{R} \ge \tau_R] - \text{friction}_R \ge +0.25\text{R}$.
+
+### Deliverable 4: Microstructure Exit Ratchet & Multi-Asset Portfolio Kernel
+For an SMC swing setup with $1\text{R} \approx 1.8\% - 2.5\%$:
+- Provide the optimal `RatchetConfig` (breakeven lock, profit lock, trail, and time decay) that avoids the 22.9% win-rate retracement trap while giving the trade room to reach $+2.0\text{R}$ to $+2.5\text{R}$.
+- Specify the risk sizing per trade (e.g. Base Risk \$50 vs House Money \$75-\$100) under the \$5,000 capital and 4.5% (\$225) hard drawdown constraint to hit **$+20.0\%$ net ROI per 1-month window** with $\ge 6$ trades.
+
+### Deliverable 5: End-to-End Walk-Forward Integration Code
+Provide a drop-in runner module (`Engine/runners/smc_footprint_runner.py`) that wires the SMC event detector, footprint confirmation, regression meta-labeler, and portfolio execution kernel into a unified walk-forward pipeline ready to run across all 20 OOS windows.
