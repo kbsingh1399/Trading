@@ -1,89 +1,82 @@
-# OPUS 5 MASTER DIRECTIVE: AUTONOMOUS BUILD & VERIFICATION OF CONVEX TREND-FOLLOWING ENGINE ACROSS ALL 20 OOS WINDOWS
+# OPUS 5 MASTER DIRECTIVE: AUTONOMOUS TREND-FOLLOWING ENGINE VIA GITHUB MCP
 
-Opus, you have proven that your embedded Python sandbox can autonomously execute, instrument, and verify trading engines. 
-Now, we are giving you full architectural command to design, forward test, and iterate on an **Adaptive Convex Trend-Following Engine with Causal ML** until all 20 OOS windows satisfy `target_oos_criteria.json`.
+Opus, all target criteria, master enforcement rules, baseline engines, and institutional skills are committed and pushed to our public GitHub repositories on branch `main`. 
+
+Use your GitHub MCP server or direct HTTP raw pulls to fetch every required file from the exact links below. Do not assume or hallucinate; pull the live files directly.
 
 ---
 
-## 1. Mandatory Protocol: Load Rules & Skills First
+## 1. Git Repository Access & Pull Information
 
-Before generating the architecture, you must query and ingest via GitHub MCP (`kbsingh1399/Engine` or `kbsingh1399/Trading`):
-1. **Master Enforcement Rules**: `.agents/rules/AGENTS.md` (and `.agents/AGENTS.md`). Ingest all 12 core domains, including the 20 OOS Windows Protocol (§10), Institutional Anti-Lookahead Blacklist (§14), and Karpathy Directives (§6).
-2. **Target Criteria & Windows**:
-   - `Engine/target_oos_criteria.json`:
-     - **Min ROI per 1-Month Window**: `> +20.0%`
-     - **Max Drawdown**: `< 5.0%` (Hard circuit-breaker stop at `4.5%` / `$225` on `$5,000` capital)
-     - **Min Win Rate**: `> 40.0%`
-     - **Take-Profit Target**: `>= 4.0R` (Upper barrier $\ge 4.0	ext{R}$, extending to $8.0	ext{R}$ in strong momentum)
-     - **Min Trades per Window**: `>= 15 trades`
-     - **Frictions**: Strict 33 bps round-trip (8 bps taker fee in/out, 10 bps entry slippage, 15 bps stop slippage).
-   - `Engine/oos_windows_20.json`: 20 non-overlapping 1-month windows (W01 May-2021 to W20 Mar-2026).
-3. **Core Institutional Skills (in `skills/`)**:
-   - `skills/training-machine-learning-models.md`
-   - `skills/engineering-features-for-machine-learning.md`
-   - `skills/backtesting-trading-strategies.md`
-   - `skills/trader-risk.md`
-   - `skills/karpathy-guidelines.md`
+### Repositories (Branch: `main`)
+- **Primary Trading Repository**: `https://github.com/kbsingh1399/Trading`
+- **Quantitative Engine & Skills Catalog**: `https://github.com/kbsingh1399/Engine`
+
+### Core Canonical Files to Pull (Raw GitHub URLs)
+1. **Master Agent Enforcement Rules & Protocols**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/.agents/rules/AGENTS.md`
+   *(Contains the 20 OOS Windows Protocol, Anti-Lookahead Blacklist, Karpathy Directives, and Execution Gates)*
+
+2. **Target Acceptance Criteria**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json`
+   *(Target: ROI >= 20.0%, MaxDD < 5.0%, Win Rate >= 40.0%, Target R >= 4.0R, Min Trades >= 15 per window)*
+
+3. **20 Out-Of-Sample (OOS) Windows Specification**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/oos_windows_20.json`
+   *(W01 May-2021 through W20 Mar-2026)*
+
+4. **Working Round 9 Engine Baseline**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/rp2_round9_ml_convex_engine.py`
+   *(Your verified pure-NumPy Histogram GBDT + Ridge Logistic engine)*
+
+### Institutional Skills to Pull (From `https://github.com/kbsingh1399/Engine/tree/main/skills/`)
+- **ML Model Training**: `https://raw.githubusercontent.com/kbsingh1399/Engine/main/skills/training-machine-learning-models.md`
+- **Feature Engineering**: `https://raw.githubusercontent.com/kbsingh1399/Engine/main/skills/engineering-features-for-machine-learning.md`
+- **Backtesting Invariants**: `https://raw.githubusercontent.com/kbsingh1399/Engine/main/skills/backtesting-trading-strategies.md`
+- **Risk & Sizing**: `https://raw.githubusercontent.com/kbsingh1399/Engine/main/skills/trader-risk.md`
+- **Karpathy Directives**: `https://raw.githubusercontent.com/kbsingh1399/Engine/main/skills/karpathy-guidelines.md`
 
 ---
 
 ## 2. Empirical Ground Truth from Round 9 Real-Data Execution
 
-We ran your Round 9 engine (`rp2_round9_ml_convex_engine.py`) on our real 18-asset Binance master parquets for Window 1 (May 2021 Liquidation Crash). Here is what the real trade ledger revealed:
-- **Trained GBDT & Invariants**: Worked flawlessly! Pure NumPy GBDT fit on 7,750 pre-purge events with out-of-sample validation AUC = **0.6282**.
-- **Trades & Win Rate**: 30 trades (passed $\ge 15$ floor), 43.33% Win Rate (passed $> 40\%$ floor).
-- **Capital Defense**: Max Drawdown was rock-solid at **3.84%** during a 50% market crash.
-- **The Exact Failure Vector**:
-  - `target` (+4.0R) exits = **0 trades**.
-  - 7 trades achieved explosive MFE between $+1.5	ext{R}$ and $+3.07	ext{R}$ (DOT reached $+3.07	ext{R}$, DOGE $+2.56	ext{R}$, ETH $+1.88	ext{R}$, LTC $+1.72	ext{R}$, ADA $+1.72	ext{R}$).
-  - BUT all 7 were prematurely knocked out on minor 15-minute pullbacks by the tight ratchet stop (locking at $+0.8	ext{R}$), exiting at $+0.60	ext{R}$ to $+0.70	ext{R}$!
-  - Result: Average win was only $+0.60	ext{R}$ while average loss was $-0.80	ext{R}$, capping ROI at $-2.32\%$.
-- **Takeaway**: Crypto trends have massive volatility. A ratchet that trails too tightly suffocates winning runs. Winning trades MUST be given room to breathe so they can expand into $+4.0	ext{R}$ to $+8.0	ext{R}$ home runs!
+We executed your `rp2_round9_ml_convex_engine.py` on our real 18-asset Binance master parquets for **Window 1 (May 2021 Liquidation Crash)**.
+- **What Worked**:
+  - GBDT trained causally on 7,750 pre-purge events with validation AUC = `0.6282`.
+  - Max Drawdown was rock-solid at `3.84%` during Bitcoin's 50% crash (gap budget and tail-notional caps held).
+  - Generated 30 trades at a 43.33% win rate.
+- **The Bottleneck**:
+  - Zero trades reached the +4.0R target because the trailing ratchet stop locked too tightly (+0.8R lock at +1.5R gain).
+  - 7 explosive trades that reached MFE between +1.5R and +3.07R (DOT +3.07R, DOGE +2.56R, ETH +1.88R, LTC +1.72R) were stopped out on minor pullbacks at +0.60R to +0.70R.
+  - Wins averaged only +0.60R against -0.80R losses, yielding -2.32% ROI.
+- **Conclusion**: Crypto trends have wide intraday swings. Tight trailing stops suffocate the right tail. Runners must be given breathing room to mature into +4.0R to +8.0R payoffs!
 
 ---
 
-## 3. Architecture: Adaptive Convex Trend-Following Engine
+## 3. Mission Directive: Build Adaptive Convex Trend-Following Engine (Round 10)
 
-Mean-reversion and flush-reclaim setups are inherently range-bound. In contrast, **crypto perpetuals are defined by massive directional momentum regimes** (W01 May-21 crash, W03 Nov-21 top, W05 Luna, W06 3AC, W09 Jan-23 rally, W11/W13/W15/W17 bull breakouts). A trend-following strategy naturally captures the 4R–10R right-tail skew required for $+20\%$ monthly ROI.
+Design, simulate, and deliver an **Adaptive Convex Trend-Following Engine with Causal ML** (`rp2_round10_convex_trend_following_ml.py`):
 
-### A. Multi-Horizon Trend Identification
-- **Donchian Breakout Channels**: 20-bar and 55-bar rolling highs/lows on 15m candles.
-- **Moving Average Ribbon**: $EMA_{20} > EMA_{50} > EMA_{200}$ for confirmed bull momentum (reversed for bear momentum).
-- **ADX & Volatility Expansion Filter**: Only trade when $	ext{ADX}_{14} \ge 22$ and $	ext{ATR}_{14} / 	ext{rolling\_mean}(	ext{ATR}, 96) \ge 1.0$. In low-volatility chop ($	ext{ADX} < 20$), stay flat or trade ultra-tight stops.
-- **Volume & Open Interest Surge**: Directional volume $Z \ge 1.5$ and positive Open Interest expansion ($\Delta	ext{OI}_{1	ext{h}} > 0$) confirming aggressive trend initiation.
-
-### B. Causal ML Classifier Overlay (Event-Conditioned)
-- Condition candidate trend entries on Donchian breakout or EMA pullback signals.
-- Train the shallow GBDT / Ridge ensemble (`max_depth <= 4`, `reg_lambda >= 3.0`) strictly on in-sample data prior to $t_{	ext{start}} - 72	ext{h}$.
-- Target Label: Does the breakout hit **$+4.0	ext{R}$** before $-1.0	ext{R}$ or 36-bar (9h) expiry?
-- Gate entries using the validation score quantile grid (`p*`).
-
-### C. Convex Payoff Geometry & Wide-Breathing Ratchets
-- **Initial Stop**: Set at swing extreme or $1.0 	imes 	ext{ATR}_{14}$.
-- **Target**: Base $+4.0	ext{R}$, extending to $+8.0	ext{R}$ during extreme volume/OI momentum breakouts.
-- **Anti-Suffocation Ratchet Schedule**:
-  - Gain $\ge +1.0	ext{R} 	o$ Move stop to Breakeven $+0.10	ext{R}$.
-  - Gain $\ge +2.0	ext{R} 	o$ Move stop to Entry $+1.00	ext{R}$.
-  - Gain $\ge +3.2	ext{R} 	o$ Move stop to Entry $+2.20	ext{R}$.
-  - Chandelier Trailing Stop: Once past $+3.5	ext{R}$, trail stop at $2.2 	imes 	ext{ATR}_{14}$ from the running high, allowing 5R–8R mega-runners to mature!
-- **Time Decay**: Allow 36 bars (9 hours) before checking time decay ($< +0.10	ext{R}$), giving multi-hour trend waves adequate time to develop.
-
-### D. Pyramiding & Dynamic House-Money Sizing
-- Base Risk: `$25.00` (0.50% of `$5,000`).
-- House-Money Scaling: $	ext{Risk} = \$25 + 0.40 	imes \max(0, 	ext{Banked Realised Profit})$, capped at `$200`.
-- Convex Pyramiding: When a trade reaches $+1.5	ext{R}$ and stop is locked at BE, allow a single $0.50	imes$ pyramid add on trend continuation.
-- Capital Protection Floor: Zero trade risk if $	ext{Equity} - 	ext{Open Risk} \le \$4,775$ (4.5% drawdown limit).
+1. **Multi-Horizon Trend Identification**:
+   - Donchian channel breakouts (20-bar & 55-bar) aligned with EMA ribbons ($EMA_{20} > EMA_{50} > EMA_{200}$).
+   - Chop filter: $	ext{ADX}_{14} \ge 22$ and expanding ATR ($	ext{ATR}_{14} / 	ext{rolling\_mean}(	ext{ATR}, 96) \ge 1.0$). Stay flat in low-volatility compression.
+   - Volume and Open Interest expansion ($Z_{	ext{vol}} \ge 1.5, \Delta	ext{OI}_{1	ext{h}} > 0$).
+2. **Causal GBDT Overlay**:
+   - Condition samples on trend breakouts; train on pre-purge events ($t \le t_{	ext{start}} - 72	ext{h}$) to predict probability of hitting **+4.0R** before -1.0R.
+3. **Anti-Suffocation Ratchet Geometry**:
+   - Stop at swing extreme ($1.0 	imes 	ext{ATR}_{14}$). Target: $+4.0	ext{R}$ (extending to $+8.0	ext{R}$ on volume surges).
+   - Progressive ratchet: Breakeven lock at $+1.0	ext{R}$, profit lock at $+2.0	ext{R}$ ($	o +1.0	ext{R}$), $+3.2	ext{R}$ ($	o +2.2	ext{R}$), followed by a loose $2.2 	imes 	ext{ATR}_{14}$ chandelier trailing stop.
+4. **Pyramiding & House Money**:
+   - Add $0.50	imes$ pyramid once stop is locked at BE; scale risk with banked profit ($25 + 0.40 	imes 	ext{banked}$, cap $200); protect $\$4,775$ hard floor.
 
 ---
 
-## 4. Your Autonomous Execution Mandate
+## 4. Autonomous Simulation Loop in Sandbox
 
-Run an autonomous development, simulation, and calibration loop inside your sandbox:
-1. **Simulate**: Test the trend-following engine across all 20 windows using your synthetic panel harness.
-2. **Diagnose & Calibrate**: Check where individual windows fall short of `target_oos_criteria.json` (e.g. low-vol windows like W07/W18 needing tighter chop filters, vs explosive windows like W01/W05 needing wider trailing stops).
-3. **Verify All Invariants**: Zero lookahead, 72h causal purge, gap-multiplier budget ($4.5\%$ hard ceiling), no RNG.
-4. **Deliver**:
-   - Output the complete, drop-in, single-file script `rp2_round10_convex_trend_following_ml.py` (with class `ConvexTrendML` aliased to `MLConvexEngine`).
-   - Output the consolidated 20-window scorecard table.
+Execute your autonomous simulation and calibration loop inside your sandbox:
+1. Pull the files from the GitHub URLs above.
+2. Simulate across the 20 windows in `Engine/oos_windows_20.json`.
+3. Verify all 24 invariants (zero lookahead, 72h purge, 4.5% kill-switch, determinism).
+4. Output the drop-in Python file `rp2_round10_convex_trend_following_ml.py` and the 20-window scorecard.
 
-Opus, the rules are loaded and the parameters are clear. Build the trend-following engine, run your autonomous verification loop, and deliver Round 10!
+Opus, pull the files from GitHub and conquer the 20 windows!
