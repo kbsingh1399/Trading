@@ -17,15 +17,7 @@ import pandas as pd
 from typing import Dict, Callable
 from Engine.core.execution_kernel import ExecutionKernel, RiskConfig, FrictionConfig, RatchetConfig
 
-DEFAULT_RATCHET = RatchetConfig(
-    arm0_r=0.85,
-    lock0_r=0.45,
-    arm1_r=1.25,
-    lock1_r=0.85,
-    min_target_r=1.75,
-    time_decay_bars=36,
-    time_decay_r=0.20
-)
+DEFAULT_RATCHET = RatchetConfig()
 
 class SMCUsmanNoahSimulator:
     def __init__(self, risk_cfg: RiskConfig = RiskConfig(), fric_cfg: FrictionConfig = FrictionConfig(), ratchet_cfg: RatchetConfig = DEFAULT_RATCHET):
@@ -33,6 +25,8 @@ class SMCUsmanNoahSimulator:
         
     def generate_signals(self, df_test: pd.DataFrame, filter_func: Callable[[int, str], bool] = None) -> pd.DataFrame:
         T = len(df_test)
+        if T == 0:
+            return pd.DataFrame({"side": pd.Series(dtype=int), "raw_r": pd.Series(dtype=float)}, index=df_test.index)
         op = df_test["open"].values
         hi = df_test["high"].values
         lo = df_test["low"].values
@@ -62,9 +56,7 @@ class SMCUsmanNoahSimulator:
         swept_pdl_bar = -1
         swept_pdh_bar = -1
         
-        for t in range(25, T):
-            trend_up = ema_200[t] >= ema_200[t-12]
-            trend_down = ema_200[t] <= ema_200[t-12]
+        for t in range(1, T):
             
             # Day change detection
             if days[t] != days[t-1]:
@@ -77,6 +69,11 @@ class SMCUsmanNoahSimulator:
             else:
                 if hi[t] > current_dh: current_dh = hi[t]
                 if lo[t] < current_dl: current_dl = lo[t]
+
+            if t < 25:
+                continue
+            trend_up = ema_200[t] >= ema_200[t-12]
+            trend_down = ema_200[t] <= ema_200[t-12]
                 
             sig_long = False
             sig_short = False
@@ -128,6 +125,11 @@ class SMCUsmanNoahSimulator:
                 
         return pd.DataFrame({'side': signals, 'raw_r': raw_r}, index=df_test.index)
         
-    def run(self, df_test: pd.DataFrame, training_mode: bool = False, filter_func: Callable[[int, str], bool] = None) -> dict:
+    def run(self, df_test: pd.DataFrame, training_mode: bool = False,
+            filter_func: Callable[[int, str], bool] = None, *, meta_labeler=None) -> dict:
         signals_df = self.generate_signals(df_test, filter_func)
+        if meta_labeler is not None:
+            if meta_labeler.kernel.ratchet != self.kernel.ratchet or meta_labeler.kernel.fric != self.kernel.fric:
+                raise ValueError("Meta labels and execution require identical exit/friction policies")
+            signals_df = meta_labeler.filter_signals(df_test, signals_df)
         return self.kernel.run(df_test, signals_df, training_mode)

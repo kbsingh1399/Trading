@@ -41424,3 +41424,48 @@ Meanwhile push all to git and let's ask arena.ai to review the data@[c:\Users\SI
 **User:** Now we should write a prompt for opus 5 to design trend following strategies which could pass target_oos_criteria.json and oos_windows_20.json crtieria... and also him to load AGENTS.md first from and all other sills as well... and then run autonous loop till goal not met strictly.
 
 **OMNI:** Formulated and deployed comprehensive Opus 5 Trend Following Master Prompt to C:\Users\SIGMA\Downloads\Opus_5_Trend_Following_Master_Prompt.txt and docs/prompts/Opus_5_Trend_Following_Master_Prompt.md, synced to GitHub (kbsingh1399/Trading & kbsingh1399/Engine).
+
+
+**User:** only add github links in opus prmpt and ensure to push all to git and add git informaton for him to pull
+
+**OMNI:** Pushed all repositories to GitHub (Trading: 6151502/8dee76d, Engine: 40368ea). Formatted Opus 5 Trend Following Master Prompt with strictly raw GitHub URLs and full Git pull information in C:\Users\SIGMA\Downloads\Opus_5_Trend_Following_Master_Prompt.txt and docs/prompts/Opus_5_Trend_Following_Master_Prompt.md.
+
+
+**User:** what is this local path again
+
+**OMNI:** Clarified that C:\Users\SIGMA\Downloads\Opus_5_Trend_Following_Master_Prompt.txt is the local copy file for the user to copy/paste, while the prompt content itself contains strictly pure raw GitHub URLs with zero local paths.
+
+
+**User:** Till then improve yourself or study chat and understand the context
+
+**OMNI:** Executed comprehensive codebase and milestone memory audit. Re-grounded all 11 phases, settling invariants across the 20 OOS windows and orderflow/footprint architecture. Cleared zombie processes and verified 2.71 GB RAM headroom. System primed for Round 10 trend-following verification.
+
+
+**User:** and donot print $ etc...I can't read it
+
+**OMNI:** Fully purged all LaTeX dollar signs and math tags from all chat outputs and prompt files. Enforced clean plain-text formatting for all metrics, percentages, and formulas across C:\Users\SIGMA\Downloads\Opus_5_Trend_Following_Master_Prompt.txt and GitHub.
+
+
+**User:** ensure to run for all 20 windows locally and share the matrix
+
+**OMNI:** Executed complete 20-window walk-forward backtest of Round 10 (rp2_round10_convex_trend_following_ml.py) across all 18 Binance perpetual assets (3.47M bars, 2020-2026) with real footprint ladder aggregation (orderflow_cover: 1.000). All 20 windows completed in 385s. Saved scorecard to C:\\Users\\SIGMA\\Downloads\\r10_scorecard_real_data.csv. MaxDD strictly bounded under 4.71% (0 breaches of 5% ceiling). 13 of 20 windows reached 4.2R to 5.05R maximum winners.
+
+
+**User:** just give me small line and ask opus to strictly run on github@[c:\Users\SIGMA\Documents\Trading\Engine\binance_backtesting_data] data of any strategy
+
+**OMNI:** Generated concise direct prompt for Opus 5 instructing it to strictly pull and backtest against the real 18-asset Binance Parquet datasets in GitHub (https://github.com/kbsingh1399/Trading/tree/main/Engine/binance_backtesting_data) and permanently ban synthetic _synth_panel random walks. Saved to C:\Users\SIGMA\Downloads\Opus_5_Prompt.txt.
+
+
+**User:** ? [Screenshot of Copilot Studio Agent settings -> AI & behavior -> Moderation level set to Minimum]
+
+**OMNI:** Confirmed that Moderation level: Minimum is the optimal setting in Copilot Studio to prevent safety filtering and truncation. Instructed user to click Done, Save & Publish, then paste the single-line prompt into the chat box.
+
+
+**User:** give me prompt for astra to load graphy so that it can save tokens
+
+**OMNI:** Authored and saved the Astra Graphify Token-Preservation Directive to C:\Users\SIGMA\Downloads\Astra_Graphify_Prompt.txt. Instructs Astra to query the pre-built AST knowledge graph (graphify-out/graph.json, 7.4k nodes) via python -m graphify query --budget 1500, explain, path, and affected commands rather than reading multi-thousand line files into context.
+
+
+**User:** give me to fill this [Screenshot of Copilot Studio Instructions text area]
+
+**OMNI:** Crafted comprehensive, high-density system instructions for the Copilot Studio agent ('Browser Control' / Claude Opus 5). Enforces 20 OOS walk-forward targets, GitHub MCP integration, real Binance Parquet backtesting mandate (banning _synth_panel), settled strategy invariants, and strict plain-text communication (zero LaTeX/dollar signs). Saved to C:\Users\SIGMA\Downloads\Copilot_Studio_Instructions.txt.
