@@ -106,7 +106,7 @@ class PortfolioExecutionKernel:
                 "roi_pct": 0.0, "max_dd_pct": 0.0, "win_rate_pct": 0.0,
                 "trades": 0, "net_pnl": 0.0, "trades_list": [], "equity_curve": np.array([])
             }
-        T = len(next(iter(data.values())))
+        T = min(len(d) for d in data.values()) if data else 0
         if T == 0:
             return {
                 "roi_pct": 0.0, "max_dd_pct": 0.0, "win_rate_pct": 0.0,
@@ -204,7 +204,7 @@ class PortfolioExecutionKernel:
             # --- 4) Queue signals from bar t close for fill at t+1 open ---
             if t < T - 1:
                 for sym in self.symbols:
-                    if sym in sig_side:
+                    if sym in sig_side and t < len(sig_side[sym]):
                         s_ = int(sig_side[sym][t])
                         if s_ != 0 and sym not in positions and sym not in pending:
                             pending[sym] = (s_, float(sig_rr[sym][t]))

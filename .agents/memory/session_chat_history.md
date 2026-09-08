@@ -41404,3 +41404,23 @@ Meanwhile push all to git and let's ask arena.ai to review the data@[c:\Users\SI
    - Saved prompt file directly to `C:\Users\SIGMA\Downloads\Arena_Data_Review.txt` for immediate drag-and-drop / upload into Arena.ai.
    - Generated empty companion paste file `C:\Users\SIGMA\Downloads\Arena_output.md`.
 
+
+
+**User:** Opus 5 delivered rp2_round8_convex_liquidation_leadlag.py and asked for empirical scorecard.
+
+**OMNI:** Executed W01 backtest on real 18-asset data (31 trades, 58.06% WR, 3.20% MaxDD, -2.16% ROI, liq_exhaust: 0). Generated Opus_5_Round8_Scorecard.txt for Opus 5 tuning.
+
+
+**User:** If non of our strategy able to achive target_oos_criteria.json and oos_windows_20.json, then we should ask Opus 5 build, forward test all windows till it passes... we can ask him to integrate different ML techniques as well...
+
+**OMNI:** Synced updated target_oos_criteria.json (min_r_multiple 4.0, min_trades 15) to GitHub (kbsingh1399/Trading & kbsingh1399/Engine). Formulated and deployed comprehensive Opus 5 ML 20-Windows Master Directive to C:\Users\SIGMA\Downloads\Opus_5_ML_20Windows_Master_Directive.txt and docs/prompts/Opus_5_ML_20Windows_Master_Directive.md.
+
+
+**User:** did you create any folder where on md files of skilles are available
+
+**OMNI:** Confirmed 1,303 flattened .md skill files are available in https://github.com/kbsingh1399/Engine/tree/main/skills, c:\Users\SIGMA\Documents\Engine\skills, and mirrored to c:\Users\SIGMA\Documents\Trading\skills.
+
+
+**User:** Now we should write a prompt for opus 5 to design trend following strategies which could pass target_oos_criteria.json and oos_windows_20.json crtieria... and also him to load AGENTS.md first from and all other sills as well... and then run autonous loop till goal not met strictly.
+
+**OMNI:** Formulated and deployed comprehensive Opus 5 Trend Following Master Prompt to C:\Users\SIGMA\Downloads\Opus_5_Trend_Following_Master_Prompt.txt and docs/prompts/Opus_5_Trend_Following_Master_Prompt.md, synced to GitHub (kbsingh1399/Trading & kbsingh1399/Engine).

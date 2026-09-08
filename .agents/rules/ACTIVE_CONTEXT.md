@@ -39,4 +39,9 @@ trigger: always_on
 ## 4. Ox Alpha Prompting Protocol (Strict Mandate)
 - **Automatic `.txt` File Creation in Downloads**: All prompts generated for Ox Alpha MUST be created as `.txt` files directly in `C:\Users\SIGMA\Downloads\` (e.g. `C:\Users\SIGMA\Downloads\Ox_Alpha_1.txt`, `Ox_Alpha_2.txt`) so the user can immediately drag/drop and upload them into `oxalpha.com/chat`.
 - **Zero Chat Dump**: Never dump the lengthy prompt text into chat responses; provide the filename, summary, and direct file link.
+- **Fresh Session / Zero Memory Mandate (CRITICAL)**: Ox Alpha operates in a **brand new chat session on EVERY turn** with zero conversational memory, zero previous chat context, and zero access to the internet, GitHub, or local repository files. Every prompt generated for Ox Alpha MUST be 100% self-contained and explicitly include:
+  1. Complete operational parameters, dataset provenance (18 Binance perpetual assets, 3.47M 15m bars, 2020–2026), and exchange frictions (8 bps fee, 10 bps entry slippage, 15 bps exit slippage or maker model).
+  2. The exact quantitative target criteria (ROI > +20% per 1-month window, MaxDD < 5.0% with 4.5% hard stop, WR > 40%, Min Trades >= 6, max 2 concurrent positions on $5,000 capital).
+  3. The complete historical empirical progression and failure analysis across all 20 canonical OOS windows (Rounds 1–5 audits, including why 15m SMC/Footprint gave AUC ≈ 0.5015).
+  4. Complete, unabridged source code for all relevant active production modules embedded directly inside the prompt so Ox Alpha has full offline context to review, diagnose, and author drop-in production code.
 

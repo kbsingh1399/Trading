@@ -73,6 +73,7 @@ When `AGENTS.md` is loaded, execute sequentially without asking:
 3. **Arena.ai Prompt Protocol**: NEVER inject large source code blocks into prompts. Reference raw GitHub URLs only to bypass context caps.
 4. **Minimal Files**: Always consolidate related tools into unified modules. Prune scratch scripts immediately after validation.
 5. **Markdown File Isolation (Strict Mandate)**: Standalone `.md` files (Arena prompts, specifications, architecture reviews, audits) MUST strictly reside inside `docs/` (`docs/prompts/`, `docs/specs/`). Loose `.md` files in root or `Engine/` are strictly FORBIDDEN. Authorized exceptions: `.agents/rules/*.md` and `scratch/README.md`.
+6. **Ox Alpha Fresh Session Protocol (Strict Mandate)**: Every prompt generated for Ox Alpha operates in a **brand new chat session with zero memory, zero previous chat context, and zero internet/repo access**. Every prompt created in `C:\Users\SIGMA\Downloads\Ox_Alpha_*.txt` (and archived in `docs/prompts/`) MUST be 100% self-contained: explicitly including the complete dataset provenance (18 Binance perpetuals, 3.47M 15m bars, 2020–2026), exchange frictions, risk budget rules, the complete empirical scorecard history across all 20 OOS windows, and full unabridged source code for all active production modules embedded directly inside the prompt.
 
 ---
 
