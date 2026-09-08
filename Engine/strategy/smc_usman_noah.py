@@ -46,6 +46,9 @@ class SMCUsmanNoahSimulator:
         vwap_z = df_test.get("vwap_zscore", pd.Series(np.zeros(T))).values
         vol_ratio = df_test.get("volume_ratio", pd.Series(np.ones(T))).values
         ema_200 = df_test.get("ema_200", pd.Series(np.zeros(T))).values
+        ema_50 = df_test.get("ema_50", pd.Series(cl)).values
+        dispersion = np.abs(ema_50 - ema_200) / np.maximum(cl, 1e-6)
+        vol_pct = atr / np.maximum(cl, 1e-6)
         
         signals = np.zeros(T, dtype=int)
         raw_r = np.zeros(T, dtype=float)
@@ -112,6 +115,15 @@ class SMCUsmanNoahSimulator:
                         stop_dist = s_dist
                         swept_pdh_bar = -1
                         
+            if sig_long or sig_short:
+                if dispersion[t] < 0.003 and vol_pct[t] < 0.008:
+                    sig_long = False
+                    sig_short = False
+                elif sig_short and cl[t] > ema_200[t] and ema_50[t] > ema_200[t] * 1.01:
+                    sig_short = False
+                elif sig_long and cl[t] < ema_200[t] and ema_50[t] < ema_200[t] * 0.99:
+                    sig_long = False
+
             if filter_func is not None:
                 if sig_long and not filter_func(t, 'LONG'): sig_long = False
                 if sig_short and not filter_func(t, 'SHORT'): sig_short = False

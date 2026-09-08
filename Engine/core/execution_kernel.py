@@ -6,10 +6,11 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class RiskConfig:
     initial_capital: float = 5000.0
-    base_risk: float = 25.0              # 0.50% base risk
-    house_money_risk: float = 50.0       # 1.00% max 2x risk
-    drawdown_defense_risk: float = 15.0  # 0.30% risk
-    drawdown_limit: float = 0.045        # 4.5% ($225) hard drawdown stop
+    base_risk: float = 55.0              # 1.10% base risk
+    house_money_risk: float = 115.0      # 2.30% house money
+    drawdown_defense_risk: float = 15.0  # 0.30% defense risk
+    drawdown_limit: float = 0.045        # 4.5% hard drawdown stop
+    drawdown_entry_buffer: float = 0.038 # 3.80% preemptive entry halt buffer
 
 @dataclass(frozen=True)
 class FrictionConfig:
@@ -19,11 +20,13 @@ class FrictionConfig:
 
 @dataclass(frozen=True)
 class RatchetConfig:
-    arm0_r: float = 0.8
-    lock0_r: float = 0.15
-    arm1_r: float = 1.5
-    lock1_r: float = 0.80
-    min_target_r: float = 2.5
+    arm0_r: float = 0.70
+    lock0_r: float = 0.20
+    arm1_r: float = 1.20
+    lock1_r: float = 0.75
+    arm2_r: float = 1.80
+    lock2_r: float = 1.40
+    min_target_r: float = 2.10
     time_decay_bars: int = 24
     time_decay_r: float = 0.20
 

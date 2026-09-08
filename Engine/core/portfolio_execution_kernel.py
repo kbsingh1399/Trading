@@ -37,12 +37,16 @@ class PortfolioExecutionKernel:
                  risk: RiskConfig = RiskConfig(),
                  fric: FrictionConfig = FrictionConfig(),
                  ratchet: RatchetConfig = RatchetConfig(),
-                 max_positions: int = 2):
+                 max_positions: int = 2,
+                 dd_defense_thresh: float = 0.018,
+                 dd_entry_buffer: Optional[float] = None):
         self.symbols = list(symbols)
         self.risk = risk
         self.fric = fric
         self.rat = ratchet
         self.max_positions = max_positions
+        self.dd_defense_thresh = dd_defense_thresh
+        self.dd_entry_buffer = dd_entry_buffer if dd_entry_buffer is not None else getattr(risk, "drawdown_entry_buffer", 0.038)
         self.trades: List[Dict] = []
 
     # ---------------- helpers ----------------
@@ -61,13 +65,19 @@ class PortfolioExecutionKernel:
         gain = (hi - p.entry) / p.rr if p.side == 1 else (p.entry - lo) / p.rr
         if gain > p.max_r:
             p.max_r = gain
+        arm2 = getattr(R, "arm2_r", 1.80)
+        lock2 = getattr(R, "lock2_r", 1.40)
         if p.side == 1:
-            if p.max_r >= R.arm1_r:
+            if p.max_r >= arm2:
+                p.stop = max(p.stop, p.entry + lock2 * p.rr)
+            elif p.max_r >= R.arm1_r:
                 p.stop = max(p.stop, p.entry + R.lock1_r * p.rr)
             elif p.max_r >= R.arm0_r:
                 p.stop = max(p.stop, p.entry + R.lock0_r * p.rr)
         else:
-            if p.max_r >= R.arm1_r:
+            if p.max_r >= arm2:
+                p.stop = min(p.stop, p.entry - lock2 * p.rr)
+            elif p.max_r >= R.arm1_r:
                 p.stop = min(p.stop, p.entry - R.lock1_r * p.rr)
             elif p.max_r >= R.arm0_r:
                 p.stop = min(p.stop, p.entry - R.lock0_r * p.rr)
@@ -145,7 +155,8 @@ class PortfolioExecutionKernel:
 
         for t in range(1, T):
             current_dd = (peak - mark_to_market(t - 1)) / peak if peak > 0 else 0.0
-            dd_blocked = (not training_mode) and current_dd >= self.risk.drawdown_limit
+            entry_limit = self.dd_entry_buffer if self.dd_entry_buffer is not None else self.risk.drawdown_limit
+            dd_blocked = (not training_mode) and current_dd >= entry_limit
 
             # --- 1) Fill pending entries at this bar's open (signal was at t-1 close) ---
             for sym in list(pending.keys()):
@@ -161,10 +172,10 @@ class PortfolioExecutionKernel:
                 if lps <= 0:
                     continue
                 net_profit = realized - self.risk.initial_capital
-                if net_profit > 50.0:
-                    trade_risk = min(self.risk.house_money_risk, realized * 0.01)
-                elif current_dd > 0.025:
+                if current_dd > self.dd_defense_thresh:
                     trade_risk = self.risk.drawdown_defense_risk
+                elif net_profit > 50.0:
+                    trade_risk = self.risk.house_money_risk
                 else:
                     trade_risk = self.risk.base_risk
                 if side == 1:

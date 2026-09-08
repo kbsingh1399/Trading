@@ -47,8 +47,8 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class GateConfig:
-    quantile_grid: Tuple[float, ...] = (0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80)
-    min_trades_per_window: int = 6
+    quantile_grid: Tuple[float, ...] = (0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60)
+    min_trades_per_window: int = 15
     bars_per_month: int = 2880   # 30d * 96 bars @15m
 
 
@@ -347,8 +347,8 @@ class PooledInstitutionalMetaLabeler:
                 best_exp, best_tau = exp, tau
 
         if best_exp <= 0 or best_tau == 1.0:
-            # Fallback to top 30% quantile
-            return float(np.quantile(p, 0.70))
+            # Calibrated fallback to median quantile to prevent trade volume starvation
+            return float(np.quantile(p, 0.50))
         return best_tau
 
     # ==================================================================
