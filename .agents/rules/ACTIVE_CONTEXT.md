@@ -35,3 +35,8 @@ trigger: always_on
 - **DeepSeek Harness**: Local evaluation suite in `deepseek-harness/` via `.agents/scripts/deepseek_harness_runner.py`.
 - **Memory Cleaner**: Run `.agents/scripts/free_ram.ps1` to unthrottle CPU and reclaim physical RAM.
 - **Dual `.agents` Folder Parity**: Every edit to rules, memory, or scripts must be mirrored 1:1 between `Engine_1_arena_PR/.agents` and `Engine_2/.agents`.
+
+## 4. Ox Alpha Prompting Protocol (Strict Mandate)
+- **Automatic `.txt` File Creation in Downloads**: All prompts generated for Ox Alpha MUST be created as `.txt` files directly in `C:\Users\SIGMA\Downloads\` (e.g. `C:\Users\SIGMA\Downloads\Ox_Alpha_1.txt`, `Ox_Alpha_2.txt`) so the user can immediately drag/drop and upload them into `oxalpha.com/chat`.
+- **Zero Chat Dump**: Never dump the lengthy prompt text into chat responses; provide the filename, summary, and direct file link.
+

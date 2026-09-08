@@ -631,12 +631,12 @@ def test_multisymbol_bit_parity_full_vs_incremental():
                     return pd.DataFrame(), pd.DataFrame()
 
             end_dt = pd.to_datetime(int(kl["open_time"].iloc[-1]), unit="ms", utc=True)
-            res = perform_incremental_append(
+            status, data = perform_incremental_append(
                 symbol=symbol, master_path=mpath, ladder_path=None,
                 fetcher=MockFetcher(), processor=proc, end_dt=end_dt, log=QUIET
             )
-            assert res is not None and res != "CURRENT", f"Incremental append failed for {symbol}"
-            m_incr, _ = res
+            assert status == "SUCCESS" and data is not None, f"Incremental append failed for {symbol}: {status}"
+            m_incr, _ = data
 
             assert len(m_incr) == len(full_ref), f"Length mismatch: {len(m_incr)} vs {len(full_ref)}"
             assert np.all(m_incr["open_time_ms"].to_numpy() == full_ref["open_time_ms"].to_numpy()), "open_time_ms mismatch"
@@ -786,12 +786,12 @@ def test_ema_sequential_multiappend_bit_parity():
             for split_idx in splits:
                 fetcher = MultiAppendMockFetcher(split_idx - 1)
                 end_dt = pd.to_datetime(int(kl["open_time"].iloc[split_idx - 1]), unit="ms", utc=True)
-                res = perform_incremental_append(
+                status, data = perform_incremental_append(
                     symbol=symbol, master_path=mpath, ladder_path=None,
                     fetcher=fetcher, processor=proc, end_dt=end_dt, log=QUIET
                 )
-                assert res is not None and isinstance(res[0], pd.DataFrame), f"Append failed at split {split_idx}"
-                m_curr, _ = res
+                assert status == "SUCCESS" and data is not None, f"Append failed at split {split_idx}: {status}"
+                m_curr, _ = data
                 # Re-export to simulate disk persistence between runs
                 mpath = exp.export_master(m_curr, symbol)
 
@@ -820,6 +820,120 @@ def test_ema_sequential_multiappend_bit_parity():
     print("  [PASS] multi-append bit-parity: BTCUSDT, ETHUSDT, DOGEUSDT (3 sequential appends atol=0.0 on all 5 EMAs & CVD)")
 
 
+def test_incremental_append_return_contract():
+    """R5-H1: Assert exactly Tuple[AppendStatus, Optional[Tuple[DataFrame, Optional[DataFrame]]]] across all states."""
+    from Engine.pipeline.incremental_append import perform_incremental_append, AppendStatus, CorruptedMasterCheckpointError
+    import tempfile, shutil
+
+    tdir = tempfile.mkdtemp()
+    try:
+        kl, spot, funding, metrics = make_streams(n_bars=4500, price0=50000.0, gap_at=None)
+        proc = HistoricalMetricsProcessor(log=QUIET)
+        m = proc.process_master_dataset(kl, metrics, funding, None, spot, symbol="BTCUSDT")
+        exp = ParquetExporter(tdir)
+        mpath = exp.export_master(m, "BTCUSDT")
+
+        class DummyFetcher:
+            def __init__(self):
+                self.metrics_absent_days = []
+            def fetch_futures_klines(self, *a, **k): return kl.iloc[:10].copy()
+            def fetch_spot_klines(self, *a, **k): return spot.iloc[:10].copy()
+            def fetch_metrics(self, *a, **k): return metrics.iloc[:10].copy()
+            def fetch_funding_rates(self, *a, **k): return funding.iloc[:10].copy()
+            def fetch_footprint(self, *a, **k): return pd.DataFrame(), pd.DataFrame()
+
+        # State 1: CURRENT -> (AppendStatus.CURRENT, None)
+        last_dt = pd.to_datetime(int(m["open_time_ms"].iloc[-1]), unit="ms", utc=True)
+        ret_curr = perform_incremental_append("BTCUSDT", mpath, None, DummyFetcher(), proc, end_dt=last_dt, log=QUIET)
+        assert isinstance(ret_curr, tuple) and len(ret_curr) == 2, f"Expected 2-tuple, got {ret_curr!r}"
+        assert ret_curr[0] == AppendStatus.CURRENT and ret_curr[1] is None, f"Expected (CURRENT, None), got {ret_curr}"
+
+        # State 2: REBUILD_REQUIRED -> (AppendStatus.REBUILD_REQUIRED, None)
+        huge_dt = last_dt + pd.Timedelta(days=60) # > 45 days
+        ret_reb = perform_incremental_append("BTCUSDT", mpath, None, DummyFetcher(), proc, end_dt=huge_dt, log=QUIET)
+        assert isinstance(ret_reb, tuple) and len(ret_reb) == 2, f"Expected 2-tuple, got {ret_reb!r}"
+        assert ret_reb[0] == AppendStatus.REBUILD_REQUIRED and ret_reb[1] is None, f"Expected (REBUILD_REQUIRED, None), got {ret_reb}"
+
+        # State 3: Corrupted -> raises CorruptedMasterCheckpointError
+        with open(mpath, "wb") as f:
+            f.write(b"CORRUPTED_PARQUET_HEADER_DATA")
+        raised = False
+        try:
+            perform_incremental_append("BTCUSDT", mpath, None, DummyFetcher(), proc, end_dt=last_dt, log=QUIET)
+        except CorruptedMasterCheckpointError:
+            raised = True
+        assert raised, "Expected CorruptedMasterCheckpointError on corrupted file"
+
+        print("  [PASS] return contract: uniform (AppendStatus, data) tuple across all terminal states (R5-H1)")
+    finally:
+        shutil.rmtree(tdir, ignore_errors=True)
+
+
+def test_suspicious_truncation_quarantine_negative_control():
+    """R5-H2: Differentiate legitimate fresh small master vs truncated corruption."""
+    from Engine.pipeline.incremental_append import compute_incremental_append_plan, CorruptedMasterCheckpointError
+    import tempfile, shutil
+
+    tdir = tempfile.mkdtemp()
+    try:
+        kl, spot, funding, metrics = make_streams(n_bars=3, price0=50000.0, gap_at=None)
+        proc = HistoricalMetricsProcessor(log=QUIET)
+        m_small = proc.process_master_dataset(kl, metrics, funding, None, spot, symbol="BTCUSDT")
+        exp = ParquetExporter(tdir)
+        mpath = exp.export_master(m_small, "BTCUSDT")
+
+        # Case A: Fresh small master with NO companion manifest -> clean None (rebuild required, no quarantine)
+        plan = compute_incremental_append_plan(mpath, log=QUIET)
+        assert plan is None, "Fresh small dataset should return None"
+        assert os.path.exists(mpath), "Fresh small dataset should not be quarantined"
+
+        # Case B: Companion manifest expects 10,000 rows, but file has 3 rows -> TRUNCATED CORRUPTION -> Quarantine + Raise
+        man_path = exp.manifest_path("BTCUSDT")
+        with open(man_path, "w", encoding="utf-8") as f:
+            f.write('{"symbol": "BTCUSDT", "total_rows": 10000}')
+
+        raised = False
+        try:
+            compute_incremental_append_plan(mpath, log=QUIET)
+        except CorruptedMasterCheckpointError as exc:
+            raised = True
+            assert "suspicious truncation" in str(exc)
+
+        assert raised, "Suspicious truncation failed to raise CorruptedMasterCheckpointError"
+        assert not os.path.exists(mpath), "Truncated master should be quarantined"
+        assert not os.path.exists(man_path), "Stale manifest should be removed"
+
+        print("  [PASS] negative control: suspicious truncation vs fresh small master classified cleanly (R5-H2)")
+    finally:
+        shutil.rmtree(tdir, ignore_errors=True)
+
+
+def test_concurrency_fencing():
+    """R5-M2: AppendLock file lock and boundary verification prevent race conditions."""
+    from Engine.pipeline.incremental_append import AppendLock, perform_incremental_append, AppendStatus
+    import tempfile, shutil
+
+    tdir = tempfile.mkdtemp()
+    try:
+        kl, spot, funding, metrics = make_streams(n_bars=4500, price0=50000.0, gap_at=None)
+        proc = HistoricalMetricsProcessor(log=QUIET)
+        m = proc.process_master_dataset(kl, metrics, funding, None, spot, symbol="BTCUSDT")
+        exp = ParquetExporter(tdir)
+        mpath = exp.export_master(m, "BTCUSDT")
+
+        # Lock the file externally
+        with AppendLock(mpath) as locked:
+            assert locked, "Primary lock should be acquired"
+            # Second attempt while locked must detect lock and yield REBUILD_REQUIRED
+            end_dt = pd.to_datetime(int(m["open_time_ms"].iloc[-1]), unit="ms", utc=True)
+            res = perform_incremental_append("BTCUSDT", mpath, None, None, proc, end_dt=end_dt, log=QUIET)
+            assert res[0] == AppendStatus.REBUILD_REQUIRED, f"Expected REBUILD_REQUIRED on locked file, got {res}"
+
+        print("  [PASS] concurrency fencing: AppendLock and boundary checks guard against overlapping appends (R5-M2)")
+    finally:
+        shutil.rmtree(tdir, ignore_errors=True)
+
+
 def main() -> int:
     t0 = time.time()
     print("OFFLINE PIPELINE TEST SUITE")
@@ -834,6 +948,9 @@ def main() -> int:
     test_corrupted_footer_quarantine_negative_control()
     test_multisymbol_bit_parity_full_vs_incremental()
     test_ema_sequential_multiappend_bit_parity()
+    test_incremental_append_return_contract()
+    test_suspicious_truncation_quarantine_negative_control()
+    test_concurrency_fencing()
     test_orchestrator_end_to_end()
     test_repair_gate()
     test_fetcher_against_mock_binance()

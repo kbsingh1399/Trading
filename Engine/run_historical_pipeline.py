@@ -344,19 +344,19 @@ def run_pipeline(
     }
 
     # ---- Fast Incremental Append Path ----
-    if not force and not end_date_str and os.path.exists(mpath):
+    if not force and not end_date_str and os.path.exists(mpath) and os.path.exists(ppath):
         try:
             from Engine.pipeline.incremental_append import perform_incremental_append, CorruptedMasterCheckpointError, AppendStatus
-            incr_res = perform_incremental_append(
+            status, data = perform_incremental_append(
                 symbol=symbol, master_path=mpath, ladder_path=lpath,
                 fetcher=fetcher, processor=processor, end_dt=end_dt,
                 all_footprint=all_footprint, footprint_days=footprint_days, log=log
             )
-            if incr_res == AppendStatus.CURRENT or (isinstance(incr_res, tuple) and incr_res[0] == AppendStatus.CURRENT):
-                log(f"[SKIP] {symbol}: dataset already current through target end date (no-op fast return, R3-M3, R4-M3)")
+            if status == AppendStatus.CURRENT:
+                log(f"[SKIP] {symbol}: dataset already current through target end date (no-op fast return, R3-M3, R4-M3, R5-H1)")
                 return True
-            elif incr_res is not None:
-                master, ladder = incr_res
+            elif status == AppendStatus.SUCCESS and data is not None:
+                master, ladder = data
                 if ladder is not None and not ladder.empty:
                     old_stats = {}
                     if os.path.exists(ppath):
@@ -374,6 +374,9 @@ def run_pipeline(
                         "tick_rungs": len(ladder) - int(old_stats.get("synthetic_rungs", 0)),
                         "synthetic_rungs": int(old_stats.get("synthetic_rungs", 0)),
                     }
+            else:
+                log(f"[INCR] {symbol}: incremental append returned {status} -> proceeding with full rebuild")
+                master, ladder = None, None
         except CorruptedMasterCheckpointError as exc:
             log(f"[QUARANTINE ALERT] {symbol}: checkpoint corruption detected ({exc}); quarantined, forcing clean full rebuild")
             master, ladder = None, None
@@ -416,7 +419,15 @@ def run_pipeline(
             f"({master['datetime_utc'].iloc[0]} -> {master['datetime_utc'].iloc[-1]})")
 
         t2 = time.time()
-        ladder, lstats = assemble_ladder(master, fp_ladder if not fp_ladder.empty else None, allow_synthetic=False)
+        existing_ladder = None
+        if fp_ladder.empty and os.path.exists(lpath):
+            try:
+                existing_ladder = pd.read_parquet(lpath)
+                log(f"[OK] {symbol}: preserved existing footprint ladder from {os.path.basename(lpath)} ({len(existing_ladder):,} rungs)")
+            except Exception as e:
+                log(f"[WARN] {symbol}: could not read existing ladder {lpath}: {e}")
+                existing_ladder = None
+        ladder, lstats = assemble_ladder(master, fp_ladder if not fp_ladder.empty else existing_ladder, allow_synthetic=False)
         ladder_stats.update(lstats)
         log(f"[OK] {symbol}: ladder assembled in {time.time() - t2:.1f}s | {ladder_stats}")
 
@@ -438,7 +449,11 @@ def run_pipeline(
     combined_absent_days = sorted(set(stored_absent_days) | set(fetcher_absent))
     attested_months = {d[:7] for d in combined_absent_days} if combined_absent_days else None
 
-    exp_start_ms = int(effective_start.timestamp() * 1000)
+    if effective_start > start_dt and not master.empty:
+        # Mid-day token listing: first candle is at the Binance perpetual launch hour on listing date
+        exp_start_ms = int(master["open_time_ms"].iloc[0])
+    else:
+        exp_start_ms = int(effective_start.timestamp() * 1000)
     exp_end_ms = int(end_dt.timestamp() * 1000) if end_date_str else None
     report = run_council(master, ladder, symbol, log, attested_months=attested_months,
                          expected_start_ms=exp_start_ms, expected_end_ms=exp_end_ms)
@@ -517,7 +532,7 @@ def run_pipeline(
     if not audit_ok:
         log(f"[FAIL-CLOSED] {symbol}: export rejected by post-export audit gate. Cleaning up export files.")
         for p in (mpath, lpath, manifest_path):
-            if os.path.exists(p):
+            if p and os.path.exists(p):
                 try:
                     os.remove(p)
                 except Exception:

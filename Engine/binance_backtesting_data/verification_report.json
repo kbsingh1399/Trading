@@ -1,9 +1,9 @@
 {
-  "BTCUSDT": {
-    "symbol": "BTCUSDT",
+  "ADAUSDT": {
+    "symbol": "ADAUSDT",
     "passed": true,
-    "master_rows": 210883,
-    "ladder_rows": 1977494,
+    "master_rows": 210903,
+    "ladder_rows": 2421762,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",
@@ -11,11 +11,11 @@
     },
     "findings": []
   },
-  "ETHUSDT": {
-    "symbol": "ETHUSDT",
+  "APTUSDT": {
+    "symbol": "APTUSDT",
     "passed": true,
-    "master_rows": 210889,
-    "ladder_rows": 2899879,
+    "master_rows": 136296,
+    "ladder_rows": 3016809,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",
@@ -23,11 +23,35 @@
     },
     "findings": []
   },
-  "XRPUSDT": {
-    "symbol": "XRPUSDT",
+  "ARBUSDT": {
+    "symbol": "ARBUSDT",
     "passed": true,
-    "master_rows": 210895,
-    "ladder_rows": 1646665,
+    "master_rows": 121364,
+    "ladder_rows": 2560290,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "AVAXUSDT": {
+    "symbol": "AVAXUSDT",
+    "passed": true,
+    "master_rows": 208853,
+    "ladder_rows": 5091966,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "BCHUSDT": {
+    "symbol": "BCHUSDT",
+    "passed": true,
+    "master_rows": 210912,
+    "ladder_rows": 1273037,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",
@@ -47,47 +71,23 @@
     },
     "findings": []
   },
+  "BTCUSDT": {
+    "symbol": "BTCUSDT",
+    "passed": true,
+    "master_rows": 210883,
+    "ladder_rows": 1977494,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
   "DOGEUSDT": {
     "symbol": "DOGEUSDT",
     "passed": true,
     "master_rows": 210901,
     "ladder_rows": 717108,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "ADAUSDT": {
-    "symbol": "ADAUSDT",
-    "passed": true,
-    "master_rows": 210903,
-    "ladder_rows": 2421762,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "TRXUSDT": {
-    "symbol": "TRXUSDT",
-    "passed": true,
-    "master_rows": 210905,
-    "ladder_rows": 1208711,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "LINKUSDT": {
-    "symbol": "LINKUSDT",
-    "passed": true,
-    "master_rows": 210905,
-    "ladder_rows": 1480857,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",
@@ -107,6 +107,30 @@
     },
     "findings": []
   },
+  "ETHUSDT": {
+    "symbol": "ETHUSDT",
+    "passed": true,
+    "master_rows": 210889,
+    "ladder_rows": 2899879,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "LINKUSDT": {
+    "symbol": "LINKUSDT",
+    "passed": true,
+    "master_rows": 210905,
+    "ladder_rows": 1480857,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
   "LTCUSDT": {
     "symbol": "LTCUSDT",
     "passed": true,
@@ -119,11 +143,71 @@
     },
     "findings": []
   },
-  "BCHUSDT": {
-    "symbol": "BCHUSDT",
+  "NEARUSDT": {
+    "symbol": "NEARUSDT",
     "passed": true,
-    "master_rows": 210912,
-    "ladder_rows": 1273037,
+    "master_rows": 206737,
+    "ladder_rows": 5589367,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "OPUSDT": {
+    "symbol": "OPUSDT",
+    "passed": true,
+    "master_rows": 149689,
+    "ladder_rows": 3717836,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "SOLUSDT": {
+    "symbol": "SOLUSDT",
+    "passed": true,
+    "master_rows": 209729,
+    "ladder_rows": 5090130,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "SUIUSDT": {
+    "symbol": "SUIUSDT",
+    "passed": true,
+    "master_rows": 117437,
+    "ladder_rows": 2742669,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "TRXUSDT": {
+    "symbol": "TRXUSDT",
+    "passed": true,
+    "master_rows": 210905,
+    "ladder_rows": 1208711,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "XRPUSDT": {
+    "symbol": "XRPUSDT",
+    "passed": true,
+    "master_rows": 210895,
+    "ladder_rows": 1646665,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",
