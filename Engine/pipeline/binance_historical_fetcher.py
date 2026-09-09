@@ -7,6 +7,7 @@ Streams
   2. Spot 15m klines         data.binance.vision monthly -> daily -> api  REST tail
   3. Futures official metrics (5m)  daily archives -> futures/data REST bridge
   4. Funding rate history    fapi /fapi/v1/fundingRate (paginated, incremental cache)
+  5. Index price 15m klines  data.binance.vision monthly -> daily (Vision archive only; no REST tail)
 
 Design
   * Every archive object is cached as Parquet under ``cache_dir`` and never
@@ -508,6 +509,7 @@ class BinanceHistoricalFetcher:
             "metrics": os.path.join(self.cache_dir, "metrics_daily"),
             "funding": os.path.join(self.cache_dir, "funding_rates"),
             "footprint": os.path.join(self.cache_dir, "footprint_monthly"),
+            "index_klines_15m": os.path.join(self.cache_dir, "index_klines_15m"),
         }
 
         for d in self.dirs.values():
@@ -668,6 +670,67 @@ class BinanceHistoricalFetcher:
         self.log(f"[FETCHER] {symbol}: {len(df):,} futures bars "
                  f"({pd.to_datetime(df['open_time'].iloc[0], unit='ms', utc=True)} -> {pd.to_datetime(df['open_time'].iloc[-1], unit='ms', utc=True)})")
         return df
+
+    def fetch_index_price_klines(self, symbol: str, start_date: str, now: Optional[datetime] = None) -> pd.DataFrame:
+        """Fetches 15m index price klines from data.binance.vision (Vision archive only; no REST tail).
+
+        Returns a minimal 2-column DataFrame [open_time (ms int64), close (float64)] representing
+        the Binance multi-exchange composite settlement index — the true reference price against
+        which funding rates and liquidations settle. Qualitatively different from Binance spot:
+        for alts (TRX, DOGE, ADA, LINK, …) the index is a weighted composite across exchanges.
+        Pre-listing bars are absent (not imputed). The processor fills index_close = 0.0 on gaps.
+        """
+        now = now or datetime.now(timezone.utc)
+        start = _utc(start_date)
+        self.log(f"[FETCHER] {symbol}: index price 15m klines from {start_date}")
+        kind = "index_klines_15m"
+        base_m = f"{VISION}/futures/um/monthly/indexPriceKlines/{symbol}/15m"
+        base_d = f"{VISION}/futures/um/daily/indexPriceKlines/{symbol}/15m"
+
+        def monthly(ym: str) -> Optional[pd.DataFrame]:
+            return self._cached(kind, f"{symbol}-idx-15m-{ym}",
+                                f"{base_m}/{symbol}-15m-{ym}.zip", parse_kline_csv)
+
+        def daily(ymd: str) -> Optional[pd.DataFrame]:
+            return self._cached(kind, f"{symbol}-idx-15m-{ymd}",
+                                f"{base_d}/{symbol}-15m-{ymd}.zip", parse_kline_csv)
+
+        live_now = datetime.now(timezone.utc)
+        live_cur_month_start = datetime(live_now.year, live_now.month, 1, tzinfo=timezone.utc)
+        month_end_exclusive = min(datetime(now.year, now.month, 1, tzinfo=timezone.utc), live_cur_month_start)
+
+        months = _month_keys(start, month_end_exclusive)
+        monthly_res = self._parallel(monthly, months, f"{symbol} index monthly klines")
+        frames = [df for df in monthly_res.values() if df is not None and not df.empty]
+
+        # Daily fallback: probe around listing boundary and recent months (archive lag)
+        first_ok = next((i for i, ym in enumerate(months) if monthly_res.get(ym) is not None), None)
+        daily_keys: List[str] = []
+        for i, ym in enumerate(months):
+            if monthly_res.get(ym) is not None:
+                continue
+            near_recent = i >= len(months) - 2
+            after_listing = first_ok is not None and i >= first_ok - 1
+            if near_recent or after_listing:
+                y, m = int(ym[:4]), int(ym[5:])
+                m_start = datetime(y, m, 1, tzinfo=timezone.utc)
+                m_end = datetime(y + (m == 12), 1 if m == 12 else m + 1, 1, tzinfo=timezone.utc)
+                daily_keys += _day_keys(max(m_start, start), min(m_end, now))
+        end_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        daily_keys += _day_keys(max(month_end_exclusive, start), end_day)
+        if daily_keys:
+            daily_res = self._parallel(daily, daily_keys, f"{symbol} index daily klines")
+            frames += [df for df in daily_res.values() if df is not None and not df.empty]
+
+        if not frames:
+            self.log(f"[WARN] {symbol}: no index price klines on Vision; index_close will be 0")
+            return pd.DataFrame(columns=["open_time", "close"])
+
+        df = self._merge_klines(frames)
+        self.log(f"[FETCHER] {symbol}: {len(df):,} index price bars "
+                 f"({pd.to_datetime(df['open_time'].iloc[0], unit='ms', utc=True)} -> "
+                 f"{pd.to_datetime(df['open_time'].iloc[-1], unit='ms', utc=True)})")
+        return df[["open_time", "close"]].reset_index(drop=True)
 
     def fetch_spot_klines(self, symbol: str, start_date: str, now: Optional[datetime] = None) -> pd.DataFrame:
         now = now or datetime.now(timezone.utc)

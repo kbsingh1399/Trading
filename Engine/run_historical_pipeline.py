@@ -389,6 +389,7 @@ def run_pipeline(
         t0 = time.time()
         klines = fetcher.fetch_futures_klines(symbol, warmup_start.strftime("%Y-%m-%d"), end_dt)
         spot = fetcher.fetch_spot_klines(symbol, warmup_start.strftime("%Y-%m-%d"), end_dt)
+        index_klines = fetcher.fetch_index_price_klines(symbol, warmup_start.strftime("%Y-%m-%d"), end_dt)
         metrics = fetcher.fetch_metrics(symbol, effective_start.strftime("%Y-%m-%d"), end_dt)
         funding = fetcher.fetch_funding_rates(symbol, int(warmup_start.timestamp() * 1000))
         log(f"[OK] {symbol}: streams fetched in {time.time() - t0:.1f}s | http={http.stats}")
@@ -414,6 +415,7 @@ def run_pipeline(
             klines, metrics, funding, fp_summary, spot, symbol=symbol,
             export_start_ms=int(effective_start.timestamp() * 1000),
             export_end_ms=int(end_dt.timestamp() * 1000) if end_date_str else None,
+            index_df=index_klines,
         )
         log(f"[OK] {symbol}: {len(master):,} bars x {len(master.columns)} cols computed in {time.time() - t1:.1f}s "
             f"({master['datetime_utc'].iloc[0]} -> {master['datetime_utc'].iloc[-1]})")

@@ -9,10 +9,10 @@ Single source of truth for the dual-table Parquet contract:
 
 Backward compatibility contract
 -------------------------------
-The first 62 entries of CANONICAL_COLUMNS are byte-for-byte identical (name,
+The first 56 entries of CANONICAL_COLUMNS are byte-for-byte identical (name,
 order, dtype) to the legacy schema consumed by quant_strategy_suite.py,
 run_expanding_walkforward_ml.py, trend_orderflow_features.py and the live
-monitor. New features are only ever APPENDED after ``metrics_available``.
+monitor. New features are only ever APPENDED after ``is_imputed_metrics``.
 ================================================================================
 """
 
@@ -95,6 +95,9 @@ CANONICAL_COLUMNS: List[str] = [
     "short_liq_zs",           # float64 rolling-96 z-score of short_liq_usd
     "liq_imbalance_ratio",    # float64 (short - |long|) / (short + |long|) in [-1, 1]
     "is_imputed_metrics",     # int8 1 = ex-post data-quality quarantine (official metrics missing/frozen/imputed, e.g. 2022 API outage or Binance reporting halt). RETROSPECTIVE ONLY: not for contemporaneous live signals.
+    # 15. Index Price (100% Real Binance Vision indexPriceKlines — multi-exchange composite)
+    "index_close",            # float64 Binance index price 15m close; 0.0 if no archive exists for this asset/bar
+    "basis_index_bps",        # float64 (futures_close - index_close) / index_close * 10^4 in basis points; 0.0 when index_close unavailable
 ]
 
 # Backward compatibility aliases

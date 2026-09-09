@@ -333,6 +333,7 @@ def perform_incremental_append(
         # Fetch raw streams for warmup + tail
         klines = fetcher.fetch_futures_klines(symbol, warmup_start_dt.strftime("%Y-%m-%d"), end_dt)
         spot = fetcher.fetch_spot_klines(symbol, warmup_start_dt.strftime("%Y-%m-%d"), end_dt)
+        index_klines = fetcher.fetch_index_price_klines(symbol, warmup_start_dt.strftime("%Y-%m-%d"), end_dt)
         metrics = fetcher.fetch_metrics(symbol, warmup_start_dt.strftime("%Y-%m-%d"), end_dt)
         funding = fetcher.fetch_funding_rates(symbol, int(warmup_start_dt.timestamp() * 1000))
 
@@ -358,6 +359,7 @@ def perform_incremental_append(
             klines, metrics, funding, fp_summary, spot, symbol=symbol,
             export_start_ms=int(warmup_start_dt.timestamp() * 1000),
             export_end_ms=now_ms,
+            index_df=index_klines,
         )
 
         # Extract strictly new bars

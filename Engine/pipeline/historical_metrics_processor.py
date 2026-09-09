@@ -151,6 +151,7 @@ class HistoricalMetricsProcessor:
         symbol: str = "BTCUSDT",
         export_start_ms: Optional[int] = None,
         export_end_ms: Optional[int] = None,
+        index_df: Optional[pd.DataFrame] = None,
     ) -> pd.DataFrame:
         """
         ``export_start_ms``: first bar to keep. Indicators are computed on the
@@ -396,6 +397,24 @@ class HistoricalMetricsProcessor:
         tot = short_liq + np.abs(long_liq)
         out["liq_imbalance_ratio"] = np.divide(short_liq - np.abs(long_liq), tot, out=np.zeros(n), where=tot > 0)
 
+        # ---------------------------------------------------------------- index price (Binance Vision indexPriceKlines)
+        # 100% real multi-exchange composite index — no synthesis, no imputation.
+        # Bars without Vision archive coverage stay NaN here; _finalise converts to 0.0.
+        index_close_arr = np.full(n, np.nan)
+        if index_df is not None and not index_df.empty:
+            idx_frame = pd.DataFrame({"open_time_ms": ot}).merge(
+                index_df.rename(columns={"open_time": "open_time_ms", "close": "_idx_close"})[["open_time_ms", "_idx_close"]],
+                on="open_time_ms", how="left"
+            )
+            index_close_arr = idx_frame["_idx_close"].to_numpy(np.float64)
+            matched = int(np.isfinite(index_close_arr).sum())
+            log(f"[PROCESSOR] {symbol}: index price matched {matched:,}/{n:,} bars ({matched/n*100:.1f}%)")
+        else:
+            log(f"[WARN] {symbol}: no index_df supplied; index_close=0, basis_index_bps=0")
+        out["index_close"] = index_close_arr
+        denom = np.where((index_close_arr <= 0) | ~np.isfinite(index_close_arr), np.nan, index_close_arr)
+        out["basis_index_bps"] = np.where(np.isnan(denom), 0.0, (c - index_close_arr) / denom * 10_000.0)
+
         if export_start_ms is not None:
             keep = out["open_time_ms"].to_numpy() >= int(export_start_ms)
             if not keep.any():
@@ -423,7 +442,7 @@ class HistoricalMetricsProcessor:
     def _finalise(df: pd.DataFrame) -> pd.DataFrame:
         price_cols = ("open", "high", "low", "close", "atr_14", "atr_100", "ema_8", "ema_21", "ema_50", "ema_200",
                       "ema_800", "basis_usd", "session_vah", "session_val", "prev_day_vah", "prev_day_val",
-                      "spot_close", "session_vwap")
+                      "spot_close", "session_vwap", "index_close")
         coin_cols = ("volume_base", "future_cvd_15m", "future_cvd_session", "future_cvd_lifetime", "spot_cvd_15m",
                      "spot_cvd_session", "spot_cvd_lifetime", "open_interest_k", "taker_buy_vol_btc",
                      "taker_sell_vol_btc", "zc_div")
@@ -431,7 +450,7 @@ class HistoricalMetricsProcessor:
                     "avg_trade_size_usd")
         ratio_cols = ("rsi_14", "ls_ratio_global", "ls_ratio_top", "top_account_ratio", "whale_index",
                       "taker_volume_ratio", "vwap_zscore", "volume_ratio", "long_liq_zs",
-                      "short_liq_zs", "liq_imbalance_ratio")
+                      "short_liq_zs", "liq_imbalance_ratio", "basis_index_bps")
         pct_cols = ("funding_rate_pct", "oi_change_pct")
         for cols, dp in ((price_cols, PRICE_DP), (coin_cols, COIN_DP), (usd_cols, USD_DP), (ratio_cols, RATIO_DP), (pct_cols, PCT_DP)):
             for col in cols:
