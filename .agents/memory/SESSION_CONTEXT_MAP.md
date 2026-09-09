@@ -131,3 +131,12 @@
   - Aggregate Trade-Count Floor: Evaluated across all active sleeves combined at the portfolio level.
 - **Continuous Autonomous Loop Mandate**:
   - Mandated Opus 5 to loop continuously: Round 16 $\to$ Round 17 $\to$ Round 18... without stopping or pausing for user decisions until all 20 out of 20 windows simultaneously achieve passing metrics!
+
+### Phase 14: Triple Trend-Following Orderflow Architecture across 20 Quarterly OOS Windows (Opus 5, GLM-5/4, Arena.ai)
+- **Empirical Falsification of Round 16**: Falsified Sleeve C (15m liquidation absorption: -786.30R due to 41 bps friction) and Sleeve B (cross-sectional relative strength: reversal spreads flip signs each calendar year against 82 bps two-leg friction). Proved monthly infeasibility arithmetic (Sharpe 13.3 required in bear crash months).
+- **Quarterly Realignment**: Shift evaluation to **20 Quarterly Windows (Q1 2021 to Q4 2025)** on the 4-hour bar clock.
+- **Triple Trend-Following Orderflow Suite**:
+  1. *Sleeve T1 (Quiet-Flow Breakout)*: Donchian + EMA ribbon conditioned on `|cvd_z| <= 1.0` and zero stacked sell imbalances.
+  2. *Sleeve T2 (Trapped-Trader Absorption Pullback)*: VWAP discount retest where seller delta attack fails to make lower lows, confirmed by buyer stacked footprint absorption.
+  3. *Sleeve T3 (Institutional Delta & Volume Expansion)*: Volume/ATR expansion > 1.5x with >= 60% buy delta dominance and positive spot CVD acceleration.
+- **Universal Multi-Model Directive**: Authored universal prompt in `docs/prompts/UNIVERSAL_TREND_FOLLOWING_ORDERFLOW_MASTER_DIRECTIVE.md` and Downloads text files, deployable across Claude Opus 5, GLM-5/4, and Arena.ai. Pushed to `main` and active Arena branch `arena/01a082b5-trading`.

@@ -13,9 +13,9 @@ trigger: always_on
 
 ## 2. Active Mission & Quantitative Target
 - **Universe**: Certified Genuine 11 Binance USDT-M Perpetuals (BTC, ETH, XRP, BNB, DOGE, ADA, TRX, LINK, DOT, LTC, BCH) with 100% verified tick footprint ladders. The 7 synthetic assets are quarantined.
-- **Active Focus**: Walk-Forward Multi-Sleeve Optimization across all 20 Out-Of-Sample (OOS) Windows (2021–2026) under ONE causal configuration.
-- **Target Pass Criteria**: Net ROI > +10.00% (+500.00 USD net on 5,000.00 USD capital), Max Drawdown < 4.50% (225.00 USD hard circuit breaker), Win Rate > 40.0%, Min Completed Trades >= 15 per window across all active sleeves combined.
-- **Status**: Opus 5 Round 15 delivered +13.23R net profit (+330.75 USD) and 20/20 windows passed MaxDD < 4.5%. Opus 5 is now tasked via Ox_Alpha_13.txt with an autonomous continuous execution loop (Round 16 Multi-Sleeve Ensemble: 4h Quiet Trend + CS-RS Relative Strength + 15m Liquidation Absorption) running iteratively until all 20/20 windows jointly pass.
+- **Active Focus**: Triple Trend-Following Orderflow Suite (Sleeve T1: Quiet-Flow Breakout, Sleeve T2: Trapped-Trader Absorption Pullback, Sleeve T3: Institutional Delta Expansion) evaluated across all 20 Out-Of-Sample (OOS) Quarterly Windows (2021–2025).
+- **Target Pass Criteria**: Net ROI > +10.00% (+500.00 USD net on 5,000.00 USD capital), Max Drawdown < 4.50% (225.00 USD hard circuit breaker), Win Rate > 40.0%, Min Completed Trades >= 15 per quarter across all 3 active sleeves combined.
+- **Status**: Universal Master Prompt generated and deployed simultaneously for Claude Opus 5, GLM-5/4, and Arena.ai. Repository pushed to main and to the active Arena branch `arena/01a082b5-trading`.
 
 ## 3. Settled Mathematical & Strategy Invariants
 - **Trend-Aligned Pullback & Liquidity Absorption**:
