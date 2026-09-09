@@ -1,105 +1,9 @@
 {
-  "ADAUSDT": {
-    "symbol": "ADAUSDT",
-    "passed": true,
-    "master_rows": 210903,
-    "ladder_rows": 2421762,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "APTUSDT": {
-    "symbol": "APTUSDT",
-    "passed": true,
-    "master_rows": 136296,
-    "ladder_rows": 3016809,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "ARBUSDT": {
-    "symbol": "ARBUSDT",
-    "passed": true,
-    "master_rows": 121364,
-    "ladder_rows": 2560290,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "AVAXUSDT": {
-    "symbol": "AVAXUSDT",
-    "passed": true,
-    "master_rows": 208853,
-    "ladder_rows": 5091966,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "BCHUSDT": {
-    "symbol": "BCHUSDT",
-    "passed": true,
-    "master_rows": 210912,
-    "ladder_rows": 1273037,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "BNBUSDT": {
-    "symbol": "BNBUSDT",
-    "passed": true,
-    "master_rows": 210899,
-    "ladder_rows": 1105152,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
   "BTCUSDT": {
     "symbol": "BTCUSDT",
     "passed": true,
-    "master_rows": 210883,
-    "ladder_rows": 1977494,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "DOGEUSDT": {
-    "symbol": "DOGEUSDT",
-    "passed": true,
-    "master_rows": 210901,
-    "ladder_rows": 717108,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "DOTUSDT": {
-    "symbol": "DOTUSDT",
-    "passed": true,
-    "master_rows": 210910,
-    "ladder_rows": 2077871,
+    "master_rows": 672,
+    "ladder_rows": 5548,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",
@@ -110,92 +14,8 @@
   "ETHUSDT": {
     "symbol": "ETHUSDT",
     "passed": true,
-    "master_rows": 210889,
-    "ladder_rows": 2899879,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "LINKUSDT": {
-    "symbol": "LINKUSDT",
-    "passed": true,
-    "master_rows": 210905,
-    "ladder_rows": 1480857,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "LTCUSDT": {
-    "symbol": "LTCUSDT",
-    "passed": true,
-    "master_rows": 210911,
-    "ladder_rows": 1693367,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "NEARUSDT": {
-    "symbol": "NEARUSDT",
-    "passed": true,
-    "master_rows": 206737,
-    "ladder_rows": 5589367,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "OPUSDT": {
-    "symbol": "OPUSDT",
-    "passed": true,
-    "master_rows": 149689,
-    "ladder_rows": 3717836,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "SOLUSDT": {
-    "symbol": "SOLUSDT",
-    "passed": true,
-    "master_rows": 209729,
-    "ladder_rows": 5090130,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "SUIUSDT": {
-    "symbol": "SUIUSDT",
-    "passed": true,
-    "master_rows": 117437,
-    "ladder_rows": 2742669,
-    "agent_status": {
-      "Agent1:Continuity": "PASS",
-      "Agent2:Microstructure": "PASS",
-      "Agent3:Schema": "PASS"
-    },
-    "findings": []
-  },
-  "TRXUSDT": {
-    "symbol": "TRXUSDT",
-    "passed": true,
-    "master_rows": 210905,
-    "ladder_rows": 1208711,
+    "master_rows": 672,
+    "ladder_rows": 5891,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",
@@ -206,8 +26,188 @@
   "XRPUSDT": {
     "symbol": "XRPUSDT",
     "passed": true,
-    "master_rows": 210895,
-    "ladder_rows": 1646665,
+    "master_rows": 672,
+    "ladder_rows": 4896,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "SOLUSDT": {
+    "symbol": "SOLUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 3565,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "BNBUSDT": {
+    "symbol": "BNBUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 3795,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "DOGEUSDT": {
+    "symbol": "DOGEUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 1286,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "ADAUSDT": {
+    "symbol": "ADAUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 2575,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "TRXUSDT": {
+    "symbol": "TRXUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 3118,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "LINKUSDT": {
+    "symbol": "LINKUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 2956,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "AVAXUSDT": {
+    "symbol": "AVAXUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 1095,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "SUIUSDT": {
+    "symbol": "SUIUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 1444,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "NEARUSDT": {
+    "symbol": "NEARUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 2105,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "DOTUSDT": {
+    "symbol": "DOTUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 1183,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "LTCUSDT": {
+    "symbol": "LTCUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 2424,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "BCHUSDT": {
+    "symbol": "BCHUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 2598,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "APTUSDT": {
+    "symbol": "APTUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 987,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "OPUSDT": {
+    "symbol": "OPUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 750,
+    "agent_status": {
+      "Agent1:Continuity": "PASS",
+      "Agent2:Microstructure": "PASS",
+      "Agent3:Schema": "PASS"
+    },
+    "findings": []
+  },
+  "ARBUSDT": {
+    "symbol": "ARBUSDT",
+    "passed": true,
+    "master_rows": 672,
+    "ladder_rows": 1502,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",

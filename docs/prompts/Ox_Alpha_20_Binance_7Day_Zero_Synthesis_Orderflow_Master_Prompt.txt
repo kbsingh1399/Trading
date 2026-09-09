@@ -1,0 +1,106 @@
+# MASTER QUANTITATIVE MISSION PROMPT: ZERO-SYNTHESIS ORDERFLOW & MICROSTRUCTURE
+## VALIDATION & STRATEGY EVALUATION ACROSS THE 18 INSTITUTIONAL BINANCE ASSETS
+## TARGET PLATFORM: CLAUDE OPUS 5 (OX ALPHA / ARENA.AI)
+==============================================================================================================
+
+### 1. MISSION DIRECTIVE & CORE CONSTRAINTS
+You are acting as the Chief Quantitative Architect for an institutional crypto proprietary trading desk. You operate in a brand new chat session with zero memory, zero chat context, and zero external repository access. Every specification, formula, dataset definition, and friction model is self-contained in this prompt.
+
+Your objective is to ingest, analyze, improve, and backtest our Triple Trend-Following Orderflow Strategy Suite on our freshly deployed, 100% genuine, zero-synthesis Binance Market Data dataset across all 18 institutional USDT-M perpetual contracts.
+
+You must:
+1. Ground yourself strictly in the data provenance: zero synthetic footprint rungs, zero interpolated wicks, zero lookahead.
+2. Evaluate the Triple Trend-Following Orderflow Suite (Sleeve T1: Quiet-Flow Breakout, Sleeve T2: Trapped-Trader Absorption Pullback, Sleeve T3: Institutional Delta Expansion) under strict institutional frictions (41.0 bps round-trip execution drag).
+3. Enforce the fixed portfolio risk budget (5,000.00 USD capital, 25.00 USD base risk, 4.50% hard drawdown stop, max 2 concurrent positions).
+4. Verify execution metrics and deliver a drop-in, zero-lookahead strategy configuration that preserves capital and generates consistent risk-adjusted alpha.
+
+==============================================================================================================
+### 2. DATASET PROVENANCE: 100% GENUINE, ZERO-SYNTHESIS MICROSTRUCTURE
+- Universe (18 Institutional Binance USDT-M Perpetuals):
+  BTCUSDT, ETHUSDT, XRPUSDT, SOLUSDT, BNBUSDT, DOGEUSDT, ADAUSDT, TRXUSDT, LINKUSDT, AVAXUSDT, SUIUSDT, NEARUSDT, DOTUSDT, LTCUSDT, BCHUSDT, APTUSDT, OPUSDT, ARBUSDT
+- Current Verification Benchmark Horizon:
+  * Date Range: 2026-09-02 00:00:00 UTC to 2026-09-08 23:45:00 UTC (Trailing 7 complete days).
+  * Total Bars: 12,096 15-minute candles (672 bars per asset, exactly 96 bars/day * 7 days).
+  * Footprint Price Rungs: 47,718 authentic tick-derived rungs across Table 2 (100% genuine aggTrades ticks, ZERO synthetic candles, ZERO synthetic rungs).
+  * Monotonicity & Integrity: 0 missing bars, 0 non-finite values, 0 impossible open interest entries.
+  * Autonomous Verification Council: Verified PASS across all 18 symbols on Continuity, Microstructure, Schema, and Metrics Validity gates.
+
+- Multi-Table Parquet Structure per Asset:
+  * Table 1: {symbol}_15m_master_2020_2026.parquet (672 rows x 56 canonical columns per asset).
+  * Table 2: {symbol}_15m_footprint_ladder.parquet (13 columns: open_time_ms, price_bin, bid_vol_coin, ask_vol_coin, net_delta_coin, total_vol_coin, trade_count, is_poc, is_buy_imbalance, is_sell_imbalance, is_stacked_buy_imb, is_stacked_sell_imb, is_value_area).
+  * Table 3: {symbol}_dataset_manifest.json (Cryptographic SHA-256 audit manifest and schema contract).
+
+==============================================================================================================
+### 3. INSTITUTIONAL EXECUTION & FRICTION MODEL
+- Realistic Exchange Frictions (Mandatory on Every Order):
+  * Taker Fee per side: 8.0 bps (0.0008) = 16.0 bps round-trip
+  * Entry Slippage: 10.0 bps (0.0010)
+  * Stop-Loss Exit Slippage: 15.0 bps (0.0015)
+  * Total Round-Trip Execution Drag: 41.0 bps (0.0041)
+- Portfolio Governor & Risk Budget (Fixed 5,000.00 USD Capital):
+  * Initial Capital: 5,000.00 USD
+  * Base Risk per Trade: 25.00 USD (0.50% equity risk)
+  * Drawdown Defense Risk: 15.00 USD (0.30% equity risk armed when drawdown >= 2.00% / 100.00 USD)
+  * House Money Risk: 50.00 USD (1.00% equity risk unlocked strictly when net profit >= +50.00 USD)
+  * Hard Circuit Breaker (Max Drawdown Limit): 4.50% (225.00 USD hard stop)
+  * Max Concurrent Positions: 2 open positions across all 18 symbols simultaneously
+  * Max Leverage: 10.0x (Max Notional per trade: 25,000.00 USD)
+
+- Target Pass Performance Criteria:
+  1. Net ROI > +10.00% (+500.00 USD net on 5,000.00 USD capital)
+  2. Max Drawdown < 4.50% (225.00 USD hard stop)
+  3. Win Rate > 40.0%
+  4. Completed Trades >= 15 per evaluation period across active sleeves
+
+==============================================================================================================
+### 4. THE TRIPLE TREND-FOLLOWING ORDERFLOW SUITE
+
+#### Sleeve T1: Quiet-Flow Breakout (Volatility Contraction -> Orderbook Expansion)
+- Core Premise: Extended volatility contraction (NR7 / low volume / tight spread) precedes institutional directional expansion.
+- Macro Filter: 200 EMA slope positive (ema_200[t] >= ema_200[t-12] over 3 hours) for longs; negative for shorts.
+- Micro Trigger: Range contraction (ATR_14 / ATR_100 < 0.75) followed by aggressive taker volume breakout (volume_ratio > 1.8) and directional CVD acceleration.
+- Invalidation: Stop placed at opposite boundary of the consolidation range.
+
+#### Sleeve T2: Trapped-Trader Absorption Pullback (Discount Liquidity Sweeps)
+- Core Premise: Aggressive breakout traders get trapped at key swing extremes; smart money absorbs liquidity into resting limit orders.
+- Macro Filter: Price trading above 200 EMA and 800 EMA on higher timeframe.
+- Micro Trigger:
+  * Longs: Previous Day Low (PDL) or Session Low sweep with immediate reclaim, extreme VWAP Z-score < -0.5, Spot CVD divergence zc_div > 0.8 (spot buying while futures dumping).
+  * Shorts: Previous Day High (PDH) sweep with immediate rejection, VWAP Z-score > +0.5, Spot CVD divergence zc_div < -0.8.
+  * Squeeze Protection: Strictly veto any short if short_liq_zs >= 1.0 (active short squeeze).
+
+#### Sleeve T3: Institutional Delta Expansion (Footprint Cluster Surges)
+- Core Premise: Stacked diagonal aggressive order imbalances (>= 3:1 ratio across 3+ consecutive price bins) confirm institutional initiative flow.
+- Micro Trigger: Real-time stacked buy imbalances (is_stacked_buy_imb == 1) occurring near Value Area Low (VAL) or session VWAP.
+- Invalidation: Bar closes below the lowest rung of the stacked imbalance cluster.
+
+#### Microstructure Piecewise Exit Ratchet (Anti-Retracement Invariant)
+To eliminate the win-rate retracement trap where winning trades turn into full stop-outs:
+- Phase 0 (Breakeven Lock): At +0.80R price gain, move stop-loss to Entry +0.15R (guarantees profit clearing 41.0 bps round-trip friction).
+- Phase 1 (Profit Lock): At +1.50R price gain, move stop-loss to Entry +0.80R.
+- Profit Target: Exit at +2.50R (purged legacy unrealistic 5R targets that retrace).
+- Time Decay Exit: Exit at market if trade fails to gain +0.20R within 24 bars (6 hours).
+
+==============================================================================================================
+### 5. INSTITUTIONAL GIT CODEBASE REPOSITORY REFERENCES
+Fetch and review the unabridged production implementations directly from GitHub (branch: main):
+- Repository: https://github.com/kbsingh1399/Trading.git
+- Data Schema Contract:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/schema.py
+- Canonical Mathematical Indicators:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/canonical_indicators.py
+- Mathematical Liquidation Model:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/mathematical_liquidation_engine.py
+- Master Historical Pipeline:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_historical_pipeline.py
+- Verification Council:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/verification/verify_parquet_integrity.py
+- Baseline Strategy Engine:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine_2/s1_liquidation_cascade.py
+
+==============================================================================================================
+### 6. REQUIRED OUTPUT & DELIVERABLES
+Deliver a rigorous, production-grade analysis and executable Python module:
+1. Microstructure Analysis: Empirical evaluation of the 100% genuine tick footprint ladders across all 18 assets.
+2. Unified Strategy Implementation: Provide the clean, single-file Python strategy module executing Sleeves T1, T2, and T3 under the exact portfolio governor rules.
+3. Performance Scorecard: Detailed trade logs, win rate, profit factor, max drawdown in USD and percentage, and net ROI after full 41.0 bps frictions.

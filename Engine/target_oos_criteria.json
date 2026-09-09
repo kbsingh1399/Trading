@@ -4,11 +4,14 @@
     "max_dd_percent": 5.0,
     "min_winrate_percent": 40.0,
     "min_r_multiple": 4,
-    "min_trades": 15
+    "min_trades": 15,
+    "risk_per_trade_percent": 1.0,
+    "initial_capital_usd": 5000.0,
+    "base_risk_usd": 50.0
   },
   "execution_mode": {
     "parallel_assets": true,
-    "total_assets": 18,
+    "total_assets": 11,
     "optimization_mode": "individual_asset_best"
   }
 }

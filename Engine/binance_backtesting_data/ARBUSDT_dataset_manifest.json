@@ -1,10 +1,10 @@
 {
   "symbol": "ARBUSDT",
   "timeframe": "15m",
-  "total_rows": 121364,
-  "expected_rows": 121364,
-  "expected_start_ms": 1679583600000,
-  "expected_end_ms": 1788810300000,
+  "total_rows": 672,
+  "expected_rows": 672,
+  "expected_start_ms": 1788307200000,
+  "expected_end_ms": 1788911999999,
   "columns": [
     "open_time_ms",
     "close_time_ms",
@@ -64,46 +64,39 @@
     "is_imputed_metrics"
   ],
   "column_count": 56,
-  "start_time_utc": "2023-03-23 15:00:00",
-  "end_time_utc": "2026-09-07 19:45:00",
-  "exported_at_utc": "2026-09-07T20:04:26.647845+00:00",
+  "start_time_utc": "2026-09-02 00:00:00",
+  "end_time_utc": "2026-09-08 23:45:00",
+  "exported_at_utc": "2026-09-09T20:22:55.209212+00:00",
   "master_file": "ARBUSDT_15m_master_2020_2026.parquet",
-  "master_sha256": "03785f774defd67a6d3aeb711184ad4812a0c4ec5911763a30dc5c51a71107b6",
-  "master_size_mb": 43.32,
+  "master_sha256": "72f313b73ab8fff4eb3be2afb58def12b19b8a87fe2e2f89cc8318673a1f3b87",
+  "master_size_mb": 0.28,
   "ladder_file": "ARBUSDT_15m_footprint_ladder.parquet",
-  "ladder_sha256": "5ed5d947fcb6982f923b13b5b18cc1cc1d2042cc37f85057276d729d2e7107dd",
-  "ladder_size_mb": 10.91,
+  "ladder_sha256": "5895fb0e6e61eb12fbd7fe4e45ada12748ce71b78116ae3920092b4d8cf9cf02",
+  "ladder_size_mb": 0.07,
   "ladder": {
-    "candles": 121176,
-    "tick_exact_candles": 121176,
+    "candles": 672,
+    "tick_exact_candles": 672,
     "synthetic_candles": 0,
-    "total_rungs": 2560290,
-    "tick_rungs": 2560290,
+    "total_rungs": 1502,
+    "tick_rungs": 1502,
     "synthetic_rungs": 0
   },
   "provenance": {
-    "tick_exact_bars": 121176,
-    "spot_exact_bars": 121364,
-    "imputed_metrics_bars": 35,
-    "metrics_archive_absent_months": [
-      "2026-09"
-    ],
-    "metrics_archive_absent_days": [
-      "2026-09-07"
-    ],
-    "metrics_archive_absent_day_count": 1,
+    "tick_exact_bars": 672,
+    "spot_exact_bars": 672,
+    "imputed_metrics_bars": 0,
+    "metrics_archive_absent_months": [],
+    "metrics_archive_absent_days": [],
+    "metrics_archive_absent_day_count": 0,
     "metrics_unavailable_fraction_by_year": {
-      "2023": 0.0002,
-      "2024": 0.0006,
-      "2025": 0.0002,
       "2026": 0.0
     }
   },
   "verification": {
     "symbol": "ARBUSDT",
     "passed": true,
-    "master_rows": 121364,
-    "ladder_rows": 2560290,
+    "master_rows": 672,
+    "ladder_rows": 1502,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",

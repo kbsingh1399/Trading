@@ -1,10 +1,10 @@
 {
   "symbol": "APTUSDT",
   "timeframe": "15m",
-  "total_rows": 136296,
-  "expected_rows": 136296,
-  "expected_start_ms": 1666144800000,
-  "expected_end_ms": 1788810300000,
+  "total_rows": 672,
+  "expected_rows": 672,
+  "expected_start_ms": 1788307200000,
+  "expected_end_ms": 1788911999999,
   "columns": [
     "open_time_ms",
     "close_time_ms",
@@ -64,47 +64,39 @@
     "is_imputed_metrics"
   ],
   "column_count": 56,
-  "start_time_utc": "2022-10-19 02:00:00",
-  "end_time_utc": "2026-09-07 19:45:00",
-  "exported_at_utc": "2026-09-07T20:03:56.972602+00:00",
+  "start_time_utc": "2026-09-02 00:00:00",
+  "end_time_utc": "2026-09-08 23:45:00",
+  "exported_at_utc": "2026-09-09T20:22:27.530966+00:00",
   "master_file": "APTUSDT_15m_master_2020_2026.parquet",
-  "master_sha256": "3944656e6f80c3ce414e181d489a3814ea22cc9d1599606aa4f57c9e452186c7",
-  "master_size_mb": 49.36,
+  "master_sha256": "e6e804013f8cd7bff2cce2aaee5a55e08821944ff3ce06c21438eb501679c451",
+  "master_size_mb": 0.27,
   "ladder_file": "APTUSDT_15m_footprint_ladder.parquet",
-  "ladder_sha256": "db83f7fc2911b28f33bccc4ed1dece5c30769a660ddade7a31a158c15e1b8bb8",
-  "ladder_size_mb": 11.88,
+  "ladder_sha256": "701cf639586f003bf72f33fdc2f27317ec78562f56d05654e4c5f5d3bc5559de",
+  "ladder_size_mb": 0.04,
   "ladder": {
-    "candles": 136107,
-    "tick_exact_candles": 136107,
+    "candles": 672,
+    "tick_exact_candles": 672,
     "synthetic_candles": 0,
-    "total_rungs": 3016809,
-    "tick_rungs": 3016809,
+    "total_rungs": 987,
+    "tick_rungs": 987,
     "synthetic_rungs": 0
   },
   "provenance": {
-    "tick_exact_bars": 136107,
-    "spot_exact_bars": 136296,
-    "imputed_metrics_bars": 5465,
-    "metrics_archive_absent_months": [
-      "2026-09"
-    ],
-    "metrics_archive_absent_days": [
-      "2026-09-07"
-    ],
-    "metrics_archive_absent_day_count": 1,
+    "tick_exact_bars": 672,
+    "spot_exact_bars": 672,
+    "imputed_metrics_bars": 0,
+    "metrics_archive_absent_months": [],
+    "metrics_archive_absent_days": [],
+    "metrics_archive_absent_day_count": 0,
     "metrics_unavailable_fraction_by_year": {
-      "2022": 0.7652,
-      "2023": 0.0001,
-      "2024": 0.0006,
-      "2025": 0.0002,
       "2026": 0.0
     }
   },
   "verification": {
     "symbol": "APTUSDT",
     "passed": true,
-    "master_rows": 136296,
-    "ladder_rows": 3016809,
+    "master_rows": 672,
+    "ladder_rows": 987,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",
