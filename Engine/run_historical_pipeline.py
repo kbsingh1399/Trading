@@ -94,7 +94,7 @@ def existing_output_is_current(target_dir: str, symbol: str, max_age_hours: floa
             manifest_data = json.load(fh)
         if not manifest_data.get("verification", {}).get("passed", False):
             return False
-        if manifest_data.get("schema_version") != "2.1":
+        if manifest_data.get("schema_version") != "2.2":
             return False
         if manifest_data.get("master_file") != os.path.basename(mpath):
             return False
@@ -209,7 +209,7 @@ def cleanup_symbol_raw_cache(cache_dir: str, symbol: str, log: Callable[[str], N
     base_lower = sym_lower[:-4] if sym_lower.endswith(("usdt", "usdc")) else sym_lower
     targets = {sym_lower, f"{base_lower}usdt", f"{base_lower}usdc"}
 
-    protected_subdirs = {"funding", "footprint"}
+    protected_subdirs = {"funding", "footprint", "index_klines_15m"}
 
     for root, dirs, files in os.walk(cache_dir):
         # Do not recurse into or inspect protected persistent cache subdirectories

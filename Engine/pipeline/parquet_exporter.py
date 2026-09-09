@@ -178,7 +178,7 @@ class ParquetExporter:
                 } if "datetime_utc" in master and "is_imputed_metrics" in master else {},
             },
             "verification": verification,
-            "schema_version": "2.1",
+            "schema_version": "2.2",
         }
         path = self.manifest_path(symbol)
         tmp = path + ".tmp"
@@ -273,7 +273,7 @@ class ParquetExporter:
                     } if "datetime_utc" in clean_master and "is_imputed_metrics" in clean_master else {},
                 },
                 "verification": verification or {},
-                "schema_version": "2.1",
+                "schema_version": "2.2",
             }
 
             with open(staging_man_path, "w", encoding="utf-8") as fh:

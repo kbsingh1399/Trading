@@ -328,7 +328,7 @@ def test_orchestrator_end_to_end():
             assert np.isin(l["open_time_ms"].unique(), m["open_time_ms"].to_numpy()).all()
             import json
             man = json.load(open(os.path.join(d, "DOGEUSDT_dataset_manifest.json")))
-            assert man["verification"]["passed"] and man["schema_version"] in ("2.0", "2.1")
+            assert man["verification"]["passed"] and man["schema_version"] in ("2.0", "2.1", "2.2")
             # fast-skip honours the contract (fresh file -> skip); age check ignored by passing a huge window
             assert rp.existing_output_is_current(d, "DOGEUSDT", max_age_hours=1e9)
             # malformed ladder (missing is_value_area) must NOT be skipped
