@@ -41762,3 +41762,12 @@ User confirmed the criteria file's 4R target and 15 minimum trades; current file
      * Deploy Two-Sided Symmetric Trend-Following (Short quiet-flow breakdown and short delta momentum expansion during 4h EMA 50 < EMA 200 bear regimes) plus Macro Bear Long Veto to eliminate 2022 bear market drawdowns.
      * Enforce dimensionless relative volume priority ranking (v / mean20(v)) and Config F anti-suffocation ratchets (+1.20R -> +0.30R / +2.20R -> +1.10R / +3.50R -> +2.40R, TP 6.0R).
    - Synchronized 'C:\Users\SIGMA\Downloads\MASTER_PROMPT.txt' and 'docs/prompts/MASTER_PROMPT.md', committed (6f21c3b), and pushed to origin main and origin arena/01a082b5-trading.
+
+---
+**Turn Update (2026-09-09T16:20:00 IST):**
+1. **Opus 5 Round 18 Delivery & Local Verification:**
+   - User provided Opus 5 Round 18 deliverables: 'rp3_trend_following_orderflow_engine (2).py', 'rp3_round18_oos_scorecard.csv', 'RP3_ROUND18_REPORT.md'.
+   - Local verification confirmed: 36/36 institutional invariants PASS.
+   - Major breakthrough: Strategy achieved overall 5-year profitability of +2,050.26 USD (+41.0% on 5,000.00 USD capital, +75.12 R, 46.5% WR, 550 trades) under full 41 bps exchange frictions.
+   - Root-cause autopsy: Identified the mathematical feasibility ratio (netR / maxDD_R > 2.2222) and diagnosed why 6 quarters failed (T3-SHORT firing during Q4 2024 bull run, long whipsaws during 2022 bear rallies).
+   - Formulated Round 19 causal regime cures: BTC macro trend anchoring and cross-asset breadth filtering.
