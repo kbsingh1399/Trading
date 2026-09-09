@@ -41751,3 +41751,14 @@ User confirmed the criteria file's 4R target and 15 minimum trades; current file
      * Part V: Marcos Lopez de Prado Meta-Labeling, Triple-Barrier labeling, fractional differentiation, CPCV, and integrated skill compendium (quant-analyst, ML training, feature engineering, backtesting, risk, Karpathy guidelines, clean code).
      * Part VI: The 14 executable institutional invariants and self-test checkpoints.
    - Archived master copy in 'docs/specs/INSTITUTIONAL_QUANT_KNOWLEDGE_PACK.md'.
+
+---
+**Turn Update (2026-09-09T16:03:00 IST):**
+1. **Round 18 Non-Stop Mandate & Causal Cure Deployment for Opus 5:**
+   - User command: 'ask opus not to stop all 20/20 pass..strict mandate'.
+   - Categorically rejected target relaxation to +2.00% ROI; strictly mandated Opus to run continuous iterative causal re-optimization until all 20/20 quarterly OOS windows simultaneously pass: Net ROI > +10.00% (+500.00 USD), MaxDD < 4.50% (225.00 USD), WR > 40.0%, Trades >= 15.
+   - Encoded direct mathematical cures for Opus's Round 17 post-mortem findings:
+     * Purge/re-engineer Sleeve T2 (low-drift slot hog) to prevent starving T1 and T3.
+     * Deploy Two-Sided Symmetric Trend-Following (Short quiet-flow breakdown and short delta momentum expansion during 4h EMA 50 < EMA 200 bear regimes) plus Macro Bear Long Veto to eliminate 2022 bear market drawdowns.
+     * Enforce dimensionless relative volume priority ranking (v / mean20(v)) and Config F anti-suffocation ratchets (+1.20R -> +0.30R / +2.20R -> +1.10R / +3.50R -> +2.40R, TP 6.0R).
+   - Synchronized 'C:\Users\SIGMA\Downloads\MASTER_PROMPT.txt' and 'docs/prompts/MASTER_PROMPT.md', committed (6f21c3b), and pushed to origin main and origin arena/01a082b5-trading.
