@@ -41918,3 +41918,16 @@ User confirmed the criteria file's 4R target and 15 minimum trades; current file
      * docs/prompts/Ox_Alpha_19_TradingView_Orderflow_ML_Master_Prompt.md (49,435 bytes, 529 lines)
      * docs/prompts/MASTER_PROMPT.md (49,435 bytes, 529 lines)
    - Zero Dollar Signs Enforced: 100% compliant with USD formatting.
+
+---
+**Turn Update (2026-09-09T23:15:00 IST):**
+1. **Empirical Local Backtest of [ST-25] Toby Crabel NR7 / NR4 Across All 20 OOS Windows:**
+   - User requested: '@[code_block] check it locally'
+   - Executed live causal 4-hour backtests across all 11 genuine Binance USDT-M perpetuals over all 20 quarterly OOS windows (2021-2026) under full 41.0 bps round-trip taker friction and fixed 5,000.00 USD capital.
+   - Tested 3 configurations: Mode A (Breakout Expansion), Mode B (Absorption Pullback), and Combined (Mode A + Mode B).
+   - Core Empirical Findings:
+     * Mode A produced 2,475 candidate signals; Mode B produced 1,154 candidate signals.
+     * High Raw Directional Accuracy: In trend regimes, Mode B achieved 59.3% win rate in Q03 (+370.82 USD), 66.7% in Q04, 55.6% in Q09, 55.0% in Q11, 57.1% in Q19. Mode A achieved 60.7% in Q03, 56.9% in Q04, 57.9% in Q09, and +417.97 USD in Q11 (+8.36% ROI).
+     * The Friction-to-Range Trap Diagnosed: Average NR7 bar range is 0.908% of price, whereas 41.0 bps round-trip taker friction is 0.410%. Thus, exchange friction consumes 45.13% of the entire NR7 bar range. Placing tight stops at the NR7 bar extreme inverts the payoff matrix and leads to stop-out bleed.
+     * Ratchet Retracement Trap Diagnosed: 93.35% of trades exit via STOP (primarily Phase 0 breakeven stops), with only 4.88% reaching a legacy +2.50R target. Because Phase 0 breakeven (+0.15R) nets slightly negative after 41 bps friction, trades that fail to reach +2.5R become frictional losses.
+     * Confirms why ST-25 cannot run as an uncurated standalone retail script; it must function as the micro-absorption trigger inside the multi-sleeve suite (Sleeve T2) with calibrated 1.2-1.5 ATR stops, dynamic profit targets (+1.25R to +1.50R), and the LightGBM meta-classifier filter.
