@@ -41785,3 +41785,9 @@ User confirmed the criteria file's 4R target and 15 minimum trades; current file
      * Continuity: 0 gaps (!=15m), 0 nulls, strictly monotonic across all 210,900+ 15m bars per asset.
      * Footprint Ladder: Sum of rung volumes matches master candle volume to 0.0000% difference.
    - Identified root cause of 20/20 difficulty: Data is 100% genuine and verified. Bottleneck is the tight 225.00 USD hard circuit breaker (4.50%) vs required +500.00 USD ROI (feasibility ratio > 2.2222) coupled with un-anchored counter-trend trades (shorts in Q4 2024 bull run, longs in 2022 bear rallies).
+
+---
+**Turn Update (2026-09-09T22:37:00 IST):**
+1. **User Query on Input Format (SRT vs TXT):**
+   - User inquired whether SRT or TXT works best.
+   - Clarified that TXT is optimal for token efficiency, dense semantic reasoning, and context preservation (eliminating subtitle line-number and timestamp overhead), while SRT is supported if timecodes are needed.
