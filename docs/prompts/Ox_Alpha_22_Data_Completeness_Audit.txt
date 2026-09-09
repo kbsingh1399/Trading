@@ -1,0 +1,179 @@
+================================================================================
+OX ALPHA 22 — BINANCE VISION DATA COMPLETENESS AUDIT
+QUESTION: Is our current dataset complete, or are any genuine Binance Vision
+          feeds missing that would meaningfully improve signal quality?
+Repository: https://github.com/kbsingh1399/Trading.git (branch: main)
+Generated: 2026-09-10T02:00 IST
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 1 — READ THESE TWO FILES FIRST. DO NOT WRITE ANY CODE BEFORE READING THEM.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FILE A — Pipeline entry point (what feeds are currently fetched & how):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_historical_pipeline.py
+
+FILE B — Core fetcher (the actual download functions for each Binance Vision feed):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/binance_historical_fetcher.py
+
+Read both files completely before proceeding.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 2 — WHAT IS CURRENTLY IN OUR DATASET
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Universe: 18 Binance USDT-M Perpetuals
+  BTC, ETH, XRP, SOL, BNB, DOGE, ADA, TRX, LINK, AVAX,
+  SUI, NEAR, DOT, LTC, BCH, APT, OP, ARB
+
+Current 56-column master table per symbol contains data from these feeds:
+
+  FEED                          SOURCE                              STATUS
+  ─────────────────────────────────────────────────────────────────────────
+  Futures 15m klines            data.binance.vision + fapi REST     LIVE
+  Spot 15m klines               data.binance.vision + api REST      LIVE
+  Futures official metrics      data.binance.vision daily archives  LIVE
+    (open_interest, ls_ratio, taker_ratio)
+  Funding rate history          fapi /fapi/v1/fundingRate           LIVE
+  Futures aggTrades (footprint) data.binance.vision monthly/daily   LIVE
+  Spot aggTrades (spot CVD)     data.binance.vision monthly/daily   LIVE
+  Premium index klines          fapi /fapi/v1/premiumIndexKlines    LIVE
+  Mark price klines             fapi /fapi/v1/markPriceKlines       LIVE
+  UM liquidation snapshots      data.binance.vision daily           LIVE
+
+These are the 56 columns currently computed from the above:
+  open_time_ms, close_time_ms, datetime_utc, symbol,
+  open, high, low, close, volume_base, volume_quote, volume_sma9, trade_count,
+  rsi_14, atr_14, atr_100, ema_8, ema_21, ema_50, ema_200, ema_800,
+  future_cvd_15m, future_cvd_session, future_cvd_lifetime,
+  spot_cvd_15m, spot_cvd_session, spot_cvd_lifetime,
+  funding_rate_pct, basis_usd,
+  open_interest_k, open_interest_usd, oi_change_pct,
+  long_liq_usd, short_liq_usd,
+  ls_ratio_global, ls_ratio_top, top_account_ratio,
+  whale_index, taker_volume_ratio,
+  session_vah, session_val, prev_day_vah, prev_day_val,
+  taker_buy_count, taker_sell_count,
+  taker_buy_vol_{base}, taker_sell_vol_{base},
+  avg_trade_size_usd, spot_close,
+  session_vwap, vwap_zscore, volume_ratio,
+  zc_div, long_liq_zs, short_liq_zs, liq_imbalance_ratio,
+  is_imputed_metrics
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 3 — COMPLETE BINANCE VISION FEED INVENTORY (WHAT EXISTS AT data.binance.vision)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Binance Vision hosts the following feed types (verify at https://data.binance.vision):
+
+  FUTURES (USDT-M) — futures/um/
+    klines/{SYMBOL}/{interval}/         ← already using
+    aggTrades/{SYMBOL}/                 ← already using (footprint)
+    trades/{SYMBOL}/                    ← individual raw trades (NOT same as aggTrades)
+    premiumIndexKlines/{SYMBOL}/{int}/  ← basis/premium
+    markPriceKlines/{SYMBOL}/{int}/     ← mark price
+    liquidationSnapshot/{SYMBOL}/       ← already using
+    indexPriceKlines/{SYMBOL}/{int}/    ← underlying index price (BTCUSD, not BTCUSDT)
+    metrics/{SYMBOL}/                   ← OI, LS ratio, taker ratio — already using
+
+  SPOT — spot/
+    klines/{SYMBOL}/{interval}/         ← already using (spot_close, spot CVD)
+    aggTrades/{SYMBOL}/                 ← already using (spot CVD)
+    trades/{SYMBOL}/                    ← individual raw spot trades
+    bookTicker/ (via REST only, not Vision archive)
+
+  COIN-M (cm/) — supplementary, not in primary universe
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 4 — YOUR TASK: GAP ANALYSIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+After reading both files, answer exactly these questions:
+
+QUESTION 1 — TRADES vs AGGTRADES
+  We use aggTrades (compressed, same-price-same-ms grouping) for footprint rungs.
+  Binance Vision also has raw trades/ (every individual execution).
+  Would switching footprint rung construction from aggTrades to raw trades
+  meaningfully improve footprint accuracy for our 15m bars?
+  Or is aggTrades sufficient given our 15m timeframe?
+  Give a concrete quantitative answer (e.g., avg aggTrade compression ratio per bar).
+
+QUESTION 2 — INDEX PRICE KLINES
+  We currently do NOT ingest indexPriceKlines (the underlying spot index,
+  e.g., .BTCUSDT index, not the futures mark price).
+  Would this add any column not already computed from our existing feeds?
+  Specifically: is basis_usd currently computed as (futures_close - spot_close)
+  or as (futures_mark - index_price)?
+  Check in the fetcher code which formula is actually used.
+  If indexPriceKlines would improve basis accuracy — propose the exact columns to add.
+
+QUESTION 3 — FUNDING RATE ARCHIVE
+  We currently use the fapi REST endpoint for funding rates (paginated, cached).
+  Binance Vision also has a fundingRate archive under futures/um/.
+  Check if the fetcher already uses the Vision archive or is still REST-only.
+  If REST-only: would switching to Vision archives (which go back further) fill
+  any historical gaps for pre-2021 data?
+
+QUESTION 4 — COIN-M LIQUIDATIONS (cm/)
+  We currently pull liquidations from USDT-M (um/) only.
+  Binance Vision also has cm/liquidationSnapshot for COIN-M.
+  For our 18 UM perpetuals, would cm/ liquidations add meaningful signal
+  that is NOT already captured in our long_liq_zs / short_liq_zs columns?
+  Or is cm/ liquidation data effectively a duplicate for our universe?
+
+QUESTION 5 — DATA QUALITY OF CURRENT DATASET
+  Load the verification_report.json from:
+    https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/binance_backtesting_data/verification_report.json
+  Confirm all 18 assets show:
+    passed: true
+    Agent1:Continuity: PASS
+    Agent2:Microstructure: PASS
+    Agent3:Schema: PASS
+    synthetic_candles: 0
+    synthetic_rungs: 0
+  Flag any asset that does NOT meet all of the above.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 5 — REQUIRED OUTPUT FORMAT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Output one section per question:
+
+  Q1 [TRADES vs AGGTRADES]: KEEP / UPGRADE
+    Reasoning: ...
+    If UPGRADE: exact function change needed in binance_historical_fetcher.py
+
+  Q2 [INDEX PRICE KLINES]: ADD / SKIP
+    Reasoning: ...
+    If ADD: exact new column name(s) and formula
+
+  Q3 [FUNDING RATE ARCHIVE]: ALREADY DONE / SWITCH TO VISION / KEEP REST
+    Reasoning: ...
+    If SWITCH: function to modify in binance_historical_fetcher.py
+
+  Q4 [CM LIQUIDATIONS]: ADD / SKIP
+    Reasoning: ...
+    If ADD: exact merge logic with existing long_liq_zs
+
+  Q5 [DATA QUALITY]: ALL PASS / FLAG
+    List any flagged assets with specific failure reason.
+
+Then a final one-line summary:
+  "Dataset is complete. No additional feeds needed."
+  OR
+  "Dataset needs: [feed1], [feed2]. Estimated new columns: [n]."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONSTRAINTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- ZERO SYNTHESIS: Do not recommend any feed that would require imputation,
+  interpolation, or proxy computation. Genuine data only.
+- ZERO DOLLAR SIGNS in output. Always write USD.
+- Base your answers strictly on what you read in the two fetcher files above.
+  Do not guess or use prior knowledge without cross-checking against the code.
+- If a feed is already integrated, say so explicitly rather than recommending it.
+
+================================================================================
+END OF OX ALPHA 22 PROMPT
+================================================================================
