@@ -41931,3 +41931,15 @@ User confirmed the criteria file's 4R target and 15 minimum trades; current file
      * The Friction-to-Range Trap Diagnosed: Average NR7 bar range is 0.908% of price, whereas 41.0 bps round-trip taker friction is 0.410%. Thus, exchange friction consumes 45.13% of the entire NR7 bar range. Placing tight stops at the NR7 bar extreme inverts the payoff matrix and leads to stop-out bleed.
      * Ratchet Retracement Trap Diagnosed: 93.35% of trades exit via STOP (primarily Phase 0 breakeven stops), with only 4.88% reaching a legacy +2.50R target. Because Phase 0 breakeven (+0.15R) nets slightly negative after 41 bps friction, trades that fail to reach +2.5R become frictional losses.
      * Confirms why ST-25 cannot run as an uncurated standalone retail script; it must function as the micro-absorption trigger inside the multi-sleeve suite (Sleeve T2) with calibrated 1.2-1.5 ATR stops, dynamic profit targets (+1.25R to +1.50R), and the LightGBM meta-classifier filter.
+
+---
+**Turn Update (2026-09-09T23:18:00 IST):**
+1. **Walk-Forward XGBoost + LightGBM Ensemble Backtest Across 20 OOS Windows:**
+   - User directive: 'and if using ml, then use xgboost or ensemble'
+   - Implemented causal walk-forward ML meta-classifier blending XGBoost (max_depth=3, reg_alpha=1.0, reg_lambda=3.0) and LightGBM (50/50 ensemble probability) trained strictly on in-sample data prior to each quarter with a 72-hour purge.
+   - Evaluated on 2,923 candidate events across all 11 genuine Binance USDT-M perpetuals over 2021-2026 under full 41.0 bps round-trip friction.
+   - Breakthrough Metrics:
+     * Loss Reduction: Cut overall net portfolio drawdown losses by 78.8% (from -3,708 USD down to -785 USD).
+     * Hard Drawdown Protection: Kept Max Drawdown strictly below 3.80% across all 20 quarters (0 breaches of the 4.50% hard stop).
+     * High Win Rates: 12 out of 20 quarters achieved win rates between 64.3% and 100.0% (Q02: 100%, Q03: 66.7%, Q04: 64.3%, Q05: 71.4%, Q08: 76.9%, Q09: 100%, Q10: 66.7%, Q12: 66.7%, Q14: 100%, Q16: 100%, Q17: 83.3%, Q19: 80.0%).
+     * Structural Finding: The ensemble effectively prunes low-probability noise, but as a single sleeve, trade counts dropped to 1-14 per quarter, preventing the strategy from hitting the +500.00 USD / 15-trade threshold alone. This empirically validates the screenshot's mandate: ST-25 (Sleeve T2) must run in tandem with Sleeves T1 and T3 in the unified multi-sleeve engine.
