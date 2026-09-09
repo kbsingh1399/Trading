@@ -41812,3 +41812,10 @@ User confirmed the criteria file's 4R target and 15 minimum trades; current file
      * 15m resolution is an empirical capital incinerator in crypto: 41 bps friction across 10,219 trades destroys the edge.
      * Counter-trend pullback buying into 'discount' acts as a falling knife during secular bear cascades.
      * Proves why Opus 5's 4-Hour clock, trend expansion sleeves (T1/T3), and strict selectivity (550 trades over 5 years netting +2,050.26 USD) are mathematically mandatory.
+
+---
+**Turn Update (2026-09-09T22:43:00 IST):**
+1. **Edge Evaluation on Retail AR Model:**
+   - User asked: 'so ther is no edge in his strategy..right?'
+   - Clarified that as a mechanical, systematic trading strategy in crypto perpetuals, it has ZERO edge (in fact, heavy negative expectancy of -0.65 R/trade).
+   - Detailed why: retail orderflow concepts rely on discretionary human filtering and CME equity index microstructure (1-2 bps friction); when mechanized on crypto perpetuals with 41 bps friction, it produces severe overtrading and death by liquidation cascades. Edge only exists when conditioned on macro trend regimes and higher timeframe (4h) friction amortization.
