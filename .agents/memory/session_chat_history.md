@@ -41943,3 +41943,18 @@ User confirmed the criteria file's 4R target and 15 minimum trades; current file
      * Hard Drawdown Protection: Kept Max Drawdown strictly below 3.80% across all 20 quarters (0 breaches of the 4.50% hard stop).
      * High Win Rates: 12 out of 20 quarters achieved win rates between 64.3% and 100.0% (Q02: 100%, Q03: 66.7%, Q04: 64.3%, Q05: 71.4%, Q08: 76.9%, Q09: 100%, Q10: 66.7%, Q12: 66.7%, Q14: 100%, Q16: 100%, Q17: 83.3%, Q19: 80.0%).
      * Structural Finding: The ensemble effectively prunes low-probability noise, but as a single sleeve, trade counts dropped to 1-14 per quarter, preventing the strategy from hitting the +500.00 USD / 15-trade threshold alone. This empirically validates the screenshot's mandate: ST-25 (Sleeve T2) must run in tandem with Sleeves T1 and T3 in the unified multi-sleeve engine.
+
+---
+**Turn Update (2026-09-09T23:23:00 IST):**
+1. **Walk-Forward Tabular ResNet-MLP Neural Network Backtest Across 20 OOS Windows:**
+   - Evaluated a PyTorch Tabular ResNet-MLP (2 Residual Blocks with LayerNorm, GELU, and Dropout 0.25) across all 20 OOS windows on 2,923 candidate events.
+   - Result: ResNet-MLP achieved consistent 55.0% to 66.7% win rates across 15 quarters with healthy trade density (14-48 trades/quarter), but produced Net PnL of -3,426.30 USD.
+   - Contrast with XGBoost/LightGBM Ensemble: Confirmed that for tabular orderflow features, GBDT ensembles significantly outperform neural networks (-785 USD vs -3,426 USD) because tree splits handle discrete orderflow thresholds (e.g. delta_z > 1.2, zc_div > 0.8) without being distorted by gradient descent over noisy continuous spaces.
+2. **Forensic Evaluation of Google's TimesFM-3 for Algorithmic Trading:**
+   - User inquiry: 'Meanwhile, find out if we could use timesfm3 google for trading'
+   - Architectural Profile: Google Research's 200M-500M parameter decoder-only Transformer foundation model for time-series forecasting, with TimesFM-3 introducing native multivariate capabilities.
+   - Core Finding: Cannot be used for zero-shot directional price prediction (prices are non-stationary martingales with low signal-to-noise ratio where foundation models degrade to ~50% random coin flips).
+   - High-Value Quant Applications:
+     1. Volatility Clustering & Regime Forecasting: Predicting 6-24 bar rolling ATR / Garman-Klass volatility horizons to govern the Altcoin Breadth Gate.
+     2. Multivariate Orderflow & CVD Exhaustion: Modeling [Spot CVD, Futures CVD, Funding Rates] jointly to predict liquidation cascades 2-4 bars in advance.
+     3. Dynamic Time-Decay Modeling: Replacing static 24-bar holding periods with path-dependent exit horizons.
