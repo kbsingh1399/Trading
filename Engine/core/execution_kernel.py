@@ -26,7 +26,7 @@ class RatchetConfig:
     lock1_r: float = 0.75
     arm2_r: float = 1.80
     lock2_r: float = 1.40
-    min_target_r: float = 2.10
+    min_target_r: float = 4.0
     time_decay_bars: int = 24
     time_decay_r: float = 0.20
 
@@ -40,8 +40,8 @@ class ExecutionKernel:
     def __init__(self, risk_cfg=RiskConfig(), fric_cfg=FrictionConfig(),
                  ratchet_cfg=RatchetConfig()):
         self.risk, self.fric, self.ratchet = risk_cfg, fric_cfg, ratchet_cfg
-        if ratchet_cfg != RatchetConfig():
-            raise ValueError('Execution requires the fixed institutional ratchet')
+        if not np.isfinite(ratchet_cfg.min_target_r) or ratchet_cfg.min_target_r <= 0:
+            raise ValueError('Target R must be finite and positive')
         if not (risk_cfg.initial_capital > 0 and risk_cfg.base_risk > 0
                 and 0 < risk_cfg.drawdown_limit < 1):
             raise ValueError('Invalid risk configuration')
@@ -62,7 +62,7 @@ class ExecutionKernel:
     def _position(self, t, side, raw_r, open_price, budget):
         entry = open_price * (1 + side * self.fric.entry_slippage)
         stop = entry - side * raw_r
-        target = entry + side * raw_r * 2.5
+        target = entry + side * raw_r * self.ratchet.min_target_r
         if not np.isfinite(raw_r) or raw_r <= 0 or min(stop, target) <= 0:
             return None
         stop_fill = stop * (1 - side * self.fric.exit_slippage)
@@ -99,7 +99,7 @@ class ExecutionKernel:
             return self._trade(pos, t, o * (1 - side * self.fric.exit_slippage),
                                'STOP_OPEN' if reason_stop == 'STOP' else reason_stop)
         if side * (o - pos['target']) >= 0:
-            pos['max_r'] = max(pos['max_r'], 2.5)
+            pos['max_r'] = max(pos['max_r'], self.ratchet.min_target_r)
             return self._trade(pos, t, pos['target'], 'TARGET_OPEN')
         adverse = l if side == 1 else h
         favorable = h if side == 1 else l
@@ -107,17 +107,19 @@ class ExecutionKernel:
             return self._trade(pos, t, stop * (1 - side * self.fric.exit_slippage),
                                'STOP_BAR' if reason_stop == 'STOP' else reason_stop)
         if side * (favorable - pos['target']) >= 0:
-            pos['max_r'] = max(pos['max_r'], 2.5)
+            pos['max_r'] = max(pos['max_r'], self.ratchet.min_target_r)
             return self._trade(pos, t, pos['target'], 'TARGET_BAR')
         pos['max_r'] = max(pos['max_r'], side * (favorable - pos['entry']) / pos['rr'])
         current_r = side * (c - pos['entry']) / pos['rr']
-        if t - pos['bar'] + 1 >= 24 and current_r < 0.2:
+        if t - pos['bar'] + 1 >= self.ratchet.time_decay_bars and current_r < self.ratchet.time_decay_r:
             return self._trade(pos, t, c * (1 - side * self.fric.exit_slippage), 'TIME_DECAY')
         # These mutations occur only after the current bar's exit checks.
-        if pos['max_r'] >= 1.5:
-            proposed = pos['entry'] + side * 0.80 * pos['rr']
-        elif pos['max_r'] >= 0.8:
-            proposed = pos['entry'] + side * 0.15 * pos['rr']
+        if pos['max_r'] >= self.ratchet.arm2_r:
+            proposed = pos['entry'] + side * self.ratchet.lock2_r * pos['rr']
+        elif pos['max_r'] >= self.ratchet.arm1_r:
+            proposed = pos['entry'] + side * self.ratchet.lock1_r * pos['rr']
+        elif pos['max_r'] >= self.ratchet.arm0_r:
+            proposed = pos['entry'] + side * self.ratchet.lock0_r * pos['rr']
         else:
             return None
         pos['stop'] = max(stop, proposed) if side == 1 else min(stop, proposed)

@@ -110,4 +110,24 @@
 - **Test Suite Perfection**: Offline pipeline tests (`python -m Engine.verification.test_pipeline_offline`) passed 10/10 in 31.2s; independent local forensic tool (`audit_full_dataset_forensic.py --council`) verified 18/18 PASS.
 - **Remote Parity**: Commits `929b6c8` and `25e7055` merged and pushed with 100% byte-for-byte dual mirror parity on GitHub.
 
+### Phase 12: Opus 5 Forensic Audit, Genuine 11 Certification & User Master Protocol
+- **Opus 5 Forensic Discovery**: Conclusively proved that the 7 late-listed assets (SOL, AVAX, NEAR, OP, SUI, APT, ARB) had synthetically replicated footprint ladders (0.00000 cross-rung delta dispersion, bin step = 3.5e-4 * price violating schema). Certified the Genuine 11 universe (BTC, ETH, XRP, BNB, DOGE, ADA, TRX, LINK, DOT, LTC, BCH) with 100% genuine tick footprint ladders and complete 2020-2026 data.
+- **7 Mandatory Guardrails Established**: (1) Scope footprint to Genuine 11, (2) Ban is_imputed_metrics from entry gating, (3) Structural exclusion of 2022 frozen derivatives metrics across all 20 windows, (4) Gate zc_div on SPOT_EXACT + per-symbol z-score, (5) +1 period publication lag on derivatives metrics, (6) Council hard assertions for dispersion > 0 and bin step match, (7) Row count reconciliation.
+- **User Master Mandate**:
+  1. All prompts to Opus MUST be strictly Git-based (raw GitHub URLs, zero source code dumps).
+  2. Stop all local coding and execution runs here -- let Opus do all the coding, execution, and backtesting!
 
+### Phase 13: Kusto Server-Side Walk-Forward Engine, Round 15 Empirical Triumphs & Autonomous Multi-Sleeve Protocol
+- **Opus 5 Round 14 Forensic Audit (15m Clock)**: Net -71.77R over 1,005 trades due to 41 bps friction consuming 0.38R–1.02R per trade.
+- **Opus 5 Round 15 Breakthrough (4h Clock)**:
+  - Net **+13.23R (+330.75 USD)** over 95 trades (**+85.00R swing** over Round 14).
+  - **20/20 Windows Pass MaxDD < 4.5%** (peak DD in any window was only 3.255%).
+  - 4h ATR is 1.834% of price, cutting friction to 0.089R (77% reduction).
+  - VPIN Orderflow Inversion: Aggressive taker buying (`taker_ratio >= 1.25`) yields only +0.724 ATR forward drift (exhaustion climax), whereas quiet flow (`cvd_z <= 1.0` and no stacked sell) yields **+2.970 ATR forward drift** (Wyckoff "no supply").
+  - Window 17 achieved **+13.72R (+343.00 USD) with 81.8% Win Rate and 13.45 R/DD**!
+- **Trade-Count Bottleneck & Multi-Sleeve Architecture**:
+  - In bear cascades (W4, W6, W12, W18), the bullish ribbon exists on only 1.5%–7.0% of bars, causing long-only trend breakouts to be physically absent (0 to 3 trades).
+  - Authorized **Multi-Sleeve Architecture**: Sleeve A (4h Convex Trend Follower with quiet flow), Sleeve B (Cross-Sectional Relative Strength long/short pairs across Genuine 11 to harvest dispersion during bear cascades), and Sleeve C (15m Liquidation Cascade Absorption for capitulation flushes).
+  - Aggregate Trade-Count Floor: Evaluated across all active sleeves combined at the portfolio level.
+- **Continuous Autonomous Loop Mandate**:
+  - Mandated Opus 5 to loop continuously: Round 16 $\to$ Round 17 $\to$ Round 18... without stopping or pausing for user decisions until all 20 out of 20 windows simultaneously achieve passing metrics!

@@ -1,0 +1,417 @@
+{
+  "asset": "SOL",
+  "data_sha256": "89609f6b38f89ae3e32ab57b90217e98301db84fb48e617d3ef47f0603f07996",
+  "criteria": {
+    "min_roi_percent": 10.0,
+    "max_dd_percent": 5.0,
+    "min_winrate_percent": 40.0,
+    "min_r_multiple": 4,
+    "min_trades": 15
+  },
+  "data_provenance_certified": false,
+  "ratchet": {
+    "arm0_r": 0.7,
+    "lock0_r": 0.2,
+    "arm1_r": 1.2,
+    "lock1_r": 0.75,
+    "arm2_r": 1.8,
+    "lock2_r": 1.4,
+    "min_target_r": 4.0,
+    "time_decay_bars": 24,
+    "time_decay_r": 0.2
+  },
+  "strategies": {
+    "LiquidationCascadeSimulator": {
+      "passes": 0,
+      "required_windows": 20,
+      "all_pass": false,
+      "windows": [
+        {
+          "roi_pct": 0.0,
+          "max_dd_pct": 0.0,
+          "win_rate_pct": 0.0,
+          "trades": 0,
+          "net_pnl": 0.0,
+          "trades_list": [],
+          "halted": false,
+          "meta_audit": {
+            "oos_start": "2021-05-01 00:00:00+00:00",
+            "purge_cutoff": "2021-04-28 00:00:00+00:00",
+            "latest_label_end": "2021-04-27 00:30:00+00:00",
+            "events": 195,
+            "positive_events": 7,
+            "calibration_events": 146,
+            "raw_oof_brier": 0.04039963000004859,
+            "threshold": 0.5,
+            "folds": [
+              {
+                "train_end": "2020-12-03 02:45:00+00:00",
+                "validation_start": "2020-12-08 09:00:00+00:00",
+                "train_events": 47,
+                "validation_events": 49
+              },
+              {
+                "train_end": "2021-01-31 04:15:00+00:00",
+                "validation_start": "2021-02-04 19:30:00+00:00",
+                "train_events": 91,
+                "validation_events": 49
+              },
+              {
+                "train_end": "2021-03-11 17:15:00+00:00",
+                "validation_start": "2021-03-15 06:45:00+00:00",
+                "train_events": 144,
+                "validation_events": 48
+              }
+            ]
+          },
+          "primary_candidates": 20,
+          "accepted_candidates": 0,
+          "window": "May 2021 Great Liquidation Crash",
+          "passed": false,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "S2InstitutionalMLSimulator": {
+      "passes": 0,
+      "required_windows": 20,
+      "all_pass": false,
+      "windows": [
+        {
+          "roi_pct": 0.0,
+          "max_dd_pct": 0.0,
+          "win_rate_pct": 0.0,
+          "trades": 0,
+          "net_pnl": 0.0,
+          "trades_list": [],
+          "halted": false,
+          "meta_audit": {
+            "oos_start": "2021-05-01 00:00:00+00:00",
+            "purge_cutoff": "2021-04-28 00:00:00+00:00",
+            "latest_label_end": "2021-04-27 00:30:00+00:00",
+            "events": 195,
+            "positive_events": 7,
+            "calibration_events": 146,
+            "raw_oof_brier": 0.04039963000004859,
+            "threshold": 0.5,
+            "folds": [
+              {
+                "train_end": "2020-12-03 02:45:00+00:00",
+                "validation_start": "2020-12-08 09:00:00+00:00",
+                "train_events": 47,
+                "validation_events": 49
+              },
+              {
+                "train_end": "2021-01-31 04:15:00+00:00",
+                "validation_start": "2021-02-04 19:30:00+00:00",
+                "train_events": 91,
+                "validation_events": 49
+              },
+              {
+                "train_end": "2021-03-11 17:15:00+00:00",
+                "validation_start": "2021-03-15 06:45:00+00:00",
+                "train_events": 144,
+                "validation_events": 48
+              }
+            ]
+          },
+          "primary_candidates": 20,
+          "accepted_candidates": 0,
+          "window": "May 2021 Great Liquidation Crash",
+          "passed": false,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "SMCEdgefulSimulator": {
+      "passes": 0,
+      "required_windows": 20,
+      "all_pass": false,
+      "windows": [
+        {
+          "roi_pct": 0.0,
+          "max_dd_pct": 0.0,
+          "win_rate_pct": 0.0,
+          "trades": 0,
+          "net_pnl": 0.0,
+          "trades_list": [],
+          "halted": false,
+          "meta_audit": {
+            "oos_start": "2021-05-01 00:00:00+00:00",
+            "purge_cutoff": "2021-04-28 00:00:00+00:00",
+            "latest_label_end": "2021-04-27 04:30:00+00:00",
+            "events": 1307,
+            "positive_events": 44,
+            "calibration_events": 980,
+            "raw_oof_brier": 0.028846387640670594,
+            "threshold": 0.5,
+            "folds": [
+              {
+                "train_end": "2020-11-05 08:30:00+00:00",
+                "validation_start": "2020-11-08 11:45:00+00:00",
+                "train_events": 305,
+                "validation_events": 327
+              },
+              {
+                "train_end": "2021-01-02 20:30:00+00:00",
+                "validation_start": "2021-01-06 01:45:00+00:00",
+                "train_events": 628,
+                "validation_events": 327
+              },
+              {
+                "train_end": "2021-02-24 20:45:00+00:00",
+                "validation_start": "2021-02-27 21:45:00+00:00",
+                "train_events": 961,
+                "validation_events": 326
+              }
+            ]
+          },
+          "primary_candidates": 177,
+          "accepted_candidates": 0,
+          "window": "May 2021 Great Liquidation Crash",
+          "passed": false,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "SMCKaneSimulator": {
+      "passes": 0,
+      "required_windows": 20,
+      "all_pass": false,
+      "windows": [
+        {
+          "roi_pct": 0.0,
+          "max_dd_pct": 0.0,
+          "win_rate_pct": 0.0,
+          "trades": 0,
+          "net_pnl": 0.0,
+          "trades_list": [],
+          "halted": false,
+          "meta_audit": {
+            "oos_start": "2021-05-01 00:00:00+00:00",
+            "purge_cutoff": "2021-04-28 00:00:00+00:00",
+            "latest_label_end": "2021-04-27 00:30:00+00:00",
+            "events": 234,
+            "positive_events": 13,
+            "calibration_events": 175,
+            "raw_oof_brier": 0.04437708126230431,
+            "threshold": 0.5,
+            "folds": [
+              {
+                "train_end": "2020-11-07 16:30:00+00:00",
+                "validation_start": "2020-11-11 05:15:00+00:00",
+                "train_events": 58,
+                "validation_events": 59
+              },
+              {
+                "train_end": "2020-12-30 09:45:00+00:00",
+                "validation_start": "2021-01-02 12:30:00+00:00",
+                "train_events": 116,
+                "validation_events": 58
+              },
+              {
+                "train_end": "2021-03-01 23:45:00+00:00",
+                "validation_start": "2021-03-05 12:15:00+00:00",
+                "train_events": 171,
+                "validation_events": 58
+              }
+            ]
+          },
+          "primary_candidates": 50,
+          "accepted_candidates": 0,
+          "window": "May 2021 Great Liquidation Crash",
+          "passed": false,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "SMCMarciSimulator": {
+      "passes": 0,
+      "required_windows": 20,
+      "all_pass": false,
+      "windows": [
+        {
+          "roi_pct": 0.0,
+          "max_dd_pct": 0.0,
+          "win_rate_pct": 0.0,
+          "trades": 0,
+          "net_pnl": 0.0,
+          "trades_list": [],
+          "halted": false,
+          "meta_audit": {
+            "oos_start": "2021-05-01 00:00:00+00:00",
+            "purge_cutoff": "2021-04-28 00:00:00+00:00",
+            "latest_label_end": "2021-04-27 13:45:00+00:00",
+            "events": 338,
+            "positive_events": 12,
+            "calibration_events": 253,
+            "raw_oof_brier": 0.03805154290344255,
+            "threshold": 0.5,
+            "folds": [
+              {
+                "train_end": "2020-11-01 08:45:00+00:00",
+                "validation_start": "2020-11-04 23:00:00+00:00",
+                "train_events": 78,
+                "validation_events": 85
+              },
+              {
+                "train_end": "2021-01-05 06:00:00+00:00",
+                "validation_start": "2021-01-08 07:00:00+00:00",
+                "train_events": 167,
+                "validation_events": 84
+              },
+              {
+                "train_end": "2021-02-20 22:30:00+00:00",
+                "validation_start": "2021-02-25 13:45:00+00:00",
+                "train_events": 248,
+                "validation_events": 84
+              }
+            ]
+          },
+          "primary_candidates": 38,
+          "accepted_candidates": 0,
+          "window": "May 2021 Great Liquidation Crash",
+          "passed": false,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "SMCMarcoSimulator": {
+      "passes": 0,
+      "required_windows": 20,
+      "all_pass": false,
+      "windows": [
+        {
+          "roi_pct": 0.0,
+          "max_dd_pct": 0.0,
+          "win_rate_pct": 0.0,
+          "trades": 0,
+          "net_pnl": 0.0,
+          "trades_list": [],
+          "halted": false,
+          "meta_audit": {
+            "oos_start": "2021-05-01 00:00:00+00:00",
+            "purge_cutoff": "2021-04-28 00:00:00+00:00",
+            "latest_label_end": "2021-04-27 13:30:00+00:00",
+            "events": 272,
+            "positive_events": 10,
+            "calibration_events": 204,
+            "raw_oof_brier": 0.042671351690076416,
+            "threshold": 0.5,
+            "folds": [
+              {
+                "train_end": "2020-11-04 12:30:00+00:00",
+                "validation_start": "2020-11-07 19:15:00+00:00",
+                "train_events": 64,
+                "validation_events": 68
+              },
+              {
+                "train_end": "2020-12-27 21:15:00+00:00",
+                "validation_start": "2020-12-30 22:30:00+00:00",
+                "train_events": 131,
+                "validation_events": 68
+              },
+              {
+                "train_end": "2021-03-02 18:45:00+00:00",
+                "validation_start": "2021-03-07 09:30:00+00:00",
+                "train_events": 200,
+                "validation_events": 68
+              }
+            ]
+          },
+          "primary_candidates": 43,
+          "accepted_candidates": 0,
+          "window": "May 2021 Great Liquidation Crash",
+          "passed": false,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "SMCMayneSimulator": {
+      "passes": 0,
+      "required_windows": 20,
+      "all_pass": false,
+      "windows": [
+        {
+          "roi_pct": 0.0,
+          "max_dd_pct": 0.0,
+          "win_rate_pct": 0.0,
+          "trades": 0,
+          "net_pnl": 0.0,
+          "trades_list": [],
+          "halted": false,
+          "meta_audit": {
+            "oos_start": "2021-05-01 00:00:00+00:00",
+            "purge_cutoff": "2021-04-28 00:00:00+00:00",
+            "latest_label_end": "2021-04-27 11:30:00+00:00",
+            "events": 654,
+            "positive_events": 25,
+            "calibration_events": 490,
+            "raw_oof_brier": 0.04116686578139809,
+            "threshold": 0.5,
+            "folds": [
+              {
+                "train_end": "2020-11-10 17:45:00+00:00",
+                "validation_start": "2020-11-13 19:15:00+00:00",
+                "train_events": 154,
+                "validation_events": 164
+              },
+              {
+                "train_end": "2021-01-01 11:45:00+00:00",
+                "validation_start": "2021-01-04 12:15:00+00:00",
+                "train_events": 315,
+                "validation_events": 163
+              },
+              {
+                "train_end": "2021-03-03 05:15:00+00:00",
+                "validation_start": "2021-03-06 06:45:00+00:00",
+                "train_events": 485,
+                "validation_events": 163
+              }
+            ]
+          },
+          "primary_candidates": 113,
+          "accepted_candidates": 0,
+          "window": "May 2021 Great Liquidation Crash",
+          "passed": false,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "SMCUsmanNoahSimulator": {
+      "passes": 0,
+      "required_windows": 20,
+      "all_pass": false,
+      "windows": [
+        {
+          "window": "May 2021 Great Liquidation Crash",
+          "passed": false,
+          "status": "NOT_EVALUABLE",
+          "reason": "Insufficient resolved primary events or class support"
+        }
+      ]
+    }
+  },
+  "source_sha256": {
+    "optimize_individual_assets.py": "1f14d2abdb664b592cd64522e11ccb2406ab1f8cf004947c87e8d63cc25fe10c",
+    "core\\execution_kernel.py": "2566c8cfab838577aebc33e8a5292c79ed638eb09d8aafcb973c989e1680846e",
+    "core\\institutional_meta_labeler.py": "d529587f03c3f1b1f83e87ab1626499cfee45cc6d9f83907226997f744a48223",
+    "strategy\\funding_basis_carry_engine.py": "d7354a03cbe1665aad26045c3807440a99e0c71a851cdb89dddb264ac87df977",
+    "strategy\\institutional_alpha_master.py": "34242d81c1d60552d9feb3092aec0ebd0d0f79b87f46a89eb94d84822bdaff47",
+    "strategy\\rp2_round10_convex_trend_following_ml.py": "f82f6fba213a31df9045ab02ae65a0d422eb35add1a5bdc51daf9e4c9d7290c1",
+    "strategy\\rp2_round11_regime_adaptive_ml.py": "2fcbf1ea45e634cc6106d254e627db6c6cc20ea4ba8ac28c329d22fb36d680f9",
+    "strategy\\rp2_round12_regime_adaptive_ml.py": "00be873007fa20da541cbe582ff25cd337d7ab19927facba53c31e1bc31b3744",
+    "strategy\\rp2_round8_convex_liquidation_leadlag.py": "e2ab35dabb1c094ccb93acbcd8ce689a55b5f46ab0afda9b01629abfd5343f90",
+    "strategy\\rp2_round9_ml_convex_engine.py": "966dd6412306b53fc12ccd1dccbc6ff917a7890bb15507047920cf7762011f0c",
+    "strategy\\s1_liquidation_cascade.py": "983febf66c70bc53715b3ddd41010cb9a190dc4439262114a8514bd96f3e67e0",
+    "strategy\\s1_liquidation_cascade_v2.py": "e356a32c2d23624d3a37819a94df46c2cee015983b430d8f417951ccf447a70d",
+    "strategy\\s2_institutional_ml.py": "cc29ffa501770be8a8bed70ebd7310959b8cd3778ca31ae1a2b060de7c299c8d",
+    "strategy\\smc_edgeful.py": "ee199a3ba6a073151673d3ae57dc7553fde31938cd53c88ed094326214452665",
+    "strategy\\smc_event_detector.py": "0e27275de791b0a18fc42cd96fd0848d47e0b7f32c60e549d675d589f4758387",
+    "strategy\\smc_kane.py": "37557ee9b7737a9ce1914d99d4ade96048f94ff2e58a642bf3c539a5f0cdde35",
+    "strategy\\smc_marci.py": "dcaf2f12a7883d57c9e13575fd37276c27c753ddef38a10015182bd459b49b32",
+    "strategy\\smc_marco.py": "a3a8c64e41ae657e8f1e9e7b654b477282fd13de94157956dbb07aea904f646b",
+    "strategy\\smc_mayne.py": "e018123f91f42786993ae42b9dda001e554d163f718a7e41cc3d23fff98ec37c",
+    "strategy\\smc_usman_noah.py": "19c176f767d7add0868cd0d858a379b141a4d25d93a164f4e6366178197caff9"
+  }
+}

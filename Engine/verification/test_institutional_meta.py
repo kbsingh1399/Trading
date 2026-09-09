@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from Engine.core.execution_kernel import ExecutionKernel, FrictionConfig, RatchetConfig
+from Engine.core.execution_kernel import ExecutionKernel, FrictionConfig, RatchetConfig, RiskConfig
 from Engine.core.institutional_meta_labeler import InstitutionalMetaLabeler
 from Engine.optimize_individual_assets import STRATEGIES, passes_criteria
 
@@ -25,7 +25,10 @@ def signals(df, positions=(0,), side=1):
 
 
 def frictionless():
-    return ExecutionKernel(fric_cfg=FrictionConfig(0., 0., 0.))
+    return ExecutionKernel(risk_cfg=RiskConfig(base_risk=25.),
+                           fric_cfg=FrictionConfig(0., 0., 0.),
+                           ratchet_cfg=RatchetConfig(arm0_r=0.8, lock0_r=0.15,
+                               arm1_r=1.5, lock1_r=0.8, min_target_r=2.5))
 
 
 @pytest.mark.parametrize("side", [1, -1])
@@ -104,7 +107,7 @@ def test_friction_sizing_and_terminal_settlement():
     df = bars(5)
     df.loc[1, "low"] = 98.
     trade = ExecutionKernel().run(df, signals(df))["trades_list"][0]
-    assert trade["pnl"] == pytest.approx(-25.)
+    assert trade["pnl"] == pytest.approx(-ExecutionKernel().risk.base_risk)
     terminal = ExecutionKernel().run(bars(5), signals(bars(5)))["trades_list"][0]
     assert terminal["reason"] == "TERMINAL_SETTLEMENT"
     assert terminal["pnl"] < 0
@@ -167,3 +170,16 @@ def test_strict_pass_boundaries():
     assert passes_criteria(base, criteria)
     for key, value in (("roi_pct", 20.), ("max_dd_pct", 5.), ("win_rate_pct", 40.), ("trades", 5)):
         assert not passes_criteria(dict(base, **{key: value}), criteria)
+
+
+def test_four_r_target_shared_by_execution_and_meta_labels():
+    df = bars(35)
+    df.loc[25, "high"] = 105.
+    primary = signals(df, (24,))
+    kernel = ExecutionKernel(fric_cfg=FrictionConfig(0., 0., 0.))
+    trade = kernel.run(df, primary)["trades_list"][0]
+    assert kernel.ratchet.min_target_r == 4.
+    assert trade["exit"] == pytest.approx(104.)
+    events = InstitutionalMetaLabeler(kernel).label_events(df, primary)
+    assert events.label.tolist() == [1]
+    assert events.net_r.iloc[0] == pytest.approx(trade["r"])

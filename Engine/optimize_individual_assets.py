@@ -4,11 +4,13 @@ import argparse
 import hashlib
 import json
 import sys
+from dataclasses import asdict, replace
 import pandas as pd
 BASE_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR.parent) not in sys.path:
     sys.path.insert(0, str(BASE_DIR.parent))
 from Engine.core.institutional_meta_labeler import InstitutionalMetaLabeler
+from Engine.core.execution_kernel import RatchetConfig
 from Engine.strategy.s1_liquidation_cascade import LiquidationCascadeSimulator
 from Engine.strategy.s2_institutional_ml import S2InstitutionalMLSimulator
 from Engine.strategy.smc_edgeful import SMCEdgefulSimulator
@@ -59,8 +61,9 @@ def run_optimization(asset):
         raise ValueError('Asset outside configured universe')
     windows = json.loads((BASE_DIR / 'oos_windows_20.json').read_text())
     criteria = json.loads((BASE_DIR / 'target_oos_criteria.json').read_text())['target_criteria']
-    if len(windows) != 20 or criteria['min_r_multiple'] != 2.5:
-        raise ValueError('Expected twenty windows and fixed 2.5R target')
+    if len(windows) != 20 or not 0 < criteria['min_r_multiple'] < float('inf'):
+        raise ValueError('Expected twenty windows and a positive finite target')
+    ratchet = replace(RatchetConfig(), min_target_r=float(criteria['min_r_multiple']))
     prior_end = None
     for w in windows:
         start = pd.Timestamp(w['start_date'], tz='UTC')
@@ -77,7 +80,7 @@ def run_optimization(asset):
                BASE_DIR / 'core' / 'institutional_meta_labeler.py']
     sources += sorted((BASE_DIR / 'strategy').glob('*.py'))
     report = {'asset': asset, 'data_sha256': fingerprint, 'criteria': criteria,
-              'data_provenance_certified': False, 'strategies': {},
+              'data_provenance_certified': False, 'ratchet': asdict(ratchet), 'strategies': {},
               'source_sha256': {str(p.relative_to(BASE_DIR)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}}
     for cls in STRATEGIES:
         rows = []
@@ -85,7 +88,7 @@ def run_optimization(asset):
             start = pd.Timestamp(w['start_date'], tz='UTC')
             end = pd.Timestamp(w['end_date'], tz='UTC') + pd.Timedelta(days=1)
             try:
-                result = evaluate_window(cls(), frame, start, end)
+                result = evaluate_window(cls(ratchet_cfg=ratchet), frame, start, end)
                 passed = passes_criteria(result, criteria)
                 row = {k: v for k, v in result.items() if k != 'equity_curve'}
                 row.update(window=w['name'], passed=passed, status='PASS' if passed else 'FAIL')

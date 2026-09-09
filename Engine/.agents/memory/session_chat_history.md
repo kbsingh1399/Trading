@@ -40680,3 +40680,6 @@ Meanwhile push all to git and let's ask arena.ai to review the data@[c:\Users\SI
    - Saved prompt file directly to `C:\Users\SIGMA\Downloads\Arena_Data_Review.txt` for immediate drag-and-drop / upload into Arena.ai.
    - Generated empty companion paste file `C:\Users\SIGMA\Downloads\Arena_output.md`.
 
+### Codex continuation: 2026-09-09
+User confirmed the criteria file's 4R target and 15 minimum trades; current file also specifies ROI >10%, DD <5%, WR >40%. Aligned target execution and labels, preserved current repository risk/ratchet settings, and removed hardcoded target/ratchet behavior. Regression suite: 23 passed. Per-asset fail-fast evaluation: 144 combinations; 79 metric failures with zero trades, 33 insufficient training/calibration support, 32 missing first-window coverage; no sequence passed W1. Reports: docs/reviews/meta_labeling; integration: docs/specs/institutional-meta-labeling-integration.md. Upstream provenance remains uncertified. Graphify update launched; completion tracked in this task.
+

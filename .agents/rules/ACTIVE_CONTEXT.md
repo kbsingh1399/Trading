@@ -7,41 +7,42 @@ trigger: always_on
 > **ALWAYS-ON TURN-0 SITUATIONAL AWARENESS**
 > Auto-injected on every turn. Eliminates context amnesia, retrieval latency, and model hallucination.
 
-## 1. Active Mission & Quantitative Target
-- **Repository**: Quantitative Trading Infrastructure (`Engine_1_arena_PR` & `Engine_2`).
-- **Active Focus**: `Engine_2/s1_liquidation_cascade.py` Walk-Forward Optimization across the **20 Out-Of-Sample (OOS) Windows (2021–2026)** on 18 Binance USDT-M Perpetual assets (3.46M 15m candles).
-- **Target Pass Criteria**: ROI > 20.0%, Max Drawdown < 5.0%, Win Rate > 40.0%, Min Trades >= 6 per window under ONE causal configuration.
-- **Status (2026-09-05, Arena fresh prompt session)**: Purged previous pessimistic baseline. Initiating fresh strategy construction utilizing the expanded Alpha feature set from Second Brain v11.0 (Nodes 1-76), dynamic volatility-scaled targets, and multi-tier microstructure ratchets.
+## 1. User Master Mandate (Strict & Non-Negotiable)
+- **GIT-BASED PROMPTS ONLY**: When generating prompts for Claude Opus (Ox Alpha / Arena), they MUST be strictly Git-based. NEVER inject massive source code blocks directly into the prompts. Point strictly to raw GitHub URLs (`https://raw.githubusercontent.com/kbsingh1399/Trading/main/...`) so Opus fetches and reads the codebase directly from GitHub.
+- **ZERO LOCAL CODING / EXECUTION — LET OPUS DO IT**: Stop doing coding, optimization, or backtesting runs locally in this environment. Do NOT run local backtest scripts or try to solve the strategy locally. Let Opus do the engineering, execution, coding, and backtesting! Our sole role is to facilitate Opus, author concise Git-based prompts, manage memory, and let Opus execute.
 
-## 2. Settled Mathematical & Strategy Invariants
-- **Alpha Confluence Signal**:
-  $$\text{long\_liq\_zs} > 1.8 \quad \land \quad \text{zc\_div} > 0.8 \quad \land \quad \Delta\text{Spot} > 0 \quad \land \quad \Delta\text{Futures} < 0 \quad \land \quad \text{RSI} < 40 \quad \land \quad \text{VWAP Z} < -0.5$$
-- **Microstructure Exit Ratchet (Anti-Retracement)**:
-  - $+0.8\text{R} \to \text{Stop to Entry} + 0.15\text{R}$ (Breakeven Lock)
-  - $+1.5\text{R} \to \text{Stop to Entry} + 0.80\text{R}$ (Profit Lock)
-  - Target: $+2.5\text{R}$ exit (Purged legacy 5.0R fantasy that retraced 85.8% of winners)
-  - Time Decay: Exit at market if trade fails to gain $+0.2\text{R}$ within 24 bars (6 hours)
-- **Fixed Risk Budget**:
-  - Initial Capital: $5,000.00
-  - Base Risk: $25.00 (0.50%) | House Money: $50.00 (1.00% max 2×) | Defense Risk: $15.00 (0.30%)
-  - Drawdown Limit: 4.5% ($225 hard stop) | Max Concurrent Positions: 2 across all 18 symbols
-- **Anti-Lookahead Blacklist**:
-  - Permanently banned: `winning_configuration.json`, `s1_status.json`, per-window hand-picked parameter tables, test-set `nlargest` overrides.
+## 2. Active Mission & Quantitative Target
+- **Universe**: Certified Genuine 11 Binance USDT-M Perpetuals (BTC, ETH, XRP, BNB, DOGE, ADA, TRX, LINK, DOT, LTC, BCH) with 100% verified tick footprint ladders. The 7 synthetic assets are quarantined.
+- **Active Focus**: Walk-Forward Multi-Sleeve Optimization across all 20 Out-Of-Sample (OOS) Windows (2021–2026) under ONE causal configuration.
+- **Target Pass Criteria**: Net ROI > +10.00% (+500.00 USD net on 5,000.00 USD capital), Max Drawdown < 4.50% (225.00 USD hard circuit breaker), Win Rate > 40.0%, Min Completed Trades >= 15 per window across all active sleeves combined.
+- **Status**: Opus 5 Round 15 delivered +13.23R net profit (+330.75 USD) and 20/20 windows passed MaxDD < 4.5%. Opus 5 is now tasked via Ox_Alpha_13.txt with an autonomous continuous execution loop (Round 16 Multi-Sleeve Ensemble: 4h Quiet Trend + CS-RS Relative Strength + 15m Liquidation Absorption) running iteratively until all 20/20 windows jointly pass.
 
-## 3. Core Architecture, Data Provenance & Local Tooling
-- **Verified Backtesting Parquet Dataset**: `Engine_2/binance_backtesting_data/` contains verified, continuous 15m Master and Footprint Ladder parquets across 18 symbols (2020 -> 2026, 0 nulls, monotonic timestamps).
-- **Canonical Download & Ingest Pipeline**: `Engine_2/run_historical_pipeline.py` is the verified master production pipeline orchestrator (fetches Klines, metrics, and funding rates; computes 28 canonical indicators; applies non-linear liquidation engine; exports master + ladder parquets; verifies integrity).
-- **Second Brain Recall**: `python .agents/scripts/second_brain.py query "<topic>"` (Graph Memory + Context Map + Session History).
-- **DeepSeek Harness**: Local evaluation suite in `deepseek-harness/` via `.agents/scripts/deepseek_harness_runner.py`.
-- **Memory Cleaner**: Run `.agents/scripts/free_ram.ps1` to unthrottle CPU and reclaim physical RAM.
-- **Dual `.agents` Folder Parity**: Every edit to rules, memory, or scripts must be mirrored 1:1 between `Engine_1_arena_PR/.agents` and `Engine_2/.agents`.
+## 3. Settled Mathematical & Strategy Invariants
+- **Trend-Aligned Pullback & Liquidity Absorption**:
+  - Macro Trend Filter: Positive 200 EMA slope (ema_200[t] >= ema_200[t-12] over 3h / 12 bars) for longs; negative slope for shorts.
+  - Micro Entry Trigger: Discount liquidity sweeps (PDL sweep for longs, PDH sweep for shorts, extreme VWAP Z-score < -0.5, Spot CVD divergence zc_div > 0.8).
+  - Short Squeeze Protection: Strictly veto any short if short_liq_zs >= 1.0 (active short squeeze).
+- **Microstructure Piecewise Ratchet**:
+  - Phase 0 (BE Lock): At +0.70R to +0.80R gain, move stop to Entry +0.35R (clearing 41 bps friction with guaranteed profit).
+  - Phase 1 (Profit Lock): At +1.50R gain, move stop to Entry +0.80R.
+  - Target: +1.85R to +2.50R exit (never 4R/5R moonshots that retrace 97.6% of the time).
+  - Time Decay: Exit at market if trade fails to gain +0.20R within 24 bars (6 hours).
+- **Fixed Risk Budget (5,000.00 USD Initial Capital)**:
+  - Base Risk: 35.00 to 45.00 USD (0.70% to 0.90%)
+  - Drawdown Defense Risk: 15.00 to 20.00 USD arming at 2.00% DD (100.00 USD)
+  - House Money Risk: 100.00 to 120.00 USD unlocking at +50.00 USD net profit
+  - Hard Drawdown Stop: 4.50% (225.00 USD)
+  - Max Concurrent Positions: 2 open positions across all 11 symbols simultaneously.
 
-## 4. Ox Alpha Prompting Protocol (Strict Mandate)
-- **Automatic `.txt` File Creation in Downloads**: All prompts generated for Ox Alpha MUST be created as `.txt` files directly in `C:\Users\SIGMA\Downloads\` (e.g. `C:\Users\SIGMA\Downloads\Ox_Alpha_1.txt`, `Ox_Alpha_2.txt`) so the user can immediately drag/drop and upload them into `oxalpha.com/chat`.
-- **Zero Chat Dump**: Never dump the lengthy prompt text into chat responses; provide the filename, summary, and direct file link.
-- **Fresh Session / Zero Memory Mandate (CRITICAL)**: Ox Alpha operates in a **brand new chat session on EVERY turn** with zero conversational memory, zero previous chat context, and zero access to the internet, GitHub, or local repository files. Every prompt generated for Ox Alpha MUST be 100% self-contained and explicitly include:
-  1. Complete operational parameters, dataset provenance (18 Binance perpetual assets, 3.47M 15m bars, 2020–2026), and exchange frictions (8 bps fee, 10 bps entry slippage, 15 bps exit slippage or maker model).
-  2. The exact quantitative target criteria (ROI > +20% per 1-month window, MaxDD < 5.0% with 4.5% hard stop, WR > 40%, Min Trades >= 6, max 2 concurrent positions on $5,000 capital).
-  3. The complete historical empirical progression and failure analysis across all 20 canonical OOS windows (Rounds 1–5 audits, including why 15m SMC/Footprint gave AUC ≈ 0.5015).
-  4. Complete, unabridged source code for all relevant active production modules embedded directly inside the prompt so Ox Alpha has full offline context to review, diagnose, and author drop-in production code.
-
+## 4. Prompting Protocol for Claude Opus (Ox Alpha / Arena)
+- **Automatic .txt File Creation in Downloads**: Prompts for Opus are saved as .txt files in C:\Users\SIGMA\Downloads\ (e.g. Ox_Alpha_10.txt) and archived in docs/prompts/.
+- **Strictly Git-Based (No Code Dumps)**: Point strictly to raw GitHub URLs:
+  * Repository: https://github.com/kbsingh1399/Trading.git (branch: main)
+  * Processor: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/historical_metrics_processor.py
+  * Fetcher: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/binance_historical_fetcher.py
+  * Runner: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_historical_pipeline.py
+  * Schema: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/schema.py
+  * Indicators: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/canonical_indicators.py
+  * Council: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/verification/verify_parquet_integrity.py
+- **Zero Chat Dump**: Never dump lengthy prompt text in chat responses; provide filename, summary, and direct file link.
+- **Zero Dollar Signs**: Strict prohibition on dollar symbols; always write USD.
