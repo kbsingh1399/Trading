@@ -1,0 +1,298 @@
+================================================================================
+OX ALPHA 21 — ZERO-SYNTHESIS PIPELINE VERIFICATION & FULL WALK-FORWARD BACKTEST
+MISSION: Verify the new 9-feed genuine dataset and run the canonical strategy
+         across all 20 OOS quarterly windows (2021-2026).
+Repository: https://github.com/kbsingh1399/Trading.git (branch: main)
+Generated: 2026-09-10T01:56 IST
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 0: YOUR MISSION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You are Ox Alpha, a senior quant engineer. The dataset has been completely
+rebuilt from scratch using 100% genuine Binance Vision raw data (zero synthetic
+approximations). Your job is:
+
+  1. VERIFY the new dataset schema and data integrity.
+  2. AUDIT the pipeline code for any remaining synthetic fill paths.
+  3. RUN the canonical strategy across all 20 OOS walk-forward windows.
+  4. REPORT results per-window and aggregate.
+
+Do not assume anything. Fetch every file from Git before reading it.
+Do not synthesize, interpolate, or fill any column you cannot compute from raw.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 1: DATASET PROVENANCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Universe: 18 Binance USDT-M Perpetual Contracts
+  BTC, ETH, XRP, SOL, BNB, DOGE, ADA, TRX, LINK, AVAX,
+  SUI, NEAR, DOT, LTC, BCH, APT, OP, ARB
+
+Timeframe: 15-minute bars
+Current slice: 2026-09-02 00:00 UTC → 2026-09-08 23:45 UTC (7 days, 672 bars)
+Schema version: 2.1
+
+Per-asset files (in Engine/binance_backtesting_data/):
+  {SYMBOL}_15m_master_2020_2026.parquet  — 56-column master table
+  {SYMBOL}_15m_footprint_ladder.parquet  — tick-exact aggTrade rungs
+  {SYMBOL}_dataset_manifest.json         — provenance + verification hashes
+
+Verification status (all 18 assets): ALL PASS
+  Agent1:Continuity  — monotonic timestamps, zero gaps
+  Agent2:Microstructure — tick-exact rungs, 0 synthetic candles
+  Agent3:Schema      — 56 columns present, no nulls in required fields
+
+BTC manifest reference numbers (use as sanity check for your own load):
+  master_rows: 672   ladder_rows: 5548   synthetic_candles: 0
+  synthetic_rungs: 0   schema_version: 2.1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 2: 56-COLUMN MASTER TABLE SCHEMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Column set (all genuine — zero synthetic fills):
+
+  OHLCV + Time
+    open_time_ms, close_time_ms, datetime_utc, symbol
+    open, high, low, close
+    volume_base, volume_quote, trade_count
+
+  Derived OHLCV
+    volume_sma9
+
+  Technicals (computed from genuine klines)
+    rsi_14, atr_14, atr_100
+    ema_8, ema_21, ema_50, ema_200, ema_800
+
+  Futures Microstructure (genuine aggTrades / bookTicker)
+    future_cvd_15m, future_cvd_session, future_cvd_lifetime
+
+  Spot Microstructure (genuine spot aggTrades)
+    spot_cvd_15m, spot_cvd_session, spot_cvd_lifetime
+
+  Funding & Basis (premiumIndexKlines)
+    funding_rate_pct, basis_usd
+
+  Open Interest (metrics API)
+    open_interest_k, open_interest_usd, oi_change_pct
+
+  Liquidations (um/liquidationSnapshot)
+    long_liq_usd, short_liq_usd
+
+  Long/Short Ratios (metrics API)
+    ls_ratio_global, ls_ratio_top, top_account_ratio
+
+  Derived Signals
+    whale_index, taker_volume_ratio
+    session_vah, session_val, prev_day_vah, prev_day_val
+    taker_buy_count, taker_sell_count
+    taker_buy_vol_{symbol_base}, taker_sell_vol_{symbol_base}
+    avg_trade_size_usd
+    spot_close, session_vwap, vwap_zscore, volume_ratio
+    zc_div, long_liq_zs, short_liq_zs, liq_imbalance_ratio
+
+  Audit
+    is_imputed_metrics  (must be 0 for all rows — enforce this check)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 3: RAW SOURCE CODE (FETCH FROM GIT — DO NOT ASSUME)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Fetch and read these files before writing any code:
+
+Core schema & canonical indicators:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/schema.py
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/canonical_indicators.py
+
+Pipeline entry point:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_historical_pipeline.py
+
+Data fetcher (contains all 9 feed download + aggregation logic):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/binance_historical_fetcher.py
+
+Metrics processor (computes derived signals):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/historical_metrics_processor.py
+
+Parquet exporter (atomic staging + SHA256 manifest writer):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/parquet_exporter.py
+
+Integrity verifier:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/verification/verify_parquet_integrity.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 4: PIPELINE AUDIT TASKS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+After fetching binance_historical_fetcher.py and historical_metrics_processor.py,
+perform these four checks:
+
+CHECK-1: Synthetic rung detection
+  Search for any code path that creates footprint rungs WITHOUT using actual
+  aggTrade price-volume data. Any rung derived purely from kline OHLC
+  (e.g., uniform distribution across price range) is synthetic.
+  If found: flag the function name and line number. Propose a fix.
+
+CHECK-2: Metrics imputation detection
+  Search for any fallback that writes non-zero values into
+  long_liq_usd, short_liq_usd, ls_ratio_global, ls_ratio_top,
+  open_interest_k when the raw API returned empty/null.
+  Acceptable: forward-fill for oi_change_pct only, nothing else.
+  If found: flag it.
+
+CHECK-3: Spot CVD cross-contamination
+  Confirm that spot_cvd_* columns are computed exclusively from Binance
+  SPOT market aggTrades, not from USDT-M futures aggTrades.
+  Report your confirmation explicitly.
+
+CHECK-4: Atomic write safety
+  Confirm that parquet_exporter.py uses .tmp staging files with os.replace()
+  for crash-safe atomic writes. Report confirmation or flag missing safety.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 5: QUANTITATIVE STRATEGY INVARIANTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+These are non-negotiable. Do not deviate.
+
+SIGNAL CONFLUENCE (all 6 conditions must be TRUE simultaneously for long entry):
+  long_liq_zs > 1.8          — liquidation cascade spike
+  zc_div > 0.8               — spot/futures CVD divergence
+  spot_cvd_15m > 0           — spot accumulation (buyers stepping in)
+  future_cvd_15m < 0         — futures selling pressure (trapped longs)
+  rsi_14 < 40                — oversold
+  vwap_zscore < -0.5         — below VWAP (discount zone)
+
+MACRO TREND FILTER (must be met BEFORE checking signal confluence):
+  LONG: ema_200[t] >= ema_200[t-12]   (positive 200-EMA slope over 3h)
+  SHORT: ema_200[t] <= ema_200[t-12]  (negative 200-EMA slope over 3h)
+
+SHORT SQUEEZE VETO:
+  If short_liq_zs >= 1.0 at any bar, do NOT enter short. Skip that bar.
+
+MICROSTRUCTURE EXIT RATCHET (strictly bar j+1 — no intra-bar execution):
+  Phase 0 (BE Lock): price gain >= +0.70R → move stop to Entry + 0.35R
+  Phase 1 (Profit Lock): price gain >= +1.50R → move stop to Entry + 0.80R
+  Profit Target: +1.85R to +2.50R (hard exit at +2.50R)
+  Time Decay: if trade fails to gain +0.20R within 24 bars (6h), exit at market
+
+RISK BUDGET (5,000 USD initial capital):
+  Base Risk:            35.00 USD (0.70%)
+  Drawdown Defense:     15.00 USD (0.30%) — arms when drawdown > 100 USD (2.0%)
+  House Money:         100.00 USD (2.00%) — unlocks when net profit > 50 USD
+  Hard Drawdown Stop:  225.00 USD (4.5%) — halt all trading for the window
+  Max Concurrent:       2 positions across all 18 symbols simultaneously
+
+EXECUTION FRICTIONS (mandatory — no zero-friction runs):
+  Taker fee:      0.0008 (8 bps) per side
+  Entry slippage: 0.0010 (10 bps)
+  Stop slippage:  0.0015 (15 bps)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 6: 20 OOS WALK-FORWARD WINDOWS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Run in strict sequential order. Fail-fast on any window failure.
+In-sample purge boundary: t_purge = window_start - 72h (causal isolation)
+
+W01  2021-01-01  2021-03-31   Q1 2021
+W02  2021-04-01  2021-06-30   Q2 2021
+W03  2021-07-01  2021-09-30   Q3 2021
+W04  2021-10-01  2021-12-31   Q4 2021
+W05  2022-01-01  2022-03-31   Q1 2022
+W06  2022-04-01  2022-06-30   Q2 2022
+W07  2022-07-01  2022-09-30   Q3 2022
+W08  2022-10-01  2022-12-31   Q4 2022
+W09  2023-01-01  2023-03-31   Q1 2023
+W10  2023-04-01  2023-06-30   Q2 2023
+W11  2023-07-01  2023-09-30   Q3 2023
+W12  2023-10-01  2023-12-31   Q4 2023
+W13  2024-01-01  2024-03-31   Q1 2024
+W14  2024-04-01  2024-06-30   Q2 2024
+W15  2024-07-01  2024-09-30   Q3 2024
+W16  2024-10-01  2024-12-31   Q4 2024
+W17  2025-01-01  2025-03-31   Q1 2025
+W18  2025-04-01  2025-06-30   Q2 2025
+W19  2025-07-01  2025-09-30   Q3 2025
+W20  2025-10-01  2025-12-31   Q4 2025
+
+PASS CRITERIA PER WINDOW:
+  Net ROI    > +10.0%   (> +500 USD net on 5,000 USD)
+  Max DD     < 4.5%     (< 225 USD hard circuit breaker)
+  Win Rate   > 40.0%
+  Trades     >= 15 completed trades (across all 18 symbols combined)
+
+FAIL-FAST PROTOCOL:
+  If Window k fails ANY criterion: HALT immediately, do NOT proceed to k+1.
+  Document the failure reason, diagnose the signal or risk issue.
+  Propose a causal parameter fix using only in-sample data prior to Window k.
+  Retest Window k. Confirm all prior windows k-1..1 still pass.
+  Only then advance to k+1.
+
+ANTI-LOOKAHEAD BLACKLIST — THESE ARE HARD VIOLATIONS:
+  - No per-window parameter lookup tables (keyed by w_idx or window date)
+  - No grid search over OOS test data to find passing parameters
+  - No early exit when a profit target is hit (run the full window)
+  - No trailing ratchets applied intra-bar (bar j only, effective bar j+1)
+  - No future MAE sizing (mark-to-market bar-by-bar only)
+  - No static result caches (winning_configuration.json, s1_status.json, etc.)
+  - All metrics must be generated live in this session from actual code runs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 7: REQUIRED DELIVERABLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DELIVERABLE 1 — PIPELINE AUDIT REPORT
+  For each of the 4 checks in Section 4:
+    - Status: PASS / FLAG
+    - If FLAG: exact function name, line number, and proposed fix
+
+DELIVERABLE 2 — WALK-FORWARD SCORECARD
+  For each window that runs, output this exact table row:
+  | Window | Period       | ROI%  | NetUSD | MaxDD% | WinRate | Trades | Status |
+
+  Then a summary row:
+  | AGGREGATE | 2021-2025 | X.XX% | XXXX  | X.XX%  | XX.X%   | XXXX   | PASS/FAIL |
+
+DELIVERABLE 3 — FAILURE ANALYSIS (if any window fails)
+  - Which window failed and which criterion
+  - Root cause hypothesis (signal drought? risk parameter? data gap?)
+  - Proposed causal fix (in-sample only)
+  - Re-test confirmation
+
+DELIVERABLE 4 — FINAL VERDICT
+  One-line verdict: "Strategy passes all 20 OOS windows" or
+  "Strategy fails at Window N: [reason]"
+  Plus: your top 3 actionable recommendations for improvement.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 8: CONSTRAINTS & RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ZERO SYNTHESIS: If a column (especially footprint rungs, liquidations,
+   or CVD) cannot be computed from real Binance Vision raw data, leave it null.
+   Do NOT fill with OHLC-derived approximations.
+
+2. ZERO DOLLAR SIGNS in output. Always write USD.
+
+3. FETCH BEFORE CODE: Read every .py file from the raw GitHub URLs above
+   before writing any backtesting code. Do not rely on memory.
+
+4. LIVE METRICS ONLY: All window results must come from code you execute
+   in this session. Do not report from any cached .json or .md files.
+
+5. SINGLE STRATEGY FILE: Write all logic into one self-contained script.
+   No fragmented helper files. No duplicate runners.
+
+6. REPORT FORMAT: Follow the exact scorecard table format in Deliverable 2.
+   Deviations will be rejected.
+
+7. GIT PUSH AT END: After completing all runs, push the final strategy script
+   to the repository at:
+   Engine/s1_liquidation_cascade.py
+   Branch: main
+
+================================================================================
+END OF OX ALPHA 21 PROMPT
+================================================================================
