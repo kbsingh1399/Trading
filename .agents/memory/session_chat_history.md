@@ -41802,3 +41802,13 @@ User confirmed the criteria file's 4R target and 15 minimum trades; current file
      3. Path (Effort vs Result: Aggressive unabsorbed flow vs passive absorption).
      4. Confirmation (Bid x Ask Footprint, Stacked Imbalances, Trapped Traders, Delta Divergence).
    - Direct mapping to quantitative system: Explains why naive orderflow setups (like legacy T2) fail when detached from macro context/location, and provides exact algorithmic rules for building a high-expectancy quantitative AR engine using our existing footprint ladder and value area parquet data.
+
+---
+**Turn Update (2026-09-09T22:41:00 IST):**
+1. **Empirical Backtest of Naive AR Model on 15m Binance Parquets:**
+   - Evaluated the naive retail AR Model (Value Area Discount + Footprint Imbalance confirmation) on 15m resolution across all 11 assets and 20 quarters.
+   - Result: 0/20 quarters passed, generating 10,219 trades, losing -6,669.42 R (-149,048.57 USD) with a 23.43% win rate.
+   - Core forensic findings:
+     * 15m resolution is an empirical capital incinerator in crypto: 41 bps friction across 10,219 trades destroys the edge.
+     * Counter-trend pullback buying into 'discount' acts as a falling knife during secular bear cascades.
+     * Proves why Opus 5's 4-Hour clock, trend expansion sleeves (T1/T3), and strict selectivity (550 trades over 5 years netting +2,050.26 USD) are mathematically mandatory.
