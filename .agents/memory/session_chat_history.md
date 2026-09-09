@@ -41881,3 +41881,22 @@ User confirmed the criteria file's 4R target and 15 minimum trades; current file
      * Bitcoin 4h Macro Tide Gate (BTC EMA 50 > EMA 200 ? BTC Close > EMA 50) produced a massive +13.5R swing in Q09 (from -7.53R to +5.98R / +269.29 USD, 61.5% WR).
      * Strong positive quarters: Q01 (+372.74 USD), Q03 (+241.73 USD), Q09 (+269.29 USD), Q13 (+410.83 USD, PASS), Q16 (+148.90 USD), Q19 (+374.57 USD).
      * Identified root cause of remaining failing quarters: low trade counts (5-12 trades) during range compressions where breakout momentum dies.
+
+---
+**Turn Update (2026-09-09T23:05:00 IST):**
+1. **Validation & Comprehensive Upgrade of Ox Alpha 19 Master Prompt:**
+   - User queried: '@[c:\Users\SIGMA\Downloads\Ox_Alpha_19_TradingView_Orderflow_ML_Master_Prompt.txt] s it self explanatery about each stategy'
+   - Evaluated the master prompt: Identified that the initial draft only contained high-level 2-sentence summaries for the strategies, leaving Claude Opus 5 to guess exact parameter thresholds and execution mechanics.
+   - Upgraded Section 4 into 24 fully self-contained, mathematically rigorous specification cards (ST-01 through ST-24) across all 4 architectural families:
+     * Indicators & Parameters: Exact lookback periods, standard deviations, ATR multipliers, and oscillator thresholds.
+     * Numbered Step-by-Step Entry Rules: Concrete mathematical inequalities for both Long and Short triggers.
+     * Stop Loss & Target Geometry: Explicit ATR distances, R-multiples, and multi-stage ratchet triggers.
+     * Root-Cause Crypto Failure Modes: Detailed breakdown of how retail assumptions fail under 41.0 bps round-trip friction, fakeout wicks, and cascade flushes.
+     * Orderflow & ML Enhancement Directives: Exact integration rules for Bitcoin 4h Macro Tide Gate, Spot-versus-Futures Delta Disparity, Causal CVD Velocity (diff3), Bar Close Efficiency (>= 0.65), and LightGBM meta-classifier.
+   - Zero Dollar Signs Enforced: 100% compliant with institutional USD currency formatting.
+   - Files Synchronized:
+     * C:\Users\SIGMA\Downloads\Ox_Alpha_19_TradingView_Orderflow_ML_Master_Prompt.txt (45,763 bytes)
+     * C:\Users\SIGMA\Downloads\MASTER_PROMPT.txt (45,763 bytes)
+     * docs/prompts/Ox_Alpha_19_TradingView_Orderflow_ML_Master_Prompt.md (45,763 bytes)
+     * docs/prompts/MASTER_PROMPT.md (45,763 bytes)
+   - Pruned temporary build scripts from scratch/.
