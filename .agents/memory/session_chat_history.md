@@ -41900,3 +41900,21 @@ User confirmed the criteria file's 4R target and 15 minimum trades; current file
      * docs/prompts/Ox_Alpha_19_TradingView_Orderflow_ML_Master_Prompt.md (45,763 bytes)
      * docs/prompts/MASTER_PROMPT.md (45,763 bytes)
    - Pruned temporary build scripts from scratch/.
+
+---
+**Turn Update (2026-09-09T23:09:00 IST):**
+1. **Deconstruction of Toby Crabel NR7 / NR4 & Two Concrete Steps to Unlock 20/20 Pass:**
+   - User provided: 'web_page_text (27).txt' and attached image detailing the two concrete steps to unlock the 20/20 pass.
+   - Deconstructed 'web_page_text (27).txt' into '[ST-25] Toby Crabel NR7 / NR4 Volatility Contraction & Absorption Pullback':
+     * Theoretical Basis: Day Trading with Short Term Price Patterns (Crabel, 1990). Invariant: extreme volatility compression (narrowest range in 4 or 7 bars) invariably precedes explosive price expansion.
+     * Dual-Mode Architecture: Mode A (Breakout Expansion) and Mode B (Trend Pullback Absorption / NR7 inside bar at dynamic support with oversold momentum).
+     * Orderflow / ML Integration: Mode B serves as the exact trigger engine for Sleeve T2 (Trapped-Trader Absorption Pullback), verified by Spot vs Futures Delta Disparity and CVD divergence.
+   - Integrated the Two Concrete Steps into Section 5 of the Master Prompt:
+     * Step 1: Activate Sleeve T2 for Range Regimes (buys extreme liquidity sweeps at support with spot CVD absorption, providing 10-15 high-win-rate trades during chop markets to clear the minimum trade quota).
+     * Step 2: Deploy Altcoin Volatility/Breadth Filter (disables breakout trading entirely when rolling 100-bar ATR is in the bottom 15th percentile across the altcoin universe).
+   - Synchronized across all 4 target files:
+     * C:\Users\SIGMA\Downloads\Ox_Alpha_19_TradingView_Orderflow_ML_Master_Prompt.txt (49,435 bytes, 529 lines)
+     * C:\Users\SIGMA\Downloads\MASTER_PROMPT.txt (49,435 bytes, 529 lines)
+     * docs/prompts/Ox_Alpha_19_TradingView_Orderflow_ML_Master_Prompt.md (49,435 bytes, 529 lines)
+     * docs/prompts/MASTER_PROMPT.md (49,435 bytes, 529 lines)
+   - Zero Dollar Signs Enforced: 100% compliant with USD formatting.

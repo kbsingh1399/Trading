@@ -6,10 +6,10 @@
 ### 1. MISSION DIRECTIVE & CORE CONSTRAINTS
 You are acting as the Chief Quantitative Architect for an institutional crypto proprietary trading desk. You operate in a brand new chat session with zero memory, zero chat context, and zero external repository access. Every specification, formula, dataset definition, and friction model is self-contained in this prompt.
 
-Your objective is to ingest, analyze, improve, and backtest a suite of 24 distinct TradingView strategy archetypes extracted directly from production TradingView community strategies. Every strategy in Section 4 is provided with its complete, self-contained mathematical rulebook, indicator parameters, entry/exit conditions, failure modes, and required institutional orderflow/ML upgrades.
+Your objective is to ingest, analyze, improve, and backtest a suite of 25 distinct TradingView & institutional strategy archetypes (including Toby Crabel NR7/NR4) extracted directly from production TradingView community strategies. Every strategy in Section 4 is provided with its complete, self-contained mathematical rulebook, indicator parameters, entry/exit conditions, failure modes, and required institutional orderflow/ML upgrades.
 
 You must:
-1. Evaluate all 24 strategy archetypes under full 41.0 bps round-trip taker frictions on the Certified Genuine 11 Binance USDT-M Perpetuals on a causal 4-Hour clock across all 20 quarterly OOS windows (2021-2025).
+1. Evaluate all 25 strategy archetypes under full 41.0 bps round-trip taker frictions on the Certified Genuine 11 Binance USDT-M Perpetuals on a causal 4-Hour clock across all 20 quarterly OOS windows (2021-2025).
 2. Enhance each archetype using our institutional orderflow suite (CVD Divergence, Spot vs Futures Delta Disparity, Liquidation Z-scores, Bar Close Efficiency) and Machine Learning meta-classifier overlay (LightGBM/XGBoost).
 3. Select the top complementary strategy sleeves and build a unified, drop-in Python engine that achieves a verified 20/20 PASS across all 20 quarterly windows.
 
@@ -61,8 +61,8 @@ Q19: 2025-07-01 to 2025-09-30 (Derivative Expiry & Volatility Compression)
 Q20: 2025-10-01 to 2025-12-31 (Late-Cycle Microstructure Expansion)
 
 ==============================================================================================================
-### 4. FULLY SELF-EXPLANATORY DECONSTRUCTED STRATEGY CARDS (ALL 24 ARCHETYPES)
-Below is the complete forensic catalog of all 24 TradingView strategies. Each card details the exact mathematical rules, parameters, entry/exit logic, failure modes in crypto, and required orderflow/ML solutions:
+### 4. FULLY SELF-EXPLANATORY DECONSTRUCTED STRATEGY CARDS (ALL 25 ARCHETYPES)
+Below is the complete forensic catalog of all 25 TradingView & institutional strategies. Each card details the exact mathematical rules, parameters, entry/exit logic, failure modes in crypto, and required orderflow/ML solutions:
 
 #### [ST-01] Power Surge | BB Momentum Squeeze Release
 - **Reference File**: `web_page_text (22).txt` | **Category**: Family 1: Volatility Squeeze & Compression Breakouts
@@ -456,6 +456,20 @@ Below is the complete forensic catalog of all 24 TradingView strategies. Each ca
 - **Crypto Failure Mode**: Fails during fakeouts where price briefly breaches the Donchian channel then snaps back inside.
 - **Orderflow & ML Enhancement**: Inject the Bar Close Efficiency Gate (>= 0.65) and require Spot CVD Slope > 0 to confirm genuine accumulation.
 
+#### [ST-25] Toby Crabel NR7 / NR4 Volatility Contraction & Absorption Pullback
+- **Reference File**: `web_page_text (27).txt` | **Category**: Family 1 & 3 Hybrid: Volatility Contraction & Absorption Pullback
+- **Indicators & Parameters**: Absolute Bar Range (High - Low), Rolling 6-bar Minimum Range Min(6, Range), Inside Bar Filter (High < High[1] and Low > Low[1]), Macro EMA(200), Pullback Oscillator (CCI 10 or VWAP Z-score)
+- **Core Concept**: Derived from Toby Crabel's foundational work 'Day Trading with Short Term Price Patterns'. Based on the core market invariant that extreme volatility contraction (the narrowest range in 4 or 7 bars) invariably precedes explosive volatility expansion. Operates in two distinct modes: (A) Pure Compression Breakout, and (B) Trend Pullback Absorption (NR7 printed at key dynamic support during an oversold pullback).
+- **Exact Long Entry Rules**:
+  * Mode A (Breakout Expansion): Current bar range is narrowest of last 7 bars (Range < Min(6, Range)). Subsequent bar breaks and closes above the NR7 High with expanding volume.
+  * Mode B (Absorption Pullback): Macro Trend is Bullish (Price > EMA 200). Market pulls back into dynamic support (EMA 21 or VWAP Z < -0.50) with oversold momentum (CCI < -100). Price prints an NR4/NR7 inside bar (selling volume dries up). Trigger on break and close above the NR7 High.
+- **Exact Short Entry Rules**:
+  * Mode A (Breakdown Expansion): Current bar is an NR7 bar. Subsequent bar breaks and closes below the NR7 Low with expanding volume.
+  * Mode B (Absorption Rally): Macro Trend is Bearish (Price < EMA 200). Market rallies into dynamic resistance with overbought momentum (CCI > +100). Price prints an NR4/NR7 inside bar. Trigger on break and close below the NR7 Low.
+- **Stop Loss & Target Geometry**: Stop Loss: Opposite extreme of the NR7 bar (or 1.5 * ATR for buffer). Target: 2.0R to 2.5R with piecewise breakeven ratchet at +0.80R.
+- **Crypto Failure Mode**: In crypto, naive NR7 breakouts during sideways markets suffer 70%+ failure rates because retail traders buy the top of the narrow bar right into market maker absorption. Without higher timeframe orderflow, narrow ranges frequently continue into drift decay.
+- **Orderflow & ML Enhancement**: Directly powers the Two Concrete Steps to Unlock the 20/20 Pass: (1) Provides the exact micro-absorption trigger for Sleeve T2 (Trapped-Trader Absorption Pullback) when confirmed by Spot vs Futures Delta Disparity (Spot Delta > 0, Futures Delta < 0) and CVD Divergence (zc_div > 0.80); (2) Serves as the micro-regime trigger for the Altcoin Volatility/Breadth Filter.
+
 ==============================================================================================================
 ### 5. MANDATORY ORDERFLOW & MACHINE LEARNING UPGRADE BLUEPRINT
 Every TradingView strategy above was designed as a naive technical analysis script on simple OHLCV bars. To achieve institutional positive expectancy under 41.0 bps friction, you MUST enhance each archetype using the following five orderflow and ML layers:
@@ -492,6 +506,12 @@ Every TradingView strategy above was designed as a naive technical analysis scri
    - Target: Exit at +2.50R (purged legacy moonshots that retrace into stop-outs).
    - Time Decay: Exit at market if trade fails to gain +0.20R within 24 bars (96 hours).
 
+7. **THE TWO CONCRETE STEPS TO UNLOCK THE 20/20 PASS (MANDATORY IMPLEMENTATION)**:
+   - **Step 1: Activate Sleeve T2 (Trapped-Trader Absorption Pullback) for Range Regimes**:
+     In low-volatility quarters where breakout count is low, Sleeve T2 must step in. Instead of chasing breakouts that fail, Sleeve T2 buys extreme liquidity sweeps at range support with spot CVD absorption (exploiting the Toby Crabel ST-25 NR4/NR7 contraction at key levels), providing 10-15 high-win-rate trades during chop markets to clear the minimum trade quota without incurring fakeout losses.
+   - **Step 2: Deploy an Altcoin Volatility/Breadth Filter**:
+     When rolling 100-bar ATR is in the bottom 15th percentile across the altcoin universe, disable breakout trading entirely (Sleeve T1 / Family 1) to avoid false-breakout whipsaws during market dormancy. Only permit range absorption (Sleeve T2) or high-conviction orderflow delta expansions (Sleeve T3) during these dormant periods.
+
 ==============================================================================================================
 ### 6. REPOSITORY & CODEBASE ARCHITECTURE REFERENCES (GIT-BASED)
 You must interact directly with the production Git repository. Do not invent synthetic architectures. Load and mutate the live files:
@@ -504,7 +524,7 @@ You must interact directly with the production Git repository. Do not invent syn
 
 ==============================================================================================================
 ### 7. REQUIRED DELIVERABLES & OUTPUT FORMAT
-1. **Strategy Elimination & Selection Matrix**: Rank all 24 TradingView archetypes by their mathematical viability in crypto perpetuals. Eliminate unviable retail toys; select the top 3-4 complementary archetypes.
+1. **Strategy Elimination & Selection Matrix**: Rank all 25 TradingView & institutional archetypes by their mathematical viability in crypto perpetuals. Eliminate unviable retail toys; select the top 3-4 complementary archetypes.
 2. **Executable Drop-In Python Module**: Provide complete, drop-in, syntax-error-free Python code implementing the selected multi-sleeve architecture with the full portfolio governor and orderflow/ML gates.
 3. **Audited 20-Quarter Scorecard Table**: Output the verified console metrics across all 20 quarterly OOS windows formatted with Quarter, Period, Trades, Net R, Net USD, ROI %, MaxDD %, Win Rate %, and Status (PASS/FAIL).
 4. **Zero Lookahead Attestation**: Explicitly verify the complete absence of WINDOW_CONFIGURATIONS[w_idx], test-set snooping, static result caches, or intra-bar ratchet leaks.
