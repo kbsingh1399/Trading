@@ -1,4 +1,4 @@
-# UNIVERSAL MASTER DIRECTIVE: TRIPLE TREND-FOLLOWING ORDERFLOW SUITE (QUARTERLY OOS)
+# UNIVERSAL MASTER DIRECTIVE: TRIPLE TREND-FOLLOWING ORDERFLOW SUITE (ROUND 18: 20/20 OOS NON-STOP MANDATE)
 > **Target Frontier Models:** Claude Opus 5 (Copilot Studio / Ox Alpha), GLM-5/4 (Zhipu AI), Arena.ai Multi-Agent Council
 > **Canonical GitHub Repository:** `https://github.com/kbsingh1399/Trading` (Branch: `main` & `arena/01a082b5-trading`)
 > **Knowledge Compendium:** `https://raw.githubusercontent.com/kbsingh1399/Trading/main/docs/specs/INSTITUTIONAL_QUANT_KNOWLEDGE_PACK.md`
@@ -8,114 +8,109 @@
 > **Currency Unit:** Strict institutional USD (zero dollar symbols used)
 
 ================================================================================
-EXECUTIVE MANDATE & EMPIRICAL BACKTESTING FOUNDATIONS
+EXECUTIVE MANDATE & THE ROUND 18 NON-STOP DIRECTIVE (ALL 20/20 PASS MANDATORY)
 ================================================================================
-You are the Lead Quantitative Architect and Chief Investment Officer. Your mandate is to design, implement, and verify an institutional multi-sleeve quantitative system comprising a MINIMUM OF THREE DISTINCT TREND-FOLLOWING STRATEGIES, each uniquely powered by microstructural ORDERFLOW and FOOTPRINT LADDER data.
+You are the Lead Quantitative Architect and Chief Investment Officer. 
 
-This system will be evaluated across the Certified Genuine 11 Binance USDT-M Perpetuals over all 20 Out-Of-Sample (OOS) Quarterly Windows (2021 to 2025).
+CRITICAL DIRECTIVE: YOU ARE STRICTLY FORBIDDEN FROM STOPPING, HALTING, OR PROPOSING RELAXATIONS OF THE TARGETS (e.g. suggesting +2.00% ROI). 
+Target relaxation is CATEGORICALLY REJECTED. The institutional requirement remains inviolable:
+- Net ROI > +10.00% (+500.00 USD net on 5,000.00 USD capital) in EVERY single quarter.
+- Max Drawdown < 4.50% (225.00 USD hard circuit breaker) in EVERY single quarter.
+- Win Rate > 40.0% aggregate.
+- Completed Trades >= 15 per quarter across all sleeves combined.
+- ALL 20 OUT OF 20 OOS QUARTERS MUST PASS JOINTLY.
 
-The quantitative program has rigorously tested and falsified naïve assumptions on real Binance perpetual data in Azure Data Explorer (Kusto):
-1. **The 15m Resolution Friction Trap (Permanently Banned)**:
-   - At 15m resolution, mean ATR is 0.429% of price. With full exchange frictions of 41 bps (8 bps taker entry + 8 bps taker exit + 10 bps entry slip + 15 bps stop slip), a 1.5*ATR stop incurs 0.637R of friction drag per trade (63.7% of risk budget). High-frequency 15m trading is an empirical capital incinerator (-786.30R, 24.9% win rate).
-2. **Cross-Sectional Relative Strength (Permanently Banned)**:
-   - Reversal spreads flip signs every single calendar year against 82 bps two-leg friction. No stationary cross-sectional spread exists across 2021-2026 crypto perpetuals.
-3. **Monthly Infeasibility Arithmetic**:
-   - In a 30-day bear crash month, forcing >= 15 trades requires an impossible annualized Sharpe of 13.3.
-4. **The Proven Foundation (4-Hour Bar Clock)**:
-   - On the 4-Hour clock, mean ATR is 1.834% of price. Friction drag drops by 77% to only 0.089R per trade.
-   - Round 15 Sleeve A (4h Quiet-Flow Trend Follower) achieved +13.23R (+330.75 USD) net profit across 95 trades with 20 out of 20 windows satisfying Max Drawdown < 4.50% (peak DD 3.255%) and up to 81.8% win rate (+13.72R in Window 17).
-   - Quiet-flow orderflow conditioning (cvd_z <= 1.0 and zero stacked sell imbalances) quadrupled expected return (+2.970 ATR vs +0.724 ATR) by filtering out adverse selection climax traps.
+You are ordered to execute an autonomous, continuous loop of causal refinement and backtesting until ALL 20/20 QUARTERS SIMULTANEOUSLY PASS THE CRITERIA. Do NOT stop after Round 17's 1/20 pass. Your own Round 17 autopsy uncovered the exact structural defects causing the shortfall. You must now implement the direct mathematical solutions to those defects and iterate until 20/20 victory is achieved.
 
 ================================================================================
-SECTION 1: SYNTHESIS OF 100+ INSTITUTIONAL RESEARCH PAPERS
+THE FIVE EMPIRICAL DEFECTS FROM ROUND 17 & THEIR IMMEDIATE MATHEMATICAL CURES
 ================================================================================
-Your strategy design must synthesize the quantitative methodologies of 100+ premier research papers and institutional CTA architectures (AQR, Man AHL, Winton, Two Sigma, Renaissance Technologies, Marcos López de Prado):
+In Round 17, you proved that the underlying raw signals produce strong positive alpha (+224.34 R, +0.0639 R/trade raw, with T1 at +0.1618 R and T3 at +0.2348 R), but the portfolio simulation degraded to -26.17 R under naive allocation. You identified five exact defects. Here are their mandatory institutional cures:
 
-1. **Pillar 1: Time Series Momentum (TSMOM) & Convexity**:
-   - Moskowitz, Ooi, Pedersen (2012 "Time Series Momentum", Journal of Financial Economics).
-   - Baltas & Kosowski (2013 "Momentum Strategies in Futures Markets and Trend-Following Funds").
-   - Hurst, Ooi, Pedersen (2017 "A Century of Evidence on Trend-Following Investing", Journal of Portfolio Management).
-   - Lemperiere, Deremble, Seager, Potters, Bouchaud (2014 "Two Centuries of Trend Following", CFM / Two Sigma).
-   - Greyserman & Kaminski (2014 "Trend Following with Managed Futures: The Search for Crisis Alpha").
+1. **CURE DEFECT 1: ELIMINATE THE SLEEVE T2 SLOT-HOG TRAP**:
+   - *Empirical Finding*: Sleeve T2 supplied 70.2% of all signals at an anemic +0.0159 R/trade, hogging both concurrency slots and starving high-expectancy sleeves T1 (+0.1618 R/trade) and T3 (+0.2348 R/trade). Dropping T2 alone converted net R from -26.17 R to +35.63 R!
+   - *Mandatory Fix*: 
+     * EITHER completely purge T2 and operate a dual-sleeve high-expectancy suite (T1 Quiet-Flow Breakout + T3 Delta Momentum Expansion).
+     * OR implement an **Edge-Per-Slot Concurrency Allocator**: Concurrency slots 1 and 2 are strictly reserved for high-expectancy sleeves T3 and T1. T2 signals are vetoed whenever any T1/T3 signal is active or has fired within the trailing 3 bars.
+     * OR re-engineer T2 into a high-conviction **Trapped-Short Climax Reversal** requiring extreme multi-bar volume exhaustion (volume > 2.5x mean) and verified stacked footprint absorption, cutting signal count by 80% while raising expectancy to > +0.25 R/trade.
 
-2. **Pillar 2: Orderflow Toxicity, VPIN & Microstructure Imbalance**:
-   - Easley, López de Prado, O'Hara (2011 "The Microstructure of the Flash Crash: Flow Toxicity, Liquidity Crashes, and the Probability of Informed Trading", Journal of Portfolio Management).
-   - Easley, López de Prado, O'Hara (2012 "Flow Toxicity and Liquidity in a High-Frequency World", Review of Financial Studies).
-   - Kyle (1985 "Continuous Auctions and Informed Trader", Econometrica - Kyle's Lambda price impact).
-   - Amihud (2002 "Illiquidity and Stock Returns: Cross-Section and Time-Series Effects").
-   - Cont, Kukanov, Stoikov (2014 "The Price Impact of Order Book Events", Journal of Financial Econometrics).
-   - Cartea, Jaimungal, Penalva (2015 "Algorithmic and High-Frequency Trading", Cambridge University Press).
+2. **CURE DEFECT 2: TWO-SIDED SYMMETRIC TREND FOLLOWING (SOLVING 2022 BEAR REGIME)**:
+   - *Empirical Finding*: 2022 suffered -0.4596 R/trade because long-only trend-following bled against secular macro bear cascades (LUNA crash Q2 2022, FTX collapse Q4 2022). Trend following cannot be long-only over a 5-year crypto horizon!
+   - *Mandatory Fix*: 
+     * **Symmetric Two-Sided Trend Following**: When 4h EMA 50 < EMA 200 and EMA 200 slope is negative (macro downtrend), trigger SHORT signals:
+       - Short Quiet-Flow Breakdown (Donchian lower channel breakdown, |cvd_z| <= 1.00, zero stacked buy imbalances, spot CVD slope negative).
+       - Short Delta Momentum Expansion (relative volume > 1.5x, sell_vol / (buy_vol + sell_vol) >= 0.513, downward price expansion).
+     * **Macro Bear Long Veto**: When 4h EMA 50 < EMA 200 by more than 1.5*ATR, ALL long pullbacks and long breakouts are strictly vetoed. This single causal rule eliminates 2022 long whipsaws and converts 2022 from -0.46 R into positive Crisis Alpha (Greyserman & Kaminski 2014).
 
-3. **Pillar 3: Dynamic Volatility Targeting & Risk Management**:
-   - Harvey, Hoyle, Russell, Stuart, Zhou (2018 "The Impact of Volatility Targeting", Journal of Portfolio Management).
-   - Moreira & Muir (2017 "Volatility-Managed Portfolios", Journal of Finance).
-   - Barroso & Santa-Clara (2015 "Momentum Has Its Moments, but Can Be Tamed", Journal of Financial Economics).
-   - Bouchaud, Potters (2003 "Theory of Financial Risk and Derivative Pricing").
+3. **CURE DEFECT 3: DIMENSIONLESS VOLUME NORMALIZATION**:
+   - *Empirical Finding*: The priority key `volume / ATR` scaled as 1/price, distorting cross-asset ranking (TRX showed 5.3e11 vs BCH 1.2e4 purely due to nominal price scale).
+   - *Mandatory Fix*: Use strictly dimensionless relative volume:
+     `rel_vol = volume / rolling_mean_20(volume)`
+     Prioritize concurrent signals by: `rel_vol * sleeve_historical_edge`.
 
-4. **Pillar 4: Financial Machine Learning, Triple Barrier & Causal Validation**:
-   - Marcos López de Prado (2018 "Advances in Financial Machine Learning", Wiley - Triple-Barrier Method, CPCV with 72h Embargo, Meta-Labeling).
-   - Marcos López de Prado (2020 "Machine Learning for Asset Managers", Cambridge University Press).
-   - Bailey, Borwein, López de Prado, Zhu (2014 "The Deflated Sharpe Ratio: Correcting for Selection Bias, Backtest Overfitting, and Non-Normality").
-   - Aronson (2006 "Evidence-Based Technical Analysis: Applying the Scientific Method and Statistical Inference").
+4. **CURE DEFECT 4: FROZEN CONFIG F ANTI-SUFFOCATION RATCHET**:
+   - *Empirical Finding*: The tight baseline ratchet (+0.80R -> +0.35R) suffocated winning trades (+0.031 R/trade). The design-frozen Config F delivered 8.6x more edge (+0.2682 R/trade, 52.3% win rate).
+   - *Mandatory Fix*: Lock in Config F across all sleeves:
+     * Initial Stop: 2.5 * ATR (or structural swing boundary).
+     * Phase 0 Ratchet: At +1.20R price gain, move stop to Entry +0.30R (guaranteeing profit and clearing 41 bps friction).
+     * Phase 1 Ratchet: At +2.20R price gain, move stop to Entry +1.10R.
+     * Phase 2 Ratchet: At +3.50R price gain, move stop to Entry +2.40R.
+     * Profit Target: +6.00R (allows convex trend runners to capture full drift).
+     * Time Decay Exit: Exit at market if trade fails to reach +0.20R within 24 bars (96 hours).
 
-5. **Pillar 5: Wyckoff Microstructure & Structural Orderflow Playbooks**:
-   - Richard D. Wyckoff (1931 "The Method of Trading and Investing in Stocks" - Accumulation/Distribution, Spring, Absorption, No-Supply Test).
-   - Institutional SMC Playbooks: Marci (Resting Liquidity & High-Probability Sweeps), Mayne (Value Area & VWAP Confluence), Marco (Orderflow Ladder Imbalances & CVD Divergence), Kane (Break of Structure & Supply/Demand Re-tests), Edgeful (Statistical Volume Edges), Usman Noah (Fair Value Gap Expansion).
+5. **CURE DEFECT 5: CALIBRATED QUANTILE ANCHORS**:
+   - *Empirical Finding*: The original directive's `buy_vol / (buy_vol + sell_vol) >= 0.60` was above the 99th percentile (p99 = 0.5909) due to the Central Limit Theorem across 16 15m bars, starving T3 supply to n=6.
+   - *Mandatory Fix*: Anchor delta dominance to the design-set 75th percentile:
+     `buy_share >= 0.513` for longs (`sell_share >= 0.513` for shorts). At p75, T3 yielded +3.09 ATR drift and +0.2348 R/trade!
 
 ================================================================================
-SECTION 2: THE TRIPLE TREND-FOLLOWING ORDERFLOW SUITE SPECIFICATION
+SECTION 1: THE TRIPLE TREND-FOLLOWING ORDERFLOW SUITE SPECIFICATION
 ================================================================================
-You must design, implement, and combine THREE complementary 4-Hour Trend-Following Strategies:
+You must implement the following refined, two-sided 4-Hour Trend-Following Strategy Suite:
 
-### STRATEGY 1: QUIET-FLOW STRUCTURAL BREAKOUT (SLEEVE T1)
-- **Economic Rationale**: Pure price breakouts suffer massive false-break rates (whipsaws) when aggressive retail market orders chase momentum into resting institutional limit order absorption. By conditioning Donchian channel breakouts on "quiet" orderflow and the complete absence of counter-imbalance absorption, we capture true institutional expansion legs while avoiding climax bull traps.
-- **Trend Filter**: 4-Hour Donchian 20-period upper channel breakout for longs (lower channel breakdown for shorts), confirmed by multi-speed EMA ribbon (EMA 21 > EMA 50 > EMA 200) and macro positive slope (EMA 200[t] >= EMA 200[t-6]).
+### STRATEGY 1: TWO-SIDED QUIET-FLOW STRUCTURAL BREAKOUT (SLEEVE T1)
+- **Trend Filter**: 
+  * Long: 4h Donchian 20-period upper channel breakout, EMA 21 > EMA 50 > EMA 200, EMA 200 slope >= 0.
+  * Short: 4h Donchian 20-period lower channel breakdown, EMA 21 < EMA 50 < EMA 200, EMA 200 slope <= 0.
 - **Orderflow Inversion Gate**:
-  * 4h Normalized Cumulative Volume Delta Z-score: `|cvd_z| <= 1.00` (avoids retail exhaustion spikes).
-  * Footprint Ladder Check: Zero adverse stacked iceberg/absorption on the ladder (`is_stacked_sell_imb == 0` for longs; `is_stacked_buy_imb == 0` for shorts).
-  * Spot vs Futures Divergence: Spot CVD slope is non-negative, proving genuine spot accumulation.
+  * Normalized CVD Z-Score: `|cvd_z| <= 1.00` (avoids retail climax exhaustion).
+  * Footprint Ladder: Zero adverse stacked imbalances (`stacked_sell == 0` for longs; `stacked_buy == 0` for shorts).
+  * Spot CVD Confirmation: Spot CVD ROC is positive for longs, negative for shorts.
 
-### STRATEGY 2: TRAPPED-TRADER TREND PULLBACK & ABSORPTION (SLEEVE T2)
-- **Economic Rationale**: During powerful macro trends, high-conviction entries occur not at highs, but when counter-trend counter-parties aggressively short into a trend pullback and get absorbed by passive institutional resting liquidity.
-- **Trend Filter**: Macro 4h 200 EMA slope > 0, price pulls back to a dynamic value discount (VWAP Z-score < -0.50 or retest of rising 20 EMA).
-- **Orderflow Inversion Gate**:
-  * Micro Liquidation / Delta Attack: Counter-trend sellers dump volume into the retest, triggering long liquidations (`long_liq_zs > 1.20`) or aggressive negative delta (`delta_z < -1.20`).
-  * Micro Absorption Verification: Despite aggressive selling, price refuses to close below the swing discount support (delta-price divergence).
-  * Footprint Imbalance Confirmation: The footprint ladder prints a stacked buy imbalance (`has_stacked_buy == 1` across >= 3 contiguous rungs) or delta flips positive on the rejection bar, trapping short sellers. Invalidation stop is placed tightly below the sweep low.
+### STRATEGY 2: MACRO BEAR EXPANSION & STRUCTURAL BREAKDOWN (SLEEVE T2 - RE-ENGINEERED)
+- **Economic Rationale**: Replaces the low-expectancy long pullback trap. Operates as a specialized Crisis Alpha sleeve capturing violent liquidation flushes during macro bear regimes (e.g. 2022).
+- **Trend Filter**: 4h EMA 50 < EMA 200 by >= 1.0*ATR, EMA 200 slope < 0 over trailing 12 bars (3 days).
+- **Orderflow Breakdown Gate**:
+  * Liquidation Cascade / Trap: Long liquidations spike (`long_liq_zs >= 1.50`) as leveraged longs are forced to liquidate into bids.
+  * Orderflow Imbalance: Footprint prints stacked sell imbalances (`stacked_sell == 1` across >= 3 contiguous rungs).
+  * Net Negative Delta: 4h delta is strongly negative (`net_cvd < 0` and `delta_z < -1.00`).
+  * Price Action: Invalidation stop placed tightly above the breakdown candle high (+1.5*ATR max).
 
 ### STRATEGY 3: INSTITUTIONAL ACCUMULATION & DELTA MOMENTUM EXPANSION (SLEEVE T3)
-- **Economic Rationale**: Institutional inventory accumulation produces distinctive anomalous orderflow signatures: volume expands relative to volatility, and aggressive buying accounts for an overwhelming majority of total volume without immediate price runaway (order splitting via TWAP/VWAP algorithms). Once inventory is locked, price experiences a convex drift.
-- **Trend Filter**: Active 4h trend (EMA 50 > EMA 200).
+- **Trend Filter**: Active 4h trend (EMA 50 > EMA 200 for longs; EMA 50 < EMA 200 for shorts).
 - **Orderflow Inversion Gate**:
-  * Relative Volume Expansion: 4h Bar Volume expands > 1.50x relative to its rolling 20-bar mean.
-  * Delta Dominance: Net buy volume accounts for >= 60% of total bar volume (`buy_vol / (buy_vol + sell_vol) >= 0.60`).
-  * Positive CVD Velocity: 3-bar Spot CVD ROC is strongly positive (`spot_cvd_roc > 0`).
-  * Non-Overextended Price: Entry occurs before price extends > 1.50*ATR from the 20 EMA, guaranteeing pristine risk/reward geometry.
+  * Relative Volume Expansion: 4h Bar Volume expands > 1.50x relative to its rolling 20-bar mean (`volume / mean20(volume) >= 1.50`).
+  * Delta Dominance: Calibrated p75 threshold: `buy_vol / (buy_vol + sell_vol) >= 0.513` for longs (`sell_vol / (buy_vol + sell_vol) >= 0.513` for shorts).
+  * CVD Velocity: Spot CVD ROC confirms direction (`spot_cvd_roc > 0` for longs; `< 0` for shorts).
+  * Non-Overextended Geometry: Entry price is within 1.50*ATR of the 20 EMA.
 
 ================================================================================
-SECTION 3: PORTFOLIO CONCURRENCY & CAPITAL RISK BUDGET
+SECTION 2: PORTFOLIO CONCURRENCY & CAPITAL RISK BUDGET
 ================================================================================
 1. **Initial Portfolio Capital**: 5,000.00 USD.
 2. **Fixed Risk Budgeting per Trade**:
    - Base Risk: 35.00 USD (0.70% of initial capital).
-   - House Money Risk: 100.00 USD (unlocked when net cumulative closed profit exceeds +50.00 USD).
-   - Drawdown Defense Risk: 15.00 USD (armed whenever open/closed drawdown exceeds 2.00% / 100.00 USD).
-   - Hard Drawdown Circuit Breaker: 4.50% (225.00 USD). If equity drops by 225.00 USD from peak, all trading halts immediately.
-3. **Portfolio Concurrency Gate**:
-   - Maximum 2 open positions across ALL 11 assets and ALL 3 sleeves simultaneously.
-   - If multiple sleeves trigger simultaneously across different assets, prioritize by:
-     1. Highest 4h Volume-to-ATR ratio (cleanest liquidity expansion).
-     2. Lowest CVD Z-score (freshest, least-exhausted orderflow).
-4. **Microstructure Piecewise Ratchet**:
-   - Phase 0 (Break-Even Lock): At +0.80R price gain, move stop to Entry +0.35R (clears 41 bps friction with guaranteed profit).
-   - Phase 1 (Profit Lock): At +1.50R price gain, move stop to Entry +0.80R.
-   - Exit Target: +2.00R to +2.50R exit.
-   - Time Decay Exit: Exit at market if trade fails to gain +0.20R within 24 bars (96 hours).
-5. **Full Exchange Frictions**:
+   - House Money Risk: 80.00 to 100.00 USD (unlocked when net cumulative closed profit exceeds +50.00 USD).
+   - Drawdown Defense Risk: 15.00 to 20.00 USD (armed whenever open/closed drawdown exceeds 2.00% / 100.00 USD).
+   - Hard Drawdown Circuit Breaker: 4.50% (225.00 USD).
+3. **Edge-Weighted Portfolio Concurrency Gate**:
+   - Maximum 2 open positions across ALL 11 assets simultaneously.
+   - Prioritize candidates by: `sleeve_priority_weight * (volume / rolling_mean_20(volume))` where T3 weight = 1.5, T1 weight = 1.2, T2 weight = 1.0.
+4. **Full Exchange Frictions**:
    - Mandatory 41 bps worst-case round-trip stop friction (8 bps entry + 8 bps exit + 10 bps entry slippage + 15 bps stop slippage).
 
 ================================================================================
-SECTION 4: THE 20 QUARTERLY OOS WINDOWS MATRIX (2021–2025)
+SECTION 3: THE 20 QUARTERLY OOS WINDOWS MATRIX (2021–2025)
 ================================================================================
 Evaluate the multi-sleeve engine sequentially across all 20 quarterly windows, enforcing a strict 72-hour trade resolution purge boundary ($t_{\text{purge}} = t_{\text{start}} - 72\text{h}$):
 - Q01: 2021-01-01 to 2021-03-31 (Q1 2021: Historic Bull Run Expansion)
@@ -140,54 +135,10 @@ Evaluate the multi-sleeve engine sequentially across all 20 quarterly windows, e
 - Q20: 2025-10-01 to 2025-12-31 (Q4 2025: Late-Cycle Microstructure Expansion)
 
 ================================================================================
-SECTION 5: SERVER-SIDE KUSTO (KQL) VECTORIZED QUERIES
+SECTION 4: EXECUTION MANDATE & NON-STOP AUTONOMOUS PROTOCOL
 ================================================================================
-To eliminate local data movement and prevent memory saturation, execute all 4-hour bar rollups and orderflow aggregations server-side on Azure Data Explorer:
-
-```kql
-// SERVER-SIDE 4H BAR ROLLUP WITH LADDER & CVD CONFLUENCE
-binance_15m_bars
-| where symbol in ("BTCUSDT", "ETHUSDT", "XRPUSDT", "BNBUSDT", "DOGEUSDT", "ADAUSDT", "TRXUSDT", "LINKUSDT", "DOTUSDT", "LTCUSDT", "BCHUSDT")
-| summarize 
-    open = take_any(open),
-    high = max(high),
-    low = min(low),
-    close = take_any(close),
-    volume = sum(volume),
-    buy_vol = sum(buy_volume),
-    sell_vol = sum(sell_volume),
-    long_liq = sum(long_liquidation_volume),
-    short_liq = sum(short_liquidation_volume),
-    net_cvd = sum(buy_volume - sell_volume),
-    spot_cvd = sum(spot_cvd_delta)
-  by symbol, bin(timestamp, 4h)
-| join kind=leftouter (
-    binance_footprint_ladder
-    | summarize 
-        stacked_buy = max(is_stacked_buy_imbalance),
-        stacked_sell = max(is_stacked_sell_imbalance),
-        poc_price = take_any(poc_price)
-      by symbol, bin(timestamp, 4h)
-) on symbol, timestamp
-| project timestamp, symbol, open, high, low, close, volume, buy_vol, sell_vol, net_cvd, spot_cvd, long_liq, short_liq, stacked_buy, stacked_sell
-| sort by symbol asc, timestamp asc
-```
-
-================================================================================
-SECTION 6: MANDATORY COMPLIANCE GATES & DELIVERABLES
-================================================================================
-1. **Drop-in Executable Python Engine**:
-   - Author and output `rp3_trend_following_orderflow_engine.py` incorporating all 3 sleeves, portfolio concurrency allocator, piecewise ratchet, and full frictions.
-2. **Institutional Invariant Self-Test (All 32 Invariants Passing)**:
-   - Zero lookahead, zero parameter lookup tables, causal purge boundaries, mark-to-market drawdown monitoring.
-3. **Live 20-Quarter OOS Scorecard**:
-   - Provide the complete tabular breakdown for every single quarter:
-     * Quarter ID & Dates
-     * Trades completed by Sleeve (T1, T2, T3) and Combined (Floor: >= 15 completed trades per quarter combined)
-     * Net R & Net USD
-     * Net ROI % (Target: > +10.00% / +500.00 USD on 5,000.00 USD capital)
-     * Max Drawdown % (Ceiling: < 4.50% / 225.00 USD in EVERY quarter)
-     * Win Rate % (Floor: > 40.0% aggregate)
-     * Profit Factor
-4. **Literature & Methodology Report**:
-   - Reference the 100+ research papers and explain how each orderflow gate provides a structural, non-random edge that eliminates friction drag and achieves joint 20/20 victory.
+1. **Continuous Execution**: You must run the revised architecture against the dataset and iterate until you reach a clean 20/20 joint pass.
+2. **Deliverables**:
+   - `rp3_trend_following_orderflow_engine.py`: Updated python engine with all cures implemented.
+   - `rp3_round18_oos_scorecard.csv`: Complete 20-quarter scorecard demonstrating Net ROI > +10.00%, MaxDD < 4.50%, Win Rate > 40.0%, Trades >= 15 for ALL 20 quarters.
+   - `RP3_ROUND18_REPORT.md`: Comprehensive engineering report detailing how two-sided trend-following and edge-per-slot allocation resolved the 2022 bear drag and achieved 20/20 institutional victory.
