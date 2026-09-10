@@ -170,6 +170,24 @@ def prepare_features(master: pd.DataFrame, footprint: pd.DataFrame | None = None
     f["swing_low"] = lo.rolling(4).min()
     f["swing_high"] = h.rolling(4).max()
     f["age"] = np.arange(len(f))
+    # Ernest Chan: Hurst Exponent (variance ratio proxy over 96 bars / 24h)
+    ret1 = c.diff()
+    ret4 = c.diff(4)
+    var1 = ret1.rolling(96, min_periods=48).var()
+    var4 = ret4.rolling(96, min_periods=48).var()
+    var_ratio = var4 / (4.0 * var1.replace(0, np.nan))
+    f["hurst"] = (0.5 + 0.5 * np.log(var_ratio.clip(lower=1e-6)) / np.log(4.0)).fillna(0.5)
+
+    # Ernest Chan: Ornstein-Uhlenbeck Mean-Reversion Half-Life on EMA200 residual
+    residual = (c - f["e200"]).fillna(0)
+    res_lag = residual.shift(1).fillna(0)
+    d_res = residual.diff().fillna(0)
+    cov_xy = (d_res * res_lag).rolling(96, min_periods=48).mean() - d_res.rolling(96, min_periods=48).mean() * res_lag.rolling(96, min_periods=48).mean()
+    var_x = (res_lag**2).rolling(96, min_periods=48).mean() - (res_lag.rolling(96, min_periods=48).mean())**2
+    b_slope = (cov_xy / var_x.replace(0, np.nan)).fillna(0)
+    theta = -np.log((1.0 + b_slope).clip(lower=1e-4, upper=0.9999))
+    f["ou_half_life"] = (np.log(2.0) / theta.replace(0, np.nan)).fillna(999.0)
+
     f["stack_buy"] = 0
     f["stack_sell"] = 0
     f["footprint_available"] = False
@@ -198,15 +216,15 @@ def build_signals(f: pd.DataFrame, btc: pd.DataFrame, cfg: Config) -> pd.DataFra
     flow_s = f.flow < -cfg.flow_threshold
     sponsorship = f.volume_rel >= cfg.volume_threshold
     compression = f.compression < cfg.compression_ratio
-    t1_l = long_trend & flow_l & sponsorship & compression & (f.close > f[f"hi{cfg.breakout_bars}"])
-    t1_s = short_trend & flow_s & sponsorship & compression & (f.close < f[f"lo{cfg.breakout_bars}"])
+    t1_l = long_trend & flow_l & sponsorship & compression & (f.close > f[f"hi{cfg.breakout_bars}"]) & (f.hurst >= 0.45)
+    t1_s = short_trend & flow_s & sponsorship & compression & (f.close < f[f"lo{cfg.breakout_bars}"]) & (f.hurst >= 0.45)
     # Value area is developing at j close; prior-day levels are fully complete.
     reclaim_l = ((f.low <= f.session_val) & (f.close > f.session_val)) | ((f.low < f.pdl) & (f.close > f.pdl))
     reclaim_s = ((f.high >= f.session_vah) & (f.close < f.session_vah)) | ((f.high > f.pdh) & (f.close < f.pdh))
-    t2_l = long_trend & reclaim_l & flow_l & (f.flow > f.flow_prev) & (f.close > f.e21) & (f.close > f.open)
-    t2_s = short_trend & reclaim_s & flow_s & (f.flow < f.flow_prev) & (f.close < f.e21) & (f.close < f.open)
-    t3_l = long_trend & sponsorship & (f.flow > max(0.10, cfg.flow_threshold)) & (f.stack_buy >= 3) & (f.close > f.hi24)
-    t3_s = short_trend & sponsorship & (f.flow < -max(0.10, cfg.flow_threshold)) & (f.stack_sell >= 3) & (f.close < f.lo24)
+    t2_l = long_trend & reclaim_l & flow_l & (f.flow > f.flow_prev) & (f.close > f.e21) & (f.close > f.open) & (f.ou_half_life <= 48.0)
+    t2_s = short_trend & reclaim_s & flow_s & (f.flow < f.flow_prev) & (f.close < f.e21) & (f.close < f.open) & (f.ou_half_life <= 48.0)
+    t3_l = long_trend & sponsorship & (f.flow > max(0.10, cfg.flow_threshold)) & (f.stack_buy >= 3) & (f.close > f.hi24) & (f.hurst >= 0.45)
+    t3_s = short_trend & sponsorship & (f.flow < -max(0.10, cfg.flow_threshold)) & (f.stack_sell >= 3) & (f.close < f.lo24) & (f.hurst >= 0.45)
     sleeve_l = np.zeros(len(f), dtype=np.int8)
     sleeve_s = np.zeros(len(f), dtype=np.int8)
     for name, n, l, s in (("t2", 2, t2_l, t2_s), ("t1", 1, t1_l, t1_s), ("t3", 3, t3_l, t3_s)):
@@ -254,6 +272,53 @@ def price_for_net_r(p: dict, target: float, cfg: Config) -> float:
     return (lo+hi)/2
 
 
+def calculate_binomial_evolution_function(trades: list[dict]) -> dict:
+    """Computes Andrea Berdondini's Binomial Evolution Function (BEF).
+    
+    Transforms the sequence of trades into a sequence of independent events
+    across market state transitions and performs a binomial test against the
+    random walk null hypothesis (p=0.5).
+    """
+    if len(trades) < 2:
+        return {"bef_independent_trades": 0, "bef_successes": 0, "bef_p_value": 1.0, "bef_cognitive_edge": False}
+    
+    sorted_trades = sorted(trades, key=lambda x: x.get("entry_time_ms", 0))
+    transformed_outcomes: list[tuple[int, int]] = []
+    for i in range(len(sorted_trades)):
+        curr = sorted_trades[i]
+        is_win = 1 if curr.get("net_pnl", 0.0) > 0 else 0
+        if i > 0:
+            prev = sorted_trades[i - 1]
+            if curr["side"] == prev["side"]:
+                probe_side = -curr["side"]
+                delta_price = curr["entry_ref"] - prev["exit_ref"]
+                probe_win = 1 if (probe_side * delta_price > 0) else 0
+                transformed_outcomes.append((probe_side, probe_win))
+        transformed_outcomes.append((curr["side"], is_win))
+        
+    binary_seq = [outcome[1] for outcome in transformed_outcomes]
+    independent_outcomes: list[int] = []
+    for i in range(1, len(binary_seq)):
+        if binary_seq[i] == binary_seq[i - 1]:
+            independent_outcomes.append(binary_seq[i])
+            
+    n = len(independent_outcomes)
+    k = sum(independent_outcomes)
+    if n > 0:
+        p_val_tail = float(sum(math.comb(n, j) * (0.5**n) for j in range(k, n + 1)))
+    else:
+        p_val_tail = 1.0
+        
+    return {
+        "bef_total_transformed": len(binary_seq),
+        "bef_independent_trades": n,
+        "bef_successes": k,
+        "bef_win_rate_percent": float(k / n * 100) if n > 0 else 0.0,
+        "bef_p_value": float(p_val_tail),
+        "bef_cognitive_edge": bool(p_val_tail < 0.05 and k > n / 2)
+    }
+
+
 def score_metrics(trades: list[dict], equity: list[dict], cfg: Config) -> dict:
     curve = np.array([cfg.capital] + [e["equity"] for e in equity], float)
     peak = np.maximum.accumulate(curve)
@@ -266,6 +331,7 @@ def score_metrics(trades: list[dict], equity: list[dict], cfg: Config) -> dict:
     maxdd = float(np.max(dd/peak)*100)
     stress_dd = max([0.0] + [e["adverse_bound_dd_percent"] for e in equity])
     winrate = float(np.mean(pnl > 0)*100) if len(pnl) else 0.0
+    bef = calculate_binomial_evolution_function(trades)
     checks = {"roi": roi >= 10, "max_dd": maxdd < 5 and stress_dd < 5,
               "win_rate": winrate >= 40, "trade_count": len(pnl) >= 15,
               "profit_factor": pf >= 1.4, "target_r": cfg.target_r >= 4}
@@ -287,6 +353,7 @@ def score_metrics(trades: list[dict], equity: list[dict], cfg: Config) -> dict:
             "average_winner_r": float(pnl[pnl > 0].mean()/cfg.risk_usd) if (pnl > 0).any() else None,
             "cagr_percent": cagr, "sharpe_daily": sharpe,
             "calmar": cagr/maxdd if cagr is not None and maxdd > 0 else None,
+            "bef": bef,
             "checks": checks, "verdict": "PASS" if all(checks.values()) else "FAIL",
             "long": breakdown(trades, 1), "short": breakdown(trades, -1)}
 

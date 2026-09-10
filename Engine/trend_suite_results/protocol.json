@@ -1,5 +1,5 @@
 {
-  "created_utc": "2026-09-10T12:39:59.475775+00:00",
+  "created_utc": "2026-09-10T18:24:46.325685+00:00",
   "raw_criteria": {
     "target_criteria": {
       "min_roi_percent": 10.0,
@@ -725,5 +725,5 @@
   ],
   "selection": "pre-2021 training score only; freeze before first evaluation",
   "funding_limitation": "8h schedule estimated from last-settled rates; not exact funding events",
-  "source_sha256": "9b11a10646f6f894112adf8e38664309f6fd6043b73119d83402d89ae56cdced"
+  "source_sha256": "cead794adcb42ea06ff7c69ab86c92a1543db2b115838ecd029e47ec9756ade7"
 }
