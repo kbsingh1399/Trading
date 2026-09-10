@@ -22,6 +22,24 @@ Construct an institutional-grade Trend-Following Orderflow Trading System that p
 ALL 20 consecutive Out-Of-Sample (OOS) quarterly windows (2021 Q1 through 2025 Q4)
 under strict real-world Binance friction modeling, without a single failing window.
 
+CRITICAL ASSET ALLOCATION DIRECTIVE (BTC EXCLUSION MANDATE):
+Empirical market microstructure confirms that BTC perpetual contracts are heavily
+degraded by cross-venue basis arbitrage (CME vs ETF vs Spot), high-frequency predatory
+liquidity pins, and mean-reverting chop that consistently breaks trend-following rules.
+In contrast, high-beta altcoin perpetuals exhibit superior retail orderflow participation,
+genuine trapped-trader liquidations, and clean multi-day directional momentum expansions.
+
+Therefore, you must enforce the following universe architecture:
+1. BTCUSDT DIRECT TRADING IS STRICTLY BANNED:
+   - Do not open positions in BTCUSDT.
+   - Use BTCUSDT solely as an EXOGENOUS MACRO COMPASS & REGIME FILTER (e.g. macro trend
+     alignment, market-wide liquidation cascades, systemic volatility gating).
+2. ACTIVE TRADE EXECUTION UNIVERSE (17 ALTCOIN PERPETUALS):
+   - ETH, XRP, SOL, BNB, DOGE, ADA, TRX, LINK, AVAX,
+     SUI, NEAR, DOT, LTC, BCH, APT, OP, ARB.
+   - Focus capital and risk budgets exclusively on altcoins demonstrating clean orderflow
+     sponsorship, value area breakouts, and aggressive taker delta expansion.
+
 Do not guess or assume codebase structure. Fetch every file directly from the GitHub
 repository via raw URLs.
 
@@ -45,7 +63,7 @@ institutional hurdles. A failure in ANY single window constitutes a system failu
 1. Portfolio Risk Budget & Capital:
    - Initial Capital: 5000.00 USD
    - Base Risk per Trade: 1.0 percent (50.00 USD fixed risk allocation)
-   - Max Concurrent Open Positions: 2 to 3 across the entire portfolio
+   - Max Concurrent Open Positions: 2 to 3 across the entire altcoin portfolio
 
 2. Window Return & Risk Hurdles:
    - Net ROI Target: >= +10.00 percent per quarter (+500.00 USD net on 5000.00 USD capital)
@@ -98,8 +116,9 @@ SECTION 3: DATASET PROVENANCE & DUAL-TABLE SPECIFICATION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Universe: 18 Binance USDT-M Perpetual Contracts (2020 to 2026, 3.47M 15m bars, 0 nulls):
-  BTC, ETH, XRP, SOL, BNB, DOGE, ADA, TRX, LINK, AVAX,
-  SUI, NEAR, DOT, LTC, BCH, APT, OP, ARB
+  - Exogenous Macro Filter: BTCUSDT
+  - Tradable Altcoins: ETH, XRP, SOL, BNB, DOGE, ADA, TRX, LINK, AVAX,
+                       SUI, NEAR, DOT, LTC, BCH, APT, OP, ARB
 
 Schema Version 2.2 Dual-Table Architecture:
 1. Master Table ({symbol}_15m_master_2020_2026.parquet):
@@ -142,22 +161,24 @@ SECTION 4: INSTITUTIONAL ANTI-LOOKAHEAD & EXECUTION RULES
    and resume.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION 5: TREND-FOLLOWING SYSTEM ARCHITECTURE (FIRST PRINCIPLES)
+SECTION 5: ALTCOIN TREND-FOLLOWING SYSTEM ARCHITECTURE (FIRST PRINCIPLES)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Crypto perpetual orderflow displays pronounced trend continuation characteristics driven by:
+Altcoin perpetual orderflow displays pronounced trend continuation characteristics driven by:
 - Sustained aggressive market order imbalance (CVD expansion).
-- Cascading liquidations fueling breakout momentum.
+- Cascading retail liquidations fueling breakout momentum.
 - Structural trapped-trader absorption at Value Area extremes.
 
-Architectural Recommendations for the Trend Suite:
+Architectural Recommendations for the Altcoin Trend Suite:
 
-1. Macro Regime Filter:
-   - Identify dominant multi-hour trend direction using slope of long-term trendlines
-     (e.g., EMA 200 / EMA 800) and multi-session VWAP alignment.
-   - Restrict long entries to bullish structural regimes; short entries to bearish regimes.
+1. BTC Macro Compass (Exogenous Regime Gate):
+   - Measure BTC macro trend direction using slope of BTC EMA 200 / EMA 800 and session VWAP.
+   - Restrict Altcoin long entries to periods where BTC is not in an aggressive breakdown.
+   - Gate or hedge Altcoin short entries during massive BTC upward surges.
+   - If BTC experiences an extreme volatility flash (BTC ATR z-score > 3.0), temporarily veto
+     new entries to prevent systemic liquidity contagion.
 
-2. Triple-Sleeve Multi-Alpha Structure:
+2. Triple-Sleeve Multi-Alpha Structure (Executed on Altcoins):
    - Sleeve T1: Quiet-Flow Volatility Breakout
      Identifies compression regimes (narrowing ATR / Value Area contraction) transitioning
      into high-momentum expansion accompanied by institutional volume.
@@ -178,7 +199,7 @@ Architectural Recommendations for the Trend Suite:
      within 24 bars (6 hours).
 
 4. Portfolio Execution & Risk Allocation:
-   - Run parallel multi-asset screening across the institutional universe.
+   - Run parallel multi-asset screening across the 17 altcoin perpetuals.
    - Limit concurrent positions to 2 or 3 to maintain diversification while strictly capping
      aggregate portfolio drawdown below 5.0 percent.
 
@@ -190,7 +211,8 @@ Provide an exhaustive, verified implementation and analysis:
 
 1. Complete Backtesting Engine:
    - Deliver clean, modular, self-contained Python code that loads the genuine Parquet datasets,
-     computes the trend-following signals, applies full frictions, and logs trades.
+     computes the trend-following signals on the 17 altcoins using BTC as the macro compass,
+     applies full frictions, and logs trades.
    - Single-file strategy architecture (e.g. Engine/s1_trend_following_suite.py).
 
 2. 20-Window Scorecard Performance Table:
