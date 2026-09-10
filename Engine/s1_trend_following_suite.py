@@ -37,28 +37,28 @@ MASTER_COLUMNS = ["open_time_ms", "open", "high", "low", "close", "volume_base",
 class Config:
     capital: float = 5000.0
     risk_usd: float = 50.0
-    max_positions: int = 3
+    max_positions: int = 2
     max_gross_leverage: float = 3.0
     fee: float = 0.0008
     entry_slip: float = 0.0010
     exit_slip: float = 0.0015
     friction_floor: float = 0.0041
     dd_limit: float = 0.05
-    circuit_fraction: float = 0.045
-    warmup_bars: int = 4000
+    circuit_fraction: float = 0.048
+    warmup_bars: int = 1000
     breakout_bars: int = 96
-    stop_atr: float = 3.0
+    stop_atr: float = 2.5
     min_stop_fraction: float = 0.012
-    target_r: float = 2.2
-    flow_threshold: float = 0.04
-    volume_threshold: float = 1.3
-    compression_ratio: float = 1.0
+    target_r: float = 2.0
+    flow_threshold: float = 0.02
+    volume_threshold: float = 1.22
+    compression_ratio: float = 1.1
     macro_z_limit: float = 3.0
-    sleeve_mode: str = "all"
+    sleeve_mode: str = "adaptive"
     ratchet: bool = True
-    max_hold_bars: int = 288
+    max_hold_bars: int = 144
     decay_bars: int = 24
-    cooldown_bars: int = 16
+    cooldown_bars: int = 8
     # The master exposes last-settled rates, not event timestamps. This is an
     # explicitly approximate 8h funding model, separately itemized in output.
     funding_8h: bool = True
@@ -142,7 +142,7 @@ def prepare_features(master: pd.DataFrame, footprint: pd.DataFrame | None = None
             (f.high >= f[["open", "close"]].max(axis=1))).all():
         raise ValueError("Invalid OHLC geometry")
     c, h, lo = f.close, f.high, f.low
-    for n in (21, 50, 200, 800):
+    for n in (21, 50, 200, 800, 2880):
         f[f"e{n}"] = ema(c, n)
     tr = pd.concat([h-lo, (h-c.shift()).abs(), (lo-c.shift()).abs()], axis=1).max(axis=1)
     f["atr"] = rma(tr, 14)
@@ -227,10 +227,21 @@ def build_signals(f: pd.DataFrame, btc: pd.DataFrame, cfg: Config) -> pd.DataFra
     t3_s = short_trend & sponsorship & (f.flow < -max(0.10, cfg.flow_threshold)) & (f.stack_sell >= 3) & (f.close < f.lo24) & (f.hurst >= 0.45)
     sleeve_l = np.zeros(len(f), dtype=np.int8)
     sleeve_s = np.zeros(len(f), dtype=np.int8)
-    for name, n, l, s in (("t2", 2, t2_l, t2_s), ("t1", 1, t1_l, t1_s), ("t3", 3, t3_l, t3_s)):
-        if cfg.sleeve_mode in ("all", name):
-            sleeve_l[l.to_numpy()] = n
-            sleeve_s[s.to_numpy()] = n
+    if cfg.sleeve_mode == "adaptive":
+        btc_expansion = b.slope200.abs().ge(0.80)
+        t1_eligible_l = t1_l & btc_expansion
+        t1_eligible_s = t1_s & btc_expansion
+        t2_eligible_l = t2_l & ~btc_expansion
+        t2_eligible_s = t2_s & ~btc_expansion
+        sleeve_l[t2_eligible_l.to_numpy()] = 2
+        sleeve_s[t2_eligible_s.to_numpy()] = 2
+        sleeve_l[t1_eligible_l.to_numpy()] = 1
+        sleeve_s[t1_eligible_s.to_numpy()] = 1
+    else:
+        for name, n, l, s in (("t2", 2, t2_l, t2_s), ("t1", 1, t1_l, t1_s), ("t3", 3, t3_l, t3_s)):
+            if cfg.sleeve_mode in ("all", name):
+                sleeve_l[l.to_numpy()] = n
+                sleeve_s[s.to_numpy()] = n
     valid = (f.age >= cfg.warmup_bars) & (f.volume_quote > 0)
     l = valid & macro_long & (sleeve_l > 0)
     s = valid & macro_short & (sleeve_s > 0)
@@ -388,6 +399,8 @@ def simulate_window(data: dict[str, pd.DataFrame], start_ms: int, end_ms: int,
     ix = {c: i for i, c in enumerate(cols)}
     positions: dict[str, dict] = {}
     cooldown = {s: -1 for s in arrays}
+    portfolio_cooldown = -1
+    consec_losses = 0
     cash = cfg.capital
     peak = cfg.capital
     halted = False
@@ -396,7 +409,7 @@ def simulate_window(data: dict[str, pd.DataFrame], start_ms: int, end_ms: int,
     max_open = 0
 
     def close_position(symbol: str, raw: float, t: int, reason: str):
-        nonlocal cash
+        nonlocal cash, consec_losses, portfolio_cooldown
         p = positions.pop(symbol)
         vals = execution_values(p["entry_ref"], raw, p["side"], cfg)
         # Entry fee was booked at entry; funding at settlement. Finish cash
@@ -409,6 +422,13 @@ def simulate_window(data: dict[str, pd.DataFrame], start_ms: int, end_ms: int,
                        "friction_topup": p["qty"]*vals["friction_topup"],
                        "net_pnl": net, "net_r": net/cfg.risk_usd, "exit_reason": reason})
         cooldown[symbol] = t + cfg.cooldown_bars*BAR_MS
+        if net < 0:
+            consec_losses += 1
+            if consec_losses >= 3:
+                portfolio_cooldown = t + 48 * BAR_MS
+                consec_losses = 0
+        else:
+            consec_losses = 0
 
     def marked(refs: dict[str, float]) -> float:
         return cash + sum(net_pnl(p, refs[s], cfg)+p["entry_fee"]+p["funding"] for s, p in positions.items())
@@ -438,7 +458,7 @@ def simulate_window(data: dict[str, pd.DataFrame], start_ms: int, end_ms: int,
             for s in list(positions):
                 close_position(s, bars[s][ix["open"]], int(t), "open_circuit")
         candidates = []
-        if not halted and k < len(grid):
+        if not halted and k < len(grid) and t >= portfolio_cooldown:
             for s, a in arrays.items():
                 prev = a[k-1]
                 if s in bars and s not in positions and t >= cooldown[s] and np.isfinite(prev[ix["signal"]]) and prev[ix["signal"]] != 0:
@@ -457,7 +477,13 @@ def simulate_window(data: dict[str, pd.DataFrame], start_ms: int, end_ms: int,
             current_refs = {a: bars[a][ix["open"]] for a in positions}
             equity_open = marked(current_refs)
             current_dd = (peak - equity_open) / peak if peak > 0 else 0.0
-            trade_risk = 15.0 if current_dd >= 0.02 else cfg.risk_usd
+            net_prof = equity_open - cfg.capital
+            if current_dd >= 0.025:
+                trade_risk = 15.0
+            elif net_prof >= 50.0:
+                trade_risk = 45.0 if len(positions) == 0 else 24.0
+            else:
+                trade_risk = 35.0 if len(positions) == 0 else 20.0
             qty = trade_risk / unit_loss
             gross = sum(p["qty"]*current_refs[a] for a, p in positions.items())
             if gross + qty*o > cfg.max_gross_leverage*equity_open or equity_open <= peak*(1-cfg.circuit_fraction):
@@ -506,7 +532,7 @@ def simulate_window(data: dict[str, pd.DataFrame], start_ms: int, end_ms: int,
                 p["exit_next"] = "time_decay"
             # These newly computed stops are never evaluated on this candle.
             if cfg.ratchet:
-                lock = 0.80 if p["max_net_r"] >= 1.4 else (0.30 if p["max_net_r"] >= 0.75 else None)
+                lock = 0.80 if p["max_net_r"] >= 1.40 else (0.25 if p["max_net_r"] >= 0.90 else None)
                 proposal = p["stop"]
                 if lock is not None:
                     proposal = price_for_net_r(p, lock, cfg)
@@ -562,7 +588,7 @@ def apply_signals(features: dict[str, pd.DataFrame], cfg: Config) -> dict[str, p
 def candidate_configs() -> list[Config]:
     """Predeclared finite hypothesis family, identical for all calendar dates."""
     return [replace(Config(), breakout_bars=b, stop_atr=a, target_r=tr, sleeve_mode=s, ratchet=r)
-            for b, a, tr, s, r in itertools.product((48, 96), (2.5, 3.0), (2.0, 2.2, 2.5), ("all", "t1"), (True,))]
+            for b, a, tr, s, r in itertools.product((48, 96), (2.5, 3.0), (2.0, 2.2), ("adaptive", "t1", "t2"), (True,))]
 
 
 def calibrate(features: dict[str, pd.DataFrame], start: int, end: int, output: Path,
