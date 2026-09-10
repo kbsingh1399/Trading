@@ -100,12 +100,18 @@ H4_MS = 14_400_000          # 4h
 HOUR_MS = 3_600_000
 F15_PER_4H = 16
 
+# BTC EXCLUSION MANDATE (docs/prompts/Arena_Trend_Following_20_OOS_Suite_Prompt.txt):
+# BTCUSDT is BANNED from direct trading. It is loaded solely as an exogenous
+# macro compass (systemic regime + volatility gating). Execution universe is
+# the 17 altcoin perpetuals below.
+MACRO_SYMBOL = "BTCUSDT"
 SYMBOLS_ALL = [
-    "BTCUSDT", "ETHUSDT", "XRPUSDT", "SOLUSDT", "BNBUSDT",
+    "ETHUSDT", "XRPUSDT", "SOLUSDT", "BNBUSDT",
     "DOGEUSDT", "ADAUSDT", "TRXUSDT", "LINKUSDT", "AVAXUSDT",
     "SUIUSDT", "NEARUSDT", "DOTUSDT", "LTCUSDT", "BCHUSDT",
     "APTUSDT", "OPUSDT", "ARBUSDT",
 ]
+SYMBOLS_WITH_MACRO = SYMBOLS_ALL + [MACRO_SYMBOL]
 
 # ---------------------------------------------------------------------------
 # The 20 canonical OOS quarterly windows (mission Section 2)
@@ -174,6 +180,7 @@ class RiskConfig:
     initial_capital: float = 5000.0
     risk_usd: float = 50.0            # 1.0% fixed risk budget per trade
     max_concurrent: int = 2           # portfolio cap (mission: 2 to 3)
+    sleeve_concurrency_caps: Optional[Dict[str, int]] = None  # e.g. {'T2': 1}
     dd_halt: float = 0.030            # risk-off: block new entries at this DD
     dd_resume: float = 0.015          # risk-on: re-enable below this DD
     dd_hard_cap: float = 0.05         # criterion: drawdown strictly below 5%
@@ -312,6 +319,17 @@ class TrendParams:
     r5_time_stop_4h: int = 12
     r5_er_min: float = 0.10            # requires a real uptrend
 
+    # --- BTC macro compass (BTC EXCLUSION MANDATE) -----------------------------
+    # BTCUSDT is not traded. Its 4h regime/volatility state gates alt entries:
+    #  - alt LONGS blocked while BTC is in a bear structure (EMA50<EMA200) or a
+    #    volatility shock (ATR14/ATR100 > btc_vol_shock_ratio);
+    #  - alt SHORTS blocked while BTC is in a bull structure.
+    # All state is read from the SIMULTANEOUS BTC 4h bar close (causal).
+    btc_macro_enabled: bool = True
+    btc_vol_shock_ratio: float = 1.80
+    btc_veto_long_on_bear: bool = True
+    btc_veto_short_on_bull: bool = True
+
     # --- Family S3: slow momentum book (M1) + absorption book (M2) -------------
     # M1: 30-day Donchian momentum, EMA300(4h) trend anchor, wide 3-ATR stop,
     #     5-ATR chandelier runner from entry, ~20-day hold cap. Research:
@@ -319,6 +337,7 @@ class TrendParams:
     #     quarters where the fast 4h trend book churns (2021Q1/Q3, 2023Q4...).
     m1_enabled: bool = True
     m1_donch_bars: int = 180           # 30-day breakout channel (4h bars)
+    m1_break_buffer_atr: float = 0.0   # breakout must clear channel by this many ATR
     m1_stop_k_atr: float = 3.00
     m1_trail_atr_mult: float = 5.00    # chandelier from entry (runner)
     m1_max_hold_4h: int = 120          # 20-day hard cap
@@ -816,10 +835,11 @@ def generate_candidates(sd: SymbolData, p: TrendParams,
     #     5-ATR chandelier runner from entry, no R-ratchets, 20-day cap.
     if p.m1_enabled:
         d1 = p.m1_donch_bars
+        buf1 = p.m1_break_buffer_atr * atr
         hi1, lo1 = sd.donch4_hi[d1], sd.donch4_lo[d1]
         ema_anchor = sd.ema4_300
-        brk_up_m = (c > hi1) & (c > ema_anchor)
-        brk_dn_m = (c < lo1) & (c < ema_anchor)
+        brk_up_m = (c > hi1 + buf1) & (c > ema_anchor)
+        brk_dn_m = (c < lo1 - buf1) & (c < ema_anchor)
         if not p.m1_shorts:
             brk_dn_m = np.zeros(n, bool)
         for mask, side in ((brk_up_m & valid_trend & rank_ok, 1),
@@ -855,6 +875,14 @@ def generate_candidates(sd: SymbolData, p: TrendParams,
                 out.append(Candidate(sd.symbol, int(j), side, "M2", dist,
                                      target_r=p.m2_target_r,
                                      time_stop_4h=p.m2_time_stop_4h))
+
+    # ---- BTC macro compass veto (side-specific, causal) ----------------------
+    veto_l = getattr(sd, "btc_veto_l", None)
+    veto_s = getattr(sd, "btc_veto_s", None)
+    if veto_l is not None or veto_s is not None:
+        out = [cd_ for cd_ in out
+               if not (cd_.side == 1 and veto_l is not None and veto_l[cd_.j4])
+               and not (cd_.side == -1 and veto_s is not None and veto_s[cd_.j4])]
 
     return out
 
@@ -1087,8 +1115,18 @@ def assemble_portfolio(trades_by_key: Dict[Tuple[str, int, int], Trade],
         if ts_e < t_start or ts_e >= t_end:
             continue
         by_entry.setdefault(int((ts_e - t_start) // BAR_MS), []).append(cand)
+    def _entry_quality(cd_: Candidate) -> tuple:
+        # admission priority: strongest cross-sectional momentum first (the
+        # alt most likely to run), then sleeve priority, then symbol for
+        # determinism. Rank is causal (trailing 15d return rank at bar j4).
+        sd_ = sds[cd_.symbol]
+        rk = sd_.rank4[cd_.j4] if getattr(sd_, "rank4", None) is not None else 99
+        if not np.isfinite(rk):
+            rk = 99
+        return (float(rk), SLEEVE_PRIORITY.get(cd_.sleeve, 9), cd_.symbol)
+
     for k in by_entry:
-        by_entry[k].sort(key=lambda cd_: (SLEEVE_PRIORITY.get(cd_.sleeve, 9), cd_.symbol))
+        by_entry[k].sort(key=_entry_quality)
 
     cash = risk.initial_capital
     open_pos: Dict[str, Trade] = {}
@@ -1172,6 +1210,15 @@ def assemble_portfolio(trades_by_key: Dict[Tuple[str, int, int], Trade],
                 s = cand.symbol
                 if s in open_pos:
                     continue
+                # sleeve concurrency cap (e.g. at most 1 filler slot so
+                # pullback books cannot crowd out momentum runners)
+                if risk.sleeve_concurrency_caps:
+                    cap = risk.sleeve_concurrency_caps.get(cand.sleeve)
+                    if cap is not None:
+                        n_sleeve = sum(1 for tr_ in open_pos.values()
+                                       if getattr(tr_, "sleeve", cand.sleeve) == cand.sleeve)
+                        if n_sleeve >= cap:
+                            continue
                 # correlation guard: the four books are highly correlated;
                 # cap concurrent exposure per direction
                 n_dir = sum(1 for tr_ in open_pos.values() if tr_.side == cand.side)
@@ -1255,7 +1302,7 @@ def attach_xs_ranks(sds: Dict[str, SymbolData], lookback: int) -> None:
     """Cross-sectional momentum rank (causal): for each symbol's 4h bar, rank
     by trailing `lookback`-bar return vs the other symbols at the same UTC
     timestamp. 0 = strongest. Cached per (symbol, lookback)."""
-    syms = list(sds)
+    syms = [k for k in sds if not getattr(sds[k], "is_macro_only", False)]
     if len(syms) < 2:
         for sd in sds.values():
             sd.rank4 = None
@@ -1290,18 +1337,23 @@ def attach_xs_ranks(sds: Dict[str, SymbolData], lookback: int) -> None:
 
 
 def evaluate_window(sds: Dict[str, SymbolData], window: Dict, p: TrendParams,
-                    fric: FrictionConfig, risk: RiskConfig) -> Dict:
+                    fric: FrictionConfig, risk: RiskConfig,
+                    p_by_symbol: Optional[Dict[str, TrendParams]] = None) -> Dict:
     t_start = int(pd.Timestamp(window["start"]).value // 1e6)
     t_end = int(pd.Timestamp(window["end"]).value // 1e6)
     t_purge = t_end - risk.purge_hours * HOUR_MS
 
-    # causal cross-sectional momentum ranks for the symbol universe
+    # causal cross-sectional momentum ranks for the tradeable universe
     attach_xs_ranks(sds, p.xs_rank_lookback)
+    # BTC macro compass (BTC EXCLUSION MANDATE): veto arrays per alt symbol
+    attach_btc_macro(sds, p)
 
     cands: List[Candidate] = []
     trades_by_key: Dict[Tuple[str, int, int], Trade] = {}
     n_cands_raw = 0
     for sym, sd in sds.items():
+        if getattr(sd, "is_macro_only", False):
+            continue                      # BTC: compass, never traded
         j_lo = max(0, int(np.searchsorted(sd.t4, t_start, side="left")))
         # signals up to 72h before window end (entry then fills in-window)
         j_hi = int(np.searchsorted(sd.t4, t_purge, side="right"))
@@ -1309,7 +1361,8 @@ def evaluate_window(sds: Dict[str, SymbolData], window: Dict, p: TrendParams,
             continue
         # simulation may run to the last 15m bar inside the window
         bar_end = int(np.searchsorted(sd.t, t_end, side="right")) - 1
-        sym_cands = generate_candidates(sd, p, j_lo, j_hi)
+        p_sym = (p_by_symbol or {}).get(sym, p)   # individual_asset_best mode
+        sym_cands = generate_candidates(sd, p_sym, j_lo, j_hi)
         n_cands_raw += len(sym_cands)
         best: Dict[Tuple[int, int], Candidate] = {}
         for cd_ in sym_cands:
@@ -1318,7 +1371,7 @@ def evaluate_window(sds: Dict[str, SymbolData], window: Dict, p: TrendParams,
                                    < SLEEVE_PRIORITY.get(best[key].sleeve, 9)):
                 best[key] = cd_
         for cd_ in best.values():
-            tr = simulate_trade(sd, cd_, p, fric, risk, bar_end)
+            tr = simulate_trade(sd, cd_, p_sym, fric, risk, bar_end)
             if tr is not None and tr.exit_ts < t_end:
                 cands.append(cd_)
                 trades_by_key[(cd_.symbol, cd_.j4, cd_.side)] = tr
@@ -1456,8 +1509,38 @@ def load_symbols(symbols: List[str], data_dir: str = DATA_DIR) -> Dict[str, Symb
         sd = SymbolData(s, data_dir)
         if sd.n < 1000:
             continue
+        sd.is_macro_only = (s == MACRO_SYMBOL)   # BTC: compass, never traded
         sds[s] = sd
     return sds
+
+
+def attach_btc_macro(sds: Dict[str, SymbolData], p: TrendParams) -> None:
+    """Attach per-alt 4h-bar BTC veto arrays (causal: BTC bar with the same
+    UTC 4h open time closes simultaneously with the alt signal bar)."""
+    btc = sds.get(MACRO_SYMBOL)
+    if btc is None or not p.btc_macro_enabled:
+        return
+    bear = btc.ema4_50 < btc.ema4_200
+    bull = btc.ema4_50 > btc.ema4_200
+    vshock = (btc.atr_ratio4 > p.btc_vol_shock_ratio
+              if p.btc_vol_shock_ratio < 10.0 else np.zeros(btc.n4, bool))
+    for sym, sd in sds.items():
+        if sd is btc:
+            continue
+        n = sd.n4
+        idx = np.searchsorted(btc.t4, sd.t4, side="right") - 1
+        have = idx >= 0
+        idx_c = np.clip(idx, 0, btc.n4 - 1)
+        veto_l = np.zeros(n, bool)
+        veto_s = np.zeros(n, bool)
+        if p.btc_veto_long_on_bear:
+            veto_l[have] |= bear[idx_c[have]]
+        if p.btc_vol_shock_ratio < 10.0:
+            veto_l[have] |= vshock[idx_c[have]]
+        if p.btc_veto_short_on_bull:
+            veto_s[have] |= bull[idx_c[have]]
+        sd.btc_veto_l = veto_l
+        sd.btc_veto_s = veto_s
 
 
 def run_all_windows(sds: Dict[str, SymbolData], p: TrendParams,
@@ -1491,7 +1574,7 @@ def main() -> int:
     ap.add_argument("--mode", choices=["fixed", "single"], default="fixed")
     ap.add_argument("--window", type=int, default=None)
     ap.add_argument("--params", type=str, default=None)
-    ap.add_argument("--symbols", type=str, default=",".join(SYMBOLS_ALL))
+    ap.add_argument("--symbols", type=str, default=",".join(SYMBOLS_WITH_MACRO))
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args()
