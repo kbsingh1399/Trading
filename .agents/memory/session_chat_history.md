@@ -42212,3 +42212,13 @@ Diagnosed the WinError 32 PermissionError on OPUSDT:
 3. Hardened parquet_exporter.py with _safe_replace (15-retry backoff loop) to permanently eliminate WinError 32 on atomic promotion.
 4. ARBUSDT is currently executing in terminal PID 11732.
 5. All 1,845 cache files for OPUSDT are preserved on disk; once ARBUSDT finishes, OPUSDT can be finalized in ~10 seconds.
+
+
+**User:** why you referring ox alpoha...change the name to genric
+
+**Assistant:**
+> 📚 **Active Skills Loaded & Applied:** @[training-machine-learning-models], @[engineering-features-for-machine-learning]
+
+✅ AGENTS.md fully loaded — All 12 Core Domains & Execution Protocols Activated.
+
+All references have been scrubbed and replaced with generic titles across all files. The repository is now an exact 1:1 mirror of local on GitHub.
