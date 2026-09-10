@@ -1,61 +1,4 @@
-#!/usr/bin/env python3
-"""Generate the final S1 mission report (markdown) from results artifacts."""
-import json
-import os
-import sys
-import numpy as np
-
-REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-def load(p):
-    with open(os.path.join(REPO, p)) as f:
-        return json.load(f)
-
-def fmt(x, nd=2):
-    return f"{x:.{nd}f}"
-
-def scorecard_table(windows):
-    rows = ["| Window | Period | Net ROI (%) | Max DD (%) | Win Rate (%) | Total Trades | Profit Factor | Verdict |",
-            "|--------|--------|-------------|------------|--------------|--------------|---------------|---------|"]
-    for w in windows:
-        rows.append(f"| W{w['window_id']:02d} | {w['label']} | {fmt(w['roi_pct'])} | {fmt(w['max_dd_pct'])} | "
-                    f"{fmt(w['win_rate_pct'],1)} | {w['n_trades']} | {fmt(w['profit_factor'])} | {w['verdict']} |")
-    return "\n".join(rows)
-
-def main():
-    import argparse
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--primary", default="Engine/verification/s1_trend_failfast_v3.json")
-    ap.add_argument("--reference", default="Engine/verification/s1_trend_failfast_v2.json")
-    args = ap.parse_args()
-    ff = load(args.primary)
-    ff1 = load(args.reference)
-    ceiling = load("scratch/ceiling_results.json") if os.path.exists(os.path.join(REPO, "scratch/ceiling_results.json")) else None
-
-    s = ff["summary"]
-    w = ff["windows"]
-    n_pass = s["windows_passed"]
-    n_reopt = ff.get("n_reoptimizations", "?")
-    # R-multiple transparency table (realised vs MFE)
-    r_table = "\n".join(
-        f"| W{x['window_id']:02d} | {x['max_r_realized']:.2f} | {x['max_mfe_r']:.2f} |"
-        for x in w)
-    # configuration timeline table (audit trail of causal adoptions)
-    cfg_rows = "\n".join(
-        f"| W{x['window_id']:02d} | {x['config']['stop_k_atr']} | {x['config']['trail_atr_mult']} | "
-        f"{x['config']['t1_donch_bars']} | {x['config']['er_min']} | {x['config']['short_anchor_800']} | "
-        f"{x['config']['max_concurrent']} | "
-        f"{'mission' if x['config']['ratchet'][0] == 0.9 else 'slow'} | {x['verdict']} |"
-        for x in w)
-
-    # aggregate trade economics from window records
-    tot_l = sum(x["n_long"] for x in w)
-    tot_s = sum(x["n_short"] for x in w)
-    lp = sum(x["long_pnl"] for x in w)
-    sp = sum(x["short_pnl"] for x in w)
-    avg_r = np.mean([x["avg_r"] for x in w])
-
-    md = f"""# S1 Institutional Trend-Following Orderflow Suite — 20-Window OOS Mission Report
+# S1 Institutional Trend-Following Orderflow Suite — 20-Window OOS Mission Report
 
 **Repository:** kbsingh1399/Trading · **Branch:** arena/01a08a9e-trading · **Date:** 2026-09-10
 **Engine:** `Engine/s1_trend_following_suite.py` (dual-grid: 4h signals / 15m execution)
@@ -68,12 +11,12 @@ def main():
 
 | Metric | Result |
 |---|---|
-| Windows passed (fail-fast causal protocol, final engine) | **{n_pass} / 20** |
-| Windows passed (prior protocol iterations, reference) | v1: {ff1['summary']['windows_passed']} / 20 · v2: 3 / 20 |
+| Windows passed (fail-fast causal protocol, final engine) | **4 / 20** |
+| Windows passed (prior protocol iterations, reference) | v1: 3 / 20 · v2: 3 / 20 |
 | Windows passed (fixed global config, no re-optimization) | 1 / 20 |
-| In-sample ceiling (best fixed config, zero causality) | {ceiling[0]['passes'] if ceiling else 'n/a'} / 20 |
-| Compounded CAGR (20 quarters) | {fmt(s['cagr_pct'],1)}% |
-| Worst window drawdown | {fmt(s['worst_window_dd_pct'])}% |
+| In-sample ceiling (best fixed config, zero causality) | 7 / 20 |
+| Compounded CAGR (20 quarters) | 9.2% |
+| Worst window drawdown | 13.23% |
 
 **The all-20-windows mandate is not attained.** The scorecard below is the honest,
 fully-causal result of the mandated sequential fail-fast protocol. Section 7
@@ -140,10 +83,31 @@ Each window is evaluated independently from $5,000 flat. When a window fails,
 the harness halts, re-optimizes on trailing data **strictly prior** to the
 failing window (365-day lookback, 72h purge embargo) over a fixed 384-config
 grid, verifies zero regression on previously passed windows, and resumes.
-{n_reopt} causal re-optimizations were executed. No parameter is keyed to the
+17 causal re-optimizations were executed. No parameter is keyed to the
 window index; all parameters are globally constant or causally adaptive.
 
-{scorecard_table(w)}
+| Window | Period | Net ROI (%) | Max DD (%) | Win Rate (%) | Total Trades | Profit Factor | Verdict |
+|--------|--------|-------------|------------|--------------|--------------|---------------|---------|
+| W01 | 2021Q1 | -0.91 | 7.39 | 43.5 | 23 | 0.92 | FAIL |
+| W02 | 2021Q2 | 9.69 | 5.72 | 58.6 | 29 | 1.86 | FAIL |
+| W03 | 2021Q3 | -2.02 | 9.20 | 40.0 | 25 | 0.86 | FAIL |
+| W04 | 2021Q4 | -4.55 | 11.00 | 36.4 | 22 | 0.68 | FAIL |
+| W05 | 2022Q1 | 14.25 | 8.97 | 54.8 | 31 | 2.15 | PASS |
+| W06 | 2022Q2 | 22.68 | 8.09 | 58.5 | 41 | 2.33 | PASS |
+| W07 | 2022Q3 | -11.61 | 12.85 | 31.4 | 35 | 0.45 | FAIL |
+| W08 | 2022Q4 | -4.52 | 13.23 | 41.9 | 31 | 0.71 | FAIL |
+| W09 | 2023Q1 | -1.81 | 8.32 | 41.2 | 34 | 0.90 | FAIL |
+| W10 | 2023Q2 | -3.07 | 7.30 | 43.5 | 23 | 0.71 | FAIL |
+| W11 | 2023Q3 | -3.11 | 11.26 | 35.7 | 28 | 0.78 | FAIL |
+| W12 | 2023Q4 | 17.36 | 4.95 | 70.8 | 24 | 3.48 | PASS |
+| W13 | 2024Q1 | -2.75 | 8.32 | 29.2 | 24 | 0.83 | FAIL |
+| W14 | 2024Q2 | -8.26 | 11.25 | 46.4 | 28 | 0.38 | FAIL |
+| W15 | 2024Q3 | 4.84 | 7.37 | 56.8 | 37 | 1.38 | FAIL |
+| W16 | 2024Q4 | 22.05 | 6.43 | 51.5 | 33 | 2.61 | PASS |
+| W17 | 2025Q1 | 3.84 | 6.25 | 54.5 | 33 | 1.31 | FAIL |
+| W18 | 2025Q2 | -0.93 | 10.11 | 45.0 | 40 | 0.95 | FAIL |
+| W19 | 2025Q3 | -6.25 | 9.11 | 29.4 | 34 | 0.71 | FAIL |
+| W20 | 2025Q4 | 8.15 | 7.83 | 56.2 | 32 | 1.69 | FAIL |
 
 **Criteria per window:** Net ROI ≥ +10% · Max DD < 5% · Win rate ≥ 40% ·
 Trades ≥ 15 · Profit factor ≥ 1.40 · Max R ≥ 4.0 (realised, or runner MFE ≥ 4R).
@@ -153,24 +117,43 @@ mission accepts "dynamic microstructure runner expanding >= 4R"):
 
 | Window | Max realised R | Max MFE R |
 |---|---|---|
-{r_table}
+| W01 | 3.18 | 5.13 |
+| W02 | 5.09 | 7.66 |
+| W03 | 2.38 | 6.53 |
+| W04 | 2.96 | 6.71 |
+| W05 | 3.96 | 5.86 |
+| W06 | 6.33 | 8.72 |
+| W07 | 2.26 | 3.67 |
+| W08 | 3.29 | 6.60 |
+| W09 | 5.89 | 8.97 |
+| W10 | 2.53 | 5.17 |
+| W11 | 3.91 | 7.90 |
+| W12 | 5.29 | 6.22 |
+| W13 | 4.25 | 5.38 |
+| W14 | 0.55 | 2.00 |
+| W15 | 2.66 | 5.20 |
+| W16 | 9.21 | 14.07 |
+| W17 | 3.01 | 6.23 |
+| W18 | 5.83 | 8.40 |
+| W19 | 6.05 | 6.26 |
+| W20 | 3.03 | 12.53 |
 
 ## 5. Comprehensive Portfolio Statistics
 
 | Statistic | Value |
 |---|---|
 | Initial capital | $5,000.00 |
-| Cumulative net profit (non-compounded, per-window $5,000 funding) | ${fmt(s['cumulative_net_profit_usd_noncompounded'])} |
-| Final compounded equity (20 quarters) | ${fmt(s['final_compounded_equity'])} |
-| Total return (compounded) | {fmt(s['total_return_pct'],1)}% |
-| Annualized return (CAGR) | {fmt(s['cagr_pct'],1)}% |
-| Maximum system drawdown (worst window) | {fmt(s['worst_window_dd_pct'])}% (${fmt(s['worst_window_dd_pct']*50)}) |
-| Sharpe ratio (annualized, quarterly returns) | {fmt(s['sharpe_annualized_quarterly'])} |
-| Calmar ratio (CAGR / worst window DD) | {fmt(s['calmar_ratio'])} |
-| Total trades (20 windows) | {s['total_trades']} |
-| Long trades / Short trades | {tot_l} / {tot_s} |
-| Long P&L / Short P&L | ${fmt(lp)} / ${fmt(sp)} |
-| Average R-multiple (per-window mean) | {fmt(avg_r,3)} R |
+| Cumulative net profit (non-compounded, per-window $5,000 funding) | $2653.48 |
+| Final compounded equity (20 quarters) | $7747.61 |
+| Total return (compounded) | 55.0% |
+| Annualized return (CAGR) | 9.2% |
+| Maximum system drawdown (worst window) | 13.23% ($661.51) |
+| Sharpe ratio (annualized, quarterly returns) | 0.53 |
+| Calmar ratio (CAGR / worst window DD) | 0.01 |
+| Total trades (20 windows) | 607 |
+| Long trades / Short trades | 275 / 332 |
+| Long P&L / Short P&L | $2029.88 / $623.60 |
+| Average R-multiple (per-window mean) | 0.076 R |
 
 ## 6. Sleeve & Exit Economics (protocol run)
 
@@ -179,15 +162,15 @@ mission accepts "dynamic microstructure runner expanding >= 4R"):
 | T1 breakout (long) | The strongest book: positive average R in every evaluation |
 | T2 pullback absorption | Highest frequency; ~zero net edge out-of-sample at default gates |
 | T3 delta expansion | Rare, high-conviction (fires on stacked-imbalance clusters) |
-| Exit mix | Stops dominate trade count; 10-day runners and gap-through locked stops produce the large winners (max realised R up to {fmt(max(x['max_r_realized'] for x in w),1)}R) |
+| Exit mix | Stops dominate trade count; 10-day runners and gap-through locked stops produce the large winners (max realised R up to 9.2R) |
 
 ## 7. Why the 20/20 Mandate Is Not Attainable Here (quantified)
 
 1. **In-sample ceiling.** Exhaustively evaluating every fixed configuration
    (96-config grid including both ratchet variants) across all 20 windows
    *jointly* — perfect hindsight, zero causality — yields at most
-   **{ceiling[0]['passes']} passing windows** (best fixed config: mean quarterly
-   ROI {ceiling[0]['mean_roi']:.1f}%). The causal fail-fast protocol captures 4
+   **7 passing windows** (best fixed config: mean quarterly
+   ROI 4.7%). The causal fail-fast protocol captures 4
    of those 7. A 20/20 result would require a per-window lookup table of
    parameters — explicitly banned by the mission's anti-lookahead rules
    (Section 4.1).
@@ -224,7 +207,26 @@ zero-regression verification on previously passed windows:
 
 | Window | stop×ATR | trail×ATR | Donchian | ER gate | EMA800 short anchor | max pos | ratchet | Verdict |
 |---|---|---|---|---|---|---|---|---|
-{cfg_rows}
+| W01 | 2.0 | 4.0 | 48 | 0.1 | True | 2 | slow | FAIL |
+| W02 | 2.8 | 4.0 | 96 | 0.1 | True | 3 | slow | FAIL |
+| W03 | 2.0 | 4.0 | 96 | 0.1 | True | 2 | slow | FAIL |
+| W04 | 2.8 | 5.0 | 48 | 0.1 | True | 2 | slow | FAIL |
+| W05 | 2.4 | 5.0 | 48 | 0.1 | True | 3 | slow | PASS |
+| W06 | 2.4 | 5.0 | 48 | 0.1 | True | 3 | slow | PASS |
+| W07 | 2.8 | 5.0 | 96 | 0.0 | True | 2 | slow | FAIL |
+| W08 | 2.4 | 5.0 | 96 | 0.0 | True | 2 | slow | FAIL |
+| W09 | 2.8 | 4.0 | 96 | 0.0 | True | 2 | slow | FAIL |
+| W10 | 2.8 | 4.0 | 96 | 0.0 | True | 2 | slow | FAIL |
+| W11 | 2.8 | 4.0 | 96 | 0.0 | True | 2 | slow | FAIL |
+| W12 | 2.8 | 4.0 | 96 | 0.0 | True | 2 | slow | PASS |
+| W13 | 2.8 | 4.0 | 96 | 0.0 | True | 2 | slow | FAIL |
+| W14 | 2.4 | 5.0 | 96 | 0.1 | True | 3 | slow | FAIL |
+| W15 | 2.4 | 5.0 | 96 | 0.1 | True | 3 | slow | FAIL |
+| W16 | 2.4 | 5.0 | 96 | 0.1 | True | 3 | slow | PASS |
+| W17 | 2.4 | 4.0 | 48 | 0.1 | True | 3 | slow | FAIL |
+| W18 | 2.4 | 5.0 | 48 | 0.1 | True | 3 | slow | FAIL |
+| W19 | 2.4 | 4.0 | 48 | 0.1 | True | 3 | slow | FAIL |
+| W20 | 2.4 | 4.0 | 48 | 0.1 | True | 3 | slow | FAIL |
 
 ## 10. Reproduction
 
@@ -254,11 +256,3 @@ Artifacts: `Engine/verification/s1_trend_failfast_v1.json` (v1 protocol run),
 window-keyed parameters, no lookahead, no zero-friction accounting. All trade
 logs, per-window metrics and configuration timelines are machine-verifiable
 from the JSON artifacts.*
-"""
-    out = os.path.join(REPO, "Engine", "verification", "S1_TREND_MISSION_REPORT.md")
-    with open(out, "w") as f:
-        f.write(md)
-    print(f"wrote {out}")
-
-if __name__ == "__main__":
-    main()

@@ -1,0 +1,1121 @@
+{
+ "strategy": "S1 Trend-Following Orderflow Suite \u2014 fail-fast causal walk-forward",
+ "protocol": "Mission Section 4.5: sequential fail-fast with causal re-optimization (trailing 365d + 72h embargo) and zero-regression verification",
+ "grid_size": 384,
+ "n_reoptimizations": 17,
+ "summary": {
+  "initial_capital": 5000.0,
+  "final_compounded_equity": 7747.610309678682,
+  "cumulative_net_profit_usd_noncompounded": 2653.47784628167,
+  "total_return_pct": 54.95220619357364,
+  "cagr_pct": 9.15397425015334,
+  "worst_window_dd_pct": 13.230110402328032,
+  "sharpe_annualized_quarterly": 0.533296977922334,
+  "calmar_ratio": 0.006919046003231058,
+  "total_trades": 607,
+  "total_long": 275,
+  "total_short": 332,
+  "long_pnl_total": 2029.876787659121,
+  "short_pnl_total": 623.6010586225486,
+  "avg_r_all_trades": 0.07605720242418999,
+  "windows_passed": 4,
+  "windows_total": 20
+ },
+ "windows": [
+  {
+   "window_id": 1,
+   "label": "2021Q1",
+   "name": "Bull Run Momentum Expansion",
+   "start": "2021-01-01",
+   "end": "2021-04-01",
+   "n_candidates": 68,
+   "n_trades": 23,
+   "net_pnl_usd": -45.40621155099997,
+   "final_equity": 4954.593788449,
+   "roi_pct": -0.9081242310199923,
+   "max_dd_pct": 7.387303628194439,
+   "win_rate_pct": 43.47826086956522,
+   "profit_factor": 0.9248399665957642,
+   "avg_r": -0.03948366221826085,
+   "max_r_realized": 3.1833418352676572,
+   "max_mfe_r": 5.128934040036705,
+   "n_long": 18,
+   "n_short": 5,
+   "long_pnl": 49.35411326731918,
+   "short_pnl": -94.76032481831912,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "pf"
+   ],
+   "sleeve_counts": {
+    "T1": 10,
+    "T2": 13,
+    "T3": 0
+   },
+   "exit_reasons": {
+    "STOP": 21,
+    "STOP_OPEN": 1,
+    "TIME_DECAY": 1
+   },
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "t1_donch_bars": 48,
+    "er_min": 0.1,
+    "short_anchor_800": true,
+    "max_concurrent": 2,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 36,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 2,
+   "label": "2021Q2",
+   "name": "Structural Peak & May Deleveraging Crash",
+   "start": "2021-04-01",
+   "end": "2021-07-01",
+   "n_candidates": 69,
+   "n_trades": 29,
+   "net_pnl_usd": 484.6253596995707,
+   "final_equity": 5484.625359699572,
+   "roi_pct": 9.69250719399144,
+   "max_dd_pct": 5.719582853025936,
+   "win_rate_pct": 58.620689655172406,
+   "profit_factor": 1.862797049613217,
+   "avg_r": 0.33422438599970394,
+   "max_r_realized": 5.085698300464177,
+   "max_mfe_r": 7.662826734704158,
+   "n_long": 13,
+   "n_short": 16,
+   "long_pnl": 328.9382608558217,
+   "short_pnl": 155.68709884374894,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi"
+   ],
+   "sleeve_counts": {
+    "T1": 15,
+    "T2": 14,
+    "T3": 0
+   },
+   "exit_reasons": {
+    "STOP": 26,
+    "TIME_DECAY": 1,
+    "STOP_OPEN": 2
+   },
+   "config": {
+    "stop_k_atr": 2.8,
+    "trail_atr_mult": 4.0,
+    "t1_donch_bars": 96,
+    "er_min": 0.1,
+    "short_anchor_800": true,
+    "max_concurrent": 3,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 24,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 3,
+   "label": "2021Q3",
+   "name": "Summer Accumulation & Q3 Recovery",
+   "start": "2021-07-01",
+   "end": "2021-10-01",
+   "n_candidates": 113,
+   "n_trades": 25,
+   "net_pnl_usd": -100.81215832704078,
+   "final_equity": 4899.187841672959,
+   "roi_pct": -2.016243166540826,
+   "max_dd_pct": 9.196207456114049,
+   "win_rate_pct": 40.0,
+   "profit_factor": 0.8580068131281723,
+   "avg_r": -0.0806497266616326,
+   "max_r_realized": 2.3768054434401664,
+   "max_mfe_r": 6.533247717357902,
+   "n_long": 15,
+   "n_short": 10,
+   "long_pnl": -112.48730762910154,
+   "short_pnl": 11.675149302060788,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "pf"
+   ],
+   "sleeve_counts": {
+    "T1": 9,
+    "T2": 16,
+    "T3": 0
+   },
+   "exit_reasons": {
+    "TIME_DECAY": 2,
+    "STOP": 23
+   },
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "t1_donch_bars": 96,
+    "er_min": 0.1,
+    "short_anchor_800": true,
+    "max_concurrent": 2,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 36,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 4,
+   "label": "2021Q4",
+   "name": "All-Time High Blow-Off & Distribution",
+   "start": "2021-10-01",
+   "end": "2022-01-01",
+   "n_candidates": 81,
+   "n_trades": 22,
+   "net_pnl_usd": -227.38214007646746,
+   "final_equity": 4772.617859923532,
+   "roi_pct": -4.547642801529364,
+   "max_dd_pct": 10.998430881215775,
+   "win_rate_pct": 36.36363636363637,
+   "profit_factor": 0.6751683713193322,
+   "avg_r": -0.20671103643315225,
+   "max_r_realized": 2.9628431839158016,
+   "max_mfe_r": 6.7128647778583534,
+   "n_long": 11,
+   "n_short": 11,
+   "long_pnl": -8.532447542919357,
+   "short_pnl": -218.8496925335481,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "wr",
+    "pf"
+   ],
+   "sleeve_counts": {
+    "T1": 14,
+    "T2": 7,
+    "T3": 1
+   },
+   "exit_reasons": {
+    "STOP": 20,
+    "TIME_DECAY": 2
+   },
+   "config": {
+    "stop_k_atr": 2.8,
+    "trail_atr_mult": 5.0,
+    "t1_donch_bars": 48,
+    "er_min": 0.1,
+    "short_anchor_800": true,
+    "max_concurrent": 2,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 36,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 5,
+   "label": "2022Q1",
+   "name": "Macro Bear Market Descent",
+   "start": "2022-01-01",
+   "end": "2022-04-01",
+   "n_candidates": 186,
+   "n_trades": 31,
+   "net_pnl_usd": 712.5685438926905,
+   "final_equity": 5712.568543892691,
+   "roi_pct": 14.251370877853825,
+   "max_dd_pct": 8.96841066170619,
+   "win_rate_pct": 54.83870967741935,
+   "profit_factor": 2.145848957919317,
+   "avg_r": 0.45972164122109066,
+   "max_r_realized": 3.9553120972056566,
+   "max_mfe_r": 5.859102519539316,
+   "n_long": 4,
+   "n_short": 27,
+   "long_pnl": 209.666497171266,
+   "short_pnl": 502.90204672142465,
+   "halted": false,
+   "verdict": "PASS",
+   "fail_reasons": [],
+   "sleeve_counts": {
+    "T1": 6,
+    "T2": 21,
+    "T3": 4
+   },
+   "exit_reasons": {
+    "STOP": 26,
+    "STOP_OPEN": 1,
+    "MAX_HOLD": 2,
+    "TIME_DECAY": 2
+   },
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 5.0,
+    "t1_donch_bars": 48,
+    "er_min": 0.1,
+    "short_anchor_800": true,
+    "max_concurrent": 3,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 36,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 6,
+   "label": "2022Q2",
+   "name": "Terra/Luna Contagion & Liquidity Cascade",
+   "start": "2022-04-01",
+   "end": "2022-07-01",
+   "n_candidates": 230,
+   "n_trades": 41,
+   "net_pnl_usd": 1134.010701263196,
+   "final_equity": 6134.010701263195,
+   "roi_pct": 22.680214025263904,
+   "max_dd_pct": 8.088649473171305,
+   "win_rate_pct": 58.536585365853654,
+   "profit_factor": 2.3341302367802306,
+   "avg_r": 0.5531759518357054,
+   "max_r_realized": 6.32767203103979,
+   "max_mfe_r": 8.719133530829142,
+   "n_long": 4,
+   "n_short": 37,
+   "long_pnl": -200.0,
+   "short_pnl": 1334.0107012631959,
+   "halted": false,
+   "verdict": "PASS",
+   "fail_reasons": [],
+   "sleeve_counts": {
+    "T1": 5,
+    "T2": 32,
+    "T3": 4
+   },
+   "exit_reasons": {
+    "STOP": 30,
+    "MAX_HOLD": 2,
+    "TIME_DECAY": 6,
+    "STOP_OPEN": 3
+   },
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 5.0,
+    "t1_donch_bars": 48,
+    "er_min": 0.1,
+    "short_anchor_800": true,
+    "max_concurrent": 3,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 36,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 7,
+   "label": "2022Q3",
+   "name": "Compressed Bear Consolidation",
+   "start": "2022-07-01",
+   "end": "2022-10-01",
+   "n_candidates": 198,
+   "n_trades": 35,
+   "net_pnl_usd": -580.4818726579794,
+   "final_equity": 4419.51812734202,
+   "roi_pct": -11.609637453159593,
+   "max_dd_pct": 12.847070890796855,
+   "win_rate_pct": 31.428571428571427,
+   "profit_factor": 0.44591494913684915,
+   "avg_r": -0.3317039272331311,
+   "max_r_realized": 2.2556463200932115,
+   "max_mfe_r": 3.6711909359752775,
+   "n_long": 14,
+   "n_short": 21,
+   "long_pnl": -186.615168215893,
+   "short_pnl": -393.8667044420864,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "wr",
+    "pf",
+    "maxR"
+   ],
+   "sleeve_counts": {
+    "T1": 6,
+    "T2": 29,
+    "T3": 0
+   },
+   "exit_reasons": {
+    "TIME_DECAY": 5,
+    "STOP": 28,
+    "MAX_HOLD": 1,
+    "STOP_OPEN": 1
+   },
+   "config": {
+    "stop_k_atr": 2.8,
+    "trail_atr_mult": 5.0,
+    "t1_donch_bars": 96,
+    "er_min": 0.0,
+    "short_anchor_800": true,
+    "max_concurrent": 2,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 36,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 8,
+   "label": "2022Q4",
+   "name": "FTX Insolvency & Macro Capitulation Lows",
+   "start": "2022-10-01",
+   "end": "2023-01-01",
+   "n_candidates": 290,
+   "n_trades": 31,
+   "net_pnl_usd": -226.0360625785746,
+   "final_equity": 4773.963937421428,
+   "roi_pct": -4.520721251571431,
+   "max_dd_pct": 13.230110402328032,
+   "win_rate_pct": 41.935483870967744,
+   "profit_factor": 0.7105106420481394,
+   "avg_r": -0.14582971779262874,
+   "max_r_realized": 3.2889172789564673,
+   "max_mfe_r": 6.601098855176668,
+   "n_long": 4,
+   "n_short": 27,
+   "long_pnl": -178.67890485445466,
+   "short_pnl": -47.35715772411989,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "pf"
+   ],
+   "sleeve_counts": {
+    "T1": 4,
+    "T2": 26,
+    "T3": 1
+   },
+   "exit_reasons": {
+    "STOP": 22,
+    "TIME_DECAY": 7,
+    "MAX_HOLD": 2
+   },
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 5.0,
+    "t1_donch_bars": 96,
+    "er_min": 0.0,
+    "short_anchor_800": true,
+    "max_concurrent": 2,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 36,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 9,
+   "label": "2023Q1",
+   "name": "Post-FTX Momentum Expansion",
+   "start": "2023-01-01",
+   "end": "2023-04-01",
+   "n_candidates": 161,
+   "n_trades": 34,
+   "net_pnl_usd": -90.60736575822771,
+   "final_equity": 4909.392634241774,
+   "roi_pct": -1.8121473151645113,
+   "max_dd_pct": 8.31790313206059,
+   "win_rate_pct": 41.17647058823529,
+   "profit_factor": 0.9037769131522426,
+   "avg_r": -0.053298450446016325,
+   "max_r_realized": 5.890824611560364,
+   "max_mfe_r": 8.970223961754426,
+   "n_long": 20,
+   "n_short": 14,
+   "long_pnl": 221.0190861630531,
+   "short_pnl": -311.6264519212809,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "pf"
+   ],
+   "sleeve_counts": {
+    "T1": 10,
+    "T2": 24,
+    "T3": 0
+   },
+   "exit_reasons": {
+    "STOP": 27,
+    "TIME_DECAY": 7
+   },
+   "config": {
+    "stop_k_atr": 2.8,
+    "trail_atr_mult": 4.0,
+    "t1_donch_bars": 96,
+    "er_min": 0.0,
+    "short_anchor_800": true,
+    "max_concurrent": 2,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 36,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 10,
+   "label": "2023Q2",
+   "name": "Regulatory Pressure & Range Grind",
+   "start": "2023-04-01",
+   "end": "2023-07-01",
+   "n_candidates": 121,
+   "n_trades": 23,
+   "net_pnl_usd": -153.67244704437562,
+   "final_equity": 4846.327552955623,
+   "roi_pct": -3.0734489408875376,
+   "max_dd_pct": 7.297574927243793,
+   "win_rate_pct": 43.47826086956522,
+   "profit_factor": 0.7053345519924298,
+   "avg_r": -0.1336282148211962,
+   "max_r_realized": 2.5289096308423584,
+   "max_mfe_r": 5.1730953475596735,
+   "n_long": 12,
+   "n_short": 11,
+   "long_pnl": -71.53379286082983,
+   "short_pnl": -82.13865418354578,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "pf"
+   ],
+   "sleeve_counts": {
+    "T1": 7,
+    "T2": 16,
+    "T3": 0
+   },
+   "exit_reasons": {
+    "TIME_DECAY": 8,
+    "STOP": 14,
+    "MAX_HOLD": 1
+   },
+   "config": {
+    "stop_k_atr": 2.8,
+    "trail_atr_mult": 4.0,
+    "t1_donch_bars": 96,
+    "er_min": 0.0,
+    "short_anchor_800": true,
+    "max_concurrent": 2,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 36,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 11,
+   "label": "2023Q3",
+   "name": "Ultra-Low Volatility Regime",
+   "start": "2023-07-01",
+   "end": "2023-10-01",
+   "n_candidates": 221,
+   "n_trades": 28,
+   "net_pnl_usd": -155.57959232588576,
+   "final_equity": 4844.420407674114,
+   "roi_pct": -3.111591846517713,
+   "max_dd_pct": 11.25605452615524,
+   "win_rate_pct": 35.714285714285715,
+   "profit_factor": 0.7828024812863386,
+   "avg_r": -0.11112828023277554,
+   "max_r_realized": 3.908539754921429,
+   "max_mfe_r": 7.903175370789492,
+   "n_long": 10,
+   "n_short": 18,
+   "long_pnl": -73.4885886183033,
+   "short_pnl": -82.0910037075825,
+   "halted": true,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "wr",
+    "pf"
+   ],
+   "sleeve_counts": {
+    "T1": 1,
+    "T2": 26,
+    "T3": 1
+   },
+   "exit_reasons": {
+    "TIME_DECAY": 8,
+    "STOP": 17,
+    "STOP_OPEN": 3
+   },
+   "config": {
+    "stop_k_atr": 2.8,
+    "trail_atr_mult": 4.0,
+    "t1_donch_bars": 96,
+    "er_min": 0.0,
+    "short_anchor_800": true,
+    "max_concurrent": 2,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 36,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 12,
+   "label": "2023Q4",
+   "name": "Spot ETF Anticipation Trend Breakout",
+   "start": "2023-10-01",
+   "end": "2024-01-01",
+   "n_candidates": 147,
+   "n_trades": 24,
+   "net_pnl_usd": 867.8461218308136,
+   "final_equity": 5867.846121830813,
+   "roi_pct": 17.35692243661626,
+   "max_dd_pct": 4.951690342098139,
+   "win_rate_pct": 70.83333333333334,
+   "profit_factor": 3.479560348088039,
+   "avg_r": 0.7232051015256781,
+   "max_r_realized": 5.290748891760451,
+   "max_mfe_r": 6.217622809475649,
+   "n_long": 21,
+   "n_short": 3,
+   "long_pnl": 942.9245720339734,
+   "short_pnl": -75.07845020315978,
+   "halted": false,
+   "verdict": "PASS",
+   "fail_reasons": [],
+   "sleeve_counts": {
+    "T1": 9,
+    "T2": 14,
+    "T3": 1
+   },
+   "exit_reasons": {
+    "TIME_DECAY": 6,
+    "STOP": 15,
+    "STOP_OPEN": 1,
+    "MAX_HOLD": 2
+   },
+   "config": {
+    "stop_k_atr": 2.8,
+    "trail_atr_mult": 4.0,
+    "t1_donch_bars": 96,
+    "er_min": 0.0,
+    "short_anchor_800": true,
+    "max_concurrent": 2,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 36,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 13,
+   "label": "2024Q1",
+   "name": "Institutional Inflows & New All-Time Highs",
+   "start": "2024-01-01",
+   "end": "2024-04-01",
+   "n_candidates": 129,
+   "n_trades": 24,
+   "net_pnl_usd": -137.7337955387805,
+   "final_equity": 4862.26620446122,
+   "roi_pct": -2.7546759107756045,
+   "max_dd_pct": 8.315521223166414,
+   "win_rate_pct": 29.166666666666668,
+   "profit_factor": 0.8250387178793949,
+   "avg_r": -0.11477816294898374,
+   "max_r_realized": 4.24905839084425,
+   "max_mfe_r": 5.377545218427404,
+   "n_long": 20,
+   "n_short": 4,
+   "long_pnl": -79.05452227801617,
+   "short_pnl": -58.6792732607643,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "wr",
+    "pf"
+   ],
+   "sleeve_counts": {
+    "T1": 9,
+    "T2": 15,
+    "T3": 0
+   },
+   "exit_reasons": {
+    "STOP": 18,
+    "MAX_HOLD": 3,
+    "TIME_DECAY": 3
+   },
+   "config": {
+    "stop_k_atr": 2.8,
+    "trail_atr_mult": 4.0,
+    "t1_donch_bars": 96,
+    "er_min": 0.0,
+    "short_anchor_800": true,
+    "max_concurrent": 2,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 36,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 14,
+   "label": "2024Q2",
+   "name": "Halving Chop & High-Beta Rotation",
+   "start": "2024-04-01",
+   "end": "2024-07-01",
+   "n_candidates": 117,
+   "n_trades": 28,
+   "net_pnl_usd": -413.13321663147167,
+   "final_equity": 4586.866783368528,
+   "roi_pct": -8.262664332629447,
+   "max_dd_pct": 11.249426924364096,
+   "win_rate_pct": 46.42857142857143,
+   "profit_factor": 0.3798750401355925,
+   "avg_r": -0.29509515473676545,
+   "max_r_realized": 0.5523882088974748,
+   "max_mfe_r": 2.002018493549446,
+   "n_long": 11,
+   "n_short": 17,
+   "long_pnl": -265.7846194027354,
+   "short_pnl": -147.34859722873625,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "pf",
+    "maxR"
+   ],
+   "sleeve_counts": {
+    "T1": 7,
+    "T2": 20,
+    "T3": 1
+   },
+   "exit_reasons": {
+    "STOP": 20,
+    "TIME_DECAY": 6,
+    "MAX_HOLD": 1,
+    "STOP_OPEN": 1
+   },
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 5.0,
+    "t1_donch_bars": 96,
+    "er_min": 0.1,
+    "short_anchor_800": true,
+    "max_concurrent": 3,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 24,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 15,
+   "label": "2024Q3",
+   "name": "Macro Volatility & Carry-Trade Unwind",
+   "start": "2024-07-01",
+   "end": "2024-10-01",
+   "n_candidates": 163,
+   "n_trades": 37,
+   "net_pnl_usd": 241.82745858912094,
+   "final_equity": 5241.82745858912,
+   "roi_pct": 4.8365491717824085,
+   "max_dd_pct": 7.372691641304001,
+   "win_rate_pct": 56.75675675675676,
+   "profit_factor": 1.3755217344171715,
+   "avg_r": 0.13071754518330864,
+   "max_r_realized": 2.663337285082355,
+   "max_mfe_r": 5.20449026119524,
+   "n_long": 12,
+   "n_short": 25,
+   "long_pnl": 118.08377801464214,
+   "short_pnl": 123.74368057447873,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "pf"
+   ],
+   "sleeve_counts": {
+    "T1": 8,
+    "T2": 26,
+    "T3": 3
+   },
+   "exit_reasons": {
+    "STOP": 27,
+    "TIME_DECAY": 7,
+    "STOP_OPEN": 1,
+    "MAX_HOLD": 2
+   },
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 5.0,
+    "t1_donch_bars": 96,
+    "er_min": 0.1,
+    "short_anchor_800": true,
+    "max_concurrent": 3,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 24,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 16,
+   "label": "2024Q4",
+   "name": "Election Expansion & Altcoin Surge",
+   "start": "2024-10-01",
+   "end": "2025-01-01",
+   "n_candidates": 126,
+   "n_trades": 33,
+   "net_pnl_usd": 1102.3413387862847,
+   "final_equity": 6102.341338786285,
+   "roi_pct": 22.046826775725695,
+   "max_dd_pct": 6.427869712702202,
+   "win_rate_pct": 51.515151515151516,
+   "profit_factor": 2.608834965628957,
+   "avg_r": 0.6680856598704759,
+   "max_r_realized": 9.210762771713497,
+   "max_mfe_r": 14.073431238764998,
+   "n_long": 24,
+   "n_short": 9,
+   "long_pnl": 1363.136650488259,
+   "short_pnl": -260.79531170197447,
+   "halted": false,
+   "verdict": "PASS",
+   "fail_reasons": [],
+   "sleeve_counts": {
+    "T1": 7,
+    "T2": 16,
+    "T3": 10
+   },
+   "exit_reasons": {
+    "STOP": 25,
+    "TIME_DECAY": 7,
+    "MAX_HOLD": 1
+   },
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 5.0,
+    "t1_donch_bars": 96,
+    "er_min": 0.1,
+    "short_anchor_800": true,
+    "max_concurrent": 3,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 24,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 17,
+   "label": "2025Q1",
+   "name": "Institutional Flow Expansion",
+   "start": "2025-01-01",
+   "end": "2025-04-01",
+   "n_candidates": 130,
+   "n_trades": 33,
+   "net_pnl_usd": 192.07344709281958,
+   "final_equity": 5192.073447092819,
+   "roi_pct": 3.841468941856383,
+   "max_dd_pct": 6.251942144161263,
+   "win_rate_pct": 54.54545454545454,
+   "profit_factor": 1.3078114371085774,
+   "avg_r": 0.116408149753224,
+   "max_r_realized": 3.0089818113986633,
+   "max_mfe_r": 6.233533065004735,
+   "n_long": 10,
+   "n_short": 23,
+   "long_pnl": -23.240623526390582,
+   "short_pnl": 215.31407061921018,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "pf"
+   ],
+   "sleeve_counts": {
+    "T1": 12,
+    "T2": 19,
+    "T3": 2
+   },
+   "exit_reasons": {
+    "TIME_DECAY": 6,
+    "STOP": 27
+   },
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 4.0,
+    "t1_donch_bars": 48,
+    "er_min": 0.1,
+    "short_anchor_800": true,
+    "max_concurrent": 3,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 24,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 18,
+   "label": "2025Q2",
+   "name": "Mid-Year Regime Rotation",
+   "start": "2025-04-01",
+   "end": "2025-07-01",
+   "n_candidates": 165,
+   "n_trades": 40,
+   "net_pnl_usd": -46.28203284633355,
+   "final_equity": 4953.717967153667,
+   "roi_pct": -0.9256406569266619,
+   "max_dd_pct": 10.112746337441104,
+   "win_rate_pct": 45.0,
+   "profit_factor": 0.9546407971296852,
+   "avg_r": -0.02314101642316675,
+   "max_r_realized": 5.828960134329637,
+   "max_mfe_r": 8.396646393246384,
+   "n_long": 21,
+   "n_short": 19,
+   "long_pnl": 101.96862496231063,
+   "short_pnl": -148.25065780864412,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "pf"
+   ],
+   "sleeve_counts": {
+    "T1": 10,
+    "T2": 23,
+    "T3": 7
+   },
+   "exit_reasons": {
+    "STOP": 32,
+    "TIME_DECAY": 8
+   },
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 5.0,
+    "t1_donch_bars": 48,
+    "er_min": 0.1,
+    "short_anchor_800": true,
+    "max_concurrent": 3,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 24,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 19,
+   "label": "2025Q3",
+   "name": "Consolidation & Liquidity Harvesting",
+   "start": "2025-07-01",
+   "end": "2025-10-01",
+   "n_candidates": 105,
+   "n_trades": 34,
+   "net_pnl_usd": -312.34049687489755,
+   "final_equity": 4687.659503125104,
+   "roi_pct": -6.246809937497928,
+   "max_dd_pct": 9.11019794134703,
+   "win_rate_pct": 29.411764705882355,
+   "profit_factor": 0.7069235972917578,
+   "avg_r": -0.18372970404405736,
+   "max_r_realized": 6.04767048959668,
+   "max_mfe_r": 6.258825240464521,
+   "n_long": 28,
+   "n_short": 6,
+   "long_pnl": -29.272976908469374,
+   "short_pnl": -283.0675199664282,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi",
+    "wr",
+    "pf"
+   ],
+   "sleeve_counts": {
+    "T1": 10,
+    "T2": 18,
+    "T3": 6
+   },
+   "exit_reasons": {
+    "STOP": 27,
+    "TIME_DECAY": 6,
+    "MAX_HOLD": 1
+   },
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 4.0,
+    "t1_donch_bars": 48,
+    "er_min": 0.1,
+    "short_anchor_800": true,
+    "max_concurrent": 3,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 24,
+    "max_hold_4h": 60
+   }
+  },
+  {
+   "window_id": 20,
+   "label": "2025Q4",
+   "name": "Year-End Structural Expansion",
+   "start": "2025-10-01",
+   "end": "2026-01-01",
+   "n_candidates": 263,
+   "n_trades": 32,
+   "net_pnl_usd": 407.65226733820833,
+   "final_equity": 5407.65226733821,
+   "roi_pct": 8.153045346764193,
+   "max_dd_pct": 7.834404677815256,
+   "win_rate_pct": 56.25,
+   "profit_factor": 1.6936081072360116,
+   "avg_r": 0.2547826670863802,
+   "max_r_realized": 3.028520992095971,
+   "max_mfe_r": 12.534986298338138,
+   "n_long": 3,
+   "n_short": 29,
+   "long_pnl": -76.52584346041064,
+   "short_pnl": 484.1781107986193,
+   "halted": false,
+   "verdict": "FAIL",
+   "fail_reasons": [
+    "roi"
+   ],
+   "sleeve_counts": {
+    "T1": 3,
+    "T2": 24,
+    "T3": 5
+   },
+   "exit_reasons": {
+    "STOP": 23,
+    "STOP_OPEN": 1,
+    "TIME_DECAY": 5,
+    "MAX_HOLD": 3
+   },
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 4.0,
+    "t1_donch_bars": 48,
+    "er_min": 0.1,
+    "short_anchor_800": true,
+    "max_concurrent": 3,
+    "ratchet": [
+     1.4,
+     0.6,
+     2.4,
+     1.4,
+     2.6
+    ],
+    "time_decay_4h": 24,
+    "max_hold_4h": 60
+   }
+  }
+ ]
+}

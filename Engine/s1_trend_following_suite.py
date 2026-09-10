@@ -42,10 +42,29 @@ FRICTION MODEL (mission Section 1.3 — non-negotiable)
 PURGE INVARIANT (mission Section 2)
 -----------------------------------
   Each window is evaluated independently from $5,000 flat. New entries stop
-  72h before window end (t_purge). Positions are hard-closed after 7 days
-  (42 x 4h) and any residual open mark is settled at the final bar. Windows
+  72h before window end (t_purge). Positions are hard-closed after 10 days
+  (60 x 4h) and any residual open mark is settled at the final bar. Windows
   share no state; indicators are the pipeline's causal prefix-invariant
-  series (or causal resamples thereof).
+  series (or causal resamples thereof). The 72h boundary additionally
+  embargoes the trailing-data used by the causal re-optimization harness.
+
+PARAMETER-SCALING NOTE
+----------------------
+  The mission's time-decay safeguard is specified as 24 x 15m bars (6h) for
+  the 15m microstructure engine. On the 4h signal grid, 6h is sub-one-bar;
+  the safeguard's intent (liquidate dead positions) is preserved with a
+  scaled horizon of 24 x 4h bars (4 days), exposed as `time_decay_4h`.
+
+COMPANION FILES
+---------------
+  Engine/runners/run_s1_failfast.py      mission §4.5 fail-fast causal
+                                         walk-forward harness (fixed grid,
+                                         trailing-365d + 72h embargo,
+                                         zero-regression verification).
+  Engine/verification/verify_s1_invariants.py
+                                         10 anti-lookahead & execution-
+                                         semantics invariant tests.
+  Engine/runners/generate_s1_report.py   final mission report generator.
 
 USAGE
 -----
