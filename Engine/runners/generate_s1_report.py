@@ -246,6 +246,20 @@ windows jointly. Results:
 | W18 2025Q2 | +12.82% | 5.16% | ROI clears +10% but DD fails by 0.16% |
 
 Additional negative results (measured, not assumed):
+- **Portfolio risk-layer sweep** (dd_halt 3.0%/4.5%/off x same-direction cap
+  2/3 x cooldowns on/off x cross-sectional rank filter on/off x flatten
+  trigger 4.65%..4.98%, 3 base configs x 11 unbridgeable windows): bridges
+  ZERO windows. W18 2025Q2 comes closest (ROI +13.17%, DD 5.04% — fails by
+  0.04%); its equity path has an earlier 4.84% excursion, so every flatten
+  trigger either freezes too early (ROI +3.7%) or too late (DD 5.04%). The
+  narrow pass band is empty.
+- **Freeze layer fully disabled** (pure path, uncapped DD) on the 2022 bear
+  quarters: strictly worse (W06 DD 11.1%, W07 DD 7.1-13.6%, W08 DD 7.8-12.5%,
+  all ROI negative). This also resolves the coarse-research vs portfolio gap:
+  the 4h-only research sim missed intrabar stop touches that the engine's 15m
+  stop granularity correctly catches — the portfolio engine is the accurate
+  one, and the 2022 slow-momentum short edge does not survive realistic
+  execution.
 - **Shorts enabled** (T1/T2 breakdown shorts): strictly worse (1/20 vs 4/20).
 - **DD-flatten circuit breaker at 4.6%**: caps drawdown but freezes books at
   their trough — family ceiling drops to 5/20. A flatten cannot manufacture

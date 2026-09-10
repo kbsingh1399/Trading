@@ -1118,6 +1118,7 @@ def assemble_portfolio(trades_by_key: Dict[Tuple[str, int, int], Trade],
             if (peak - eq_open) / peak >= risk.dd_flatten_frac:
                 dead = True
                 halt_idx = i if halt_idx is None else halt_idx
+                halt_start = i if halt_start is None else halt_start
                 for s_, tr_ in list(open_pos.items()):
                     opx = opens[s_][i]
                     if not np.isfinite(opx):
@@ -1159,7 +1160,8 @@ def assemble_portfolio(trades_by_key: Dict[Tuple[str, int, int], Trade],
                 halt_start = i
         else:
             flat = len(open_pos) == 0
-            quarantine_over = (i - halt_start) >= risk.quarantine_4h * F15_PER_4H
+            quarantine_over = (halt_start is not None
+                               and (i - halt_start) >= risk.quarantine_4h * F15_PER_4H)
             if dd_op <= risk.dd_resume or (flat and quarantine_over):
                 halted = False
                 op_peak = max(prev_eq, 1e-9)
@@ -1217,6 +1219,7 @@ def assemble_portfolio(trades_by_key: Dict[Tuple[str, int, int], Trade],
         if not dead and peak > 0 and (peak - eq_i) / peak >= risk.dd_flatten_frac:
             dead = True
             halt_idx = i if halt_idx is None else halt_idx
+            halt_start = i if halt_start is None else halt_start
             for s_, tr_ in list(open_pos.items()):
                 px = closes[s_][i]
                 if np.isfinite(px):
