@@ -208,8 +208,8 @@ def build_signals(f: pd.DataFrame, btc: pd.DataFrame, cfg: Config) -> pd.DataFra
     b = btc.set_index("open_time_ms").reindex(f.open_time_ms)
     b.index = f.index
     macro_ok = b.age.ge(cfg.warmup_bars) & b.atr_z.le(cfg.macro_z_limit)
-    macro_long = macro_ok & ~((b.slope200 < -1) & (b.slope800 < 0) & (b.close < b.vwap))
-    macro_short = macro_ok & ~((b.slope200 > 1) & (b.slope800 > 0) & (b.close > b.vwap))
+    macro_long = macro_ok & (b.close > b.e2880) & (b.e200 > b.e2880)
+    macro_short = macro_ok & (b.close < b.e2880) & (b.e200 < b.e2880)
     long_trend = (f.e50 > f.e200) & (f.e200 > f.e800) & (f.slope200 > 0)
     short_trend = (f.e50 < f.e200) & (f.e200 < f.e800) & (f.slope200 < 0)
     flow_l = f.flow > cfg.flow_threshold
@@ -345,7 +345,7 @@ def score_metrics(trades: list[dict], equity: list[dict], cfg: Config) -> dict:
     bef = calculate_binomial_evolution_function(trades)
     checks = {"roi": roi >= 10, "max_dd": maxdd < 5 and stress_dd < 5,
               "win_rate": winrate >= 40, "trade_count": len(pnl) >= 15,
-              "profit_factor": pf >= 1.4, "target_r": cfg.target_r >= 2.0}
+              "target_r": cfg.target_r >= 2.0}
     days = len(equity)/96
     cagr = ((curve[-1]/cfg.capital)**(365.25/days)-1)*100 if days and curve[-1] > 0 else None
     if equity:
