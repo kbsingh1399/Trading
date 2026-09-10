@@ -1,0 +1,234 @@
+================================================================================
+INSTITUTIONAL TREND-FOLLOWING ORDERFLOW SUITE — 20 OOS WINDOWS
+MISSION: Engineer, backtest, and validate a profitable institutional trend-following
+         strategy suite across all 20 canonical OOS quarterly windows (2021–2025).
+Repository: https://github.com/kbsingh1399/Trading.git (branch: main)
+Target Criteria Contract: Engine/target_oos_criteria.json
+Data Source: Engine/binance_backtesting_data/ (18 Binance USDT-M Perpetuals)
+Generated: 2026-09-10
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 0: MANDATE & CLEAN-SLATE DIRECTIVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You are an elite Quantitative Strategy Architect and Systems Engineer.
+This is a clean-slate mission. No previous session history, past failure logs, or
+legacy scorecards are provided. You are empowered to design and engineer a robust,
+mathematically sound trend-following quantitative system from first principles.
+
+Your objective is singular:
+Construct an institutional-grade Trend-Following Orderflow Trading System that passes
+ALL 20 consecutive Out-Of-Sample (OOS) quarterly windows (2021 Q1 through 2025 Q4)
+under strict real-world Binance friction modeling, without a single failing window.
+
+CRITICAL ASSET ALLOCATION DIRECTIVE (BTC EXCLUSION MANDATE):
+Empirical market microstructure confirms that BTC perpetual contracts are heavily
+degraded by cross-venue basis arbitrage (CME vs ETF vs Spot), high-frequency predatory
+liquidity pins, and mean-reverting chop that consistently breaks trend-following rules.
+In contrast, high-beta altcoin perpetuals exhibit superior retail orderflow participation,
+genuine trapped-trader liquidations, and clean multi-day directional momentum expansions.
+
+Therefore, you must enforce the following universe architecture:
+1. BTCUSDT DIRECT TRADING IS STRICTLY BANNED:
+   - Do not open positions in BTCUSDT.
+   - Use BTCUSDT solely as an EXOGENOUS MACRO COMPASS & REGIME FILTER (e.g. macro trend
+     alignment, market-wide liquidation cascades, systemic volatility gating).
+2. ACTIVE TRADE EXECUTION UNIVERSE (17 ALTCOIN PERPETUALS):
+   - ETH, XRP, SOL, BNB, DOGE, ADA, TRX, LINK, AVAX,
+     SUI, NEAR, DOT, LTC, BCH, APT, OP, ARB.
+   - Focus capital and risk budgets exclusively on altcoins demonstrating clean orderflow
+     sponsorship, value area breakouts, and aggressive taker delta expansion.
+
+Do not guess or assume codebase structure. Fetch every file directly from the GitHub
+repository via raw URLs.
+
+Core GitHub References:
+- Schema Definition (58-col master + 13-col ladder):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/schema.py
+- Canonical Mathematical Indicators:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/canonical_indicators.py
+- Formal Target Criteria Contract:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json
+- Historical Data Pipeline Runner:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_historical_pipeline.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 1: TARGET PERFORMANCE CRITERIA (target_oos_criteria.json)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Every individual quarterly window (k = 1 .. 20) must strictly satisfy the following
+institutional hurdles. A failure in ANY single window constitutes a system failure:
+
+1. Portfolio Risk Budget & Capital:
+   - Initial Capital: 5000.00 USD
+   - Base Risk per Trade: 1.0 percent (50.00 USD fixed risk allocation)
+   - Max Concurrent Open Positions: 2 to 3 across the entire altcoin portfolio
+
+2. Window Return & Risk Hurdles:
+   - Net ROI Target: >= +10.00 percent per quarter (+500.00 USD net on 5000.00 USD capital)
+   - Maximum Drawdown Cap: < 5.00 percent (250.00 USD hard circuit breaker)
+   - Win Rate Threshold: >= 40.00 percent
+   - Minimum R-Multiple Target: >= 4.0 R (or dynamic microstructure runner expanding >= 4R)
+   - Minimum Trade Frequency: >= 15 completed trades per quarter across active portfolio
+   - Profit Factor: >= 1.40
+
+3. Non-Negotiable Institutional Friction Model:
+   - Taker Fee: 8.0 bps (0.08 percent)
+   - Entry Slippage: 10.0 bps (0.10 percent)
+   - Stop/Exit Slippage: 15.0 bps (0.15 percent)
+   - Total Round-Trip Friction: 41.0 bps deducted from every trade. Zero-friction fantasies are banned.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 2: THE 20 CANONICAL OUT-OF-SAMPLE (OOS) QUARTERLY WINDOWS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The evaluation spans 5 full market cycles (bull mania, bear capitulation, chop, ETF institutionalization):
+
+Window  01: 2021-01-01 -> 2021-03-31  (Q1 2021 — Bull Run Momentum Expansion)
+Window  02: 2021-04-01 -> 2021-06-30  (Q2 2021 — Structural Peak & May Deleveraging Crash)
+Window  03: 2021-07-01 -> 2021-09-30  (Q3 2021 — Summer Accumulation & Q3 Recovery)
+Window  04: 2021-10-01 -> 2021-12-31  (Q4 2021 — All-Time High Blow-Off & Distribution)
+Window  05: 2022-01-01 -> 2022-03-31  (Q1 2022 — Macro Bear Market Descent)
+Window  06: 2022-04-01 -> 2022-06-30  (Q2 2022 — Terra/Luna Contagion & Liquidity Cascade)
+Window  07: 2022-07-01 -> 2022-09-30  (Q3 2022 — Compressed Bear Consolidation)
+Window  08: 2022-10-01 -> 2022-12-31  (Q4 2022 — FTX Insolvency & Macro Capitulation Lows)
+Window  09: 2023-01-01 -> 2023-03-31  (Q1 2023 — Post-FTX Momentum Expansion)
+Window  10: 2023-04-01 -> 2023-06-30  (Q2 2023 — Regulatory Pressure & Range Grind)
+Window  11: 2023-07-01 -> 2023-09-30  (Q3 2023 — Ultra-Low Volatility Regime)
+Window  12: 2023-10-01 -> 2023-12-31  (Q4 2023 — Spot ETF Anticipation Trend Breakout)
+Window  13: 2024-01-01 -> 2024-03-31  (Q1 2024 — Institutional Inflows & New All-Time Highs)
+Window  14: 2024-04-01 -> 2024-06-30  (Q2 2024 — Halving Chop & High-Beta Rotation)
+Window  15: 2024-07-01 -> 2024-09-30  (Q3 2024 — Macro Volatility & Global Carry-Trade Unwind)
+Window  16: 2024-10-01 -> 2024-12-31  (Q4 2024 — Election Expansion & Altcoin Surge)
+Window  17: 2025-01-01 -> 2025-03-31  (Q1 2025 — Institutional Flow Expansion)
+Window  18: 2025-04-01 -> 2025-06-30  (Q2 2025 — Mid-Year Regime Rotation)
+Window  19: 2025-07-01 -> 2025-09-30  (Q3 2025 — Consolidation & Liquidity Harvesting)
+Window  20: 2025-10-01 -> 2025-12-31  (Q4 2025 — Year-End Structural Expansion)
+
+Causal Purge Invariant:
+A strictly enforced 72-hour trade resolution purge boundary (t_purge = t_start - 72h)
+is required to prevent lookahead leakage between windows. Warm-up indicators (EMAs, ATRs, RSI)
+must converge on in-sample bars prior to t_start.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 3: DATASET PROVENANCE & DUAL-TABLE SPECIFICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Universe: 18 Binance USDT-M Perpetual Contracts (2020 to 2026, 3.47M 15m bars, 0 nulls):
+  - Exogenous Macro Filter: BTCUSDT
+  - Tradable Altcoins: ETH, XRP, SOL, BNB, DOGE, ADA, TRX, LINK, AVAX,
+                       SUI, NEAR, DOT, LTC, BCH, APT, OP, ARB
+
+Schema Version 2.2 Dual-Table Architecture:
+1. Master Table ({symbol}_15m_master_2020_2026.parquet):
+   - 58 columns: Timestamp, OHLCV, Momentum (RSI, ATR14, ATR100), EMAs (8, 21, 50, 200, 800),
+     Futures CVD (15m, session, lifetime), Spot CVD (15m, session, lifetime), Funding Rates,
+     Basis, Open Interest & OI Delta, Institutional Liquidation Models, Top Trader Positioning,
+     Session Value Area (VAH, VAL, VWAP), Trade Execution Stats, Index Price & Basis Index (bps).
+   - Zero nulls, perfectly monotonic timestamps with delta_t == 900,000 ms.
+
+2. Footprint Ladder Table ({symbol}_15m_footprint_ladder.parquet):
+   - 13 columns: open_time_ms, price_bin, bid_vol_coin, ask_vol_coin, net_delta_coin,
+     total_vol_coin, trade_count, is_poc, is_buy_imbalance, is_sell_imbalance,
+     is_stacked_buy_imb, is_stacked_sell_imb, is_value_area.
+   - Built from 100 percent empirical Binance aggTrades tick data merged onto fixed price steps.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 4: INSTITUTIONAL ANTI-LOOKAHEAD & EXECUTION RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Prohibition of Window Lookup Tables:
+   No parameters, thresholds, or sleeve toggles may be keyed to window index (w_idx).
+   All parameters must be globally constant or causally adaptive based strictly on prior data.
+
+2. Strict Bar j+1 Execution:
+   Signals triggered at the close of bar j are executed exclusively at the OPEN of bar j+1.
+   Zero intra-bar knowledge at entry time.
+
+3. Microstructure Trailing Ratchets:
+   Favorable trailing stop adjustments calculated at bar j close take effect strictly at bar j+1.
+   No intra-bar favorable stop ratcheting on the entry bar.
+
+4. Real-Time Mark-to-Market Risk Monitoring:
+   Drawdown must be tracked bar-by-bar across mark-to-market equity. Sizing using future
+   Maximum Adverse Excursion (MAE) is strictly forbidden.
+
+5. Sequential Fail-Fast Protocol:
+   Evaluate Window 1. If Window 1 passes all criteria, proceed to Window 2.
+   If ANY window fails, halt execution immediately. Re-optimize causally using only
+   historical data prior to the failing window, verify zero regression on earlier windows,
+   and resume.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 5: ALTCOIN TREND-FOLLOWING SYSTEM ARCHITECTURE (FIRST PRINCIPLES)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Altcoin perpetual orderflow displays pronounced trend continuation characteristics driven by:
+- Sustained aggressive market order imbalance (CVD expansion).
+- Cascading retail liquidations fueling breakout momentum.
+- Structural trapped-trader absorption at Value Area extremes.
+
+Architectural Recommendations for the Altcoin Trend Suite:
+
+1. BTC Macro Compass (Exogenous Regime Gate):
+   - Measure BTC macro trend direction using slope of BTC EMA 200 / EMA 800 and session VWAP.
+   - Restrict Altcoin long entries to periods where BTC is not in an aggressive breakdown.
+   - Gate or hedge Altcoin short entries during massive BTC upward surges.
+   - If BTC experiences an extreme volatility flash (BTC ATR z-score > 3.0), temporarily veto
+     new entries to prevent systemic liquidity contagion.
+
+2. Triple-Sleeve Multi-Alpha Structure (Executed on Altcoins):
+   - Sleeve T1: Quiet-Flow Volatility Breakout
+     Identifies compression regimes (narrowing ATR / Value Area contraction) transitioning
+     into high-momentum expansion accompanied by institutional volume.
+   - Sleeve T2: Trapped-Trader Absorption & Value Area Pullback
+     Enters trend-aligned pullbacks where counter-trend traders are absorbed at key swing
+     liquidity levels (Previous Day High/Low sweeps, Session VAL/VAH retests with CVD divergence).
+   - Sleeve T3: Institutional Delta Expansion
+     Enters aggressive momentum continuation when taker volume ratio and footprint stacked
+     imbalances (is_stacked_buy_imb / is_stacked_sell_imb) confirm active aggressive sponsorship.
+
+3. Dynamic Microstructure Profit Ratchet (Anti-Retracement Engine):
+   - Breakeven Lock: When price reaches +0.80 R to +1.00 R, move stop to Entry + 0.20 R
+     (guaranteeing friction costs are covered with net profit locked).
+   - Profit Lock: When price reaches +1.80 R to +2.00 R, move stop to Entry + 1.00 R.
+   - Target Expansion: Trail runners dynamically behind recent swing levels or EMA 21 to capture
+     extreme +4.0 R to +6.0 R regime extensions.
+   - Time Decay Safeguard: Liquidate at market if a position fails to gain at least +0.20 R
+     within 24 bars (6 hours).
+
+4. Portfolio Execution & Risk Allocation:
+   - Run parallel multi-asset screening across the 17 altcoin perpetuals.
+   - Limit concurrent positions to 2 or 3 to maintain diversification while strictly capping
+     aggregate portfolio drawdown below 5.0 percent.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 6: DELIVERABLES & REPORTING FORMAT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Provide an exhaustive, verified implementation and analysis:
+
+1. Complete Backtesting Engine:
+   - Deliver clean, modular, self-contained Python code that loads the genuine Parquet datasets,
+     computes the trend-following signals on the 17 altcoins using BTC as the macro compass,
+     applies full frictions, and logs trades.
+   - Single-file strategy architecture (e.g. Engine/s1_trend_following_suite.py).
+
+2. 20-Window Scorecard Performance Table:
+   Present an empirical results table formatted exactly as:
+   | Window | Period | Net ROI (%) | Max DD (%) | Win Rate (%) | Total Trades | Profit Factor | Verdict |
+   |--------|--------|-------------|------------|--------------|--------------|---------------|---------|
+   | W01    | 2021Q1 | ...         | ...        | ...          | ...          | ...           | PASS    |
+   | ...    | ...    | ...         | ...        | ...          | ...          | ...           | ...     |
+   | W20    | 2025Q4 | ...         | ...        | ...          | ...          | ...           | PASS    |
+
+3. Comprehensive Portfolio Statistics:
+   - Cumulative Net Profit (in USD)
+   - Annualized Return (CAGR)
+   - Maximum System Drawdown (in percent and USD)
+   - Overall Portfolio Sharpe Ratio and Calmar Ratio
+   - Long vs. Short Breakdown and Average R-Multiple achieved
+
+Begin your first-principles analysis and implementation immediately.
+================================================================================

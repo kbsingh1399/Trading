@@ -1,10 +1,10 @@
 {
   "symbol": "OPUSDT",
   "timeframe": "15m",
-  "total_rows": 672,
-  "expected_rows": 672,
-  "expected_start_ms": 1788307200000,
-  "expected_end_ms": 1788911999999,
+  "total_rows": 149930,
+  "expected_rows": 149930,
+  "expected_start_ms": 1654092000000,
+  "expected_end_ms": 1789028100000,
   "columns": [
     "open_time_ms",
     "close_time_ms",
@@ -61,42 +61,52 @@
     "long_liq_zs",
     "short_liq_zs",
     "liq_imbalance_ratio",
-    "is_imputed_metrics"
+    "is_imputed_metrics",
+    "index_close",
+    "basis_index_bps"
   ],
-  "column_count": 56,
-  "start_time_utc": "2026-09-02 00:00:00",
-  "end_time_utc": "2026-09-08 23:45:00",
-  "exported_at_utc": "2026-09-09T20:22:37.719277+00:00",
+  "column_count": 58,
+  "start_time_utc": "2022-06-01 14:00:00",
+  "end_time_utc": "2026-09-10 08:15:00",
+  "exported_at_utc": "2026-09-10T08:45:04.740541+00:00",
   "master_file": "OPUSDT_15m_master_2020_2026.parquet",
-  "master_sha256": "2c338c5273c3a1fdada021693410b0b1945ec4bd5239df8c79e9cdea32527249",
-  "master_size_mb": 0.28,
+  "master_sha256": "ae3ef4478619de3f0e35c27ef8d6c1a0ca01c7ffbaf3d9d1a45bb35a173fcfe9",
+  "master_size_mb": 56.55,
   "ladder_file": "OPUSDT_15m_footprint_ladder.parquet",
-  "ladder_sha256": "ee0ab77eacc991b35e6e71e4b8d2021e93ac3398e64387e5ced05bee4456f4dc",
-  "ladder_size_mb": 0.04,
+  "ladder_sha256": "9bb522b4f221e639bb86665715ca755dd6dca95cf803877cc07af37d1d1093ba",
+  "ladder_size_mb": 14.8,
   "ladder": {
-    "candles": 672,
-    "tick_exact_candles": 672,
+    "candles": 149930,
+    "tick_exact_candles": 149896,
     "synthetic_candles": 0,
-    "total_rungs": 750,
-    "tick_rungs": 750,
+    "total_rungs": 495655,
+    "tick_rungs": 495655,
     "synthetic_rungs": 0
   },
   "provenance": {
-    "tick_exact_bars": 672,
-    "spot_exact_bars": 672,
-    "imputed_metrics_bars": 0,
-    "metrics_archive_absent_months": [],
-    "metrics_archive_absent_days": [],
-    "metrics_archive_absent_day_count": 0,
+    "tick_exact_bars": 149896,
+    "spot_exact_bars": 149930,
+    "imputed_metrics_bars": 16379,
+    "metrics_archive_absent_months": [
+      "2026-09"
+    ],
+    "metrics_archive_absent_days": [
+      "2026-09-10"
+    ],
+    "metrics_archive_absent_day_count": 1,
     "metrics_unavailable_fraction_by_year": {
+      "2022": 0.7977,
+      "2023": 0.0001,
+      "2024": 0.0006,
+      "2025": 0.0002,
       "2026": 0.0
     }
   },
   "verification": {
     "symbol": "OPUSDT",
     "passed": true,
-    "master_rows": 672,
-    "ladder_rows": 750,
+    "master_rows": 149930,
+    "ladder_rows": 495655,
     "agent_status": {
       "Agent1:Continuity": "PASS",
       "Agent2:Microstructure": "PASS",
@@ -105,5 +115,5 @@
     "findings": [],
     "repair_rounds": 0
   },
-  "schema_version": "2.1"
+  "schema_version": "2.2"
 }
