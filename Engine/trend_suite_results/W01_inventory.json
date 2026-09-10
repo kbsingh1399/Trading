@@ -1,0 +1,128 @@
+[
+  {
+    "symbol": "BTCUSDT",
+    "rows_loaded": 20352,
+    "start": "2020-09-01T00:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 0
+  },
+  {
+    "symbol": "ETHUSDT",
+    "rows_loaded": 20352,
+    "start": "2020-09-01T00:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 20352
+  },
+  {
+    "symbol": "XRPUSDT",
+    "rows_loaded": 20352,
+    "start": "2020-09-01T00:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 20352
+  },
+  {
+    "symbol": "SOLUSDT",
+    "rows_loaded": 19076,
+    "start": "2020-09-14T07:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 19076
+  },
+  {
+    "symbol": "BNBUSDT",
+    "rows_loaded": 20352,
+    "start": "2020-09-01T00:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 20352
+  },
+  {
+    "symbol": "DOGEUSDT",
+    "rows_loaded": 20352,
+    "start": "2020-09-01T00:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 20352
+  },
+  {
+    "symbol": "ADAUSDT",
+    "rows_loaded": 20352,
+    "start": "2020-09-01T00:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 20352
+  },
+  {
+    "symbol": "TRXUSDT",
+    "rows_loaded": 20352,
+    "start": "2020-09-01T00:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 20352
+  },
+  {
+    "symbol": "LINKUSDT",
+    "rows_loaded": 20352,
+    "start": "2020-09-01T00:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 20352
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "rows_loaded": 18212,
+    "start": "2020-09-23T07:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 18212
+  },
+  {
+    "symbol": "SUIUSDT",
+    "rows_loaded": 0,
+    "start": null,
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 0
+  },
+  {
+    "symbol": "NEARUSDT",
+    "rows_loaded": 16096,
+    "start": "2020-10-15T08:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 16096
+  },
+  {
+    "symbol": "DOTUSDT",
+    "rows_loaded": 20352,
+    "start": "2020-09-01T00:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 20352
+  },
+  {
+    "symbol": "LTCUSDT",
+    "rows_loaded": 20352,
+    "start": "2020-09-01T00:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 20352
+  },
+  {
+    "symbol": "BCHUSDT",
+    "rows_loaded": 20352,
+    "start": "2020-09-01T00:00:00+00:00",
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 20352
+  },
+  {
+    "symbol": "APTUSDT",
+    "rows_loaded": 0,
+    "start": null,
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 0
+  },
+  {
+    "symbol": "OPUSDT",
+    "rows_loaded": 0,
+    "start": null,
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 0
+  },
+  {
+    "symbol": "ARBUSDT",
+    "rows_loaded": 0,
+    "start": null,
+    "prefix_end_exclusive": "2021-04-01T00:00:00+00:00",
+    "footprint_bars": 0
+  }
+]

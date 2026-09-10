@@ -31,16 +31,19 @@ _EPS = 1e-12
 # ------------------------------------------------------------------------------
 def get_merge_level(symbol: str) -> float:
     """Canonical value-area bucket size (price units) per asset scale."""
+    from .schema import FIXED_MERGE_STEPS
     s = symbol.upper()
+    if s in FIXED_MERGE_STEPS:
+        return float(FIXED_MERGE_STEPS[s])
     if s.startswith("BTC"):
-        return 25.0
+        return 50.0
     if s.startswith("ETH"):
-        return 1.0
+        return 2.0
     if any(s.startswith(x) for x in ("SOL", "BNB", "BCH", "AVAX", "LTC", "APT", "LINK")):
-        return 0.1
+        return 0.2
     if any(s.startswith(x) for x in ("DOT", "NEAR", "SUI", "OP", "ARB")):
-        return 0.01
-    return 0.0001
+        return 0.02
+    return 0.0002
 
 
 def nice_bin_step(prices: np.ndarray, bps: float = 3.5) -> np.ndarray:

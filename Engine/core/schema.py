@@ -124,24 +124,24 @@ ALLOWED_CONSTANT_COLUMNS: Tuple[str, ...] = (
 # Fixed Institutional Price Merge Levels (Deterministic Order Flow Geometry)
 # ------------------------------------------------------------------------------
 FIXED_MERGE_STEPS: Dict[str, float] = {
-    "BTCUSDT": 25.0,        # Standard Exocharts / Sierra Chart $25 bucket
-    "ETHUSDT": 1.0,         # Standard Exocharts / Sierra Chart $1 bucket
-    "SOLUSDT": 0.10,        # Sub-dollar microstructure (10 cents)
-    "BNBUSDT": 0.50,        # Half-dollar bucket
-    "DOGEUSDT": 0.0005,     # 5-pip bucket
-    "XRPUSDT": 0.0010,      # 10-pip bucket
-    "ADAUSDT": 0.0005,      # 5-pip bucket
-    "TRXUSDT": 0.0001,      # Single pip bucket
-    "LINKUSDT": 0.02,       # 2-cent bucket
-    "AVAXUSDT": 0.05,       # 5-cent bucket
-    "SUIUSDT": 0.005,       # Half-cent bucket
-    "NEARUSDT": 0.01,       # 1-cent bucket
-    "DOTUSDT": 0.01,        # 1-cent bucket
-    "LTCUSDT": 0.10,        # 10-cent bucket
-    "BCHUSDT": 0.50,        # Half-dollar bucket
-    "APTUSDT": 0.01,        # 1-cent bucket
-    "OPUSDT": 0.005,        # Half-cent bucket
-    "ARBUSDT": 0.002,       # 2-tenth cent bucket
+    "BTCUSDT": 50.0,        # Standard Exocharts / Sierra Chart $50 bucket
+    "ETHUSDT": 2.0,         # Standard Exocharts / Sierra Chart $2 bucket
+    "SOLUSDT": 0.20,        # Sub-dollar microstructure (20 cents)
+    "BNBUSDT": 1.00,        # Dollar bucket
+    "DOGEUSDT": 0.0010,     # 10-pip bucket
+    "XRPUSDT": 0.0020,      # 20-pip bucket
+    "ADAUSDT": 0.0010,      # 10-pip bucket
+    "TRXUSDT": 0.0002,      # 2-pip bucket
+    "LINKUSDT": 0.04,       # 4-cent bucket
+    "AVAXUSDT": 0.10,       # 10-cent bucket
+    "SUIUSDT": 0.010,       # 1-cent bucket
+    "NEARUSDT": 0.02,       # 2-cent bucket
+    "DOTUSDT": 0.02,        # 2-cent bucket
+    "LTCUSDT": 0.20,        # 20-cent bucket
+    "BCHUSDT": 1.00,        # Dollar bucket
+    "APTUSDT": 0.02,        # 2-cent bucket
+    "OPUSDT": 0.010,        # 1-cent bucket
+    "ARBUSDT": 0.004,       # 4-tenth cent bucket
 }
 
 # ------------------------------------------------------------------------------

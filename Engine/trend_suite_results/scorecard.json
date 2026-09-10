@@ -1,0 +1,139 @@
+[
+  {
+    "window": "W01",
+    "period": "2021Q1",
+    "metrics": {
+      "net_profit_usd": -200.09058887910305,
+      "net_roi_percent": -4.0018117775820645,
+      "max_dd_percent": 4.001811777582061,
+      "max_dd_usd": 200.09058887910305,
+      "adverse_bound_max_dd_percent": 4.001811777582061,
+      "win_rate_percent": 0.0,
+      "total_trades": 4,
+      "profit_factor": 0.0,
+      "average_r": -1.0004529443955161,
+      "average_winner_r": null,
+      "cagr_percent": -15.27384645801735,
+      "sharpe_daily": -2.014530549118909,
+      "calmar": -3.816732846752222,
+      "checks": {
+        "roi": false,
+        "max_dd": true,
+        "win_rate": false,
+        "trade_count": false,
+        "profit_factor": false,
+        "target_r": true
+      },
+      "verdict": "FAIL",
+      "long": {
+        "trades": 2,
+        "net_profit_usd": -100.09058887910322,
+        "win_rate_percent": 0.0,
+        "average_r": -1.0009058887910323
+      },
+      "short": {
+        "trades": 2,
+        "net_profit_usd": -100.0,
+        "win_rate_percent": 0.0,
+        "average_r": -1.0
+      },
+      "max_concurrent_positions": 3,
+      "circuit_tripped": false
+    }
+  },
+  {
+    "window": "W02",
+    "period": "2021Q2",
+    "metrics": null
+  },
+  {
+    "window": "W03",
+    "period": "2021Q3",
+    "metrics": null
+  },
+  {
+    "window": "W04",
+    "period": "2021Q4",
+    "metrics": null
+  },
+  {
+    "window": "W05",
+    "period": "2022Q1",
+    "metrics": null
+  },
+  {
+    "window": "W06",
+    "period": "2022Q2",
+    "metrics": null
+  },
+  {
+    "window": "W07",
+    "period": "2022Q3",
+    "metrics": null
+  },
+  {
+    "window": "W08",
+    "period": "2022Q4",
+    "metrics": null
+  },
+  {
+    "window": "W09",
+    "period": "2023Q1",
+    "metrics": null
+  },
+  {
+    "window": "W10",
+    "period": "2023Q2",
+    "metrics": null
+  },
+  {
+    "window": "W11",
+    "period": "2023Q3",
+    "metrics": null
+  },
+  {
+    "window": "W12",
+    "period": "2023Q4",
+    "metrics": null
+  },
+  {
+    "window": "W13",
+    "period": "2024Q1",
+    "metrics": null
+  },
+  {
+    "window": "W14",
+    "period": "2024Q2",
+    "metrics": null
+  },
+  {
+    "window": "W15",
+    "period": "2024Q3",
+    "metrics": null
+  },
+  {
+    "window": "W16",
+    "period": "2024Q4",
+    "metrics": null
+  },
+  {
+    "window": "W17",
+    "period": "2025Q1",
+    "metrics": null
+  },
+  {
+    "window": "W18",
+    "period": "2025Q2",
+    "metrics": null
+  },
+  {
+    "window": "W19",
+    "period": "2025Q3",
+    "metrics": null
+  },
+  {
+    "window": "W20",
+    "period": "2025Q4",
+    "metrics": null
+  }
+]

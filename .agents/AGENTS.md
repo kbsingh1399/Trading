@@ -96,10 +96,20 @@ When `AGENTS.md` is loaded, execute sequentially without asking:
 
 ---
 
-# PART 5: KARPATHY GUIDELINES & ORCHESTRATION
+# PART 5: KARPATHY GUIDELINES & MULTI-AGENT ORCHESTRATION
+
+> 🛑 **MANDATORY DIRECTIVE**: You are FORBIDDEN from executing complex tasks as a single isolated agent. You MUST orchestrate a swarm of specialized agents and utilize multiple methodology skills simultaneously.
+
 1. **Karpathy Directives**: (1) *Think Before Coding* (surface tradeoffs, state assumptions), (2) *Simplicity First* (minimal code, no speculative features, rewrite 200 lines to 50), (3) *Surgical Changes* (touch only what you must, match existing style), (4) *Goal-Driven Execution* (loop against verifiable criteria).
-2. **Mandatory Multi-Agent Orchestration (/orchestrate)**: Every turn must coordinate $\ge 3$ agent perspectives (Planning/Strategy, Core Math/Implementation, QA/Verification), render the canonical Orchestration Report header, and gate task completion behind verification.
-3. **Agent Skills & Compute**: Matt Pocock skill suite in `.agents/skills/`; offload heavy ML context to Prime Intellect CLI/API.
+2. **Mandatory Multi-Agent Orchestration (/orchestrate)**: 
+   - On every single turn, you must coordinate a minimum of **3 distinct agent personas** (e.g., Data Architect, Quant Strategist, QA/Verification Engineer).
+   - You MUST generate an "Orchestration Report" header detailing the active agents and their specific mandates before writing any code.
+   - Never declare a task complete without explicit cross-verification by the QA/Verification agent.
+3. **Mandatory Multi-Skill Loading (Zero Amnesia)**: 
+   - You MUST proactively search for and dynamically load **at least 2 relevant skills** from `.agents/skills/` (e.g., `@[engineering-features-for-machine-learning]` + `@[agent-data-ml-model]`) before proposing a solution. 
+   - You CANNOT assume you know what is in a skill file; you MUST physically read the `SKILL.md` into context using your `view_file` tool.
+   - You MUST include a header confirming which skills were dynamically loaded: `> 📚 **Active Skills Loaded & Applied:** @[skill-1], @[skill-2]`.
+4. **Agent Skills & Compute**: Matt Pocock skill suite in `.agents/skills/`; offload heavy ML context to Prime Intellect CLI/API.
 
 ---
 
