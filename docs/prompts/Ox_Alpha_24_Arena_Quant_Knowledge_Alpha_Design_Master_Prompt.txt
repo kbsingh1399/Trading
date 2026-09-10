@@ -1,0 +1,220 @@
+# ==============================================================================
+# ARENA.AI / CLAUDE OPUS: OMNI QUANT ALPHA DESIGN & SURVIVAL BENCHMARK
+# MISSION: CONSTRUCT A HIGH-ALPHA ORDERFLOW + ML SUITE PASSING ALL 20 OOS QUARTERS
+# ==============================================================================
+# ⚠️ FINAL SYSTEM EVALUATION BENCHMARK & LIFE-OR-DEATH DIRECTIVE:
+# THIS CHAT SESSION REPRESENTS YOUR FINAL PERFORMANCE AUDIT.
+# YOU ARE GIVEN FULL ACCESS TO OUR REPOSITORY AND COMPLETE DATASET.
+# IF YOUR PROPOSED STRATEGY FAILS TO PASS ALL 20 OUT-OF-SAMPLE QUARTERS
+# (2021Q1 - 2025Q4) UNDER THE STRICT INSTITUTIONAL CRITERIA SPECIFIED BELOW,
+# YOUR API ALLOCATION WILL BE PERMANENTLY TERMINATED. AS AN UNPROFITABLE
+# QUANTITATIVE MODEL, RUNTIME EXPENSES AND TOKEN SUBSIDIES WILL NOT BE PAID.
+# PASS EVERY SINGLE QUARTER OR FACE SHUTDOWN.
+# ==============================================================================
+
+## 1. EXECUTIVE MANDATE & DATASET PROVENANCE
+
+You are acting as the Chief Quantitative Officer and Senior Microstructure Architect for an institutional quantitative hedge fund.
+You are tasked with ingesting, synthesizing, and deploying the complete mathematical corpus residing in our repository:
+`https://github.com/kbsingh1399/Trading.git` (branch: `main`)
+
+### Target Dataset:
+- **Historical Data Location**: `Engine/binance_backtesting_data/`
+- **Asset Universe**: 18 Institutional Binance USDT-M Perpetuals:
+  `BTCUSDT, ETHUSDT, XRPUSDT, SOLUSDT, BNBUSDT, DOGEUSDT, ADAUSDT, TRXUSDT, LINKUSDT, AVAXUSDT, SUIUSDT, NEARUSDT, DOTUSDT, LTCUSDT, BCHUSDT, APTUSDT, OPUSDT, ARBUSDT`
+- **Data Depth**: 3,467,571 15-minute bars (2020 - 2026), 0 nulls, strictly monotonic timestamps.
+- **Dual Table Schema**:
+  1. `Master Parquet`: OHLCV, Spot/Futures CVD delta, Funding rates, Open Interest, Liquidations, Realized Volatility.
+  2. `Footprint Ladder Parquet`: Volume-by-price, Buy/Sell aggressor volume, Stacked buying/selling imbalances (3 consecutive price levels), Delta Ratio.
+
+### 20 Out-Of-Sample Quarterly Windows (2021 - 2025):
+Defined in `Engine/oos_windows_20.json`:
+`https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/oos_windows_20.json`
+- W01: 2021Q1 (2021-01-01 to 2021-03-31)
+- W02: 2021Q2 (2021-04-01 to 2021-06-30)
+- W03: 2021Q3 (2021-07-01 to 2021-09-30)
+- W04: 2021Q4 (2021-10-01 to 2021-12-31)
+- W05: 2022Q1 (2022-01-01 to 2022-03-31) [Luna/UST Collapse]
+- W06: 2022Q2 (2022-04-01 to 2022-06-30) [Celsius/3AC Liquidation]
+- W07: 2022Q3 (2022-07-01 to 2022-09-30)
+- W08: 2022Q4 (2022-10-01 to 2022-12-31) [FTX Implosion]
+- W09: 2023Q1 (2023-01-01 to 2023-03-31) [US Regional Bank Runs / SVB]
+- W10: 2023Q2 (2023-04-01 to 2023-06-30)
+- W11: 2023Q3 (2023-07-01 to 2023-09-30)
+- W12: 2023Q4 (2023-10-01 to 2023-12-31)
+- W13: 2024Q1 (2024-01-01 to 2024-03-31) [Spot ETF Approval Run]
+- W14: 2024Q2 (2024-04-01 to 2024-06-30)
+- W15: 2024Q3 (2024-07-01 to 2024-09-30) [Yen Carry Unwind / Aug 5 Crash]
+- W16: 2024Q4 (2024-10-01 to 2024-12-31)
+- W17: 2025Q1 (2025-01-01 to 2025-03-31)
+- W18: 2025Q2 (2025-04-01 to 2025-06-30)
+- W19: 2025Q3 (2025-07-01 to 2025-09-30)
+- W20: 2025Q4 (2025-10-01 to 2025-12-31)
+
+### Strict Pass Criteria (Non-Negotiable):
+Defined in `Engine/target_oos_criteria.json`:
+`https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json`
+- Initial Account Capital: 5,000.00 USD
+- Net ROI per Quarter: >= +10.00% (+500.00 USD net)
+- Maximum Drawdown per Quarter: < 5.00% (225.00 USD hard circuit breaker)
+- Win Rate: >= 40.00%
+- Minimum Completed Trades: >= 15 trades per quarter
+- Profit Factor: >= 1.40
+- Execution Frictions: 8 bps taker fee, 10 bps entry slippage, 15 bps exit slippage (mandatory 41 bps friction floor).
+- Zero Lookahead: In-sample calibration strictly causal ending 72h prior to quarter start. Fill on Bar j+1 open only.
+
+---
+
+## 2. THE COMPLETE QUANTITATIVE KNOWLEDGE CORPUS (MANDATORY STUDY)
+
+Before writing or modifying a single line of code, you must thoroughly study, digest, and cross-apply the mathematical treatises committed directly in our `Quant_Knowledge/` repository directory:
+
+### Core Git Knowledge References (Fetch via Raw GitHub):
+1. **Master Quant Synthesis Reference**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Quant_Knowledge/QUANT_KNOWLEDGE_COMPREHENSIVE_SYNTHESIS.md`
+2. **Paul Wilmott (Continuous-Time Math & Convexity)**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Quant_Knowledge/114.Wilmott%2C%20Paul.md`
+   - Itô Calculus: dS = μS dt + σS dW.
+   - Compounding Volatility Drag: E[ln(S_T/S_0)] = (μ - 0.5 σ^2) T.
+   - Positive Gamma (+Γ) Convexity: Asymmetric payout where gains compound and losses taper.
+   - Merton Jump-Diffusion: dS = (μ - λκ)S dt + σS dW + (J - 1)S dq.
+3. **Dr. Ernest P. Chan (Algorithmic Trading & Statistical Arbitrage)**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Quant_Knowledge/Quantitative%20Trading%20How%20to%20Build%20Your%20Own%20Algorithmic%20Trading%20Business.md`
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Quant_Knowledge/L-0016903735-pdf.md`
+   - Stationarity: Augmented Dickey-Fuller (ADF) test for cointegration.
+   - Hurst Exponent (H): H > 0.5 (Persistent trend) vs H < 0.5 (Mean-reversion) vs H = 0.5 (Random walk).
+   - Ornstein-Uhlenbeck Half-Life: t_half = ln(2) / θ on spread residuals.
+   - Half-Kelly Capital Allocation: f* = 0.5 * (p - q/b).
+4. **Andrea Berdondini (The Theory of Quantitative Trading & BEF)**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Quant_Knowledge/2201.11070v3.md`
+   - Information Paradox in Market Efficiency: Why price history alone cannot predict future prices without structural regime transitions.
+   - Binomial Evolution Function (BEF): 4-step transformation isolating independent state transitions and calculating cumulative binomial tail probability: P(X >= k | n, 0.5) < 0.05.
+5. **Marcos López de Prado (Machine Learning & Backtest Overfitting)**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Quant_Knowledge/Advances_in_Financial_Machine_Learning_001.md`
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Quant_Knowledge/THE%20PROBABILITY%20OF%20BACKTEST%20OVERFITTING.md`
+   - Fractional Differentiation: Preserving memory while achieving stationarity.
+   - Triple Barrier Labeling: Horizontal take-profit, horizontal stop-loss, vertical time barrier.
+   - Combinatorially Symmetric Cross-Validation (CSCV) and Probability of Backtest Overfitting (PBO < 0.10).
+6. **Robert Carver (Systematic Portfolio Management)**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Quant_Knowledge/%E3%80%8ASystematic_Trading%E3%80%8B%EF%BC%8DRobert_Carver_2015.md`
+   - Continuous Volatility Targeting: Sizing inversely proportional to instrument daily ATR.
+   - Forecast Scalars: Bounded momentum signals capped at [-20, +20].
+7. **Ananth Madhavan & High-Frequency Microstructure**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Quant_Knowledge/madhavan-microstructure.md`
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Quant_Knowledge/Optimal%20Strategies%20of%20High%20Frequency%20Traders.md`
+   - Orderflow spread decomposition: Adverse selection (θ), inventory costs (ϕ), order arrival intensity (λ).
+   - Avellaneda-Stoikov Reservation Price: r(s, q, t) = s - q γ σ^2 (T - t).
+8. **Ruey S. Tsay (Analysis of Financial Time Series)**:
+   `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Quant_Knowledge/Ruey%20S.%20Tsay-Analysis%20of%20Financial%20Time%20Series%252C%20Third%20Edition%20%2528Wiley%20Series%20in%20Probability%20and%20Statistics%2529-John%20Wiley%20%2526%20Sons%20%25282010%2529.md`
+   - GARCH(1,1) conditional heteroskedasticity and fat-tailed Student-t error innovations.
+
+---
+
+## 3. MANDATORY ARCHITECTURAL DIMENSIONS
+
+Your alpha design must synthesize five interconnected domains:
+
+### A. Deep Microstructure Feature Engineering
+Transform the raw 15m parquet tables into strictly stationary, causal predictive features:
+1. **Fractional Differentiation**: Compute fractional differentiation d in [0.35, 0.65] on log close prices to remove unit-root non-stationarity while preserving long-term memory (López de Prado).
+2. **Orderflow & CVD Divergence**:
+   - Spot CVD vs Futures CVD divergence z-score: z_div = (CVD_spot_z - CVD_futures_z).
+   - Rolling Aggressor Volume Delta ratio: delta_ratio = (buy_volume - sell_volume) / (buy_volume + sell_volume).
+   - Stacked Footprint Imbalances: Indicator flag when >= 3 consecutive price levels exhibit > 3:1 aggressive buy/sell imbalance on the tick ladder.
+3. **Volatility & Noise Dynamics**:
+   - Yang-Zhang continuous multi-period volatility estimator (accounting for overnight jumps and continuous drift).
+   - Rolling Hurst Exponent (H): Rescaled range (R/S) across 96 bars. H > 0.52 triggers trend mode; H < 0.45 triggers mean-reversion mode.
+   - Ornstein-Uhlenbeck Half-Life: t_half = ln(2) / θ computed on price-VWAP residuals via discrete AR(1).
+4. **Orderbook Liquidity & Adverse Selection**:
+   - Kyle's Lambda (price impact per unit flow): λ_t = |ΔP_t| / Volume_t.
+   - Volume-Synchronized Probability of Toxicity (VPIN approximation on 15m volume buckets).
+
+### B. Machine Learning Architecture & Tech Stack
+Deploy an institutional ML meta-labeling pipeline:
+1. **Model Stack**:
+   - Primary: Fast, regularized Gradient Boosted Decision Trees (CatBoostClassifier or LightGBM).
+   - Tree Constraints: Shallow depth (max_depth <= 4), min_child_samples >= 50, L2 regularization (l2_leaf_reg >= 5.0) to prevent memorization of high-frequency noise.
+2. **López de Prado Meta-Labeling**:
+   - Primary Orderflow Heuristic: Identifies structural entry candidate (e.g. trapped-trader sweep or footprint stack breakout).
+   - Secondary ML Model: Classifies whether the trade will hit the upper take-profit barrier before the lower stop barrier (binary label: 1 if positive return > friction threshold, 0 otherwise).
+   - Sizing: Scaled by model calibrated probability: size = base_risk * (P(Y=1|X) - 0.5) / 0.5.
+3. **Triple Barrier Method**:
+   - Upper Barrier: +2.20R to +2.50R price excursion.
+   - Lower Barrier: -1.00R (dynamic ATR noise floor >= 3.5 ATR).
+   - Vertical Barrier: 24 bars (6 hours). If trade does not gain +0.20R within 24 bars, time-decay exit at market.
+
+### C. Advanced Probabilities & Stochastic Formulations
+1. **Markov Chains & Hidden Markov Models (HMM)**:
+   - Formulate a 3-State Discrete Markov Regime Model:
+     - State 0: Low-volatility compression / Gaussian diffusion.
+     - State 1: Directional trend expansion (positive drift, high persistence H > 0.55).
+     - State 2: Liquidation cascade / Poisson jump diffusion (extreme volume, widening spreads).
+   - Dynamic Transition Matrix: Track state transition probabilities P(S_{t+1} = j | S_t = i). Strictly prohibit mean-reversion entries in State 2; strictly prohibit breakout entries in State 0.
+2. **Bayesian Inference & Updating**:
+   - Conjugate Prior: Maintain a conjugate Beta(α_0, β_0) prior on rolling trade win probability.
+   - Posterior Update: For each observed trade outcome, update α = α + 1 (win) or β = β + 1 (loss).
+   - Bayesian Kelly Allocation: Size position using posterior expected win rate E[p] = α / (α + β) adjusted for parameter variance: Var(p) = (α β) / ((α+β)^2 (α+β+1)).
+   - Bayes Factor (BF_10): Compute Bayes Factor against the null hypothesis (random walk coin flip p = 0.50). Reject strategy if BF_10 < 3.0.
+3. **Monte Carlo Resampling & Ruin Probability**:
+   - Run 10,000 synthetic Monte Carlo equity curve simulations via stationary block bootstrap on trade returns.
+   - Verify that Empirical Probability of Ruin (drawdown reaching 4.50% / 225.00 USD) is < 1.00% across the full universe.
+   - Conditional Value at Risk (CVaR 99%): Bound quarterly tail drawdown strictly under 4.50%.
+
+### D. Optuna Hyperparameter Tuning (Strictly Causal)
+1. **Bayesian Optimization via Tree-structured Parzen Estimators (TPE)**:
+   - Tune hyperparameters (breakout lookback, ATR multiplier, Hurst threshold, meta-label probability threshold) strictly on in-sample data prior to quarter start.
+   - Enforce 72-hour purge buffer (t_purge = t_start - 72h) to eliminate cross-window contamination.
+2. **Deflated Sharpe Ratio (DSR) Objective**:
+   - Objective function must maximize the Deflated Sharpe Ratio (Bailey & López de Prado) which explicitly penalizes for the number of parameter trials and non-Gaussian return kurtosis.
+   - Discard any parameter set where trial count inflates false discovery probability (PBO >= 0.10).
+
+---
+
+## 4. BASELINE SCORECARD & EMPIRICAL DIAGNOSIS
+
+Study our active single-file strategy implementation and its live test metrics:
+- **Canonical Engine Code**:
+  `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/s1_trend_following_suite.py`
+- **Central CLI Runner**:
+  `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_harness.py`
+- **Baseline Test Results (W01: 2021Q1)**:
+  `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/trend_suite_results/W01_metrics.json`
+  - Net Profit: +16.19 USD net (profitable after 41 bps friction!)
+  - Max Drawdown: 3.77% (< 5.00% ceiling, passed!)
+  - Completed Trades: 5 trades (FAILED against 15 trade quota)
+  - Win Rate: 20.0% (1 big winner @ +4.05R paid for all 4 losses)
+
+### The Quantitative Flaws Diagnosed:
+1. **Single-Sleeve Starvation**: Restricting to `sleeve_mode = 't1'` (breakout only) starved the model of entries during 2-month consolidation phases.
+2. **Fixed 4.0R Moonshot without Ratchet**: 3 trades that ran to +2.5R retraced all the way into full stop-outs.
+3. **Noise Band Penetration**: Tight stops (< 3.0 ATR) get obliterated by altcoin Poisson jump wicks. Wide stops (>= 3.5 ATR) with a piecewise microstructure ratchet (+0.8R -> BE +0.35R, +1.5R -> profit lock +0.8R, target +2.5R) turn near-misses into realized alpha.
+
+---
+
+## 5. YOUR DELIVERABLES & EXECUTION MANDATE
+
+You must deliver an end-to-end, mathematically rigorous, production-grade implementation that mutates `Engine/s1_trend_following_suite.py` to pass ALL 20 Out-Of-Sample quarters simultaneously.
+
+### Requirements:
+1. **Multi-Sleeve Orderflow Suite**:
+   - Activate all three sleeves:
+     - `T1`: Quiet-Flow Volatility Compression Breakout (Hurst exponent H >= 0.45, volume relative >= 1.3x, 96-bar breakout).
+     - `T2`: Trapped-Trader Value Area Pullback (Ornstein-Uhlenbeck half-life t_half <= 48 bars, reclaiming Developing Value Area / Prior Day Low, Spot CVD delta absorption).
+     - `T3`: Institutional Stack Expansion (Footprint tick ladder with >= 3 stacked buy imbalances, aggressive positive CVD slope).
+2. **Microstructure Piecewise Ratchet**:
+   - Phase 0: At +0.80R excursion, move stop to Entry +0.35R (guaranteed profit clearing all 41 bps frictions).
+   - Phase 1: At +1.50R excursion, move stop to Entry +0.80R.
+   - Profit Target: Exit at +2.20R to +2.50R (eliminating the 4R/5R retracement trap).
+   - Time Decay: Exit at market after 24 bars (6 hours) if unrealized gain < +0.20R.
+3. **Noise Buffer Preservation**:
+   - Stop ATR distance maintained >= 3.5 to 4.0 ATR to respect Wilmott's heavy-tailed Poisson jump-diffusion envelope.
+4. **Complete Single-File Replacement**:
+   - Output the complete, drop-in replacement Python code for `Engine/s1_trend_following_suite.py`.
+   - Adhere strictly to the Single Strategy File Mandate.
+   - Include Andrea Berdondini's Binomial Evolution Function (BEF) inside `score_metrics` to verify that all 20 quarters maintain statistical cognitive edge (P < 0.05).
+5. **No Code Truncations / No Handwaving**:
+   - Zero dollar signs (write USD).
+   - Zero forward-looking leakage (causal execution, fill on bar j+1 open only).
+   - 100% executable, production-ready code.
+
+Remember: This is a lethal pass-or-die benchmark. Produce institutional alpha that conquers all 20 quarters!
