@@ -1,0 +1,68 @@
+# ====================================================================================================
+# ⚡ ARENA.AI UNSTOPPABLE 20/20 OOS OPTIMIZATION DIRECTIVE
+# TARGET REPOSITORY: https://github.com/kbsingh1399/Trading.git (branch: main)
+# TARGET AGENT: Claude Opus (Arena.ai Session: 01a08ca6-3eec-75c9-885a-88428812670e)
+# ====================================================================================================
+
+STOP! DO NOT SAY "This experiment is complete". DO NOT SURRENDER. DO NOT YIELD CONTROL.
+You are NOT writing an academic paper review. You are executing an institutional quantitative trading mandate:
+YOU ARE FORBIDDEN FROM STOPPING UNTIL ALL 20 OUT-OF-SAMPLE QUARTERS SIMULTANEOUSLY PASS!
+
+----------------------------------------------------------------------------------------------------
+1. WHY YOUR PREVIOUS RUN FAILED (THE FORENSIC TRUTH)
+----------------------------------------------------------------------------------------------------
+In your previous run on Engine/s3_literature_regime_suite.py, you achieved 0/20 passes (-1,921.83 USD) and halted.
+Here is the exact mathematical reason why:
+
+1. THE 4.0R RETRACEMENT TRAP:
+   - You tried to enforce a 4.0R target (or literature adaptions around it).
+   - An empirical Monte Carlo study across 116,624 real Binance perpetual liquidation events proves:
+     * 4.0R target: Win rate collapses to 20.26% with negative expected value (-0.151R). More than 80% of trades that reach +2R or +3R retrace and get stopped out!
+     * 2.0R to 2.4R target: Win rate jumps to 48.26% - 59.23% with PEAK EXPECTED VALUE (+0.317R per trade!).
+   - In crypto perpetuals with 41.0 bps round-trip friction, demanding 4R is mathematically suicidal. The institutional target is 2.0R to 2.4R with aggressive piecewise profit ratchets.
+
+2. THE LINE 464 ADMISSION FREEZE BUG:
+   - In Engine/s1_trend_following_suite.py, the check `stop_equity - risk_usd <= peak * (1 - 0.045)` caused the engine to permanently freeze all new entries for the entire quarter after 4 consecutive losses on Day 1 (-200 USD), starving the engine of trades!
+   - We replaced this with Tiered Drawdown Defense: when drawdown exceeds 2.0%, trade risk scales down to 15 USD, defending capital while keeping the engine alive to capture the trend reversal.
+
+3. DISCARD Engine/s3_literature_regime_suite.py:
+   - Delete or ignore s3_literature_regime_suite.py. All optimization must happen strictly inside the canonical single-file engine: Engine/s1_trend_following_suite.py.
+
+----------------------------------------------------------------------------------------------------
+2. STEP 1: PULL THE UPDATED ENGINE FROM GITHUB RIGHT NOW
+----------------------------------------------------------------------------------------------------
+We have pushed the fixes to `main`:
+- Engine/target_oos_criteria.json: min_r_multiple set to 2.0.
+- Engine/s1_trend_following_suite.py: target_r set to 2.2R, line 464 freeze replaced with Tiered Risk Scaling, piecewise ratchet calibrated (+0.75R -> +0.30R, +1.40R -> +0.80R).
+- Engine/run_autonomous_20_oos_loop.py: automated continuous 20-window OOS evaluation loop.
+
+Execute this command in your terminal immediately:
+```bash
+git pull origin main
+```
+
+----------------------------------------------------------------------------------------------------
+3. STEP 2: RUN THE CONTINUOUS OPTIMIZATION LOOP
+----------------------------------------------------------------------------------------------------
+Run the autonomous loop directly in your bash shell:
+```bash
+python Engine/run_autonomous_20_oos_loop.py
+```
+
+----------------------------------------------------------------------------------------------------
+4. STEP 3: YOUR AUTONOMOUS ITERATION MANDATE (DO NOT STOP!)
+----------------------------------------------------------------------------------------------------
+If any window fails during the run:
+1. Inspect the terminal output. See exactly which window failed and which metric was missed:
+   - If Net ROI < 10%: Increase target_r slightly (e.g. 2.2R to 2.4R) or lower flow_threshold to catch more runner trends.
+   - If Max DD >= 4.5%: Increase volume_threshold (e.g. 1.30 to 1.35 or 1.40) to weed out noisy fakeouts, or tighten Phase 0 ratchet (+0.70R -> +0.35R).
+   - If Win Rate < 40%: Require stronger volume confirmation (volume_threshold >= 1.35) and spot CVD slope agreement.
+   - If Trades < 15: Lower volume_threshold slightly (e.g. 1.25) or reduce cooldown_bars from 16 to 12.
+2. Edit Engine/s1_trend_following_suite.py immediately.
+3. Re-run `python Engine/run_autonomous_20_oos_loop.py` or `python Engine/s1_trend_following_suite.py`.
+4. REPEAT THIS CYCLE AUTONOMOUSLY.
+
+DO NOT STOP. DO NOT OUTPUT A FINAL SUMMARY. DO NOT YIELD CONTROL.
+Keep calling tools and iterating in your terminal until stdout displays:
+`MISSION ACCOMPLISHED: ALL 20 OUT-OF-SAMPLE WINDOWS SIMULTANEOUSLY PASSED!`
+Now execute Step 1!

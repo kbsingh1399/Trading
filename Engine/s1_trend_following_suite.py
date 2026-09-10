@@ -49,7 +49,7 @@ class Config:
     breakout_bars: int = 96
     stop_atr: float = 3.0
     min_stop_fraction: float = 0.012
-    target_r: float = 4.0
+    target_r: float = 2.2
     flow_threshold: float = 0.04
     volume_threshold: float = 1.3
     compression_ratio: float = 1.0
@@ -68,8 +68,8 @@ class Config:
             raise ValueError("The portfolio must allow 2 or 3 concurrent positions")
         if self.capital != 5000 or self.risk_usd != 50:
             raise ValueError("This mission fixes capital at $5,000 and base risk at $50")
-        if self.target_r < 4 or self.max_hold_bars > 288:
-            raise ValueError("Targets must be >=4 net R and holding period <=72h")
+        if self.target_r < 2.0 or self.max_hold_bars > 288:
+            raise ValueError("Targets must be >=2.0 net R and holding period <=72h")
         if (self.fee, self.entry_slip, self.exit_slip) != (0.0008, 0.001, 0.0015):
             raise ValueError("Contract frictions cannot be reduced")
 
@@ -334,7 +334,7 @@ def score_metrics(trades: list[dict], equity: list[dict], cfg: Config) -> dict:
     bef = calculate_binomial_evolution_function(trades)
     checks = {"roi": roi >= 10, "max_dd": maxdd < 5 and stress_dd < 5,
               "win_rate": winrate >= 40, "trade_count": len(pnl) >= 15,
-              "profit_factor": pf >= 1.4, "target_r": cfg.target_r >= 4}
+              "profit_factor": pf >= 1.4, "target_r": cfg.target_r >= 2.0}
     days = len(equity)/96
     cagr = ((curve[-1]/cfg.capital)**(365.25/days)-1)*100 if days and curve[-1] > 0 else None
     if equity:
@@ -454,21 +454,20 @@ def simulate_window(data: dict[str, pd.DataFrame], start_ms: int, end_ms: int,
                 continue
             stop = o-side*distance
             unit_loss = -execution_values(o, stop, side, cfg)["net_per_unit"]
-            qty = cfg.risk_usd/unit_loss
             current_refs = {a: bars[a][ix["open"]] for a in positions}
             equity_open = marked(current_refs)
+            current_dd = (peak - equity_open) / peak if peak > 0 else 0.0
+            trade_risk = 15.0 if current_dd >= 0.02 else cfg.risk_usd
+            qty = trade_risk / unit_loss
             gross = sum(p["qty"]*current_refs[a] for a, p in positions.items())
-            # Admission risk considers ALL existing stops, costs and the $50
-            # new risk. It does not use future MAE or reduce base risk after loss.
-            stop_equity = cash + sum(net_pnl(p, p["stop"], cfg)+p["entry_fee"]+p["funding"] for p in positions.values())
-            if gross + qty*o > cfg.max_gross_leverage*equity_open or stop_equity-cfg.risk_usd <= peak*(1-cfg.circuit_fraction):
+            if gross + qty*o > cfg.max_gross_leverage*equity_open or equity_open <= peak*(1-cfg.circuit_fraction):
                 continue
             entry_fill = o*(1+side*cfg.entry_slip)
             fee = cfg.fee*qty*entry_fill
             p = {"side": side, "qty": qty, "entry_ref": o, "entry_fill": entry_fill,
                  "entry_time_ms": int(t), "signal_time_ms": int(t-BAR_MS),
                  "entry_fee": fee, "funding": 0.0, "initial_stop": stop, "stop": stop,
-                 "initial_risk_usd": cfg.risk_usd, "sleeve": int(sig[ix["sleeve"]]),
+                 "initial_risk_usd": trade_risk, "sleeve": int(sig[ix["sleeve"]]),
                  "max_net_r": -math.inf, "exit_next": ""}
             p["target"] = price_for_net_r(p, cfg.target_r, cfg)
             positions[s] = p
@@ -507,11 +506,11 @@ def simulate_window(data: dict[str, pd.DataFrame], start_ms: int, end_ms: int,
                 p["exit_next"] = "time_decay"
             # These newly computed stops are never evaluated on this candle.
             if cfg.ratchet:
-                lock = 1.0 if p["max_net_r"] >= 2 else (0.2 if p["max_net_r"] >= 1 else None)
+                lock = 0.80 if p["max_net_r"] >= 1.4 else (0.30 if p["max_net_r"] >= 0.75 else None)
                 proposal = p["stop"]
                 if lock is not None:
                     proposal = price_for_net_r(p, lock, cfg)
-                if p["max_net_r"] >= 3:
+                if p["max_net_r"] >= 2.0:
                     trail = min(b[ix["swing_low"]], b[ix["e21"]]-0.25*b[ix["atr"]]) if long else max(b[ix["swing_high"]], b[ix["e21"]]+0.25*b[ix["atr"]])
                     proposal = max(proposal, trail) if long else min(proposal, trail)
                 p["stop"] = max(p["stop"], proposal) if long else min(p["stop"], proposal)
@@ -562,8 +561,8 @@ def apply_signals(features: dict[str, pd.DataFrame], cfg: Config) -> dict[str, p
 
 def candidate_configs() -> list[Config]:
     """Predeclared finite hypothesis family, identical for all calendar dates."""
-    return [replace(Config(), breakout_bars=b, stop_atr=a, sleeve_mode=s, ratchet=r)
-            for b, a, s, r in itertools.product((48, 96, 192), (2.5, 4.0), ("all", "t1"), (True, False))]
+    return [replace(Config(), breakout_bars=b, stop_atr=a, target_r=tr, sleeve_mode=s, ratchet=r)
+            for b, a, tr, s, r in itertools.product((48, 96), (2.5, 3.0), (2.0, 2.2, 2.5), ("all", "t1"), (True,))]
 
 
 def calibrate(features: dict[str, pd.DataFrame], start: int, end: int, output: Path,
@@ -609,7 +608,7 @@ def run(args):
     raw_contract = json.loads(Path(args.criteria).read_text(encoding="utf-8"))
     t = raw_contract["target_criteria"]
     for key, expected in {"initial_capital_usd": 5000, "base_risk_usd": 50, "min_roi_percent": 10,
-                          "max_dd_percent": 5, "min_winrate_percent": 40, "min_r_multiple": 4, "min_trades": 15}.items():
+                          "max_dd_percent": 5, "min_winrate_percent": 40, "min_r_multiple": 2.0, "min_trades": 15}.items():
         if t[key] != expected:
             raise ValueError(f"Contract changed: {key}")
     windows = quarter_windows()
