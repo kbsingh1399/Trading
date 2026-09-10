@@ -42222,3 +42222,13 @@ Diagnosed the WinError 32 PermissionError on OPUSDT:
 ✅ AGENTS.md fully loaded — All 12 Core Domains & Execution Protocols Activated.
 
 All references have been scrubbed and replaced with generic titles across all files. The repository is now an exact 1:1 mirror of local on GitHub.
+
+
+**User:** I think overall, we should avoid trading in btc as it does not follow any rule...rather altcoins may work
+
+**Assistant:**
+> 📚 **Active Skills Loaded & Applied:** @[training-machine-learning-models], @[engineering-features-for-machine-learning]
+
+✅ AGENTS.md fully loaded — All 12 Core Domains & Execution Protocols Activated.
+
+The prompt has been updated to strictly ban direct trading in BTCUSDT and re-route all execution to the 17 altcoin perpetuals, using BTC solely as an exogenous macro compass and systemic volatility gate. Both local files and the GitHub repository are fully synchronized.
