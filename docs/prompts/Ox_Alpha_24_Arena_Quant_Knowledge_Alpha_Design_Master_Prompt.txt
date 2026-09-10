@@ -185,9 +185,19 @@ Study our active single-file strategy implementation and its live test metrics:
   - Win Rate: 20.0% (1 big winner @ +4.05R paid for all 4 losses)
 
 ### The Quantitative Flaws Diagnosed:
-1. **Single-Sleeve Starvation**: Restricting to `sleeve_mode = 't1'` (breakout only) starved the model of entries during 2-month consolidation phases.
-2. **Fixed 4.0R Moonshot without Ratchet**: 3 trades that ran to +2.5R retraced all the way into full stop-outs.
-3. **Noise Band Penetration**: Tight stops (< 3.0 ATR) get obliterated by altcoin Poisson jump wicks. Wide stops (>= 3.5 ATR) with a piecewise microstructure ratchet (+0.8R -> BE +0.35R, +1.5R -> profit lock +0.8R, target +2.5R) turn near-misses into realized alpha.
+1. **Admission Control Trade Starvation Trap (The Critical Root Cause)**:
+   In `simulate_window`, line 464 contains an overly restrictive admission test: `stop_equity - cfg.risk_usd <= peak * (1 - cfg.circuit_fraction)`. After 4 consecutive losses in the first 48 hours of a quarter (-200 USD), `stop_equity` drops to 4,750 USD, tripping the 4.5% ($225) circuit buffer. As a result, the portfolio governor silently vetoes all subsequent trades for the entire remaining 88 days of the quarter, starving the system of the subsequent 60+ winning trend runs.
+   *Fix*: Adopt our settled institutional Dynamic Risk Sizing Invariant:
+   - Initial Capital: 5,000 USD
+   - Base Risk: 35.00 USD (0.70%)
+   - Drawdown Defense Risk: 15.00 USD arming at 2.0% DD (100 USD)
+   - House Money Risk: 80.00 USD unlocking at +50 USD profit
+   - Hard Circuit Breaker Stop: 4.50% (225 USD)
+   - Max Concurrent Positions: 2 open positions across all symbols.
+2. **Missing Spot-Futures Basis Dislocation & Volatility Regime Filter**:
+   Empirical analysis on 3.47M bars proves that the basis edge exists strictly during high-volatility expansion regimes (`vol_regime = (atr_14/close) / median(atr_14/close, 288) > 1.2`). When futures drop into an extreme discount (`basis_z < -1.5`) while spot buyers absorb (`zc_div > 0.8`), 1-hour win rates jump to 59.4% with forward drift expanding to +37 to +120 bps across altcoins (SOL, LINK, DOGE).
+3. **Single-Sleeve Starvation**: Restricting to `sleeve_mode = 't1'` (breakout only) starved the model of entries during 2-month consolidation phases.
+4. **Fixed 4.0R Moonshot without Ratchet**: Trades running to +2.5R retraced into full stop-outs. A piecewise microstructure ratchet (+0.8R -> BE +0.35R, +1.5R -> profit lock +0.8R, target +2.2R to +2.5R) is mandatory to clear 41 bps frictions.
 
 ---
 
@@ -196,23 +206,26 @@ Study our active single-file strategy implementation and its live test metrics:
 You must deliver an end-to-end, mathematically rigorous, production-grade implementation that mutates `Engine/s1_trend_following_suite.py` to pass ALL 20 Out-Of-Sample quarters simultaneously.
 
 ### Requirements:
-1. **Multi-Sleeve Orderflow Suite**:
+1. **Fix Admission Control with Dynamic Tiered Risk**:
+   - Implement the Settled Fixed Risk Budget: Base risk 35.00 USD, DD defense 15.00 USD (at 2% DD), House money 80.00 USD (at +50 USD net), max 2 concurrent positions.
+   - Eliminate the line 464 starvation bug so drawdown defense scales risk down to 15 USD rather than completely freezing trading for 88 days.
+2. **Multi-Sleeve Orderflow Suite with Spot-Futures Basis Dislocation**:
    - Activate all three sleeves:
-     - `T1`: Quiet-Flow Volatility Compression Breakout (Hurst exponent H >= 0.45, volume relative >= 1.3x, 96-bar breakout).
-     - `T2`: Trapped-Trader Value Area Pullback (Ornstein-Uhlenbeck half-life t_half <= 48 bars, reclaiming Developing Value Area / Prior Day Low, Spot CVD delta absorption).
+     - `T1`: Quiet-Flow Volatility Compression Breakout (Hurst exponent H >= 0.45, volume relative >= 1.3x, 96-bar breakout, vetoed if futures are in extreme premium basis_z > 1.8).
+     - `T2`: Trapped-Trader Value Area Pullback (reclaiming Session VAL / Prior Day Low, enhanced with Spot-Futures Basis Discount basis_z < -0.8 and Spot CVD absorption zc_div > 0.5, OU half-life <= 48 bars).
      - `T3`: Institutional Stack Expansion (Footprint tick ladder with >= 3 stacked buy imbalances, aggressive positive CVD slope).
-2. **Microstructure Piecewise Ratchet**:
+3. **Microstructure Piecewise Ratchet**:
    - Phase 0: At +0.80R excursion, move stop to Entry +0.35R (guaranteed profit clearing all 41 bps frictions).
    - Phase 1: At +1.50R excursion, move stop to Entry +0.80R.
    - Profit Target: Exit at +2.20R to +2.50R (eliminating the 4R/5R retracement trap).
    - Time Decay: Exit at market after 24 bars (6 hours) if unrealized gain < +0.20R.
-3. **Noise Buffer Preservation**:
-   - Stop ATR distance maintained >= 3.5 to 4.0 ATR to respect Wilmott's heavy-tailed Poisson jump-diffusion envelope.
-4. **Complete Single-File Replacement**:
+4. **Noise Buffer Preservation**:
+   - Stop ATR distance maintained >= 3.0 to 3.5 ATR to respect Wilmott's heavy-tailed Poisson jump-diffusion envelope.
+5. **Complete Single-File Replacement**:
    - Output the complete, drop-in replacement Python code for `Engine/s1_trend_following_suite.py`.
    - Adhere strictly to the Single Strategy File Mandate.
    - Include Andrea Berdondini's Binomial Evolution Function (BEF) inside `score_metrics` to verify that all 20 quarters maintain statistical cognitive edge (P < 0.05).
-5. **No Code Truncations / No Handwaving**:
+6. **No Code Truncations / No Handwaving**:
    - Zero dollar signs (write USD).
    - Zero forward-looking leakage (causal execution, fill on bar j+1 open only).
    - 100% executable, production-ready code.
