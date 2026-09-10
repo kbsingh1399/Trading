@@ -1,0 +1,436 @@
+{
+ "ceiling_top": [
+  {
+   "passes": 4,
+   "mean_roi": 3.0199921972907724,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 48,
+    "er_min": 0.1,
+    "m1_mode": "off",
+    "m2_mode": "tight",
+    "r_on": true,
+    "mc": 3
+   }
+  },
+  {
+   "passes": 4,
+   "mean_roi": 5.309500399787053,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.0,
+    "m1_mode": "pure",
+    "m2_mode": "tight",
+    "r_on": true,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 4,
+   "mean_roi": 5.019714809951408,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.0,
+    "m1_mode": "pure",
+    "m2_mode": "tight",
+    "r_on": false,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 4,
+   "mean_roi": 3.248473508108268,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.1,
+    "m1_mode": "off",
+    "m2_mode": "tight",
+    "r_on": true,
+    "mc": 3
+   }
+  },
+  {
+   "passes": 4,
+   "mean_roi": 4.991110493024993,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.1,
+    "m1_mode": "pure",
+    "m2_mode": "tight",
+    "r_on": true,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 4,
+   "mean_roi": 4.565233592131496,
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 4.0,
+    "donch": 48,
+    "er_min": 0.0,
+    "m1_mode": "pure",
+    "m2_mode": "tight",
+    "r_on": true,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 4,
+   "mean_roi": 3.771141883470766,
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 4.0,
+    "donch": 48,
+    "er_min": 0.0,
+    "m1_mode": "ratchet",
+    "m2_mode": "off",
+    "r_on": false,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 4,
+   "mean_roi": 3.0198124627781278,
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.1,
+    "m1_mode": "off",
+    "m2_mode": "tight",
+    "r_on": true,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 4,
+   "mean_roi": 6.025779822957052,
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.1,
+    "m1_mode": "pure",
+    "m2_mode": "tight",
+    "r_on": true,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 4,
+   "mean_roi": 4.128772784630381,
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.1,
+    "m1_mode": "pure",
+    "m2_mode": "tight",
+    "r_on": true,
+    "mc": 3
+   }
+  },
+  {
+   "passes": 4,
+   "mean_roi": 4.144045671851773,
+   "config": {
+    "stop_k_atr": 2.4,
+    "trail_atr_mult": 5.0,
+    "donch": 96,
+    "er_min": 0.0,
+    "m1_mode": "ratchet",
+    "m2_mode": "off",
+    "r_on": false,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 3,
+   "mean_roi": 3.1174061506982107,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 48,
+    "er_min": 0.1,
+    "m1_mode": "off",
+    "m2_mode": "tight",
+    "r_on": true,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 3,
+   "mean_roi": 2.9001034174217324,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 48,
+    "er_min": 0.1,
+    "m1_mode": "off",
+    "m2_mode": "tight",
+    "r_on": false,
+    "mc": 3
+   }
+  },
+  {
+   "passes": 3,
+   "mean_roi": 3.3727312652726518,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.0,
+    "m1_mode": "off",
+    "m2_mode": "tight",
+    "r_on": true,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 3,
+   "mean_roi": 3.568594703454571,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.0,
+    "m1_mode": "off",
+    "m2_mode": "tight",
+    "r_on": true,
+    "mc": 3
+   }
+  },
+  {
+   "passes": 3,
+   "mean_roi": 3.049450080107853,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.0,
+    "m1_mode": "off",
+    "m2_mode": "tight",
+    "r_on": false,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 3,
+   "mean_roi": 3.955693463623414,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.0,
+    "m1_mode": "ratchet",
+    "m2_mode": "off",
+    "r_on": false,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 3,
+   "mean_roi": 4.130734913882205,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.0,
+    "m1_mode": "ratchet",
+    "m2_mode": "tight",
+    "r_on": true,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 3,
+   "mean_roi": 4.596398080681873,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.0,
+    "m1_mode": "ratchet",
+    "m2_mode": "tight",
+    "r_on": false,
+    "mc": 2
+   }
+  },
+  {
+   "passes": 3,
+   "mean_roi": 1.5395776470334321,
+   "config": {
+    "stop_k_atr": 2.0,
+    "trail_atr_mult": 4.0,
+    "donch": 96,
+    "er_min": 0.1,
+    "m1_mode": "off",
+    "m2_mode": "loose",
+    "r_on": true,
+    "mc": 3
+   }
+  }
+ ],
+ "bridgeability": [
+  {
+   "window": 1,
+   "label": "2021Q1",
+   "bridgeable": false,
+   "best_roi": 10.966276793208472,
+   "best_dd": 7.7865615490049835
+  },
+  {
+   "window": 2,
+   "label": "2021Q2",
+   "bridgeable": true,
+   "n_configs_passing": 32,
+   "best_roi": 20.49396496382842,
+   "best_dd": 4.889500442371718
+  },
+  {
+   "window": 3,
+   "label": "2021Q3",
+   "bridgeable": true,
+   "n_configs_passing": 86,
+   "best_roi": 23.65620437414895,
+   "best_dd": 4.426492696248819
+  },
+  {
+   "window": 4,
+   "label": "2021Q4",
+   "bridgeable": false,
+   "best_roi": 4.7464745948603015,
+   "best_dd": 5.0810552171960754
+  },
+  {
+   "window": 5,
+   "label": "2022Q1",
+   "bridgeable": true,
+   "n_configs_passing": 38,
+   "best_roi": 19.058510719154636,
+   "best_dd": 4.963690789174697
+  },
+  {
+   "window": 6,
+   "label": "2022Q2",
+   "bridgeable": false,
+   "best_roi": 2.140742298244404,
+   "best_dd": 4.899870976196623
+  },
+  {
+   "window": 7,
+   "label": "2022Q3",
+   "bridgeable": false,
+   "best_roi": 1.0962089872662728,
+   "best_dd": 5.083992265057559
+  },
+  {
+   "window": 8,
+   "label": "2022Q4",
+   "bridgeable": false,
+   "best_roi": 1.679209105417467,
+   "best_dd": 3.7034826661573086
+  },
+  {
+   "window": 9,
+   "label": "2023Q1",
+   "bridgeable": true,
+   "n_configs_passing": 17,
+   "best_roi": 17.42759007968938,
+   "best_dd": 4.568013852280979
+  },
+  {
+   "window": 10,
+   "label": "2023Q2",
+   "bridgeable": false,
+   "best_roi": -0.7752996781089132,
+   "best_dd": 4.70305330501604
+  },
+  {
+   "window": 11,
+   "label": "2023Q3",
+   "bridgeable": false,
+   "best_roi": 8.80889368359012,
+   "best_dd": 5.305296810235534
+  },
+  {
+   "window": 12,
+   "label": "2023Q4",
+   "bridgeable": true,
+   "n_configs_passing": 86,
+   "best_roi": 20.616972019494096,
+   "best_dd": 4.371776892196551
+  },
+  {
+   "window": 13,
+   "label": "2024Q1",
+   "bridgeable": true,
+   "n_configs_passing": 254,
+   "best_roi": 23.948914993695,
+   "best_dd": 4.446435875299194
+  },
+  {
+   "window": 14,
+   "label": "2024Q2",
+   "bridgeable": false,
+   "best_roi": -2.5929060298071636,
+   "best_dd": 5.04807194266402
+  },
+  {
+   "window": 15,
+   "label": "2024Q3",
+   "bridgeable": false,
+   "best_roi": 3.9735035280196467,
+   "best_dd": 4.84355503678628
+  },
+  {
+   "window": 16,
+   "label": "2024Q4",
+   "bridgeable": true,
+   "n_configs_passing": 176,
+   "best_roi": 37.8490800362827,
+   "best_dd": 4.796356278411957
+  },
+  {
+   "window": 17,
+   "label": "2025Q1",
+   "bridgeable": false,
+   "best_roi": 5.294429683553208,
+   "best_dd": 2.9453883669659366
+  },
+  {
+   "window": 18,
+   "label": "2025Q2",
+   "bridgeable": false,
+   "best_roi": 12.821158045186056,
+   "best_dd": 5.156043632451249
+  },
+  {
+   "window": 19,
+   "label": "2025Q3",
+   "bridgeable": true,
+   "n_configs_passing": 23,
+   "best_roi": 18.524975377378414,
+   "best_dd": 4.540212933438723
+  },
+  {
+   "window": 20,
+   "label": "2025Q4",
+   "bridgeable": true,
+   "n_configs_passing": 4,
+   "best_roi": 10.34469379549808,
+   "best_dd": 4.7572114531586465
+  }
+ ],
+ "unbridgeable_count": 11
+}

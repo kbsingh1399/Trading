@@ -31,6 +31,8 @@ def main():
     ff = load(args.primary)
     ff1 = load(args.reference)
     ceiling = load("scratch/ceiling_results.json") if os.path.exists(os.path.join(REPO, "scratch/ceiling_results.json")) else None
+    fam = load("Engine/verification/s1_family_failfast_v1.json") if os.path.exists(os.path.join(REPO, "Engine/verification/s1_family_failfast_v1.json")) else None
+    fceil = load("Engine/verification/s1_family_ceiling.json") if os.path.exists(os.path.join(REPO, "Engine/verification/s1_family_ceiling.json")) else None
 
     s = ff["summary"]
     w = ff["windows"]
@@ -68,11 +70,14 @@ def main():
 
 | Metric | Result |
 |---|---|
-| Windows passed (fail-fast causal protocol, final engine) | **{n_pass} / 20** |
+| Windows passed (fail-fast causal protocol, trend book) | **{n_pass} / 20** |
+| Windows passed (family protocol, 576-config grid) | {fam['summary']['windows_passed'] if fam else 'n/a'} / 20 |
 | Windows passed (prior protocol iterations, reference) | v1: {ff1['summary']['windows_passed']} / 20 · v2: 3 / 20 |
 | Windows passed (fixed global config, no re-optimization) | 1 / 20 |
-| In-sample ceiling (best fixed config, zero causality) | {ceiling[0]['passes'] if ceiling else 'n/a'} / 20 |
-| Compounded CAGR (20 quarters) | {fmt(s['cagr_pct'],1)}% |
+| In-sample ceiling, trend book (best fixed config, zero causality) | {ceiling[0]['passes'] if ceiling else 'n/a'} / 20 |
+| In-sample ceiling, FAMILY (best fixed config, zero causality) | {fceil['ceiling_top'][0]['passes'] if fceil else 'n/a'} / 20 |
+| Windows bridgeable by ANY of 576 family configs (per-window hindsight) | {20 - fceil['unbridgeable_count'] if fceil else 'n/a'} / 20 |
+| Compounded CAGR (20 quarters, trend protocol) | {fmt(s['cagr_pct'],1)}% |
 | Worst window drawdown | {fmt(s['worst_window_dd_pct'])}% |
 
 **The all-20-windows mandate is not attained.** The scorecard below is the honest,
@@ -204,6 +209,62 @@ mission accepts "dynamic microstructure runner expanding >= 4R"):
    quarter with a normal trend-following losing streak (5–8 consecutive stop
    churns) breaches the 5% drawdown cap long before the +10% ROI hurdle can
    be recovered.
+
+## 7b. Strategy-Family Investigation (family of strategies, per mandate)
+
+A four-book family was engineered into the single-file engine and measured:
+
+| Book | Description | Verdict |
+|---|---|---|
+| FAST TREND (T1/T2/T3) | 4h Donchian breakout, EMA21 pullback absorption, delta expansion | The core edge; passes the trend quarters |
+| SLOW MOMENTUM (M1) | 30-day Donchian, EMA300 anchor, 3-ATR stop, 5-ATR chandelier runner | Per-signal PF 1.56, positive 11/20 quarters — portfolio risk (15m stops, concurrency, DD protocol) reduces it to 0/20 standalone |
+| ABSORPTION (M2) | N-bar extreme absorbed by opposite dollar-delta, 1.2R target | Wins chop quarters per-signal (2021Q4 +8R, 2025Q4 +13R); portfolio-level marginal |
+| MR FADES (R1-R5) | stretch fade, VA sweep-reclaim, funding-crowd, bear-rally, bull-dip | Negative standalone; small family contribution |
+
+**Family grid**: 576 fixed configurations (stop-kATR x trail x Donchian x ER gate
+x M1 mode x M2 mode x R-family x max-concurrent), evaluated across all 20
+windows jointly. Results:
+
+- Best fixed family config: **4/20** — no better than the trend book alone.
+- Family fail-fast causal protocol: **{fam['summary']['windows_passed'] if fam else 'n/a'}/20** (W05, W09, W13; CAGR {fam['summary']['cagr_pct'] if fam else 0:.1f}%).
+- **Per-window bridgeability (perfect per-window hindsight — banned by the
+  mission's anti-window-keying rule, measured as a bound): 9/20 bridgeable,
+  11/20 UNBRIDGEABLE by any of the 576 configurations.**
+
+| Unbridgeable window | Best ROI any config achieves | Best DD | Blocking factor |
+|---|---|---|---|
+| W01 2021Q1 | +10.97% | 7.79% | Jan-2021 -30%-in-a-week crash |
+| W04 2021Q4 | +4.75% | 5.08% | Sep-7 crash + Dec chop |
+| W06 2022Q2 | +2.14% | 4.90% | LUNA collapse (BTC -58%) |
+| W07 2022Q3 | +1.10% | 5.08% | stair-down bear w/ violent rallies |
+| W08 2022Q4 | +1.68% | 3.70% | FTX collapse |
+| W10 2023Q2 | -0.78% | 4.70% | 27k-31k dead range |
+| W11 2023Q3 | +8.81% | 5.31% | dead range |
+| W14 2024Q2 | -2.59% | 5.05% | post-halving chop |
+| W15 2024Q3 | +3.97% | 4.84% | Aug-5 -18% day |
+| W17 2025Q1 | +5.29% | 2.95% | correction quarter |
+| W18 2025Q2 | +12.82% | 5.16% | ROI clears +10% but DD fails by 0.16% |
+
+Additional negative results (measured, not assumed):
+- **Shorts enabled** (T1/T2 breakdown shorts): strictly worse (1/20 vs 4/20).
+- **DD-flatten circuit breaker at 4.6%**: caps drawdown but freezes books at
+  their trough — family ceiling drops to 5/20. A flatten cannot manufacture
+  passes; it only truncates recoveries. Final setting: 4.98% (effectively
+  inert for natural passes).
+- **18-symbol universe**: the mission specifies 18 symbols; the repository has
+  full 2020-2026 data for 4. Rebuilding the other 14 requires Binance network
+  access, which is blocked in this environment (fapi.binance.com,
+  data.binance.vision, github all unreachable). Cross-sectional breadth is
+  untestable here.
+
+**The structural theorem.** Passing one window requires the quarter's equity
+path to reach **+10R before any ~4.5R retrace** (ROI >= 10% at $50 = 1% risk,
+DD < 5%, both measured on the same path). Sustaining that for 20 consecutive
+quarters demands a per-quarter return/DD shape of 2+ with no bad quarter in
+five years — on 4 crypto pairs, under 41 bps round-trip friction. Every crash
+quarter (Jan-2021, LUNA, FTX, Aug-2024) gap-stops any held position beyond the
+4.5R budget, and every dead range (2023 H2) offers no +10R edge after friction.
+These are properties of the data, not of parameter choice.
 
 ## 8. What Would Be Required
 

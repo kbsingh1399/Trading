@@ -140,11 +140,11 @@ def main() -> int:
     sd_trunc.n = n15_keep
     sd_trunc.start15 = sd.start15
     for attr in ("t4", "o4", "h4", "l4", "c4", "atr4", "atr4_100", "rsi4",
-                 "ema4_8", "ema4_21", "ema4_50", "ema4_200", "ema4_800",
+                 "ema4_8", "ema4_21", "ema4_50", "ema4_200", "ema4_300", "ema4_800",
                  "atr_ratio4", "vq4", "vol_ratio4", "cvd4", "cvd_frac4", "oi4",
                  "stacked4_buy", "stacked4_sell", "delta4_share", "taker4",
                  "close_pos4", "oi_alive4", "er4", "regime_long", "regime_short",
-                 "swing4_lo", "swing4_hi"):
+                 "swing4_lo", "swing4_hi", "funding4", "funding_mean4"):
         setattr(sd_trunc, attr, getattr(sd, attr)[:k + 1].copy())
     sd_trunc.n4 = k + 1
     sd_trunc.donch4_hi = {n_: v[:k + 1].copy() for n_, v in sd.donch4_hi.items()}
