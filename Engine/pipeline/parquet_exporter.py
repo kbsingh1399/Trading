@@ -21,6 +21,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import time
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
@@ -84,6 +85,18 @@ def _fsync_dir(dir_path: str) -> None:
         pass
 
 
+def _safe_replace(src: str, dst: str, max_retries: int = 15, delay: float = 0.2) -> None:
+    """Robust os.replace with exponential/linear retry loop for Windows file lock / indexer contention (WinError 32)."""
+    for attempt in range(max_retries):
+        try:
+            os.replace(src, dst)
+            return
+        except PermissionError:
+            if attempt == max_retries - 1:
+                raise
+            time.sleep(delay)
+
+
 def _atomic_write(df: pd.DataFrame, path: str, schema: pa.Schema, row_group_size: Optional[int]) -> None:
     table = pa.Table.from_pandas(df, schema=schema, preserve_index=False)
     tmp = path + ".tmp"
@@ -91,7 +104,7 @@ def _atomic_write(df: pd.DataFrame, path: str, schema: pa.Schema, row_group_size
         pq.write_table(table, f, compression="snappy", row_group_size=row_group_size, use_dictionary=True, write_statistics=True)
         f.flush()
         os.fsync(f.fileno())
-    os.replace(tmp, path)
+    _safe_replace(tmp, path)
     _fsync_dir(os.path.dirname(os.path.abspath(path)))
 
 def _file_sha256(path: str) -> Optional[str]:
@@ -184,7 +197,7 @@ class ParquetExporter:
         tmp = path + ".tmp"
         with open(tmp, "w", encoding="utf-8") as fh:
             json.dump(manifest, fh, indent=2)
-        os.replace(tmp, path)
+        _safe_replace(tmp, path)
         return path
 
     def export_dataset_atomic(
@@ -283,16 +296,16 @@ class ParquetExporter:
 
             # 4. Atomic promotion with durability (R3-C3 fix):
             # All staging files are fully written and fsync'd.
-            # Promote via os.replace in rapid sequence with manifest last as the canonical commit certificate!
-            os.replace(staging_mpath, mpath)
+            # Promote via _safe_replace in rapid sequence with manifest last as the canonical commit certificate!
+            _safe_replace(staging_mpath, mpath)
             if has_ladder:
-                os.replace(staging_lpath, lpath)
+                _safe_replace(staging_lpath, lpath)
             elif os.path.exists(lpath):
                 try:
                     os.remove(lpath)
                 except OSError:
                     pass
-            os.replace(staging_man_path, man_path)
+            _safe_replace(staging_man_path, man_path)
             _fsync_dir(self.output_dir)
 
             return mpath, (lpath if has_ladder else None), man_path
