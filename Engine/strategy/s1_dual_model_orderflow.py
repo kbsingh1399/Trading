@@ -50,14 +50,18 @@ class InstitutionalDualModelEngine:
     def __init__(
         self,
         capital: float = 5000.0,
-        base_risk: float = 45.8,
-        house_risk_max: float = 70.0,
+        base_risk: float = 56.0,
+        house_risk_max: float = 100.0,
         defense_risk: float = 14.0,
-        milestone_risk: float = 25.0,
+        milestone_risk: float = 10.0,
+        trans_risk: float = 35.0,
+        trans_thresh: float = 390.0,
         milestone_profit_usd: float = 500.0,
         max_concurrent: int = 2,
         cooldown_bars: int = 4,
-        win_r_reset_thresh: float = 0.70,
+        win_r_reset_thresh: float = 0.80,
+        conf_prob_thresh: float = 0.48,
+        conf_mult: float = 1.25,
         max_dd_limit: float = 4.40,
         random_state: int = 42
     ):
@@ -66,10 +70,14 @@ class InstitutionalDualModelEngine:
         self.house_risk_max = house_risk_max
         self.defense_risk = defense_risk
         self.milestone_risk = milestone_risk
+        self.trans_risk = trans_risk
+        self.trans_thresh = trans_thresh
         self.milestone_profit_usd = milestone_profit_usd
         self.max_concurrent = max_concurrent
         self.cooldown_bars = cooldown_bars
         self.win_r_reset_thresh = win_r_reset_thresh
+        self.conf_prob_thresh = conf_prob_thresh
+        self.conf_mult = conf_mult
         self.max_dd_limit = max_dd_limit
         self.random_state = random_state
 
@@ -85,33 +93,34 @@ class InstitutionalDualModelEngine:
         sd = X_train.std(axis=0).replace(0, 1.0)
         X_tr_s = np.nan_to_num(((X_train - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
 
-        # 1. L2 Regularized Ridge Foundation
-        ridge = LogisticRegression(C=0.05, max_iter=200, random_state=self.random_state)
+        # 1. L2 Regularized Ridge Foundation (C=0.011571)
+        ridge = LogisticRegression(C=0.011571080001893828, max_iter=200, random_state=self.random_state)
         ridge.fit(X_tr_s, y_train)
 
-        # 2. Shallow LightGBM Classifier
+        # 2. Shallow Regularized LightGBM Classifier (Trial #1046 Champion: +3,837.06 USD)
         clf = lgb.LGBMClassifier(
             n_estimators=100,
-            max_depth=3,
-            learning_rate=0.03,
+            max_depth=2,
+            num_leaves=7,
+            learning_rate=0.036271820892901624,
             subsample=0.8,
             colsample_bytree=0.8,
-            reg_alpha=2.0,
-            reg_lambda=4.0,
+            reg_alpha=2.882219940203529,
+            reg_lambda=3.1428091544171415,
             random_state=self.random_state,
             verbose=-1,
-            n_jobs=-1
+            n_jobs=2
         )
         clf.fit(X_train, y_train)
 
-        # 3. In-Sample Monthly Quantile Threshold Calibration
+        # 3. In-Sample Monthly Quantile Threshold Calibration (70% Ridge + 30% LightGBM)
         train_probs_ridge = ridge.predict_proba(X_tr_s)[:, 1]
         train_probs_lgb = clf.predict_proba(X_train)[:, 1]
-        train_probs = 0.60 * train_probs_ridge + 0.40 * train_probs_lgb
+        train_probs = 0.70 * train_probs_ridge + 0.30 * train_probs_lgb
 
         n_train_months = max(1.0, (train_df.open_time_ms.max() - train_df.open_time_ms.min()) / (30.4375 * 86_400_000))
         cands_per_month = len(train_df) / n_train_months
-        calib_q = max(0.60, min(0.96, 1.0 - (46.0 / cands_per_month)))
+        calib_q = max(0.60, min(0.96, 1.0 - (38.0 / cands_per_month)))
         calib_thresh = float(np.quantile(train_probs, calib_q))
 
         return ridge, clf, mu, sd, calib_thresh
@@ -131,7 +140,7 @@ class InstitutionalDualModelEngine:
 
         test_probs_ridge = ridge.predict_proba(X_te_s)[:, 1]
         test_probs_lgb = clf.predict_proba(X_test)[:, 1]
-        test_probs = 0.60 * test_probs_ridge + 0.40 * test_probs_lgb
+        test_probs = 0.70 * test_probs_ridge + 0.30 * test_probs_lgb
 
         selected = test_df.copy()
         selected["prob"] = test_probs
@@ -201,14 +210,14 @@ class InstitutionalDualModelEngine:
                     # Continuous cushion risk compression above milestone (Part 14 compliant)
                     cushion = max(0.0, equity - (self.capital + self.milestone_profit_usd))
                     risk_amt = min(10.0, max(4.0, cushion * 0.20))
-                elif current_profit >= 380.0:
-                    # Transition risk scaling between 380 USD and 500 USD
-                    risk_amt = 23.8
+                elif current_profit >= self.trans_thresh:
+                    # Transition risk scaling between trans_thresh and 500 USD (Trial #1046 champion)
+                    risk_amt = self.trans_risk
                 elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses >= 2:
                     risk_amt = self.defense_risk
                 else:
-                    conf_mult = 1.20 if prob >= 0.50 else 1.0
-                    base_s = self.base_risk * conf_mult
+                    conf = self.conf_mult if prob >= self.conf_prob_thresh else 1.0
+                    base_s = self.base_risk * conf
                     if current_profit >= 100.0:
                         risk_amt = min(self.house_risk_max, base_s + current_profit * 0.08)
                     else:

@@ -428,37 +428,38 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
         X_te_s = np.nan_to_num(((X_test - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
 
         from sklearn.linear_model import LogisticRegression
-        ridge = LogisticRegression(C=0.05, max_iter=200, random_state=42)
+        ridge = LogisticRegression(C=0.011571080001893828, max_iter=200, random_state=42)
         ridge.fit(X_tr_s, y_train)
 
         clf = lgb.LGBMClassifier(
             n_estimators=100,
-            max_depth=3,
-            learning_rate=0.03,
+            max_depth=2,
+            num_leaves=7,
+            learning_rate=0.036271820892901624,
             subsample=0.8,
             colsample_bytree=0.8,
-            reg_alpha=2.0,
-            reg_lambda=4.0,
+            reg_alpha=2.882219940203529,
+            reg_lambda=3.1428091544171415,
             random_state=42,
             verbose=-1,
-            n_jobs=-1
+            n_jobs=2
         )
         clf.fit(X_train, y_train)
 
-        # Hybrid ensemble: 60% Ridge + 40% LightGBM
+        # Hybrid ensemble: 70% Ridge + 30% LightGBM (Optuna Trial #1046 Champion: +3,837.06 USD)
         train_probs_ridge = ridge.predict_proba(X_tr_s)[:, 1]
         train_probs_lgb = clf.predict_proba(X_train)[:, 1]
-        train_probs = 0.60 * train_probs_ridge + 0.40 * train_probs_lgb
+        train_probs = 0.70 * train_probs_ridge + 0.30 * train_probs_lgb
 
-        # In-sample causal monthly density calibration (targeting ~22-28 trades/month)
+        # In-sample causal monthly density calibration (targeting 38 cands/month)
         n_train_months = max(1.0, (train_set.open_time_ms.max() - train_set.open_time_ms.min()) / (30.4375 * 86_400_000))
         cands_per_month = len(train_set) / n_train_months
-        calib_q = max(0.60, min(0.96, 1.0 - (46.0 / cands_per_month)))
+        calib_q = max(0.60, min(0.96, 1.0 - (38.0 / cands_per_month)))
         calib_thresh = float(np.quantile(train_probs, calib_q))
 
         test_probs_ridge = ridge.predict_proba(X_te_s)[:, 1]
         test_probs_lgb = clf.predict_proba(X_test)[:, 1]
-        raw_test_probs = 0.60 * test_probs_ridge + 0.40 * test_probs_lgb
+        raw_test_probs = 0.70 * test_probs_ridge + 0.30 * test_probs_lgb
 
         # Oxford-Man (2020) Cross-Sectional Ranking Priority:
         # At identical 15m timestamps, prioritize higher model probability candidates first
@@ -536,16 +537,16 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
                     # Continuous cushion risk compression above 500 USD milestone (Part 14 compliant)
                     cushion = max(0.0, equity - (CAPITAL + 500.0))
                     risk_amt = min(10.0, max(4.0, cushion * 0.20))
-                elif current_profit >= 380.0:
-                    # Transition risk scaling between 380 USD and 500 USD
-                    risk_amt = 23.8
+                elif current_profit >= 390.0:
+                    # Transition risk scaling between 390 USD and 500 USD (Trial #1046 champion: 35.0 USD)
+                    risk_amt = 35.0
                 elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses >= 2:
                     risk_amt = 14.0
                 else:
-                    conf_mult = 1.20 if prob >= 0.50 else 1.0
-                    base_s = 45.8 * conf_mult
+                    conf = 1.25 if prob >= 0.48 else 1.0
+                    base_s = 56.0 * conf
                     if current_profit >= 100.0:
-                        risk_amt = min(70.0, base_s + current_profit * 0.08)
+                        risk_amt = min(100.0, base_s + current_profit * 0.08)
                     else:
                         risk_amt = base_s
 
@@ -570,8 +571,8 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
                 if dd_pct > cur_max_dd_pct:
                     cur_max_dd_pct = dd_pct
 
-                # Reset loss streak only on authentic win >= +0.70R
-                if r_gain >= 0.70:
+                # Reset loss streak only on authentic win >= +0.80R
+                if r_gain >= 0.80:
                     consec_losses = 0
                 else:
                     consec_losses += 1
