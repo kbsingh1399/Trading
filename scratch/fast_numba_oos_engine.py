@@ -468,7 +468,8 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
             "symbol": test_set["symbol"].to_numpy(),
             "realized_r": test_set["realized_r"].to_numpy(),
             "bars_held": test_set["bars_held"].to_numpy(),
-            "btc_macro_tide": test_set["btc_macro_tide"].to_numpy()
+            "btc_macro_tide": test_set["btc_macro_tide"].to_numpy(),
+            "side": test_set["signal_side"].to_numpy()
         })
         df_te.sort_values(by=["open_time_ms", "prob"], ascending=[True, False], inplace=True)
 
@@ -478,6 +479,7 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
         test_r = df_te["realized_r"].to_numpy()
         test_bars = df_te["bars_held"].to_numpy()
         test_tides = df_te["btc_macro_tide"].to_numpy()
+        test_sides = df_te["side"].to_numpy()
 
         # Concurrency Governor: max 2 concurrent positions
         open_positions = []
@@ -495,6 +497,13 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
 
             prob = test_probs[idx]
             tide = test_tides[idx]
+            side = test_sides[idx]
+
+            # Macro Tide Asymmetry (Liu, Tsyvinski, Wu 2022):
+            # Veto short initiatives during Bitcoin macro bull tides (c > ema50 > ema200)
+            if side == -1 and tide > 0.0:
+                continue
+
             # Conviction tightening under adverse non-bull regimes during loss streaks
             if tide <= 0.0 and consec_losses >= 2:
                 effective_thresh = calib_thresh + 0.015

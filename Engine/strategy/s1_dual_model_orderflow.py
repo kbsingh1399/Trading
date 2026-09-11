@@ -161,7 +161,13 @@ class InstitutionalDualModelEngine:
 
             prob = float(row.get("prob", 0.50))
             tide = float(row.get("btc_macro_tide", 0.0))
+            side = int(row.get("signal_side", 1))
             calib_thresh = float(row.get("calib_thresh", 0.45))
+
+            # Macro Tide Asymmetry (Liu, Tsyvinski, Wu 2022):
+            # Veto short initiatives during Bitcoin macro bull tides (c > ema50 > ema200)
+            if side == -1 and tide > 0.0:
+                continue
 
             # Conviction tightening under adverse non-bull regimes during loss streaks
             if tide <= 0.0 and consec_losses >= 2:
