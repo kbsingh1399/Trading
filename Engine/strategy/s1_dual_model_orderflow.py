@@ -101,30 +101,51 @@ class InstitutionalDualModelEngine:
         self,
         test_df: pd.DataFrame,
         clf_long: lgb.LGBMClassifier,
-        clf_short: lgb.LGBMClassifier
+        clf_short: lgb.LGBMClassifier,
+        min_prob: float = 0.50,
+        max_trades_per_dir: int = 50
     ) -> Tuple[pd.DataFrame, str]:
         test_l = test_df[test_df["signal_side"] == 1].copy()
         test_s = test_df[test_df["signal_side"] == -1].copy()
 
-        test_l["prob"] = clf_long.predict_proba(test_l[LONG_FEATURES])[:, 1] if len(test_l) > 0 else []
-        test_s["prob"] = clf_short.predict_proba(test_s[SHORT_FEATURES])[:, 1] if len(test_s) > 0 else []
+        if len(test_l) > 0:
+            test_l["prob"] = clf_long.predict_proba(test_l[LONG_FEATURES])[:, 1]
+        else:
+            test_l["prob"] = pd.Series([], dtype=float)
+        if len(test_s) > 0:
+            test_s["prob"] = clf_short.predict_proba(test_s[SHORT_FEATURES])[:, 1]
+        else:
+            test_s["prob"] = pd.Series([], dtype=float)
+
+        # Apply minimum probability gate
+        test_l = test_l[test_l["prob"] >= min_prob]
+        test_s = test_s[test_s["prob"] >= min_prob]
+
+        # Extreme liquidation bypass: always include if liq_zs >= 3.0 regardless of regime
+        ext_l = test_df[(test_df["signal_side"] == 1) & (test_df["long_liq_zs"] >= 3.0)].copy()
+        ext_s = test_df[(test_df["signal_side"] == -1) & (test_df["short_liq_zs"] >= 3.0)].copy()
+        if len(ext_l) > 0:
+            ext_l["prob"] = clf_long.predict_proba(ext_l[LONG_FEATURES])[:, 1]
+        if len(ext_s) > 0:
+            ext_s["prob"] = clf_short.predict_proba(ext_s[SHORT_FEATURES])[:, 1]
 
         tide_mean = test_df["btc_macro_tide"].mean() if "btc_macro_tide" in test_df else 0.0
 
         if tide_mean >= 0.12:
             regime_str = f"STRONG BULL (Longs capped per symbol, tide: {tide_mean:+.2f})"
             cand = test_l[test_l.vwap_zscore <= 2.8].sort_values("prob", ascending=False).groupby("symbol").head(self.max_per_symbol)
-            selected = cand.sort_values("prob", ascending=False).head(35)
+            selected = pd.concat([cand, ext_l]).drop_duplicates("open_time_ms").sort_values("prob", ascending=False).head(max_trades_per_dir)
         elif tide_mean <= -0.10:
             regime_str = f"BEAR REGIME (Safe shorts with vol confirmation, tide: {tide_mean:+.2f})"
             filt_s = test_s[(test_s.vwap_zscore >= -2.0) & (test_s.short_liq_zs < 1.2) & (test_s.volume_ratio >= 0.75)]
             cand = filt_s.sort_values("prob", ascending=False).groupby("symbol").head(self.max_per_symbol)
-            selected = cand.sort_values("prob", ascending=False).head(35)
+            selected = pd.concat([cand, ext_s]).drop_duplicates("open_time_ms").sort_values("prob", ascending=False).head(max_trades_per_dir)
         else:
             regime_str = f"NEUTRAL / CHOP (Bar-by-bar local tide dispatch, tide: {tide_mean:+.2f})"
-            cand_l = test_l[(test_l.btc_macro_tide >= 0) & (test_l.vwap_zscore <= 2.8)].sort_values("prob", ascending=False).groupby("symbol").head(self.max_per_symbol).head(14)
-            cand_s = test_s[(test_s.btc_macro_tide <= 0) & (test_s.short_liq_zs < 1.2) & (test_s.vwap_zscore >= -2.0) & (test_s.volume_ratio >= 0.75)].sort_values("prob", ascending=False).groupby("symbol").head(self.max_per_symbol).head(14)
-            selected = pd.concat([cand_l, cand_s]).sort_values("open_time_ms")
+            cand_l = test_l[(test_l.btc_macro_tide >= 0) & (test_l.vwap_zscore <= 2.8)].sort_values("prob", ascending=False).groupby("symbol").head(self.max_per_symbol).head(max_trades_per_dir // 2)
+            cand_s = test_s[(test_s.btc_macro_tide <= 0) & (test_s.short_liq_zs < 1.2) & (test_s.vwap_zscore >= -2.0) & (test_s.volume_ratio >= 0.75)].sort_values("prob", ascending=False).groupby("symbol").head(self.max_per_symbol).head(max_trades_per_dir // 2)
+            ext_all = pd.concat([ext_l, ext_s]).drop_duplicates("open_time_ms")
+            selected = pd.concat([cand_l, cand_s, ext_all]).drop_duplicates("open_time_ms").sort_values("open_time_ms")
 
         return selected, regime_str
 

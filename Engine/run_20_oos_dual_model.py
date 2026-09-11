@@ -44,6 +44,8 @@ def main():
     MIN_WR = criteria.get("min_winrate_percent", 40.0)
     MIN_TRD = criteria.get("min_trades", 15)
     PURGE_MS = 72 * 3600 * 1000
+    MIN_PROB = 0.50        # minimum probability gate before top-N ranking
+    MAX_TRADES_PER_DIR = 50  # increased from 35 for more trade volume
 
     engine = InstitutionalDualModelEngine(
         capital=CAPITAL,
@@ -79,11 +81,11 @@ def main():
         train_set = all_data[train_mask]
         test_set = all_data[test_mask]
 
-        if len(train_set) < 2000 or len(test_set) == 0:
+        if len(train_set) < 500 or len(test_set) == 0:
             continue
 
         clf_long, clf_short = engine.train_models(train_set)
-        selected, regime_str = engine.select_trades_for_window(test_set, clf_long, clf_short)
+        selected, regime_str = engine.select_trades_for_window(test_set, clf_long, clf_short, min_prob=MIN_PROB, max_trades_per_dir=MAX_TRADES_PER_DIR)
         res = engine.simulate_execution(selected)
 
         net_pnl = res["net_pnl"]
