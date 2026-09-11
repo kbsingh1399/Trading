@@ -1,0 +1,209 @@
+{
+  "results": [
+    {
+      "window_id": 1,
+      "name": "May 2021 Great Liquidation Crash",
+      "trades": 26,
+      "win_rate": 73.07692307692307,
+      "pnl_usd": -91.41120000000001,
+      "roi_pct": -1.828224,
+      "max_dd_pct": 3.81458587130941,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 2,
+      "name": "September 2021 El Salvador Flash Crash",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    },
+    {
+      "window_id": 3,
+      "name": "November 2021 Cycle Peak Reversal",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    },
+    {
+      "window_id": 4,
+      "name": "January 2022 Fed Macro Tightening",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    },
+    {
+      "window_id": 5,
+      "name": "May 2022 Terra-Luna Systemic Shock",
+      "trades": 2,
+      "win_rate": 100.0,
+      "pnl_usd": 93.44,
+      "roi_pct": 1.8688,
+      "max_dd_pct": 0.0,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 6,
+      "name": "June 2022 3AC & Celsius Capitulation",
+      "trades": 59,
+      "win_rate": 61.016949152542374,
+      "pnl_usd": -420.0,
+      "roi_pct": -8.4,
+      "max_dd_pct": 8.873855949064863,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 7,
+      "name": "September 2022 ETH Merge Chop & Grind",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    },
+    {
+      "window_id": 8,
+      "name": "November 2022 FTX Collapse Bottom",
+      "trades": 2,
+      "win_rate": 100.0,
+      "pnl_usd": 26.0,
+      "roi_pct": 0.52,
+      "max_dd_pct": 0.0,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 9,
+      "name": "January 2023 Bullish Short Squeeze Recovery",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    },
+    {
+      "window_id": 10,
+      "name": "March 2023 SVB Bank Run & USDC Depeg",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    },
+    {
+      "window_id": 11,
+      "name": "June 2023 BlackRock Spot ETF Momentum",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    },
+    {
+      "window_id": 12,
+      "name": "August 2023 Mid-Summer Flash Liquidation",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    },
+    {
+      "window_id": 13,
+      "name": "October 2023 Uptober Spot ETF Ignition",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    },
+    {
+      "window_id": 14,
+      "name": "January 2024 Spot ETF Approval Shakeout",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    },
+    {
+      "window_id": 15,
+      "name": "March 2024 Pre-Halving All-Time High Run",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    },
+    {
+      "window_id": 16,
+      "name": "August 2024 Global Carry Trade Liquidation",
+      "trades": 1,
+      "win_rate": 100.0,
+      "pnl_usd": 22.0,
+      "roi_pct": 0.44,
+      "max_dd_pct": 0.0,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 17,
+      "name": "November 2024 US Election Mega Breakout",
+      "trades": 1,
+      "win_rate": 100.0,
+      "pnl_usd": 3.999999999999999,
+      "roi_pct": 0.07999999999999999,
+      "max_dd_pct": 0.0,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 18,
+      "name": "February 2025 Post-Inauguration Consolidation",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    },
+    {
+      "window_id": 19,
+      "name": "July 2025 Mid-Year Volatility Expansion",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    },
+    {
+      "window_id": 20,
+      "name": "March 2026 Late-Cycle Microstructure Shock",
+      "trades": 0,
+      "win_rate": 0.0,
+      "pnl_usd": 0,
+      "roi_pct": 0.0,
+      "max_dd_pct": 0.0,
+      "status": "CASH"
+    }
+  ],
+  "total_pnl": -365.9712,
+  "pass_count": 0,
+  "target_trades": 20,
+  "margin_mode": "floor0",
+  "max_depth": 3
+}

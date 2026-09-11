@@ -19,10 +19,11 @@ from numba import njit, prange
 import numpy as np
 import pandas as pd
 
-DATA_DIR = Path(r"C:\Users\SIGMA\Documents\Trading\Engine\binance_backtesting_data")
-WINDOWS_PATH = Path(r"C:\Users\SIGMA\Documents\Trading\Engine\oos_windows_20.json")
-CRITERIA_PATH = Path(r"C:\Users\SIGMA\Documents\Trading\Engine\target_oos_criteria.json")
-OUTPUT_DIR = Path(r"C:\Users\SIGMA\Documents\Trading\scratch\ml_reversal_results")
+REPO_ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = REPO_ROOT / "Engine" / "binance_backtesting_data"
+WINDOWS_PATH = REPO_ROOT / "Engine" / "oos_windows_20.json"
+CRITERIA_PATH = REPO_ROOT / "Engine" / "target_oos_criteria.json"
+OUTPUT_DIR = REPO_ROOT / "scratch" / "ml_reversal_results"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Certified genuine 11 institutional Binance USDT-M perpetuals
@@ -419,10 +420,15 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
         )
         clf.fit(X_train, y_train)
 
-        # In-sample dynamic quantile calibration (targeting top ~20-28 high conviction setups)
+        # In-sample dynamic quantile calibration (targeting ~24 high conviction setups/month).
+        # LUNA AUDIT FIX: candidate density is estimated from TRAIN window only
+        # (no test-set metadata leak via len(test_set)).
         train_probs = clf.predict_proba(X_train)[:, 1]
         target_trades = 24.0
-        calib_q = max(0.50, min(0.92, 1.0 - (target_trades / max(len(test_set), 1))))
+        t_min, t_max = train_set["open_time_ms"].min(), train_set["open_time_ms"].max()
+        train_months = max((t_max - t_min) / (30.4375 * 24 * 3600 * 1000), 1.0)
+        est_test_candidates = len(train_set) / train_months
+        calib_q = max(0.50, min(0.92, 1.0 - (target_trades / max(est_test_candidates, 1))))
         calib_thresh = float(np.quantile(train_probs, calib_q))
 
         test_probs = clf.predict_proba(X_test)[:, 1]
