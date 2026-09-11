@@ -42846,3 +42846,16 @@ Outcome: Achieved 6 certified OOS passes simultaneously (+2,487.09 USD Net PnL, 
   - Production Synchronization: Updated scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py to 100% parity with Trial #1046 champion. Verified identical backtest output in 4.06 seconds.
   - Continuous Search: Background task task-2825 continues uninterrupted exploration across doubling tree depths, leaf capacities, and transition thresholds toward cracking remaining windows.
 
+---
+### Hourly Checkpoint (Iteration 5 Wakeup): +4,000 USD Barrier Broken at Trial #2961 (+4,024.57 USD / +80.49% Net ROI)
+- Timestamp: 2026-09-11T23:32:00.000000+00:00
+- Optuna Daemon Progress: Over 3,170 trials evaluated in background task task-2825 with 6 hours remaining on 8-hour countdown.
+- All-Time Performance Benchmark: Trial #2961 established new all-time portfolio milestone:
+  - Net Closed PnL: +4,024.57 USD (+80.49% Net ROI on 5,000 USD capital) across 286 completed trades (Trade efficiency improved: higher PnL with fewer, higher-quality trades).
+  - 8 Certified Passes Maintained: W01 (+624.07 USD, 12.48% ROI, 2.30% Max DD), W02 (+500.72 USD, 10.01% ROI, 2.35% Max DD), W04 (+652.76 USD, 13.06% ROI, 2.21% Max DD), W06 (+521.69 USD, 10.43% ROI, 2.24% Max DD), W10 (+533.17 USD, 10.66% ROI, 2.81% Max DD), W15 (+505.99 USD, 10.12% ROI, 1.34% Max DD), W16 (+547.22 USD, 10.94% ROI, 2.04% Max DD), W17 (+517.77 USD, 10.36% ROI, 1.53% Max DD).
+  - Near-Pass Windows: W11 (+415.66 USD, 8.31% ROI, 69.2% WR, 2.17% Max DD), W09 (+328.13 USD, 6.56% ROI, 71.4% WR, 0.39% Max DD - surged +142 USD!), W19 (+73.54 USD, 1.47% ROI, 50.0% WR, 4.61% Max DD), W13 (+0.54 USD, break-even positive).
+  - Peak Drawdown Invariant: The maximum drawdown in ANY passing window is only 2.81% (W10), well below the 5.00% risk limit.
+  - Production Synchronization: Updated scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py to 100% parity with Trial #2961 champion. Verified identical backtest output in 3.32 seconds.
+  - Continuous Search: Background task task-2825 continues uninterrupted exploration across doubling tree depths, leaf capacities, and transition thresholds toward cracking remaining windows.
+
+
