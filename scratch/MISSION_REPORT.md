@@ -137,3 +137,43 @@ under explicit null).
 Levers that would change the answer (unchanged from v1 report): (1) lower friction model
 (maker entry ≈ 10-16bps), (2) daily/weekly hold mandate (fewer, larger trades),
 (3) aggregate (not joint all-20) pass criteria, (4) longer/crypto-native regime design history.
+
+---
+
+# CAMPAIGN v2 continuation (same day): pool-fix, stacking, oracle bound, policy grid
+
+## Data integrity fix
+- Root-caused silent exclusions: BTC metrics were 99.4% `is_imputed_metrics=True`
+  Oct 15 - Dec 15 2022 (FTX-era feed outage) → W08 had ZERO candidates in battery-v2 pools;
+  early windows W01-W07 were similarly starved. OHLCV was real throughout.
+- Fixed guard: metric-signal families (T5 funding, T9 OI) still exclude imputed rows;
+  price-only families now keep them with metric FEATURES neutralized to zero (no synthetic
+  feature reaches the ML rankers). Union pool: 204,371 → 264,962 candidates; every window
+  now has 1.5k-5k candidates; W08 trades normally (28 trades in stage2 rerun).
+
+## Architecture #5: stacked sleeve ensemble + executor-policy grid
+- `scratch/stage4_stacking.py`: walk-forward sleeve weights (trailing 90d exp-sorted),
+  HMM regime multipliers, adaptive trailing-EWMA candidate scores, 12-cell grid
+  (dd-defense x risk-cap x vol-sizing). On the FIXED pool: **0/20 in all 12 cells**
+  (best cell -76.3%; totals worsened vs sparse pool because restored early windows also
+  carry negative expectancy — the friction wall is uniform across time).
+- Reality check on best cell: P(no-skill null total >= observed) = 80%; null pass>=1 cell rate ~39%.
+
+## Architecture #6: ORACLE capacity bound (deliberately non-tradable proof)
+- `scratch/stage5_oracle.py`: per window, greedily take the top-25 candidates by REALIZED
+  net r under the mandate book. On the fixed pool the **oracle passes 20/20 windows**
+  (WR 100%, meanR +6.8..+10.9R, ROI +316%..+1238% at $40 risk).
+- Verdict: the +10%/month capacity EXISTS in the candidate distribution of every window.
+  The binding constraint is purely SELECTION SKILL: a passing system must identify
+  +7-11R tail trades with top-25-of-thousands precision, causally.
+
+## Final epistemic state (stable across 6 architectures, ~300+ variants)
+- All selection schemes measure at-or-below the no-skill null on totals; best windows are
+  chance-consistent (37-39% under explicit null). Ensemble v2 on the full 20-window pool:
+  0/20, -37.10%, MC P(month>=+10%)=5.7%.
+- No tested feature set (price/vol structure, funding/basis/OI/flow z-scores, calendar,
+  HMM regimes, cross-sectional ranks) carries the information required to hit the tails.
+- Remaining paths to 20/20 all lie OUTSIDE this dataset+mandate: (a) exogenous information
+  (L2 book, trade tapes, cross-exchange basis, spot legs for funding arb), (b) friction
+  model change, (c) criteria change (horizon/trade-floor/aggregate accounting),
+  (d) longer history with different regime mixes.

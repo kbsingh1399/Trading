@@ -62,9 +62,16 @@ def augment_pools(store: dict) -> pd.DataFrame:
             sub = sub[ok].reset_index(drop=True)
             pos = pos[ok]
 
+            imp = d["is_imputed_metrics"].fillna(False).to_numpy()[pos].astype(bool)
+            METRIC_COLS = {"funding_rate_pct", "basis_index_bps", "fund_z",
+                           "basis_z", "oi_z", "lst_z"}
+
             def col(name, fill):
                 if name in d.columns:
-                    return d[name].fillna(fill).to_numpy()[pos]
+                    v = d[name].fillna(fill).to_numpy()[pos]
+                    if name in METRIC_COLS:
+                        v = np.where(imp, fill, v)
+                    return v
                 return np.full(len(pos), fill)
 
             feat = pd.DataFrame({

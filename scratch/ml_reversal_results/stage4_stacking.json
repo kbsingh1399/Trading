@@ -1,0 +1,2275 @@
+{
+  "best_cell": "(1.5, 60.0, False)",
+  "results": {
+    "(1.5, 40.0, False)": {
+      "total_pnl": -3854.753989095527,
+      "total_pct": -77.09507978191054,
+      "passes": 0,
+      "pos_windows": 1,
+      "windows": [
+        {
+          "window_id": 1,
+          "trades": 28,
+          "win_rate": 32.142857142857146,
+          "pnl_usd": -114.32985350526504,
+          "roi_pct": -2.2865970701053007,
+          "max_dd_pct": 4.669654854958305,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 2,
+          "trades": 25,
+          "win_rate": 36.0,
+          "pnl_usd": -321.8975066488145,
+          "roi_pct": -6.43795013297629,
+          "max_dd_pct": 7.301455386559858,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 3,
+          "trades": 24,
+          "win_rate": 37.5,
+          "pnl_usd": -230.47378720104678,
+          "roi_pct": -4.609475744020935,
+          "max_dd_pct": 4.616858803270479,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 4,
+          "trades": 29,
+          "win_rate": 48.275862068965516,
+          "pnl_usd": -252.11030110373,
+          "roi_pct": -5.042206022074599,
+          "max_dd_pct": 5.18,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 5,
+          "trades": 26,
+          "win_rate": 50.0,
+          "pnl_usd": -135.73372873198747,
+          "roi_pct": -2.714674574639749,
+          "max_dd_pct": 2.8700824427313507,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 6,
+          "trades": 21,
+          "win_rate": 38.095238095238095,
+          "pnl_usd": -133.74670064761537,
+          "roi_pct": -2.674934012952307,
+          "max_dd_pct": 2.757821455060257,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 7,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -396.0679006681895,
+          "roi_pct": -7.92135801336379,
+          "max_dd_pct": 7.921358013363788,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 8,
+          "trades": 30,
+          "win_rate": 36.666666666666664,
+          "pnl_usd": -231.90627388089928,
+          "roi_pct": -4.638125477617986,
+          "max_dd_pct": 5.752065370645796,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 9,
+          "trades": 31,
+          "win_rate": 48.38709677419355,
+          "pnl_usd": -172.95175903796263,
+          "roi_pct": -3.4590351807592525,
+          "max_dd_pct": 7.544899048343079,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 10,
+          "trades": 27,
+          "win_rate": 59.25925925925925,
+          "pnl_usd": -102.99377102640315,
+          "roi_pct": -2.059875420528063,
+          "max_dd_pct": 3.080722434040187,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 11,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -6.323899753370995,
+          "roi_pct": -0.1264779950674199,
+          "max_dd_pct": 4.706993091176238,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 12,
+          "trades": 31,
+          "win_rate": 41.935483870967744,
+          "pnl_usd": -427.32143795161517,
+          "roi_pct": -8.546428759032302,
+          "max_dd_pct": 8.546428759032297,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 13,
+          "trades": 28,
+          "win_rate": 46.42857142857143,
+          "pnl_usd": -124.63225954330717,
+          "roi_pct": -2.4926451908661433,
+          "max_dd_pct": 4.883326801497879,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 14,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -202.03415364081883,
+          "roi_pct": -4.0406830728163765,
+          "max_dd_pct": 5.749009999582358,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 15,
+          "trades": 27,
+          "win_rate": 48.148148148148145,
+          "pnl_usd": -274.8464159412225,
+          "roi_pct": -5.49692831882445,
+          "max_dd_pct": 5.710569310124538,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 16,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -367.76198067123266,
+          "roi_pct": -7.355239613424653,
+          "max_dd_pct": 7.390270603036769,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 17,
+          "trades": 30,
+          "win_rate": 43.333333333333336,
+          "pnl_usd": 296.9748982598435,
+          "roi_pct": 5.939497965196869,
+          "max_dd_pct": 2.96,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 18,
+          "trades": 27,
+          "win_rate": 29.629629629629626,
+          "pnl_usd": -179.63668725306127,
+          "roi_pct": -3.592733745061225,
+          "max_dd_pct": 8.168688231600976,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 19,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -52.00499950079697,
+          "roi_pct": -1.0400999900159393,
+          "max_dd_pct": 4.581795321846912,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 20,
+          "trades": 31,
+          "win_rate": 35.483870967741936,
+          "pnl_usd": -424.95547064803145,
+          "roi_pct": -8.499109412960628,
+          "max_dd_pct": 8.720516822773625,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "(1.5, 40.0, True)": {
+      "total_pnl": -4271.423338649553,
+      "total_pct": -85.42846677299107,
+      "passes": 0,
+      "pos_windows": 1,
+      "windows": [
+        {
+          "window_id": 1,
+          "trades": 28,
+          "win_rate": 32.142857142857146,
+          "pnl_usd": -71.5694409444253,
+          "roi_pct": -1.431388818888506,
+          "max_dd_pct": 3.8646940062802586,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 2,
+          "trades": 25,
+          "win_rate": 36.0,
+          "pnl_usd": -287.907441932314,
+          "roi_pct": -5.75814883864628,
+          "max_dd_pct": 6.600503024258388,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 3,
+          "trades": 24,
+          "win_rate": 37.5,
+          "pnl_usd": -235.86145288381695,
+          "roi_pct": -4.717229057676339,
+          "max_dd_pct": 4.82924831891065,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 4,
+          "trades": 29,
+          "win_rate": 48.275862068965516,
+          "pnl_usd": -313.6190374819273,
+          "roi_pct": -6.272380749638547,
+          "max_dd_pct": 6.3214378059868075,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 5,
+          "trades": 26,
+          "win_rate": 50.0,
+          "pnl_usd": -132.11108306064827,
+          "roi_pct": -2.6422216612129654,
+          "max_dd_pct": 2.808540988556908,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 6,
+          "trades": 21,
+          "win_rate": 38.095238095238095,
+          "pnl_usd": -143.6355848010989,
+          "roi_pct": -2.872711696021978,
+          "max_dd_pct": 2.958163047891576,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 7,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -334.82851932376036,
+          "roi_pct": -6.696570386475208,
+          "max_dd_pct": 6.818028822667765,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 8,
+          "trades": 30,
+          "win_rate": 36.666666666666664,
+          "pnl_usd": -297.0235442832104,
+          "roi_pct": -5.940470885664208,
+          "max_dd_pct": 6.581541716275169,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 9,
+          "trades": 31,
+          "win_rate": 48.38709677419355,
+          "pnl_usd": -182.33678317795906,
+          "roi_pct": -3.6467356635591814,
+          "max_dd_pct": 7.4793631078944,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 10,
+          "trades": 27,
+          "win_rate": 59.25925925925925,
+          "pnl_usd": -102.23144598951707,
+          "roi_pct": -2.0446289197903416,
+          "max_dd_pct": 2.836297205153893,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 11,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -270.8536502831884,
+          "roi_pct": -5.417073005663768,
+          "max_dd_pct": 6.463920800481432,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 12,
+          "trades": 31,
+          "win_rate": 41.935483870967744,
+          "pnl_usd": -455.1130519703214,
+          "roi_pct": -9.102261039406429,
+          "max_dd_pct": 9.102261039406404,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 13,
+          "trades": 28,
+          "win_rate": 46.42857142857143,
+          "pnl_usd": -151.95803733100487,
+          "roi_pct": -3.0391607466200976,
+          "max_dd_pct": 4.423836494936295,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 14,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -251.79528881589465,
+          "roi_pct": -5.035905776317893,
+          "max_dd_pct": 8.00902699304904,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 15,
+          "trades": 27,
+          "win_rate": 48.148148148148145,
+          "pnl_usd": -310.57316360286666,
+          "roi_pct": -6.211463272057333,
+          "max_dd_pct": 6.453328788245708,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 16,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -383.96220541159903,
+          "roi_pct": -7.6792441082319804,
+          "max_dd_pct": 7.720912454745449,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 17,
+          "trades": 30,
+          "win_rate": 43.333333333333336,
+          "pnl_usd": 301.224012407527,
+          "roi_pct": 6.024480248150541,
+          "max_dd_pct": 2.852989702768227,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 18,
+          "trades": 27,
+          "win_rate": 29.629629629629626,
+          "pnl_usd": -58.982827673723826,
+          "roi_pct": -1.1796565534744765,
+          "max_dd_pct": 7.491415223682549,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 19,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -155.6911463082678,
+          "roi_pct": -3.113822926165356,
+          "max_dd_pct": 4.821988222967575,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 20,
+          "trades": 31,
+          "win_rate": 35.483870967741936,
+          "pnl_usd": -432.59364578153526,
+          "roi_pct": -8.651872915630705,
+          "max_dd_pct": 8.80433868549102,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "(1.5, 60.0, False)": {
+      "total_pnl": -3816.9496085966284,
+      "total_pct": -76.33899217193257,
+      "passes": 0,
+      "pos_windows": 1,
+      "windows": [
+        {
+          "window_id": 1,
+          "trades": 28,
+          "win_rate": 32.142857142857146,
+          "pnl_usd": -84.8382865859782,
+          "roi_pct": -1.696765731719564,
+          "max_dd_pct": 5.121567052388153,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 2,
+          "trades": 25,
+          "win_rate": 36.0,
+          "pnl_usd": -323.7771415173005,
+          "roi_pct": -6.47554283034601,
+          "max_dd_pct": 7.37603800263567,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 3,
+          "trades": 24,
+          "win_rate": 37.5,
+          "pnl_usd": -230.47378720104678,
+          "roi_pct": -4.609475744020935,
+          "max_dd_pct": 4.616858803270479,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 4,
+          "trades": 29,
+          "win_rate": 48.275862068965516,
+          "pnl_usd": -252.11030110373,
+          "roi_pct": -5.042206022074599,
+          "max_dd_pct": 5.18,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 5,
+          "trades": 26,
+          "win_rate": 50.0,
+          "pnl_usd": -181.73372873198747,
+          "roi_pct": -3.634674574639749,
+          "max_dd_pct": 3.8653976203508784,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 6,
+          "trades": 21,
+          "win_rate": 38.095238095238095,
+          "pnl_usd": -125.93092783451267,
+          "roi_pct": -2.5186185566902535,
+          "max_dd_pct": 2.6015059987982023,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 7,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -400.0679006681895,
+          "roi_pct": -8.001358013363792,
+          "max_dd_pct": 8.001358013363788,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 8,
+          "trades": 30,
+          "win_rate": 36.666666666666664,
+          "pnl_usd": -231.90627388089928,
+          "roi_pct": -4.638125477617986,
+          "max_dd_pct": 5.752065370645796,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 9,
+          "trades": 31,
+          "win_rate": 48.38709677419355,
+          "pnl_usd": -135.70353695861704,
+          "roi_pct": -2.7140707391723407,
+          "max_dd_pct": 8.150385889798434,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 10,
+          "trades": 27,
+          "win_rate": 59.25925925925925,
+          "pnl_usd": -127.99377102640318,
+          "roi_pct": -2.559875420528064,
+          "max_dd_pct": 2.5598754205280603,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 11,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -6.323899753370995,
+          "roi_pct": -0.1264779950674199,
+          "max_dd_pct": 4.706993091176238,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 12,
+          "trades": 31,
+          "win_rate": 41.935483870967744,
+          "pnl_usd": -424.4146261628109,
+          "roi_pct": -8.488292523256218,
+          "max_dd_pct": 8.488292523256224,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 13,
+          "trades": 28,
+          "win_rate": 46.42857142857143,
+          "pnl_usd": -124.63225954330717,
+          "roi_pct": -2.4926451908661433,
+          "max_dd_pct": 4.883326801497879,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 14,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -226.88751789371761,
+          "roi_pct": -4.537750357874352,
+          "max_dd_pct": 5.017542982284627,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 15,
+          "trades": 27,
+          "win_rate": 48.148148148148145,
+          "pnl_usd": -274.8464159412225,
+          "roi_pct": -5.49692831882445,
+          "max_dd_pct": 5.710569310124538,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 16,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -367.76198067123266,
+          "roi_pct": -7.355239613424653,
+          "max_dd_pct": 7.390270603036769,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 17,
+          "trades": 30,
+          "win_rate": 43.333333333333336,
+          "pnl_usd": 296.9748982598435,
+          "roi_pct": 5.939497965196869,
+          "max_dd_pct": 2.96,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 18,
+          "trades": 27,
+          "win_rate": 29.629629629629626,
+          "pnl_usd": -117.5616812333164,
+          "roi_pct": -2.351233624666328,
+          "max_dd_pct": 9.142386289612997,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 19,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -52.00499950079697,
+          "roi_pct": -1.0400999900159393,
+          "max_dd_pct": 4.581795321846912,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 20,
+          "trades": 31,
+          "win_rate": 35.483870967741936,
+          "pnl_usd": -424.95547064803145,
+          "roi_pct": -8.499109412960628,
+          "max_dd_pct": 8.720516822773625,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "(1.5, 60.0, True)": {
+      "total_pnl": -4488.360650007358,
+      "total_pct": -89.76721300014717,
+      "passes": 0,
+      "pos_windows": 2,
+      "windows": [
+        {
+          "window_id": 1,
+          "trades": 28,
+          "win_rate": 32.142857142857146,
+          "pnl_usd": -52.52335199607266,
+          "roi_pct": -1.0504670399214533,
+          "max_dd_pct": 4.109844302143792,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 2,
+          "trades": 25,
+          "win_rate": 36.0,
+          "pnl_usd": -329.88189045753023,
+          "roi_pct": -6.597637809150604,
+          "max_dd_pct": 7.473011996753096,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 3,
+          "trades": 24,
+          "win_rate": 37.5,
+          "pnl_usd": -295.1232859543612,
+          "roi_pct": -5.902465719087225,
+          "max_dd_pct": 6.014484980321521,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 4,
+          "trades": 29,
+          "win_rate": 48.275862068965516,
+          "pnl_usd": -310.72505491677225,
+          "roi_pct": -6.214501098335445,
+          "max_dd_pct": 6.263558154683723,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 5,
+          "trades": 26,
+          "win_rate": 50.0,
+          "pnl_usd": -170.5388772530611,
+          "roi_pct": -3.4107775450612223,
+          "max_dd_pct": 3.6580758803919546,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 6,
+          "trades": 21,
+          "win_rate": 38.095238095238095,
+          "pnl_usd": -147.22180261534544,
+          "roi_pct": -2.9444360523069086,
+          "max_dd_pct": 3.0298874041764976,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 7,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -339.3871010196798,
+          "roi_pct": -6.787742020393596,
+          "max_dd_pct": 6.909200456586167,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 8,
+          "trades": 30,
+          "win_rate": 36.666666666666664,
+          "pnl_usd": -291.09281347505237,
+          "roi_pct": -5.821856269501048,
+          "max_dd_pct": 6.4629271001120285,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 9,
+          "trades": 31,
+          "win_rate": 48.38709677419355,
+          "pnl_usd": -138.8961223474378,
+          "roi_pct": -2.777922446948756,
+          "max_dd_pct": 7.974733079343026,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 10,
+          "trades": 27,
+          "win_rate": 59.25925925925925,
+          "pnl_usd": -99.99768744665889,
+          "roi_pct": -1.9999537489331778,
+          "max_dd_pct": 3.186963954358546,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 11,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -318.57924568564965,
+          "roi_pct": -6.371584913712994,
+          "max_dd_pct": 6.525540978185463,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 12,
+          "trades": 31,
+          "win_rate": 41.935483870967744,
+          "pnl_usd": -453.04562921269826,
+          "roi_pct": -9.060912584253964,
+          "max_dd_pct": 9.060912584253929,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 13,
+          "trades": 28,
+          "win_rate": 46.42857142857143,
+          "pnl_usd": -165.18109875992505,
+          "roi_pct": -3.3036219751985008,
+          "max_dd_pct": 4.688297723514679,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 14,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -243.34092591756712,
+          "roi_pct": -4.866818518351343,
+          "max_dd_pct": 5.570268551166917,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 15,
+          "trades": 27,
+          "win_rate": 48.148148148148145,
+          "pnl_usd": -367.8761274480753,
+          "roi_pct": -7.357522548961507,
+          "max_dd_pct": 7.599388065149888,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 16,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -431.251849839307,
+          "roi_pct": -8.62503699678614,
+          "max_dd_pct": 8.666705343299599,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 17,
+          "trades": 30,
+          "win_rate": 43.333333333333336,
+          "pnl_usd": 297.153801772573,
+          "roi_pct": 5.94307603545146,
+          "max_dd_pct": 2.9343939154672807,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 18,
+          "trades": 27,
+          "win_rate": 29.629629629629626,
+          "pnl_usd": 55.95680293077353,
+          "roi_pct": 1.1191360586154706,
+          "max_dd_pct": 8.268928624491574,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 19,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -209.8609287742698,
+          "roi_pct": -4.197218575485396,
+          "max_dd_pct": 5.905383872287639,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 20,
+          "trades": 31,
+          "win_rate": 35.483870967741936,
+          "pnl_usd": -476.94746159124037,
+          "roi_pct": -9.538949231824807,
+          "max_dd_pct": 9.691415001685128,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "(1.5, 100.0, False)": {
+      "total_pnl": -4351.079288296844,
+      "total_pct": -87.02158576593689,
+      "passes": 0,
+      "pos_windows": 2,
+      "windows": [
+        {
+          "window_id": 1,
+          "trades": 28,
+          "win_rate": 32.142857142857146,
+          "pnl_usd": -25.855152747404546,
+          "roi_pct": -0.5171030549480908,
+          "max_dd_pct": 6.121420792237407,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 2,
+          "trades": 25,
+          "win_rate": 36.0,
+          "pnl_usd": -373.53641125427237,
+          "roi_pct": -7.470728225085447,
+          "max_dd_pct": 8.44318826644538,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 3,
+          "trades": 24,
+          "win_rate": 37.5,
+          "pnl_usd": -280.47378720104683,
+          "roi_pct": -5.609475744020936,
+          "max_dd_pct": 5.616858803270479,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 4,
+          "trades": 29,
+          "win_rate": 48.275862068965516,
+          "pnl_usd": -302.11030110372997,
+          "roi_pct": -6.042206022074599,
+          "max_dd_pct": 6.18,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 5,
+          "trades": 26,
+          "win_rate": 50.0,
+          "pnl_usd": -173.73372873198747,
+          "roi_pct": -3.4746745746397494,
+          "max_dd_pct": 3.8592376241431485,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 6,
+          "trades": 21,
+          "win_rate": 38.095238095238095,
+          "pnl_usd": -175.93092783451266,
+          "roi_pct": -3.5186185566902535,
+          "max_dd_pct": 3.6015059987982023,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 7,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -450.0679006681895,
+          "roi_pct": -9.00135801336379,
+          "max_dd_pct": 9.001358013363788,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 8,
+          "trades": 30,
+          "win_rate": 36.666666666666664,
+          "pnl_usd": -281.9062738808993,
+          "roi_pct": -5.638125477617986,
+          "max_dd_pct": 6.752065370645796,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 9,
+          "trades": 31,
+          "win_rate": 48.38709677419355,
+          "pnl_usd": -61.2070927999259,
+          "roi_pct": -1.224141855998518,
+          "max_dd_pct": 9.310984403668614,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 10,
+          "trades": 27,
+          "win_rate": 59.25925925925925,
+          "pnl_usd": -177.99377102640315,
+          "roi_pct": -3.559875420528063,
+          "max_dd_pct": 3.5598754205280603,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 11,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -56.32389975337101,
+          "roi_pct": -1.1264779950674202,
+          "max_dd_pct": 4.88,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 12,
+          "trades": 31,
+          "win_rate": 41.935483870967744,
+          "pnl_usd": -474.4146261628109,
+          "roi_pct": -9.488292523256218,
+          "max_dd_pct": 9.488292523256222,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 13,
+          "trades": 28,
+          "win_rate": 46.42857142857143,
+          "pnl_usd": -174.63225954330719,
+          "roi_pct": -3.4926451908661433,
+          "max_dd_pct": 5.883326801497878,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 14,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -276.8875178937176,
+          "roi_pct": -5.537750357874352,
+          "max_dd_pct": 5.537750357874356,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 15,
+          "trades": 27,
+          "win_rate": 48.148148148148145,
+          "pnl_usd": -324.84641594122246,
+          "roi_pct": -6.496928318824449,
+          "max_dd_pct": 6.710569310124538,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 16,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -417.76198067123266,
+          "roi_pct": -8.355239613424652,
+          "max_dd_pct": 8.39027060303677,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 17,
+          "trades": 30,
+          "win_rate": 43.333333333333336,
+          "pnl_usd": 246.97489825984348,
+          "roi_pct": 4.93949796519687,
+          "max_dd_pct": 3.9600000000000004,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 18,
+          "trades": 27,
+          "win_rate": 29.629629629629626,
+          "pnl_usd": 6.588330806173431,
+          "roi_pct": 0.13176661612346863,
+          "max_dd_pct": 10.960348504877414,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 19,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -102.004999500797,
+          "roi_pct": -2.04009999001594,
+          "max_dd_pct": 5.581795321846912,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 20,
+          "trades": 31,
+          "win_rate": 35.483870967741936,
+          "pnl_usd": -474.9554706480314,
+          "roi_pct": -9.499109412960628,
+          "max_dd_pct": 9.720516822773625,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "(1.5, 100.0, True)": {
+      "total_pnl": -4532.093276060866,
+      "total_pct": -90.64186552121731,
+      "passes": 0,
+      "pos_windows": 2,
+      "windows": [
+        {
+          "window_id": 1,
+          "trades": 28,
+          "win_rate": 32.142857142857146,
+          "pnl_usd": -14.431174099367402,
+          "roi_pct": -0.28862348198734805,
+          "max_dd_pct": 5.280203221103646,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 2,
+          "trades": 25,
+          "win_rate": 36.0,
+          "pnl_usd": -332.1831588500233,
+          "roi_pct": -6.643663177000465,
+          "max_dd_pct": 7.586141053185753,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 3,
+          "trades": 24,
+          "win_rate": 37.5,
+          "pnl_usd": -268.607381974021,
+          "roi_pct": -5.37214763948042,
+          "max_dd_pct": 5.484166900714736,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 4,
+          "trades": 29,
+          "win_rate": 48.275862068965516,
+          "pnl_usd": -377.10020433337235,
+          "roi_pct": -7.542004086667448,
+          "max_dd_pct": 7.591061143015722,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 5,
+          "trades": 26,
+          "win_rate": 50.0,
+          "pnl_usd": -153.55490235435144,
+          "roi_pct": -3.071098047087029,
+          "max_dd_pct": 3.484006631295217,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 6,
+          "trades": 21,
+          "win_rate": 38.095238095238095,
+          "pnl_usd": -173.51839913038805,
+          "roi_pct": -3.470367982607761,
+          "max_dd_pct": 3.5558193344773463,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 7,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -391.27505705768647,
+          "roi_pct": -7.825501141153729,
+          "max_dd_pct": 7.946959577346316,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 8,
+          "trades": 30,
+          "win_rate": 36.666666666666664,
+          "pnl_usd": -343.63111803362654,
+          "roi_pct": -6.872622360672532,
+          "max_dd_pct": 7.51369319128351,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 9,
+          "trades": 31,
+          "win_rate": 48.38709677419355,
+          "pnl_usd": -52.014800686394814,
+          "roi_pct": -1.0402960137278963,
+          "max_dd_pct": 8.924037899158614,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 10,
+          "trades": 27,
+          "win_rate": 59.25925925925925,
+          "pnl_usd": -157.90290160397808,
+          "roi_pct": -3.1580580320795617,
+          "max_dd_pct": 3.158058032079553,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 11,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -320.7143521822541,
+          "roi_pct": -6.414287043645082,
+          "max_dd_pct": 6.528325155457059,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 12,
+          "trades": 31,
+          "win_rate": 41.935483870967744,
+          "pnl_usd": -504.241048291986,
+          "roi_pct": -10.08482096583972,
+          "max_dd_pct": 10.08482096583968,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 13,
+          "trades": 28,
+          "win_rate": 46.42857142857143,
+          "pnl_usd": -231.43058973470613,
+          "roi_pct": -4.628611794694123,
+          "max_dd_pct": 6.013287543010301,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 14,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -299.6695627145098,
+          "roi_pct": -5.993391254290197,
+          "max_dd_pct": 5.9933912542902545,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 15,
+          "trades": 27,
+          "win_rate": 48.148148148148145,
+          "pnl_usd": -337.78315358408156,
+          "roi_pct": -6.755663071681631,
+          "max_dd_pct": 6.9975285878700015,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 16,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -433.7655998725014,
+          "roi_pct": -8.675311997450027,
+          "max_dd_pct": 8.716980343963495,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 17,
+          "trades": 30,
+          "win_rate": 43.333333333333336,
+          "pnl_usd": 241.98467551903286,
+          "roi_pct": 4.839693510380657,
+          "max_dd_pct": 4.037776440538091,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 18,
+          "trades": 27,
+          "win_rate": 29.629629629629626,
+          "pnl_usd": 285.83606413976804,
+          "roi_pct": 5.716721282795361,
+          "max_dd_pct": 9.68799914870109,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 19,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -197.42150258462368,
+          "roi_pct": -3.948430051692474,
+          "max_dd_pct": 5.656595348494702,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 20,
+          "trades": 31,
+          "win_rate": 35.483870967741936,
+          "pnl_usd": -470.66910863179436,
+          "roi_pct": -9.413382172635886,
+          "max_dd_pct": 9.565847942496221,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "(2.0, 40.0, False)": {
+      "total_pnl": -3964.8527546050664,
+      "total_pct": -79.29705509210133,
+      "passes": 0,
+      "pos_windows": 1,
+      "windows": [
+        {
+          "window_id": 1,
+          "trades": 28,
+          "win_rate": 32.142857142857146,
+          "pnl_usd": -114.32985350526504,
+          "roi_pct": -2.2865970701053007,
+          "max_dd_pct": 4.669654854958305,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 2,
+          "trades": 25,
+          "win_rate": 36.0,
+          "pnl_usd": -344.8975066488145,
+          "roi_pct": -6.897950132976289,
+          "max_dd_pct": 7.7610876807245255,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 3,
+          "trades": 24,
+          "win_rate": 37.5,
+          "pnl_usd": -230.47378720104678,
+          "roi_pct": -4.609475744020935,
+          "max_dd_pct": 4.616858803270479,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 4,
+          "trades": 29,
+          "win_rate": 48.275862068965516,
+          "pnl_usd": -252.11030110373,
+          "roi_pct": -5.042206022074599,
+          "max_dd_pct": 5.18,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 5,
+          "trades": 26,
+          "win_rate": 50.0,
+          "pnl_usd": -160.73372873198747,
+          "roi_pct": -3.2146745746397496,
+          "max_dd_pct": 3.369283720686622,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 6,
+          "trades": 21,
+          "win_rate": 38.095238095238095,
+          "pnl_usd": -133.74670064761537,
+          "roi_pct": -2.674934012952307,
+          "max_dd_pct": 2.757821455060257,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 7,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -421.0679006681895,
+          "roi_pct": -8.42135801336379,
+          "max_dd_pct": 8.421358013363788,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 8,
+          "trades": 30,
+          "win_rate": 36.666666666666664,
+          "pnl_usd": -231.90627388089928,
+          "roi_pct": -4.638125477617986,
+          "max_dd_pct": 5.752065370645796,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 9,
+          "trades": 31,
+          "win_rate": 48.38709677419355,
+          "pnl_usd": -172.95175903796263,
+          "roi_pct": -3.4590351807592525,
+          "max_dd_pct": 7.544899048343079,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 10,
+          "trades": 27,
+          "win_rate": 59.25925925925925,
+          "pnl_usd": -117.16778669782389,
+          "roi_pct": -2.3433557339564777,
+          "max_dd_pct": 3.3612479826815007,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 11,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -6.323899753370995,
+          "roi_pct": -0.1264779950674199,
+          "max_dd_pct": 4.706993091176238,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 12,
+          "trades": 31,
+          "win_rate": 41.935483870967744,
+          "pnl_usd": -427.32143795161517,
+          "roi_pct": -8.546428759032302,
+          "max_dd_pct": 8.546428759032297,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 13,
+          "trades": 28,
+          "win_rate": 46.42857142857143,
+          "pnl_usd": -124.63225954330717,
+          "roi_pct": -2.4926451908661433,
+          "max_dd_pct": 4.883326801497879,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 14,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -224.95890347893686,
+          "roi_pct": -4.499178069578737,
+          "max_dd_pct": 6.531552937779262,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 15,
+          "trades": 27,
+          "win_rate": 48.148148148148145,
+          "pnl_usd": -274.8464159412225,
+          "roi_pct": -5.49692831882445,
+          "max_dd_pct": 5.710569310124538,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 16,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -367.76198067123266,
+          "roi_pct": -7.355239613424653,
+          "max_dd_pct": 7.390270603036769,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 17,
+          "trades": 30,
+          "win_rate": 43.333333333333336,
+          "pnl_usd": 296.9748982598435,
+          "roi_pct": 5.939497965196869,
+          "max_dd_pct": 2.96,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 18,
+          "trades": 27,
+          "win_rate": 29.629629629629626,
+          "pnl_usd": -179.63668725306127,
+          "roi_pct": -3.592733745061225,
+          "max_dd_pct": 8.168688231600976,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 19,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -52.00499950079697,
+          "roi_pct": -1.0400999900159393,
+          "max_dd_pct": 4.581795321846912,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 20,
+          "trades": 31,
+          "win_rate": 35.483870967741936,
+          "pnl_usd": -424.95547064803145,
+          "roi_pct": -8.499109412960628,
+          "max_dd_pct": 8.720516822773625,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "(2.0, 40.0, True)": {
+      "total_pnl": -4422.194982985695,
+      "total_pct": -88.44389965971389,
+      "passes": 0,
+      "pos_windows": 1,
+      "windows": [
+        {
+          "window_id": 1,
+          "trades": 28,
+          "win_rate": 32.142857142857146,
+          "pnl_usd": -71.5694409444253,
+          "roi_pct": -1.431388818888506,
+          "max_dd_pct": 3.8646940062802586,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 2,
+          "trades": 25,
+          "win_rate": 36.0,
+          "pnl_usd": -312.6054018095332,
+          "roi_pct": -6.252108036190664,
+          "max_dd_pct": 7.094103148804373,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 3,
+          "trades": 24,
+          "win_rate": 37.5,
+          "pnl_usd": -235.86145288381695,
+          "roi_pct": -4.717229057676339,
+          "max_dd_pct": 4.82924831891065,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 4,
+          "trades": 29,
+          "win_rate": 48.275862068965516,
+          "pnl_usd": -313.6190374819273,
+          "roi_pct": -6.272380749638547,
+          "max_dd_pct": 6.3214378059868075,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 5,
+          "trades": 26,
+          "win_rate": 50.0,
+          "pnl_usd": -156.39395167846385,
+          "roi_pct": -3.127879033569277,
+          "max_dd_pct": 3.293368697286251,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 6,
+          "trades": 21,
+          "win_rate": 38.095238095238095,
+          "pnl_usd": -143.6355848010989,
+          "roi_pct": -2.872711696021978,
+          "max_dd_pct": 2.958163047891576,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 7,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -358.88374024068844,
+          "roi_pct": -7.177674804813769,
+          "max_dd_pct": 7.29913324100633,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 8,
+          "trades": 30,
+          "win_rate": 36.666666666666664,
+          "pnl_usd": -297.0235442832104,
+          "roi_pct": -5.940470885664208,
+          "max_dd_pct": 6.581541716275169,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 9,
+          "trades": 31,
+          "win_rate": 48.38709677419355,
+          "pnl_usd": -182.33678317795906,
+          "roi_pct": -3.6467356635591814,
+          "max_dd_pct": 7.4793631078944,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 10,
+          "trades": 27,
+          "win_rate": 59.25925925925925,
+          "pnl_usd": -114.8727812785389,
+          "roi_pct": -2.2974556255707776,
+          "max_dd_pct": 3.0870805836266677,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 11,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -306.2131875812768,
+          "roi_pct": -6.124263751625537,
+          "max_dd_pct": 6.5094622401463385,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 12,
+          "trades": 31,
+          "win_rate": 41.935483870967744,
+          "pnl_usd": -455.1130519703214,
+          "roi_pct": -9.102261039406429,
+          "max_dd_pct": 9.102261039406404,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 13,
+          "trades": 28,
+          "win_rate": 46.42857142857143,
+          "pnl_usd": -151.95803733100487,
+          "roi_pct": -3.0391607466200976,
+          "max_dd_pct": 4.423836494936295,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 14,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -251.79528881589465,
+          "roi_pct": -5.035905776317893,
+          "max_dd_pct": 8.00902699304904,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 15,
+          "trades": 27,
+          "win_rate": 48.148148148148145,
+          "pnl_usd": -310.57316360286666,
+          "roi_pct": -6.211463272057333,
+          "max_dd_pct": 6.453328788245708,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 16,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -407.83618012369357,
+          "roi_pct": -8.156723602473871,
+          "max_dd_pct": 8.198391948987336,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 17,
+          "trades": 30,
+          "win_rate": 43.333333333333336,
+          "pnl_usd": 301.224012407527,
+          "roi_pct": 6.024480248150541,
+          "max_dd_pct": 2.852989702768227,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 18,
+          "trades": 27,
+          "win_rate": 29.629629629629626,
+          "pnl_usd": -58.982827673723826,
+          "roi_pct": -1.1796565534744765,
+          "max_dd_pct": 7.491415223682549,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 19,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -155.6911463082678,
+          "roi_pct": -3.113822926165356,
+          "max_dd_pct": 4.821988222967575,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 20,
+          "trades": 31,
+          "win_rate": 35.483870967741936,
+          "pnl_usd": -438.4543934065088,
+          "roi_pct": -8.769087868130176,
+          "max_dd_pct": 8.92155363799051,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "(2.0, 60.0, False)": {
+      "total_pnl": -4474.997867419232,
+      "total_pct": -89.49995734838463,
+      "passes": 0,
+      "pos_windows": 1,
+      "windows": [
+        {
+          "window_id": 1,
+          "trades": 28,
+          "win_rate": 32.142857142857146,
+          "pnl_usd": -84.8382865859782,
+          "roi_pct": -1.696765731719564,
+          "max_dd_pct": 5.121567052388153,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 2,
+          "trades": 25,
+          "win_rate": 36.0,
+          "pnl_usd": -369.7771415173005,
+          "roi_pct": -7.39554283034601,
+          "max_dd_pct": 8.294935325847815,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 3,
+          "trades": 24,
+          "win_rate": 37.5,
+          "pnl_usd": -280.47378720104683,
+          "roi_pct": -5.609475744020936,
+          "max_dd_pct": 5.616858803270479,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 4,
+          "trades": 29,
+          "win_rate": 48.275862068965516,
+          "pnl_usd": -302.11030110372997,
+          "roi_pct": -6.042206022074599,
+          "max_dd_pct": 6.18,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 5,
+          "trades": 26,
+          "win_rate": 50.0,
+          "pnl_usd": -181.73372873198747,
+          "roi_pct": -3.634674574639749,
+          "max_dd_pct": 3.8653976203508784,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 6,
+          "trades": 21,
+          "win_rate": 38.095238095238095,
+          "pnl_usd": -191.56247346071808,
+          "roi_pct": -3.8312494692143617,
+          "max_dd_pct": 3.914136911322312,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 7,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -442.0679006681895,
+          "roi_pct": -8.84135801336379,
+          "max_dd_pct": 8.841358013363788,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 8,
+          "trades": 30,
+          "win_rate": 36.666666666666664,
+          "pnl_usd": -281.9062738808993,
+          "roi_pct": -5.638125477617986,
+          "max_dd_pct": 6.752065370645796,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 9,
+          "trades": 31,
+          "win_rate": 48.38709677419355,
+          "pnl_usd": -135.70353695861704,
+          "roi_pct": -2.7140707391723407,
+          "max_dd_pct": 8.150385889798434,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 10,
+          "trades": 27,
+          "win_rate": 59.25925925925925,
+          "pnl_usd": -122.24057799369476,
+          "roi_pct": -2.444811559873895,
+          "max_dd_pct": 3.8081816029394804,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 11,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -56.32389975337101,
+          "roi_pct": -1.1264779950674202,
+          "max_dd_pct": 4.88,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 12,
+          "trades": 31,
+          "win_rate": 41.935483870967744,
+          "pnl_usd": -480.2282497404193,
+          "roi_pct": -9.604564994808387,
+          "max_dd_pct": 9.604564994808388,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 13,
+          "trades": 28,
+          "win_rate": 46.42857142857143,
+          "pnl_usd": -174.63225954330719,
+          "roi_pct": -3.4926451908661433,
+          "max_dd_pct": 5.883326801497878,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 14,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -181.24380054521643,
+          "roi_pct": -3.6248760109043285,
+          "max_dd_pct": 6.139213262912859,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 15,
+          "trades": 27,
+          "win_rate": 48.148148148148145,
+          "pnl_usd": -324.84641594122246,
+          "roi_pct": -6.496928318824449,
+          "max_dd_pct": 6.710569310124538,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 16,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -417.76198067123266,
+          "roi_pct": -8.355239613424652,
+          "max_dd_pct": 8.39027060303677,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 17,
+          "trades": 30,
+          "win_rate": 43.333333333333336,
+          "pnl_usd": 246.97489825984348,
+          "roi_pct": 4.93949796519687,
+          "max_dd_pct": 3.9600000000000004,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 18,
+          "trades": 27,
+          "win_rate": 29.629629629629626,
+          "pnl_usd": -117.5616812333164,
+          "roi_pct": -2.351233624666328,
+          "max_dd_pct": 9.142386289612997,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 19,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -102.004999500797,
+          "roi_pct": -2.04009999001594,
+          "max_dd_pct": 5.581795321846912,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 20,
+          "trades": 31,
+          "win_rate": 35.483870967741936,
+          "pnl_usd": -474.9554706480314,
+          "roi_pct": -9.499109412960628,
+          "max_dd_pct": 9.720516822773625,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "(2.0, 60.0, True)": {
+      "total_pnl": -4853.313557303029,
+      "total_pct": -97.06627114606057,
+      "passes": 0,
+      "pos_windows": 2,
+      "windows": [
+        {
+          "window_id": 1,
+          "trades": 28,
+          "win_rate": 32.142857142857146,
+          "pnl_usd": -52.52335199607266,
+          "roi_pct": -1.0504670399214533,
+          "max_dd_pct": 4.109844302143792,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 2,
+          "trades": 25,
+          "win_rate": 36.0,
+          "pnl_usd": -329.88189045753023,
+          "roi_pct": -6.597637809150604,
+          "max_dd_pct": 7.473011996753096,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 3,
+          "trades": 24,
+          "win_rate": 37.5,
+          "pnl_usd": -295.1232859543612,
+          "roi_pct": -5.902465719087225,
+          "max_dd_pct": 6.014484980321521,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 4,
+          "trades": 29,
+          "win_rate": 48.275862068965516,
+          "pnl_usd": -382.8881694636826,
+          "roi_pct": -7.657763389273652,
+          "max_dd_pct": 7.706820445621925,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 5,
+          "trades": 26,
+          "win_rate": 50.0,
+          "pnl_usd": -170.5388772530611,
+          "roi_pct": -3.4107775450612223,
+          "max_dd_pct": 3.6580758803919546,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 6,
+          "trades": 21,
+          "win_rate": 38.095238095238095,
+          "pnl_usd": -194.3119586048076,
+          "roi_pct": -3.8862391720961518,
+          "max_dd_pct": 3.9716905239657354,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 7,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -382.1578936658478,
+          "roi_pct": -7.643157873316955,
+          "max_dd_pct": 7.764616309509528,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 8,
+          "trades": 30,
+          "win_rate": 36.666666666666664,
+          "pnl_usd": -355.4925796499425,
+          "roi_pct": -7.109851592998851,
+          "max_dd_pct": 7.750922423609826,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 9,
+          "trades": 31,
+          "win_rate": 48.38709677419355,
+          "pnl_usd": -138.8961223474378,
+          "roi_pct": -2.777922446948756,
+          "max_dd_pct": 7.974733079343026,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 10,
+          "trades": 27,
+          "win_rate": 59.25925925925925,
+          "pnl_usd": -131.2955942750915,
+          "roi_pct": -2.62591188550183,
+          "max_dd_pct": 3.805340271074056,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 11,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -318.57924568564965,
+          "roi_pct": -6.371584913712994,
+          "max_dd_pct": 6.525540978185463,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 12,
+          "trades": 31,
+          "win_rate": 41.935483870967744,
+          "pnl_usd": -508.3758938072323,
+          "roi_pct": -10.167517876144645,
+          "max_dd_pct": 10.167517876144611,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 13,
+          "trades": 28,
+          "win_rate": 46.42857142857143,
+          "pnl_usd": -204.9844668768657,
+          "roi_pct": -4.099689337537314,
+          "max_dd_pct": 5.484365085853496,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 14,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -208.4097593322674,
+          "roi_pct": -4.168195186645348,
+          "max_dd_pct": 9.26826966024581,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 15,
+          "trades": 27,
+          "win_rate": 48.148148148148145,
+          "pnl_usd": -367.8761274480753,
+          "roi_pct": -7.357522548961507,
+          "max_dd_pct": 7.599388065149888,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 16,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -431.251849839307,
+          "roi_pct": -8.62503699678614,
+          "max_dd_pct": 8.666705343299599,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 17,
+          "trades": 30,
+          "win_rate": 43.333333333333336,
+          "pnl_usd": 250.12509678894082,
+          "roi_pct": 5.002501935778817,
+          "max_dd_pct": 3.8749680151399297,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 18,
+          "trades": 27,
+          "win_rate": 29.629629629629626,
+          "pnl_usd": 55.95680293077353,
+          "roi_pct": 1.1191360586154706,
+          "max_dd_pct": 8.268928624491574,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 19,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -209.8609287742698,
+          "roi_pct": -4.197218575485396,
+          "max_dd_pct": 5.905383872287639,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 20,
+          "trades": 31,
+          "win_rate": 35.483870967741936,
+          "pnl_usd": -476.94746159124037,
+          "roi_pct": -9.538949231824807,
+          "max_dd_pct": 9.691415001685128,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "(2.0, 100.0, False)": {
+      "total_pnl": -4351.079288296844,
+      "total_pct": -87.02158576593689,
+      "passes": 0,
+      "pos_windows": 2,
+      "windows": [
+        {
+          "window_id": 1,
+          "trades": 28,
+          "win_rate": 32.142857142857146,
+          "pnl_usd": -25.855152747404546,
+          "roi_pct": -0.5171030549480908,
+          "max_dd_pct": 6.121420792237407,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 2,
+          "trades": 25,
+          "win_rate": 36.0,
+          "pnl_usd": -373.53641125427237,
+          "roi_pct": -7.470728225085447,
+          "max_dd_pct": 8.44318826644538,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 3,
+          "trades": 24,
+          "win_rate": 37.5,
+          "pnl_usd": -280.47378720104683,
+          "roi_pct": -5.609475744020936,
+          "max_dd_pct": 5.616858803270479,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 4,
+          "trades": 29,
+          "win_rate": 48.275862068965516,
+          "pnl_usd": -302.11030110372997,
+          "roi_pct": -6.042206022074599,
+          "max_dd_pct": 6.18,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 5,
+          "trades": 26,
+          "win_rate": 50.0,
+          "pnl_usd": -173.73372873198747,
+          "roi_pct": -3.4746745746397494,
+          "max_dd_pct": 3.8592376241431485,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 6,
+          "trades": 21,
+          "win_rate": 38.095238095238095,
+          "pnl_usd": -175.93092783451266,
+          "roi_pct": -3.5186185566902535,
+          "max_dd_pct": 3.6015059987982023,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 7,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -450.0679006681895,
+          "roi_pct": -9.00135801336379,
+          "max_dd_pct": 9.001358013363788,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 8,
+          "trades": 30,
+          "win_rate": 36.666666666666664,
+          "pnl_usd": -281.9062738808993,
+          "roi_pct": -5.638125477617986,
+          "max_dd_pct": 6.752065370645796,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 9,
+          "trades": 31,
+          "win_rate": 48.38709677419355,
+          "pnl_usd": -61.2070927999259,
+          "roi_pct": -1.224141855998518,
+          "max_dd_pct": 9.310984403668614,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 10,
+          "trades": 27,
+          "win_rate": 59.25925925925925,
+          "pnl_usd": -177.99377102640315,
+          "roi_pct": -3.559875420528063,
+          "max_dd_pct": 3.5598754205280603,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 11,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -56.32389975337101,
+          "roi_pct": -1.1264779950674202,
+          "max_dd_pct": 4.88,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 12,
+          "trades": 31,
+          "win_rate": 41.935483870967744,
+          "pnl_usd": -474.4146261628109,
+          "roi_pct": -9.488292523256218,
+          "max_dd_pct": 9.488292523256222,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 13,
+          "trades": 28,
+          "win_rate": 46.42857142857143,
+          "pnl_usd": -174.63225954330719,
+          "roi_pct": -3.4926451908661433,
+          "max_dd_pct": 5.883326801497878,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 14,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -276.8875178937176,
+          "roi_pct": -5.537750357874352,
+          "max_dd_pct": 5.537750357874356,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 15,
+          "trades": 27,
+          "win_rate": 48.148148148148145,
+          "pnl_usd": -324.84641594122246,
+          "roi_pct": -6.496928318824449,
+          "max_dd_pct": 6.710569310124538,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 16,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -417.76198067123266,
+          "roi_pct": -8.355239613424652,
+          "max_dd_pct": 8.39027060303677,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 17,
+          "trades": 30,
+          "win_rate": 43.333333333333336,
+          "pnl_usd": 246.97489825984348,
+          "roi_pct": 4.93949796519687,
+          "max_dd_pct": 3.9600000000000004,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 18,
+          "trades": 27,
+          "win_rate": 29.629629629629626,
+          "pnl_usd": 6.588330806173431,
+          "roi_pct": 0.13176661612346863,
+          "max_dd_pct": 10.960348504877414,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 19,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -102.004999500797,
+          "roi_pct": -2.04009999001594,
+          "max_dd_pct": 5.581795321846912,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 20,
+          "trades": 31,
+          "win_rate": 35.483870967741936,
+          "pnl_usd": -474.9554706480314,
+          "roi_pct": -9.499109412960628,
+          "max_dd_pct": 9.720516822773625,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "(2.0, 100.0, True)": {
+      "total_pnl": -4552.230454897856,
+      "total_pct": -91.04460909795714,
+      "passes": 0,
+      "pos_windows": 2,
+      "windows": [
+        {
+          "window_id": 1,
+          "trades": 28,
+          "win_rate": 32.142857142857146,
+          "pnl_usd": -14.431174099367402,
+          "roi_pct": -0.28862348198734805,
+          "max_dd_pct": 5.280203221103646,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 2,
+          "trades": 25,
+          "win_rate": 36.0,
+          "pnl_usd": -332.1831588500233,
+          "roi_pct": -6.643663177000465,
+          "max_dd_pct": 7.586141053185753,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 3,
+          "trades": 24,
+          "win_rate": 37.5,
+          "pnl_usd": -268.607381974021,
+          "roi_pct": -5.37214763948042,
+          "max_dd_pct": 5.484166900714736,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 4,
+          "trades": 29,
+          "win_rate": 48.275862068965516,
+          "pnl_usd": -377.10020433337235,
+          "roi_pct": -7.542004086667448,
+          "max_dd_pct": 7.591061143015722,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 5,
+          "trades": 26,
+          "win_rate": 50.0,
+          "pnl_usd": -247.39446563788684,
+          "roi_pct": -4.947889312757737,
+          "max_dd_pct": 5.352802931493822,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 6,
+          "trades": 21,
+          "win_rate": 38.095238095238095,
+          "pnl_usd": -173.51839913038805,
+          "roi_pct": -3.470367982607761,
+          "max_dd_pct": 3.5558193344773463,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 7,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -391.27505705768647,
+          "roi_pct": -7.825501141153729,
+          "max_dd_pct": 7.946959577346316,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 8,
+          "trades": 30,
+          "win_rate": 36.666666666666664,
+          "pnl_usd": -343.63111803362654,
+          "roi_pct": -6.872622360672532,
+          "max_dd_pct": 7.51369319128351,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 9,
+          "trades": 31,
+          "win_rate": 48.38709677419355,
+          "pnl_usd": -52.014800686394814,
+          "roi_pct": -1.0402960137278963,
+          "max_dd_pct": 8.924037899158614,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 10,
+          "trades": 27,
+          "win_rate": 59.25925925925925,
+          "pnl_usd": -84.20051715743362,
+          "roi_pct": -1.6840103431486724,
+          "max_dd_pct": 3.596048788656266,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 11,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -320.7143521822541,
+          "roi_pct": -6.414287043645082,
+          "max_dd_pct": 6.528325155457059,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 12,
+          "trades": 31,
+          "win_rate": 41.935483870967744,
+          "pnl_usd": -504.241048291986,
+          "roi_pct": -10.08482096583972,
+          "max_dd_pct": 10.08482096583968,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 13,
+          "trades": 28,
+          "win_rate": 46.42857142857143,
+          "pnl_usd": -231.43058973470613,
+          "roi_pct": -4.628611794694123,
+          "max_dd_pct": 6.013287543010301,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 14,
+          "trades": 30,
+          "win_rate": 33.33333333333333,
+          "pnl_usd": -299.6695627145098,
+          "roi_pct": -5.993391254290197,
+          "max_dd_pct": 5.9933912542902545,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 15,
+          "trades": 27,
+          "win_rate": 48.148148148148145,
+          "pnl_usd": -337.78315358408156,
+          "roi_pct": -6.755663071681631,
+          "max_dd_pct": 6.9975285878700015,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 16,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -433.7655998725014,
+          "roi_pct": -8.675311997450027,
+          "max_dd_pct": 8.716980343963495,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 17,
+          "trades": 30,
+          "win_rate": 43.333333333333336,
+          "pnl_usd": 241.98467551903286,
+          "roi_pct": 4.839693510380657,
+          "max_dd_pct": 4.037776440538091,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 18,
+          "trades": 27,
+          "win_rate": 29.629629629629626,
+          "pnl_usd": 285.83606413976804,
+          "roi_pct": 5.716721282795361,
+          "max_dd_pct": 9.68799914870109,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 19,
+          "trades": 31,
+          "win_rate": 38.70967741935484,
+          "pnl_usd": -197.42150258462368,
+          "roi_pct": -3.948430051692474,
+          "max_dd_pct": 5.656595348494702,
+          "status": "FAIL"
+        },
+        {
+          "window_id": 20,
+          "trades": 31,
+          "win_rate": 35.483870967741936,
+          "pnl_usd": -470.66910863179436,
+          "roi_pct": -9.413382172635886,
+          "max_dd_pct": 9.565847942496221,
+          "status": "FAIL"
+        }
+      ]
+    }
+  },
+  "reality_check": {
+    "null_total_median_pct": -53.92745543931754,
+    "null_total_p95_pct": 8.720590360601006,
+    "P_null_total_ge_observed": 0.8033333333333333,
+    "null_best_window_p95": 44.67676846421207,
+    "null_pass_dist": {
+      "0": 182,
+      "1": 86,
+      "2": 28,
+      "3": 3,
+      "4": 1
+    },
+    "P_null_pass_ge_observed": 0.3933333333333333
+  }
+}

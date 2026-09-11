@@ -1,0 +1,42 @@
+[stage2] loading store + augmenting...
+[battery] loading cache
+[stage2] union: 264,962 | net r mean -0.2013
+================================================================================================================================
+W#  | Window                                 | Cands   | Trades | WinRate  | Net PnL      | Net ROI   | MaxDD   | Verdict
+--------------------------------------------------------------------------------------------------------------------------------
+W01 | May 2021 Great Liquidation Crash       | 1766    | 26     |   15.4%  |    -496.24 USD |   -9.92% |  9.92% | FAIL  
+W02 | September 2021 El Salvador Flash Crash | 1484    | 28     |   42.9%  |    -148.27 USD |   -2.97% |  5.56% | FAIL  
+Model is not converging.  Current: 121104.6891248002 is not greater than 121104.73116464935. Delta is -0.04203984914056491
+W03 | November 2021 Cycle Peak Reversal      | 564     | 28     |   42.9%  |    -311.25 USD |   -6.22% |  6.29% | FAIL  
+Model is not converging.  Current: 139705.68529124703 is not greater than 139705.81902473842. Delta is -0.13373349138419144
+W04 | January 2022 Fed Macro Tightening      | 1308    | 29     |   37.9%  |    -291.37 USD |   -5.83% |  5.96% | FAIL  
+Model is not converging.  Current: 177216.75792354744 is not greater than 177216.87733707493. Delta is -0.11941352748544887
+W05 | May 2022 Terra-Luna Systemic Shock     | 1833    | 31     |   51.6%  |    +450.54 USD |   +9.01% |  4.26% | FAIL  
+Model is not converging.  Current: 186490.61786343734 is not greater than 186490.7014152583. Delta is -0.08355182097875513
+W06 | June 2022 3AC & Celsius Capitulation   | 1438    | 12     |   33.3%  |     +97.64 USD |   +1.95% |  2.02% | FAIL  
+Model is not converging.  Current: 214052.5595056818 is not greater than 214052.70738500537. Delta is -0.14787932357285172
+W07 | September 2022 ETH Merge Chop & Grind  | 1609    | 23     |   39.1%  |    -301.36 USD |   -6.03% |  6.07% | FAIL  
+Model is not converging.  Current: 234435.45843224687 is not greater than 234435.5487031847. Delta is -0.09027093782788143
+W08 | November 2022 FTX Collapse Bottom      | 1543    | 28     |   32.1%  |    -219.98 USD |   -4.40% |  4.92% | FAIL  
+Model is not converging.  Current: 255896.32793610074 is not greater than 255896.34665218365. Delta is -0.01871608290821314
+W09 | January 2023 Bullish Short Squeeze Rec | 2411    | 32     |   28.1%  |    -209.72 USD |   -4.19% |  5.59% | FAIL  
+W10 | March 2023 SVB Bank Run & USDC Depeg   | 1616    | 27     |   48.1%  |    -195.20 USD |   -3.90% |  3.90% | FAIL  
+W11 | June 2023 BlackRock Spot ETF Momentum  | 1997    | 35     |   57.1%  |    +390.32 USD |   +7.81% |  4.24% | FAIL  
+W12 | August 2023 Mid-Summer Flash Liquidati | 2215    | 26     |   38.5%  |    -240.40 USD |   -4.81% |  5.47% | FAIL  
+W13 | October 2023 Uptober Spot ETF Ignition | 2629    | 29     |   44.8%  |    -174.94 USD |   -3.50% |  7.17% | FAIL  
+W14 | January 2024 Spot ETF Approval Shakeou | 2174    | 32     |   37.5%  |    -149.38 USD |   -2.99% |  3.49% | FAIL  
+W15 | March 2024 Pre-Halving All-Time High R | 3211    | 24     |   41.7%  |     +56.18 USD |   +1.12% |  3.38% | FAIL  
+Model is not converging.  Current: 457996.45319504786 is not greater than 457996.4849610999. Delta is -0.031766052066814154
+W16 | August 2024 Global Carry Trade Liquida | 2271    | 25     |   32.0%  |    -104.70 USD |   -2.09% |  4.03% | FAIL  
+Model is not converging.  Current: 488820.98237799265 is not greater than 488821.2613903178. Delta is -0.27901232516160235
+W17 | November 2024 US Election Mega Breakou | 2687    | 29     |   41.4%  |     -38.26 USD |   -0.77% |  3.04% | FAIL  
+Model is not converging.  Current: 518882.32078753156 is not greater than 518882.5287459329. Delta is -0.20795840135542676
+W18 | February 2025 Post-Inauguration Consol | 2974    | 27     |   40.7%  |    -240.47 USD |   -4.81% |  6.07% | FAIL  
+Model is not converging.  Current: 569955.7219782181 is not greater than 569955.9165619003. Delta is -0.19458368222694844
+W19 | July 2025 Mid-Year Volatility Expansio | 2167    | 32     |   46.9%  |    +448.71 USD |   +8.97% |  5.73% | FAIL  
+Model is not converging.  Current: 655451.4078208929 is not greater than 655451.5523756862. Delta is -0.144554793369025
+W20 | March 2026 Late-Cycle Microstructure S | 1567    | 14     |   28.6%  |    -176.94 USD |   -3.54% |  3.54% | FAIL  
+================================================================================================================================
+STAGE2-v2 SUMMARY: total PnL -1,855.10 USD (-37.10%) | PASS 0/20 | 45s
+[MC] monthly-equivalent (25 trades) via block bootstrap: {'P_ROI>=10': 0.0568, 'P_DD>5': 0.4236, 'median_ROI': -2.741380169023496, 'median_DD': 4.562406394901371, 'p05_ROI': -8.221896323406813, 'p95_ROI': 10.568875073978553}
+[stage2] wrote /home/user/Trading/scratch/ml_reversal_results/stage2_v2_scorecard.json

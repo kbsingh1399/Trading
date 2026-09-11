@@ -274,6 +274,8 @@ def spec_signals(fam: str, tag: str, df: pd.DataFrame):
     return mask, side.astype(np.int8)
 
 
+NEEDS_METRIC = {"T5", "T9"}  # signal inputs are ancillary metrics; synthetic-imputed rows must not trade
+
 def spec_candidates(store: dict, fam: str, tag: str) -> pd.DataFrame:
     geo_key = dict(((f, t), g) for f, t, g in spec_list())[(fam, tag)]
     horizon, be_arm, be_lock, decay_bars, decay_min, trail_arm, trail_k, cd, r_scale = GEOS[geo_key]
@@ -281,7 +283,9 @@ def spec_candidates(store: dict, fam: str, tag: str) -> pd.DataFrame:
     parts = []
     for sym, df in store.items():
         mask, side = spec_signals(fam, tag, df)
-        idx = np.flatnonzero(mask.to_numpy() & (~df["is_imputed_metrics"].fillna(False).to_numpy()))
+        if fam in NEEDS_METRIC:
+            mask = mask & (~df["is_imputed_metrics"].fillna(False))
+        idx = np.flatnonzero(mask.to_numpy())
         if len(idx) == 0:
             continue
         t = df["open_time_ms"].to_numpy()[idx]
