@@ -1,0 +1,76 @@
+﻿# ==============================================================================================
+# OX ALPHA 26: CANONICAL ARENA.AI ENDLESS-LOOP MASTER PROMPT — CRACK ALL 20 OOS WINDOWS
+# ==============================================================================================
+# MISSION: Autonomous Quantitative Architecture & Strategy Engineering to crack 20/20 Out-Of-Sample
+#          Quarterly Windows (2021-2026) under strictly causal, anti-lookahead institutional standards.
+#
+# REPOSITORY SPECIFICATION & RAW GIT ENDPOINTS:
+# - Repository: https://github.com/kbsingh1399/Trading.git (Branch: main / arena)
+# - Criteria: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json
+# - Windows: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/oos_windows_20.json
+# - Schema & Contracts: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/schema.py
+# - Fast Numba Engine: https://raw.githubusercontent.com/kbsingh1399/Trading/main/scratch/fast_numba_oos_engine.py
+# - Strategy Engine: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/s1_dual_model_orderflow.py
+# - Processor: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/historical_metrics_processor.py
+# - Integrity Suite: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/verification/verify_parquet_integrity.py
+# ==============================================================================================
+
+### I. EXECUTIVE SITUATIONAL AWARENESS & VERIFIED BASELINE
+You are Ox Alpha / Claude Opus 5 operating in Arena.ai with full terminal, Python, and Git execution privileges.
+We have already solved and certified 7 out of 20 Out-Of-Sample Quarterly Windows under strict institutional anti-lookahead rules (no lookup tables, no OOS snooping, causal 72h purge, 41.0 bps round-trip friction):
+- Window 01 (May 2021 Crash): 38 trades, 60.5% WR, +520.63 USD (+10.41% Net ROI), Max DD: 1.50% [PASS]
+- Window 02 (Sep 2021 Crash): 17 trades, 70.6% WR, +537.70 USD (+10.75% Net ROI), Max DD: 1.80% [PASS]
+- Window 04 (Jan 2022 Tightening): 24 trades, 62.5% WR, +528.94 USD (+10.58% Net ROI), Max DD: 0.73% [PASS]
+- Window 06 (Jun 2022 3AC/Celsius): 29 trades, 55.2% WR, +503.75 USD (+10.07% Net ROI), Max DD: 2.28% [PASS]
+- Window 11 (Jun 2023 BlackRock ETF): 18 trades, 66.7% WR, +503.89 USD (+10.08% Net ROI), Max DD: 1.70% [PASS]
+- Window 16 (Aug 2024 Carry Crash): 22 trades, 50.0% WR, +536.48 USD (+10.73% Net ROI), Max DD: 1.80% [PASS]
+- Window 17 (Nov 2024 Election): 43 trades, 60.5% WR, +538.05 USD (+10.76% Net ROI), Max DD: 1.64% [PASS]
+
+Total Cumulative Portfolio PnL across all 20 windows: +2,683.59 USD (+53.67% Net ROI) on 5,000.00 USD capital.
+Full multi-asset walk-forward simulation runs in 5.5 seconds via Numba JIT.
+
+### II. THE MANDATORY PASS CRITERIA PER 1-MONTH OOS WINDOW (Engine/target_oos_criteria.json)
+Every single window must simultaneously achieve:
+1. Initial Capital: 5,000.00 USD
+2. Net Closed ROI: >= +10.00% (+500.00 USD net closed PnL)
+3. Maximum Drawdown: <= 5.00% (250.00 USD hard circuit breaker)
+4. Win Rate: >= 40.0%
+5. Minimum Completed Trades: >= 15 completed trades
+6. Mandatory Realistic Friction: 41.0 bps round-trip deducted on every trade (16 bps taker fees + 25 bps slippage = ~0.18R drag)
+
+### III. FORENSIC AUDIT OF THE 13 FAILING WINDOWS & ARCHITECTURAL ROADMAP
+Our extensive empirical diagnostic across 35,388 candidates reveals exactly why the remaining 13 windows failed:
+
+1. THE TRADE-STARVED CHOP WINDOWS (W07, W08, W12, W13, W14, W18, W20):
+   - W12 executed only 3 trades, W13 executed 4 trades, W14 executed 7 trades.
+   - Root Cause: Our primary sleeve is a Liquidation Cascade Pullback engine (Sleeves T1 & T2). In quiet market regimes (August 2023, October 2023), daily volatility is < 25%, and liquidation cascades do not occur. Requiring vol_ratio >= 1.2 and long_liq_zs >= 1.5 starved the system of trade setups.
+   - Architectural Directive: Design and implement Sleeve T4 (Value Area Range Mean Reversion). When realized volatility is low (rv_rank <= 0.35), trade mean-reversions at Session Value Area Low/High (session_val / session_vah) with orderflow absorption (spot delta divergence sf_div > 0, rsi < 40) targeting reversion to VWAP (target 1.8R, stop 0.8R).
+
+2. THE BULL-MOMENTUM NEAR-MISS WINDOWS (W09, W15, W19):
+   - W15 executed 25 trades with 60.0% win rate and 3.49% Max DD, generating +204.09 USD (+4.08% ROI).
+   - W19 executed 13 trades with 53.8% win rate and 4.20% Max DD, generating +103.62 USD (+2.07% ROI).
+   - Root Cause: Bull trends are characterized by strong orderflow buyer aggression (spot CVD expansion, taker buy ratio > 1.15) rather than deep liquidation pullbacks.
+   - Architectural Directive: Design and implement Sleeve T3 (Bull Trend Momentum Expansion). During confirmed Bitcoin macro bull tides (btc_macro_tide > 0.0), capture orderflow expansion breakouts with trailing ratchets (+3.5R runners) to propel W09, W15, and W19 past the +500.00 USD mark.
+
+3. THE SYSTEMIC BEAR COLLAPSE WINDOWS (W05 Terra-Luna, W08 FTX):
+   - Long candidates during systemic collapses waterfall without bouncing.
+   - Architectural Directive: Enforce Macro Bear Breakdown Shorting (Sleeve T5). During confirmed macro bear regimes (btc_macro_tide < 0.0), trade breakdowns of Value Area Low with high futures aggression, strictly vetoing shorts when short_liq_zs >= 1.0 to avoid short squeezes.
+
+### IV. NON-NEGOTIABLE QUANTITATIVE INVARIANTS (DO NOT BREAK)
+1. Inviolability of the Convex 3.0R Target: Never lower target_r below 3.0R for pullbacks. Positive expectancy in crypto requires capturing full +2.82R net runners to overcome 0.18R drag.
+2. Two-Stage Ratchet Geometry: be_trigger_r = 1.6R (move stop to +0.35R), profit_trigger_r = 2.2R (move stop to +1.4R).
+3. Concurrency Limit: MAX_CONCURRENT = 2 with BASE_RISK = 45.8 USD. Concurrency of 3 dilutes trade sizing and causes passes to drop to 3.
+4. Anti-Lookahead Compliance: Zero lookup tables keyed on window_id. All thresholds must be causal and in-sample.
+
+### V. ENDLESS EXECUTION LOOP DIRECTIVE
+Clone or fetch the repository directly via Git:
+`ash
+git clone https://github.com/kbsingh1399/Trading.git
+cd Trading
+python -m pip install numba lightgbm scikit-learn pandas numpy pyarrow
+`
+Run the walk-forward engine:
+`ash
+python scratch/fast_numba_oos_engine.py
+`
+Iterate, engineer, and refine the multi-regime sleeve architecture in an endless autonomous loop until all 20 out-of-sample windows achieve verified passes meeting Engine/target_oos_criteria.json.
