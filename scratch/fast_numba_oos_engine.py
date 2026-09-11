@@ -515,12 +515,12 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
                     risk_amt = min(10.0, max(4.0, cushion * 0.20))
                 elif current_profit >= 380.0:
                     # Transition risk scaling between 380 USD and 500 USD
-                    risk_amt = 26.0
+                    risk_amt = 23.8
                 elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses >= 2:
                     risk_amt = 14.0
                 else:
                     conf_mult = 1.20 if prob >= 0.50 else 1.0
-                    base_s = 45.0 * conf_mult
+                    base_s = 45.8 * conf_mult
                     if current_profit >= 100.0:
                         risk_amt = min(70.0, base_s + current_profit * 0.08)
                     else:

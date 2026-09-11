@@ -50,7 +50,7 @@ class InstitutionalDualModelEngine:
     def __init__(
         self,
         capital: float = 5000.0,
-        base_risk: float = 45.0,
+        base_risk: float = 45.8,
         house_risk_max: float = 70.0,
         defense_risk: float = 14.0,
         milestone_risk: float = 25.0,
@@ -195,7 +195,7 @@ class InstitutionalDualModelEngine:
                     risk_amt = min(10.0, max(4.0, cushion * 0.20))
                 elif current_profit >= 380.0:
                     # Transition risk scaling between 380 USD and 500 USD
-                    risk_amt = 26.0
+                    risk_amt = 23.8
                 elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses >= 2:
                     risk_amt = self.defense_risk
                 else:
