@@ -31,8 +31,15 @@ audited and rejected per LUNA's zero-leak mandate.
 |------------------------------------------|-----------------|--------------|------|
 | v1 baseline (suite + LGBM classifier)    | −4,458.45 USD   | 1/20         | 0    |
 | v2 (suite+INV+PB, regressor, g48)        | −1,221.40 USD   | 4/20         | 0    |
-| v2 champion (g96_24_10, floor0, depth3)  | **−365.97 USD** | 4/20         | 0    |
+| v2 champion (g96_24_10, floor0, depth3)  | −365.97 USD     | 4/20         | 0    |
+| upstream hybrid (Ridge 60/LGBM 40, 460cce7) | **−225.38 USD** | 7/20      | 0    |
 | Trend-harvest raw (wide geo, no ML)      | all-negative    | 0–1/20       | —    |
+
+Independent convergent check: the upstream hybrid ensemble (merged from new
+main mid-session) lands at −4.51% aggregate with best windows W17 +19.44%
+(MDD 4.94% > 4.5% limit, 12 trades < 15), W04 +7.00%, W15 +7.22% — two
+independently-built engines, same 0/20 wall. Best single-configuration
+observed outcome: upstream hybrid, −225.38 USD.
 
 Champion config detail: geometry hz=96, target 2.4R, stop 1.0R, BE ratchet
 +0.75R→+0.35R, profit lock +1.40R→+0.80R, 24-bar <+0.2R time decay, 0.25R

@@ -1,0 +1,48 @@
+[Numba Core] JIT Compiler initialized and warm in 1380.2 ms.
+
+Processing 11 institutional perpetual assets using Numba JIT Ratchet Engine...
+  [BTCUSDT ] Numba Labeled: 211,189 bars -> 4,229 candidates in 343.08 ms
+  [ETHUSDT ] Numba Labeled: 211,195 bars -> 3,914 candidates in 0.89 ms
+  [XRPUSDT ] Numba Labeled: 211,201 bars -> 2,994 candidates in 0.78 ms
+  [BNBUSDT ] Numba Labeled: 211,206 bars -> 3,118 candidates in 0.80 ms
+  [DOGEUSDT] Numba Labeled: 211,208 bars -> 3,174 candidates in 0.79 ms
+  [ADAUSDT ] Numba Labeled: 211,211 bars -> 2,880 candidates in 0.71 ms
+  [TRXUSDT ] Numba Labeled: 211,213 bars -> 2,419 candidates in 0.76 ms
+  [LINKUSDT] Numba Labeled: 211,214 bars -> 3,180 candidates in 0.85 ms
+  [DOTUSDT ] Numba Labeled: 211,220 bars -> 3,212 candidates in 0.87 ms
+  [LTCUSDT ] Numba Labeled: 211,221 bars -> 3,206 candidates in 0.77 ms
+  [BCHUSDT ] Numba Labeled: 211,226 bars -> 3,062 candidates in 0.88 ms
+
+Completed Multi-Asset Numba Compilation: 35,388 candidates in 3.72 seconds!
+=============================================================================================================================
+FAST NUMBA-POWERED WALK-FORWARD SIMULATION (ALL 20 OOS WINDOWS - TRIPLE SLEEVE + QUANTILE CALIBRATION)
+=============================================================================================================================
+W#  | Window Name                            | Candidates | Trades | Win Rate | Net PnL     | Net ROI   | Max DD  | Verdict
+-----------------------------------------------------------------------------------------------------------------------------
+W01 | May 2021 Great Liquidation Crash       | 494        | 30     |   56.7%  |    +17.25 USD |   +0.34% |  3.85% | FAIL  
+W02 | September 2021 El Salvador Flash Crash | 513        | 17     |   52.9%  |     +5.92 USD |   +0.12% |  3.50% | FAIL  
+W03 | November 2021 Cycle Peak Reversal      | 484        | 15     |   40.0%  |   -143.16 USD |   -2.86% |  4.73% | FAIL  
+W04 | January 2022 Fed Macro Tightening      | 421        | 25     |   60.0%  |   +350.10 USD |   +7.00% |  3.95% | FAIL  
+W05 | May 2022 Terra-Luna Systemic Shock     | 421        | 6      |   16.7%  |   -240.77 USD |   -4.82% |  4.83% | FAIL  
+W06 | June 2022 3AC & Celsius Capitulation   | 399        | 35     |   51.4%  |    -53.11 USD |   -1.06% |  3.87% | FAIL  
+W07 | September 2022 ETH Merge Chop & Grind  | 457        | 11     |   27.3%  |   -234.09 USD |   -4.68% |  4.68% | FAIL  
+W08 | November 2022 FTX Collapse Bottom      | 498        | 6      |    0.0%  |   -247.45 USD |   -4.95% |  4.95% | FAIL  
+W09 | January 2023 Bullish Short Squeeze Rec | 672        | 17     |   58.8%  |    +23.40 USD |   +0.47% |  2.99% | FAIL  
+W10 | March 2023 SVB Bank Run & USDC Depeg   | 509        | 18     |   33.3%  |   -171.59 USD |   -3.43% |  4.83% | FAIL  
+W11 | June 2023 BlackRock Spot ETF Momentum  | 517        | 7      |   28.6%  |   -172.86 USD |   -3.46% |  4.91% | FAIL  
+W12 | August 2023 Mid-Summer Flash Liquidati | 467        | 3      |   33.3%  |   -129.50 USD |   -2.59% |  2.76% | FAIL  
+W13 | October 2023 Uptober Spot ETF Ignition | 487        | 3      |   33.3%  |   -122.91 USD |   -2.46% |  2.46% | FAIL  
+W14 | January 2024 Spot ETF Approval Shakeou | 468        | 7      |   42.9%  |    -85.48 USD |   -1.71% |  4.61% | FAIL  
+W15 | March 2024 Pre-Halving All-Time High R | 479        | 23     |   65.2%  |   +360.92 USD |   +7.22% |  2.55% | FAIL  
+W16 | August 2024 Global Carry Trade Liquida | 490        | 15     |   40.0%  |    +31.33 USD |   +0.63% |  4.40% | FAIL  
+W17 | November 2024 US Election Mega Breakou | 484        | 12     |   66.7%  |   +972.09 USD |  +19.44% |  4.94% | FAIL  
+W18 | February 2025 Post-Inauguration Consol | 379        | 9      |   33.3%  |   -235.54 USD |   -4.71% |  4.82% | FAIL  
+W19 | July 2025 Mid-Year Volatility Expansio | 494        | 20     |   50.0%  |    +95.41 USD |   +1.91% |  4.33% | FAIL  
+W20 | March 2026 Late-Cycle Microstructure S | 521        | 7      |   14.3%  |   -245.35 USD |   -4.91% |  4.91% | FAIL  
+=============================================================================================================================
+NUMBA ENGINE BENCHMARK SUMMARY:
+  Total Walk-Forward Execution Time: 4.85 seconds (across 20 OOS models)
+  Total Trades Taken               : 286
+  Total Cumulative PnL             : -225.38 USD (Net ROI: -4.51%)
+  Criteria Compliant Windows Passed: 0 / 20
+=============================================================================================================================
