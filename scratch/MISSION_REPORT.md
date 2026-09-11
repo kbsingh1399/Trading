@@ -177,3 +177,12 @@ Levers that would change the answer (unchanged from v1 report): (1) lower fricti
   (L2 book, trade tapes, cross-exchange basis, spot legs for funding arb), (b) friction
   model change, (c) criteria change (horizon/trade-floor/aggregate accounting),
   (d) longer history with different regime mixes.
+
+### Tail-compression diagnostic (final falsification pass)
+Conditioning SURV_W/M candidates on vol-compression at entry (atr_ratio, volume_ratio,
+rsi, xs_rank, dist-to-90d-high; n=23.5k per quintile): all bins sit at -0.11..-0.24R net,
+tail-mass P(r>2R) 5.0-8.5% everywhere (best bin: dist90hi-high, -0.114R net). The
+"compressed spring" subset (atr<0.85 & volume>1.5) is -0.231R — compression does NOT
+separate tails. Symbol-level: all 18 symbols net-negative (SOL -0.087R best, LTC -0.302R
+worst). Confirms: no scalar conditioning in this feature space carries the tail signal the
+oracle pricing proves is necessary.
