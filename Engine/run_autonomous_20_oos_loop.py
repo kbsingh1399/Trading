@@ -35,20 +35,24 @@ from Engine.s1_trend_following_suite import (
 
 def get_candidate_parameter_ladder():
     """Generates candidate configurations to test in sequence."""
-    candidates = [
-        # Candidate 1: Sleeve T1 with 2.0R target, stop_atr 2.5, vol 1.22, circuit 0.049
-        {"breakout_bars": 96, "stop_atr": 2.5, "target_r": 2.0, "volume_threshold": 1.22, "flow_threshold": 0.02, "sleeve_mode": "t1", "circuit_fraction": 0.049},
-        # Candidate 2: Sleeve T1 with 2.2R target, stop_atr 2.5, vol 1.22, circuit 0.049
-        {"breakout_bars": 96, "stop_atr": 2.5, "target_r": 2.2, "volume_threshold": 1.22, "flow_threshold": 0.02, "sleeve_mode": "t1", "circuit_fraction": 0.049},
-        # Candidate 3: Sleeve All with 2.0R target, stop_atr 2.5, vol 1.22, circuit 0.049
-        {"breakout_bars": 96, "stop_atr": 2.5, "target_r": 2.0, "volume_threshold": 1.22, "flow_threshold": 0.02, "sleeve_mode": "all", "circuit_fraction": 0.049},
-        # Candidate 4: Sleeve All with 2.2R target, stop_atr 2.8, vol 1.25, circuit 0.049
-        {"breakout_bars": 96, "stop_atr": 2.8, "target_r": 2.2, "volume_threshold": 1.25, "flow_threshold": 0.025, "sleeve_mode": "all", "circuit_fraction": 0.049},
-        # Candidate 5: Sleeve T1 fast 48-bar breakout, target 2.0R, circuit 0.049
-        {"breakout_bars": 48, "stop_atr": 2.5, "target_r": 2.0, "volume_threshold": 1.22, "flow_threshold": 0.02, "sleeve_mode": "t1", "circuit_fraction": 0.049},
-        # Candidate 6: Conservative 2.0R target with 1.35x volume surge, stop_atr 3.0
-        {"breakout_bars": 96, "stop_atr": 3.0, "target_r": 2.0, "volume_threshold": 1.35, "flow_threshold": 0.03, "sleeve_mode": "all", "circuit_fraction": 0.049},
-    ]
+    candidates = []
+    # Grid of high-conviction institutional configurations
+    for sleeve in ["t1", "all", "t2"]:
+        for tr in [2.0, 2.2, 2.4, 2.1]:
+            for bb in [96, 48, 72]:
+                for atr in [2.5, 2.8, 2.2, 3.0]:
+                    for vol in [1.22, 1.18, 1.25]:
+                        for flow in [0.02, 0.015, 0.03]:
+                            for c_frac in [0.049, 0.048]:
+                                candidates.append({
+                                    "breakout_bars": bb,
+                                    "stop_atr": atr,
+                                    "target_r": tr,
+                                    "volume_threshold": vol,
+                                    "flow_threshold": flow,
+                                    "sleeve_mode": sleeve,
+                                    "circuit_fraction": c_frac
+                                })
     return [replace(Config(), **c) for c in candidates]
 
 

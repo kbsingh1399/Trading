@@ -248,7 +248,7 @@ def build_signals(f: pd.DataFrame, btc: pd.DataFrame, cfg: Config) -> pd.DataFra
     out = f.copy()
     out["signal"] = np.where(l & ~s, 1, np.where(s & ~l, -1, 0)).astype(np.int8)
     out["sleeve"] = np.where(out.signal > 0, sleeve_l, np.where(out.signal < 0, sleeve_s, 0))
-    out["score"] = (f.hurst * 10.0 + f.flow.abs() * f.volume_rel.clip(upper=10) + f.slope200.abs().clip(upper=10) * 0.05).fillna(0)
+    out["score"] = (f.flow.abs() * f.volume_rel.clip(upper=10) + f.slope200.abs().clip(upper=10) * 0.05).fillna(0)
     out["stop_distance"] = np.maximum(f.atr * cfg.stop_atr, f.close * cfg.min_stop_fraction)
     return out
 
