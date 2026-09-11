@@ -26,4 +26,4 @@ fam          tag    geo     n     net_r   gross_r        wr       pf   avg_bars
  T9     oi_break   FAST 47098 -0.788824 -0.538824 10.560958 0.351823   9.148308
  T7     orb_fast   FAST 27214 -0.830667 -0.580667 11.637393 0.313262   9.942971
  T4     nr7_fast   FAST  7017 -1.329696 -1.079696  5.999715 0.205165   8.673365
-[battery] done in 23s → /home/user/Trading/scratch/battery_pools_v2_taker41
+[battery] done in 6s → /home/user/Trading/scratch/battery_pools_v2_taker41

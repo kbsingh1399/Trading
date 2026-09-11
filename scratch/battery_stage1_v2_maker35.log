@@ -26,4 +26,4 @@ fam          tag    geo     n     net_r   gross_r        wr       pf   avg_bars
  T8     btc_lead   FAST 45231 -0.634743 -0.384743 15.047202 0.394861   9.292565
  T7     orb_fast   FAST 27132 -0.696423 -0.446423 13.828689 0.373463   9.725306
  T4     nr7_fast   FAST  6991 -1.114231 -0.864231  6.966099 0.256794   8.261908
-[battery] done in 4s → /home/user/Trading/scratch/battery_pools_v2_maker35
+[battery] done in 5s → /home/user/Trading/scratch/battery_pools_v2_maker35

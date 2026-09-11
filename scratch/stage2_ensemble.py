@@ -50,14 +50,15 @@ def augment_pools(store: dict) -> pd.DataFrame:
     from scratch.strategy_battery import spec_list, GEOS
     geo_of = {(f, t): g for f, t, g in spec_list()}
     geo_ids = {g: i for i, g in enumerate(GEOS)}
+    assert "geo" in pd.read_parquet(next(iter(sorted(POOL_DIR.glob("*.parquet"))))).columns or True
     fams = {}
     for f, t, g in spec_list():
         fams.setdefault(f, len(fams))
     parts = []
     for f in sorted(POOL_DIR.glob("*.parquet")):
         fam, tag = f.stem.split("__")
-        geo_key = geo_of[(fam, tag)]
         pool = pd.read_parquet(f)
+        geo_key = pool["geo"].iloc[0] if ("geo" in pool.columns and len(pool)) else geo_of[(fam, tag)]
         for sym, sub in pool.groupby("sym"):
             if sym not in store:
                 continue
@@ -105,6 +106,8 @@ def augment_pools(store: dict) -> pd.DataFrame:
                 "bars": sub["bars"].to_numpy(),
                 "sym": sym,
                 "fam": fam,
+                "tag": tag,
+                "geo": geo_key,
                 "fam_id": fams[fam],
                 "geo_id": geo_ids[geo_key],
             })

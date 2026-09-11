@@ -34,7 +34,10 @@ REPO = Path(__file__).resolve().parent.parent
 DATA_DIR = REPO / "Engine" / "binance_backtesting_data"
 CACHE = REPO / "scratch" / "cache_battery_v2.pkl"
 PROFILE = os.environ.get("PROFILE", "maker")
+GEO_OVR_EARLY = os.environ.get("GEO_OVR", "")
 POOL_DIR = REPO / "scratch" / f"battery_pools_v2_{PROFILE}"
+if GEO_OVR_EARLY:
+    POOL_DIR = Path(str(POOL_DIR) + f"_{GEO_OVR_EARLY}")
 RESULTS_CSV = REPO / "scratch" / f"battery_stage1_results_v2_{PROFILE}.csv"
 
 FRICTION_R = 0.25
@@ -48,6 +51,8 @@ GEOS = {
     "SURV_M": (672,  0.90, 0.10, 0,  0.0,   1.0, 1.5, 48, 896.0),
     "SURV_W": (1344, 1.00, 0.15, 0,  0.0,   1.2, 1.8, 96, 3584.0),
     "SURV_WD": (1344, 1.00, 0.15, 672, 0.50, 1.2, 1.8, 96, 3584.0),
+    "SURV_L": (2016, 1.10, 0.20, 0, 0.0, 1.4, 2.2, 144, 5376.0),
+    "SURV_XL": (2688, 1.25, 0.25, 0, 0.0, 1.6, 2.5, 192, 7168.0),
 }
 
 
@@ -314,8 +319,11 @@ FEE_PROFILES = {
 }
 FEE_PROFILE = FEE_PROFILES.get(PROFILE, FEE_PROFILES["maker25"])
 
+GEO_OVR = os.environ.get("GEO_OVR", "")
 def spec_candidates(store: dict, fam: str, tag: str) -> pd.DataFrame:
     geo_key = dict(((f, t), g) for f, t, g in spec_list())[(fam, tag)]
+    if GEO_OVR and geo_key.startswith("SURV"):
+        geo_key = GEO_OVR
     horizon, be_arm, be_lock, decay_bars, decay_min, trail_arm, trail_k, cd, r_scale = GEOS[geo_key]
     r_mult = float(np.sqrt(r_scale / 14.0))
     parts = []
@@ -341,7 +349,8 @@ def spec_candidates(store: dict, fam: str, tag: str) -> pd.DataFrame:
         live = r > -900
         idx_l = idx[live]
         parts.append(pd.DataFrame({"t": df["open_time_ms"].to_numpy()[idx_l],
-                                   "r": r[live], "side": side[idx_l], "bars": bars[live], "sym": sym}))
+                                   "r": r[live], "side": side[idx_l], "bars": bars[live], "sym": sym,
+                                   "geo": geo_key}))
         del live
     if not parts:
         return pd.DataFrame(columns=["t", "r", "side", "bars", "sym"])
@@ -363,7 +372,10 @@ def main():
     POOL_DIR.mkdir(parents=True, exist_ok=True)
     print(f"[battery] PROFILE={PROFILE} fee={FEE_PROFILE}", flush=True)
     print(f"{'FAM':<4} | {'tag':<13} | {'geo':<7} | {'n':>7} | {'netR':>8} | {'grossR':>8} | {'WR%':>6} | {'pf_net':>7} | {'avgbars':>8}", flush=True)
+    surv_only = os.environ.get("SURV_ONLY", "0") == "1"
     for fam, tag, geo_key in spec_list():
+        if surv_only and not geo_key.startswith("SURV"):
+            continue
         pool = spec_candidates(store, fam, tag)
         pool.to_parquet(POOL_DIR / f"{fam}__{tag}.parquet", index=False)
         n = len(pool)
