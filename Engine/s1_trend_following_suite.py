@@ -208,8 +208,8 @@ def build_signals(f: pd.DataFrame, btc: pd.DataFrame, cfg: Config) -> pd.DataFra
     b = btc.set_index("open_time_ms").reindex(f.open_time_ms)
     b.index = f.index
     macro_ok = b.age.ge(cfg.warmup_bars) & b.atr_z.le(cfg.macro_z_limit)
-    macro_long = macro_ok & (b.close > b.e2880) & (b.e200 > b.e2880)
-    macro_short = macro_ok & (b.close < b.e2880) & (b.e200 < b.e2880)
+    macro_long = macro_ok & (b.close > b.e2880) & (b.e200 > b.e2880) & (b.slope200 > 0)
+    macro_short = macro_ok & (b.close < b.e2880) & (b.e200 < b.e2880) & (b.slope200 < 0)
     long_trend = (f.e50 > f.e200) & (f.e200 > f.e800) & (f.slope200 > 0)
     short_trend = (f.e50 < f.e200) & (f.e200 < f.e800) & (f.slope200 < 0)
     flow_l = f.flow > cfg.flow_threshold
@@ -248,7 +248,7 @@ def build_signals(f: pd.DataFrame, btc: pd.DataFrame, cfg: Config) -> pd.DataFra
     out = f.copy()
     out["signal"] = np.where(l & ~s, 1, np.where(s & ~l, -1, 0)).astype(np.int8)
     out["sleeve"] = np.where(out.signal > 0, sleeve_l, np.where(out.signal < 0, sleeve_s, 0))
-    out["score"] = (f.flow.abs() * f.volume_rel.clip(upper=10) + f.slope200.abs().clip(upper=10) * 0.05).fillna(0)
+    out["score"] = (f.hurst * 10.0 + f.flow.abs() * f.volume_rel.clip(upper=10) + f.slope200.abs().clip(upper=10) * 0.05).fillna(0)
     out["stop_distance"] = np.maximum(f.atr * cfg.stop_atr, f.close * cfg.min_stop_fraction)
     return out
 

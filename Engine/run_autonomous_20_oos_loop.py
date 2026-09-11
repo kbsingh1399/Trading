@@ -14,6 +14,7 @@ from pathlib import Path
 import sys
 import time
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import pandas as pd
 
 from Engine.s1_trend_following_suite import (
@@ -35,18 +36,18 @@ from Engine.s1_trend_following_suite import (
 def get_candidate_parameter_ladder():
     """Generates candidate configurations to test in sequence."""
     candidates = [
-        # Baseline calibrated institutional configuration: 2.2R target, tight ratchet
-        {"breakout_bars": 96, "stop_atr": 3.0, "target_r": 2.2, "volume_threshold": 1.30, "flow_threshold": 0.04, "sleeve_mode": "all", "ratchet": True},
-        # Candidate 2: Higher selectivity on volume, target 2.1R
-        {"breakout_bars": 96, "stop_atr": 3.0, "target_r": 2.1, "volume_threshold": 1.35, "flow_threshold": 0.04, "sleeve_mode": "all", "ratchet": True},
-        # Candidate 3: Target 2.4R with wider ATR stop
-        {"breakout_bars": 96, "stop_atr": 3.2, "target_r": 2.4, "volume_threshold": 1.30, "flow_threshold": 0.035, "sleeve_mode": "all", "ratchet": True},
-        # Candidate 4: Fast breakout 48-bars, target 2.2R
-        {"breakout_bars": 48, "stop_atr": 2.8, "target_r": 2.2, "volume_threshold": 1.30, "flow_threshold": 0.04, "sleeve_mode": "all", "ratchet": True},
-        # Candidate 5: Sleeve T1 pure trend breakout
-        {"breakout_bars": 96, "stop_atr": 3.0, "target_r": 2.2, "volume_threshold": 1.25, "flow_threshold": 0.04, "sleeve_mode": "t1", "ratchet": True},
-        # Candidate 6: Conservative 2.0R target with 1.4x volume surge
-        {"breakout_bars": 96, "stop_atr": 3.0, "target_r": 2.0, "volume_threshold": 1.40, "flow_threshold": 0.045, "sleeve_mode": "all", "ratchet": True},
+        # Candidate 1: Sleeve T1 with 2.0R target, stop_atr 2.5, vol 1.22, circuit 0.049
+        {"breakout_bars": 96, "stop_atr": 2.5, "target_r": 2.0, "volume_threshold": 1.22, "flow_threshold": 0.02, "sleeve_mode": "t1", "circuit_fraction": 0.049},
+        # Candidate 2: Sleeve T1 with 2.2R target, stop_atr 2.5, vol 1.22, circuit 0.049
+        {"breakout_bars": 96, "stop_atr": 2.5, "target_r": 2.2, "volume_threshold": 1.22, "flow_threshold": 0.02, "sleeve_mode": "t1", "circuit_fraction": 0.049},
+        # Candidate 3: Sleeve All with 2.0R target, stop_atr 2.5, vol 1.22, circuit 0.049
+        {"breakout_bars": 96, "stop_atr": 2.5, "target_r": 2.0, "volume_threshold": 1.22, "flow_threshold": 0.02, "sleeve_mode": "all", "circuit_fraction": 0.049},
+        # Candidate 4: Sleeve All with 2.2R target, stop_atr 2.8, vol 1.25, circuit 0.049
+        {"breakout_bars": 96, "stop_atr": 2.8, "target_r": 2.2, "volume_threshold": 1.25, "flow_threshold": 0.025, "sleeve_mode": "all", "circuit_fraction": 0.049},
+        # Candidate 5: Sleeve T1 fast 48-bar breakout, target 2.0R, circuit 0.049
+        {"breakout_bars": 48, "stop_atr": 2.5, "target_r": 2.0, "volume_threshold": 1.22, "flow_threshold": 0.02, "sleeve_mode": "t1", "circuit_fraction": 0.049},
+        # Candidate 6: Conservative 2.0R target with 1.35x volume surge, stop_atr 3.0
+        {"breakout_bars": 96, "stop_atr": 3.0, "target_r": 2.0, "volume_threshold": 1.35, "flow_threshold": 0.03, "sleeve_mode": "all", "circuit_fraction": 0.049},
     ]
     return [replace(Config(), **c) for c in candidates]
 
