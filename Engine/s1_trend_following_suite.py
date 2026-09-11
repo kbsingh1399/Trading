@@ -30,7 +30,8 @@ ALTCOINS = tuple(x + "USDT" for x in (
     "SUI", "NEAR", "DOT", "LTC", "BCH", "APT", "OP", "ARB"))
 MASTER_COLUMNS = ["open_time_ms", "open", "high", "low", "close", "volume_base",
                   "volume_quote", "future_cvd_15m", "session_vah", "session_val",
-                  "prev_day_vah", "prev_day_val", "funding_rate_pct"]
+                  "prev_day_vah", "prev_day_val", "funding_rate_pct",
+                  "basis_usd", "short_liq_zs", "ls_ratio_top", "ls_ratio_global"]
 
 
 @dataclass(frozen=True)
@@ -188,6 +189,36 @@ def prepare_features(master: pd.DataFrame, footprint: pd.DataFrame | None = None
     theta = -np.log((1.0 + b_slope).clip(lower=1e-4, upper=0.9999))
     f["ou_half_life"] = (np.log(2.0) / theta.replace(0, np.nan)).fillna(999.0)
 
+    # 4-Hour Macro Trend Anchor (3200 15m bars = 200 4h bars)
+    f["e200_4h"] = c.ewm(span=3200, adjust=False).mean()
+    f["slope200_4h"] = (f["e200_4h"] - f["e200_4h"].shift(64)) / f.atr.replace(0, np.nan)
+
+    # Basis Z-Score over rolling 48 hours
+    b_mean = f["basis_usd"].rolling(192, min_periods=48).mean()
+    b_std = f["basis_usd"].rolling(192, min_periods=48).std().replace(0, np.nan)
+    f["basis_zscore"] = ((f["basis_usd"] - b_mean) / b_std).fillna(0.0)
+
+    # Smart Money Top Account Disparity
+    f["smart_money_disparity"] = (f["ls_ratio_top"] - f["ls_ratio_global"]).fillna(0.0)
+
+    # Causal Markov 12h State Transition (480-bar lookback, 48-bar horizon)
+    ret12h = c.pct_change(48)
+    state = np.full(len(f), 1, dtype=np.int32)
+    state[ret12h >= 0.025] = 0
+    state[ret12h <= -0.025] = 2
+    s_curr = state[:-1]
+    s_next = state[1:]
+    trans_code = s_curr * 3 + s_next
+    trans_dummies = pd.get_dummies(pd.Series(trans_code)).reindex(columns=range(9), fill_value=0)
+    rolling_trans = trans_dummies.rolling(window=480, min_periods=480).sum().to_numpy()
+    delta_p = np.full(len(f), 0.0, dtype=np.float64)
+    for t_idx in range(482, len(f)):
+        counts = (rolling_trans[t_idx - 2] + 1.0).reshape((3, 3))
+        t_mat = counts / counts.sum(axis=1, keepdims=True)
+        curr_s = state[t_idx - 1]
+        delta_p[t_idx] = t_mat[curr_s, 0] - t_mat[curr_s, 2]
+    f["markov_delta_p"] = delta_p
+
     f["stack_buy"] = 0
     f["stack_sell"] = 0
     f["footprint_available"] = False
@@ -208,8 +239,8 @@ def build_signals(f: pd.DataFrame, btc: pd.DataFrame, cfg: Config) -> pd.DataFra
     b = btc.set_index("open_time_ms").reindex(f.open_time_ms)
     b.index = f.index
     macro_ok = b.age.ge(cfg.warmup_bars) & b.atr_z.le(cfg.macro_z_limit)
-    macro_long = macro_ok & (b.close > b.e2880) & (b.e200 > b.e2880) & (b.slope200 > 0)
-    macro_short = macro_ok & (b.close < b.e2880) & (b.e200 < b.e2880) & (b.slope200 < 0)
+    macro_long = macro_ok & (b.close > b.e200_4h) & (b.slope200_4h > 0) & (b.markov_delta_p >= -0.10)
+    macro_short = macro_ok & (b.close < b.e200_4h) & (b.slope200_4h < 0) & (b.markov_delta_p <= 0.10)
     long_trend = (f.e50 > f.e200) & (f.e200 > f.e800) & (f.slope200 > 0)
     short_trend = (f.e50 < f.e200) & (f.e200 < f.e800) & (f.slope200 < 0)
     flow_l = f.flow > cfg.flow_threshold
@@ -245,8 +276,10 @@ def build_signals(f: pd.DataFrame, btc: pd.DataFrame, cfg: Config) -> pd.DataFra
                 sleeve_l[l.to_numpy()] = n
                 sleeve_s[s.to_numpy()] = n
     valid = (f.age >= cfg.warmup_bars) & (f.volume_quote > 0)
-    l = valid & macro_long & (sleeve_l > 0)
-    s = valid & macro_short & (sleeve_s > 0)
+    long_veto = (b.basis_zscore > 1.8) | (b.smart_money_disparity < -0.5)
+    short_veto = (b.short_liq_zs >= 1.0)
+    l = valid & macro_long & (sleeve_l > 0) & (~long_veto.fillna(False).to_numpy())
+    s = valid & macro_short & (sleeve_s > 0) & (~short_veto.fillna(False).to_numpy())
     out = f.copy()
     out["signal"] = np.where(l & ~s, 1, np.where(s & ~l, -1, 0)).astype(np.int8)
     out["sleeve"] = np.where(out.signal > 0, sleeve_l, np.where(out.signal < 0, sleeve_s, 0))
