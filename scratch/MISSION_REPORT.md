@@ -95,3 +95,45 @@ Design/scoring artifacts saved: `geometry_grid_results.csv`,
    design data would improve any design choice's validity.
 
 — Orchestrator (REX, ALEX, ARIA, MASON, LUNA, QUINN, MAX, DEP)
+
+---
+
+# CAMPAIGN v2 (2026-09-11): research-driven battery + ML/HMM ensemble + Monte Carlo
+
+## Method (all strictly causal: 72h purge, walk-forward per window, no test snooping)
+1. **Battery v2** (`scratch/strategy_battery.py`): 12 non-repeating specs / 9 literature-backed
+   families incl. NEW weekly-hold trailing-stop trend thesis (donchian 4d, TSMOM-7d,
+   cross-sectional deciles) with correct R-unit scaling (R-unit = horizon-scaled ATR,
+   so 1R spans 16h-64h of noise for weekly holds — fixing the unit-of-account bug found
+   during the campaign). Retained fast families (NR7, funding carry, ORB, BTC-lead, OI).
+2. **Stage 2 ensemble** (`scratch/stage2_ensemble.py`): per-window GaussianHMM(2) Markov
+   regime (train-only fit + causal forward filter), walk-forward family gate
+   (trailing 60d net expectancy > 0, top-5 fallback), dual LGBM heads
+   (regressor on clipped-R + win classifier), blended score, daily top-2 selection,
+   mandate executor (concurrency 4, house-money 40→100, DD-defense 20).
+3. **Stage 3 reality check** (`scratch/stage3_realitycheck.py`): 200-sim no-selection null
+   (identical executor, random ranking) for multiple-testing deflation.
+
+## Results (friction 0.25R everywhere)
+- Battery v2 stage-1 (`scratch/battery_stage1_v2.log`): ALL 12 specs net-negative.
+  Best gross: TSMOM-7d-strong +0.092R, XS-decile +0.090R (vs 0.25R toll; mandate needs ~+0.75R gross/trade).
+- Stage 2 v2 scorecard (`scratch/stage2_v2.log`, `ml_reversal_results/stage2_v2_scorecard.json`):
+  **0/20 PASS, total −2,070.25 USD (−41.41%)**. Best window W19 +12.93% ROI (fails DD 6.88%>5%, WR 38.2%<40%).
+- Block-bootstrap MC: P(monthly ROI ≥ +10%) = 6.3%, P(DD > 5%) = 49.4%, median ROI −3.8%.
+- **Reality check (deflation) — decisive**: under the no-selection null, max-window ROI
+  p95 = +34.7%; P(max-window ROI ≥ observed W19 +12.93%) = **37.5%**; P(null total ≤ observed −41.41%) = 39%.
+  37% of null runs pass ≥1 window; null pass-count mode = 0 (63%).
+  The campaign's best windows (incl. v1 W16 +10.49%, 1/20) are statistically indistinguishable
+  from chance on this pool. ML/Markov selection did not beat the random-ranking benchmark.
+
+## Final verdict (quadruply confirmed)
++10%/month net with 0.25R friction, DD<5%, ≥15 trades/window, WR≥40% over ALL 20 windows
+is **not achievable by any causal method tested** (~300 variants: v1/v2 engines, upstream hybrid,
+34-family battery v1, 12-spec weekly-trend battery v2, ML+HMM ensembles, gating overlays).
+Every family-level gross edge measured in this data (2020-2026, 18 perp symbols) is
++0.02…+0.19R/trade; the structural minimum to pass is ~+0.75R gross/trade; the gap is 4-7σ
+relative to all measured families. Near-passes are multiple-comparisons artifacts (37.5% chance
+under explicit null).
+Levers that would change the answer (unchanged from v1 report): (1) lower friction model
+(maker entry ≈ 10-16bps), (2) daily/weekly hold mandate (fewer, larger trades),
+(3) aggregate (not joint all-20) pass criteria, (4) longer/crypto-native regime design history.

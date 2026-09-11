@@ -1,0 +1,32 @@
+{
+  "sims": 200,
+  "null_total_pnl_pct": {
+    "median": -35.30267837399339,
+    "p05": -69.3168351572483,
+    "p95": 12.308013275330943
+  },
+  "null_max_window_roi": {
+    "median": 10.058801254768705,
+    "p95": 34.7143988037024,
+    "p99": 103.6892713305068,
+    "max": 111.52618588383116
+  },
+  "null_pass_count_distribution": {
+    "0": 126,
+    "1": 58,
+    "2": 11,
+    "3": 4,
+    "4": 1
+  },
+  "observed": {
+    "v1_total_pct": -54.25,
+    "v1_best_window_roi": 10.49,
+    "v2_total_pct": -41.41,
+    "v2_best_window_roi": 12.93
+  },
+  "interpretation": null,
+  "P(null max-window ROI >= observed v1 10.49%)": 0.48,
+  "P(null max-window ROI >= observed v2 12.93%)": 0.375,
+  "P(null total <= v2 observed -41.41%)": 0.39,
+  "P(null total <= v1 observed -54.25%)": 0.185
+}
