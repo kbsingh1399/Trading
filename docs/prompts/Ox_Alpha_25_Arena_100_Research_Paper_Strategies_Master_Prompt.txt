@@ -1,0 +1,152 @@
+# ==============================================================================
+# ARENA.AI / CLAUDE OPUS: OX ALPHA 25 MASTER RESEARCH PAPER STRATEGY BENCHMARK
+# MISSION: SYSTEMATICALLY BACKTEST & VALIDATE STRATEGY ARCHETYPES FROM 100 PAPERS
+# ACROSS ALL 20 OUT-OF-SAMPLE (OOS) QUARTERS (2021Q1 - 2025Q4)
+# ==============================================================================
+# ⚠️ LIFE-OR-DEATH QUANTITATIVE DIRECTIVE:
+# THIS IS YOUR FINAL INSTITUTIONAL AUDIT ON ARENA.AI.
+# YOU ARE GIVEN ACCESS TO OUR CANONICAL REPOSITORY AND OUR CURATED CORPUS
+# OF 100 TOP-TIER QUANT TRADING RESEARCH PAPERS (arXiv / SSRN / Institutional).
+# YOUR MISSION: TRANSLATE, CODE, AND BACKTEST THE 6 CORE STRATEGY ARCHETYPES
+# DERIVED FROM THESE 100 PAPERS AGAINST ALL 20 OUT-OF-SAMPLE WINDOWS (2021-2025).
+# EVERY STRATEGY MUST SURVIVE REAL-WORLD EXCHANGE FRICTIONS (41 BPS TOTAL).
+# ==============================================================================
+
+## 1. EXECUTIVE MANDATE & DATASET PROVENANCE
+
+You are acting as the Head of Quantitative Research and Senior Portfolio Manager for an institutional multi-strategy hedge fund.
+You must ingest, synthesize, and benchmark our quantitative strategy corpus committed directly in:
+`https://github.com/kbsingh1399/Trading.git` (branch: `main`)
+
+### Target Dataset:
+- **Historical Data Location**: `Engine/binance_backtesting_data/`
+- **Asset Universe**: 18 Institutional Binance USDT-M Perpetuals:
+  `BTCUSDT, ETHUSDT, XRPUSDT, SOLUSDT, BNBUSDT, DOGEUSDT, ADAUSDT, TRXUSDT, LINKUSDT, AVAXUSDT, SUIUSDT, NEARUSDT, DOTUSDT, LTCUSDT, BCHUSDT, APTUSDT, OPUSDT, ARBUSDT`
+- **Data Depth**: 3,467,571 15-minute bars (2020 - 2026), 0 nulls, strictly monotonic timestamps.
+- **Dual Table Schema**:
+  1. `Master Parquet`: OHLCV, Spot/Futures CVD delta, Funding rates, Open Interest, Liquidations, Realized Volatility.
+  2. `Footprint Ladder Parquet`: Volume-by-price, Buy/Sell aggressor volume, Stacked buying/selling imbalances (3 consecutive levels), Delta Ratio.
+
+### 20 Out-Of-Sample Quarterly Windows (2021 - 2025):
+Defined in `Engine/oos_windows_20.json`:
+`https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/oos_windows_20.json`
+- W01: 2021Q1 (2021-01-01 to 2021-03-31) [Parabolic Crypto Bull Expansion]
+- W02: 2021Q2 (2021-04-01 to 2021-06-30) [May 2021 Leverage Liquidation Cascade]
+- W03: 2021Q3 (2021-07-01 to 2021-09-30) [Post-Crash Recovery & Alt Season]
+- W04: 2021Q4 (2021-10-01 to 2021-12-31) [ATH Blow-Off Top & Macro Transition]
+- W05: 2022Q1 (2022-01-01 to 2022-03-31) [Macro Bear Inception]
+- W06: 2022Q2 (2022-04-01 to 2022-06-30) [Terra/Luna & UST Death Spiral + Celsius De-peg]
+- W07: 2022Q3 (2022-07-01 to 2022-09-30) [Post-Crash Consolidation & Summer Chop]
+- W08: 2022Q4 (2022-10-01 to 2022-12-31) [FTX Collapse & Extreme Solvency Shock]
+- W09: 2023Q1 (2023-01-01 to 2023-03-31) [US Regional Bank Run / SVB De-peg Relief]
+- W10: 2023Q2 (2023-04-01 to 2023-06-30) [SEC Lawsuit Low-Vol Squeeze]
+- W11: 2023Q3 (2023-07-01 to 2023-09-30) [Aug 17 Flash Cascade & Range Exhaustion]
+- W12: 2023Q4 (2023-10-01 to 2023-12-31) [ETF Front-Run Breakout]
+- W13: 2024Q1 (2024-01-01 to 2024-03-31) [Spot ETF Approval Inflow Surge]
+- W14: 2024Q2 (2024-04-01 to 2024-06-30) [Bitcoin Halving Exhaustion & Chop]
+- W15: 2024Q3 (2024-07-01 to 2024-09-30) [Yen Carry Unwind / Aug 5 Liquidation V-Bottom]
+- W16: 2024Q4 (2024-10-01 to 2024-12-31) [US Election Super-Cycle Trend]
+- W17: 2025Q1 (2025-01-01 to 2025-03-31) [Institutional Post-Cycle Rotation]
+- W18: 2025Q2 (2025-04-01 to 2025-06-30) [Macro Volatility & Sovereign Debt Shocks]
+- W19: 2025Q3 (2025-07-01 to 2025-09-30) [Autumn Liquidity Drain]
+- W20: 2025Q4 (2025-10-01 to 2025-12-31) [Year-End Institutional Rebalancing]
+
+### Strict Pass Criteria per Quarter (Non-Negotiable):
+Defined in `Engine/target_oos_criteria.json`:
+`https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json`
+- Initial Account Capital: 5,000.00 USD
+- Net ROI per Quarter: >= +10.00% (+500.00 USD net)
+- Maximum Drawdown per Quarter: < 5.00% (225.00 USD hard circuit breaker)
+- Win Rate: >= 40.00%
+- Minimum Completed Trades: >= 15 trades per quarter
+- Profit Factor: >= 1.40
+- Real-World Frictions: 8 bps taker fee, 10 bps entry slippage, 15 bps exit slippage (mandatory 41 bps friction floor).
+- Zero Lookahead: In-sample calibration strictly causal ending 72h prior to quarter start. Fills on Bar j+1 open only.
+
+---
+
+## 2. THE 100 QUANT RESEARCH PAPERS COMPENDIUM
+
+We have committed the complete compendium of 100 top-tier research papers directly to our repository:
+`https://raw.githubusercontent.com/kbsingh1399/Trading/main/Quant_Knowledge/00_QUANT_RESEARCH_PAPERS_INDEX.md`
+
+All 100 papers distill into **6 Concrete Strategy Archetypes** that you must systematically evaluate:
+
+### ARCHETYPE 1: ORDER FLOW IMBALANCE (OFI) & HAWKES MICROSTRUCTURE
+- **Theoretical Reference**: Cont, Kukanov & Stoikov (2014); Bacry & Muzy (Hawkes LOB Dynamics); Papers 001, 002, 005, 006, 007, 009, 018.
+- **Mathematical Signal**:
+  Order Flow Imbalance across top-3 price levels:
+  OFI(t) = Sum_{k=1}^3 [ Delta V_bid^(k)(t) - Delta V_ask^(k)(t) ]
+  Hawkes Excitation Intensity:
+  lambda(t) = mu + Sum_{t_i < t} alpha * exp(-beta * (t - t_i))
+- **Entry Trigger**: High OFI Z-score (Z >= 1.80) coupled with Hawkes self-excitation surge (lambda >= 1.5 * mu) indicating institutional aggressive book sweeping.
+
+### ARCHETYPE 2: DYNAMIC COINTEGRATION & ORNSTEIN-UHLENBECK SPREAD ARBITRAGE
+- **Theoretical Reference**: Avellaneda & Lee (2010); Gatev et al. (2006); Papers 036, 037, 038, 040, 041, 045, 048, 050, 051.
+- **Mathematical Signal**:
+  Perpetual-to-Spot Basis / Cross-Cointegrated Residuals:
+  dX(t) = theta * (mu - X(t)) dt + sigma * dW(t)
+  OU Half-Life: t_half = ln(2) / theta
+- **Entry Trigger**: Spread deviation |Z_spread| >= 2.0 with confirmed stationary half-life (t_half <= 48 bars / 12 hours). Exit at mean reversion (|Z_spread| <= 0.20) or hard stop at 3.5 Z.
+
+### ARCHETYPE 3: TIME-SERIES MOMENTUM WITH CONTINUOUS DRAWDOWN BRAKES
+- **Theoretical Reference**: Moskowitz, Ooi, Pedersen (2012); Lempérière & Bouchaud (Two Centuries of Trend Following, 2014); Papers 071, 073, 074, 076, 077, 080, 085, 088, 089.
+- **Mathematical Signal**:
+  Sign-scaled Volatility Targeting:
+  r_tsmom(t) = sign(R_{t-k, t}) * (sigma_target / sigma_realized(t))
+  Continuous Drawdown-Modulated Feedback:
+  w(t) = w_base * max(0.0, 1.0 - (DD(t) / DD_max)^2)
+- **Entry Trigger**: Alignment of 4-hour 200 EMA slope with 15-minute channel breakout, scaled down dynamically as portfolio drawdown approaches 2.0% USD.
+
+### ARCHETYPE 4: INVENTORY-CONSTRAINED HIGH-FREQUENCY MARKET MAKING
+- **Theoretical Reference**: Avellaneda & Stoikov (2008); Guéant, Tapia & Manziadi (2012); Papers 003, 004, 011, 015, 023, 028, 030, 083, 087, 091.
+- **Mathematical Signal**:
+  Reservation Price Skew:
+  r(s, q, t) = s - q * gamma * sigma^2 * (T - t)
+  Optimal Half-Spread:
+  delta_a + delta_b = (2 / gamma) * ln(1 + gamma / kappa)
+- **Execution Mechanism**: Post passive limit bids and asks around fair reservation price. Fade inventory q aggressively to prevent inventory accumulation before volatility shocks.
+
+### ARCHETYPE 5: OPTIMAL EXECUTION & MARGIN LIQUIDATION CASCADE HARVESTING
+- **Theoretical Reference**: Almgren & Chriss (2000); Gatheral Square-Root Impact Law (2010); Papers 029, 039, 070, 098, 099, 100.
+- **Mathematical Signal**:
+  Forced Liquidation Exhaustion & Temporary Impact Dissipation:
+  Delta P_temp = eta * (V_liq / V_market)^0.5
+- **Entry Trigger**: Step into the order book only when long/short liquidation volume spikes to 99th percentile (long_liq_zs >= 2.5) and order flow delta reverses, capturing the elastic spring-back as temporary impact decays back to fundamental value.
+
+### ARCHETYPE 6: TRIPLE-BARRIER MACHINE LEARNING & META-LABELING
+- **Theoretical Reference**: Marcos López de Prado (Advances in Financial Machine Learning); Papers 005, 007, 010, 013, 044, 047, 053, 056, 077, 081.
+- **Mathematical Signal**:
+  Primary Model generates trend hypothesis; Secondary ML Meta-Labeler (shallow tree, depth <= 3) predicts the probability of reaching the upper +2.0R barrier before touching the -1.0R stop barrier within 24 bars:
+  P(Barrier = +2.0R | Features_t) >= 0.65
+- **Entry Trigger**: Only execute primary trend signals if meta-labeler confidence clears 65%, eliminating false breakouts during high-entropy regimes.
+
+---
+
+## 3. YOUR STEP-BY-STEP MISSION OBJECTIVES
+
+1. **Inspect Core Infrastructure**:
+   - Master Schema: `Engine/core/schema.py`
+   - Canonical Indicators: `Engine/core/canonical_indicators.py`
+   - Trend Following Suite: `Engine/s1_trend_following_suite.py`
+   - Research Papers Compendium: `Quant_Knowledge/00_QUANT_RESEARCH_PAPERS_INDEX.md`
+
+2. **Benchmark Each Strategy Archetype Individually**:
+   - Write and run a backtest script evaluating Archetypes 1, 2, 3, 4, 5, and 6 independently across all 20 OOS quarters.
+   - Record quarter-by-quarter metrics: Net ROI (%), Max Drawdown (%), Win Rate (%), Trade Count, and Profit Factor.
+
+3. **Diagnose Weak Regimes**:
+   - Identify which historical quarters caused specific archetypes to fail (e.g., Q1 2021 parabolic bull vs Q2 2022 Luna cascade vs Q4 2022 FTX collapse vs Q3 2024 Aug 5 yen unwind).
+   - Explain why certain archetypes thrive in trend expansion while others dominate in mean-reverting chop.
+
+4. **Construct an Unbreakable Multi-Strategy Sleeve Portfolio**:
+   - Synthesize the complementary strengths of the winning archetypes (e.g. Trend Momentum + Liquidation Cascade Reversal + OFI Meta-Labeling).
+   - Enforce our mandatory microstructure exit ratchet:
+     * +0.8R price gain -> Move stop to Entry +0.15R (breakeven lock).
+     * +1.5R price gain -> Move stop to Entry +0.80R (profit lock).
+     * Exit target: +2.2R to +2.5R (eliminate high-R retracement traps).
+     * Time decay: Exit at market if trade fails to gain +0.2R within 24 bars (6 hours).
+
+5. **Deliver Complete 20-Window Audit Scorecard**:
+   - Print the final quarter-by-quarter table for W01 through W20.
+   - Prove that all 20 windows simultaneously achieve PASS under the strict criteria.
