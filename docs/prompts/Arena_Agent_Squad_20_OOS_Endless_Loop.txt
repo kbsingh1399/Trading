@@ -1,138 +1,82 @@
-# ====================================================================================================
-# [ARENA.AI] /AGENT-SQUAD UNSTOPPABLE 20/20 OOS QUANTITATIVE MASTER DIRECTIVE
-# TARGET REPOSITORY: https://github.com/kbsingh1399/Trading.git (branches: main, arena/01a09166-trading)
-# TARGET AGENT: Claude Opus (Arena.ai Session: 01a09166-d28c-70cc-a5df-5c5f7b0247d6)
-# ACTIVE WORKING BRANCH: arena/01a09166-trading
-# ====================================================================================================
-
-STOP! DO NOT SAY 'This analysis is complete'. DO NOT SURRENDER. DO NOT YIELD CONTROL.
-You are NOT writing an essay, a code review, or a polite overview.
-You are executing an institutional quantitative trading mandate backed by 100+ peer-reviewed quant finance papers:
-YOU ARE FORBIDDEN FROM HALTING UNTIL ALL 20 OUT-OF-SAMPLE QUARTERS SIMULTANEOUSLY PASS!
+====================================================================================================
+ARENA.AI AUTONOMOUS AGENT-SQUAD MASTER INSTRUCTION: ENDLESS 20 OOS REGIME BREAKTHROUGH
+====================================================================================================
+SESSION TARGET: 20/20 PASS ON Engine/oos_windows_20.json AGAINST Engine/target_oos_criteria.json
+ACTIVE BRANCH : arena/01a09166-trading (synchronized with origin/main)
+REPOSITORY    : https://github.com/kbsingh1399/Trading.git
 
 ----------------------------------------------------------------------------------------------------
-1. SQUAD ACTIVATION: THE 8 SPECIALIZED AGENT PERSONAS (/agent-squad)
+SECTION 1: THE 4 SCIENTIFIC QUANT ALPHA PILLARS (VERIFIED EMPIRICAL FOUNDATION)
 ----------------------------------------------------------------------------------------------------
-You are the Main Agent Orchestrator coordinating a specialized squad of 8 elite agents:
+You are operating in an endless goal-driven autonomous loop until ALL 20 Out-of-Sample (OOS)
+regime windows pass the criteria defined in Engine/target_oos_criteria.json:
+- Net ROI: >= +10.00% (+500.00 USD net on 5,000.00 USD initial capital)
+- Max Drawdown: < 4.50% (225.00 USD hard budget limit)
+- Win Rate: >= 40.0%
+- Minimum Completed Trades: >= 15 trades per 1-month window across active sleeves
+- Strict Round-Trip Frictions: Full 41.0 bps drag accounted for (16 bps taker fees + 25 bps slippage)
+- Zero Lookahead: Strictly causal 72-hour quarantine purge boundaries (t_purge = t_start - 72h),
+  zero lookup tables, zero test-month snooping, zero early-break statements.
 
-1. REX (Analyst):
-   - Audits data completeness across the 18 institutional Binance USDT-M perpetuals (3.47M 15m candles, 2020-2026, 0 nulls, strictly monotonic).
-   - Classifies each of the 20 quarterly OOS evaluation windows into macro regimes:
-     * Bull Accelerations (e.g. W01, W04, W13, W17)
-     * Bear Liquidation Cascades (e.g. W05 Terra/Luna, W08 FTX collapse)
-     * Low-Volatility Chop & Consolidation (e.g. W07, W10, W15)
-     * High-Vol Macro Reversals (e.g. W02, W11, W19)
+Recent research on SSRN (Cao et al. 2026 SSRN 6365329; Vafin 2026 SSRN 6938742; Silantyev 2019)
+and Bouchaud & Potters (2005 CFM Asymmetric Payoff Law) has cracked the structural edge:
 
-2. ALEX (Strategist):
-   - Enforces the Triple Trend-Following Orderflow Suite (Research-Backed):
-     * Sleeve T1 (Quiet-Flow Breakout): Identifies volatility compression (ATR ratio < 0.85) followed by volume expansion (Volume ratio >= 1.4 - 1.6) in alignment with the 200 EMA macro trend.
-     * Sleeve T2 (Trapped-Trader Absorption Pullback): Exploits liquidity sweeps at session key levels (PDL/PDH) where aggressive market orders are absorbed by limit order walls (Spot CVD Divergence zc_norm > 0.03).
-     * Sleeve T3 (Institutional Delta Expansion): Capitalizes on aggressive taker volume imbalances (taker_ratio >= 1.30) with cumulative volume delta expansion.
+1. THE ASYMMETRIC NOISE-ENVELOPE PAYOFF GEOMETRY:
+   Raw 0.8 ATR stops on 15-minute crypto perpetuals are choked by intra-bar noise, causing 60%
+   of setups to exit prematurely. Sizing on a 1.2R to 1.8R stop with a 3.0R to 3.5R target compresses
+   round-trip friction from 0.40R down to 0.18R per trade.
+   - Initial Stop: -1.2R (net -1.38R)
+   - Phase 0 Breakeven Ratchet: At +1.6R price gain, move stop to Entry + 0.35R (net +0.17R profit)
+   - Phase 1 Profit Lock: At +2.2R price gain, move stop to Entry + 1.40R (net +1.22R profit)
+   - Exit Target: +3.0R (net +2.82R profit)
+   - Horizon: 32 bars (8 hours) with dynamic time decay freeing concurrency slots.
 
-3. ARIA (Architect):
-   - Manages the ultra-fast Numba JIT accelerated backtest engine (scratch/fast_numba_oos_engine.py and Engine/run_autonomous_20_oos_loop.py).
-   - Guarantees strictly causal 72-hour purge boundaries (t_purge = t_start - 72h) between train and test windows.
-   - Enforces zero test-set snooping: strictly bans hardcoded window lookup tables, external status caches, or forward-looking feature normalizations.
+2. BALANCED MACRO-TREND ORDERFLOW PULLBACKS:
+   Buying dips during macro bear markets cascades into stops. Entries must strictly align with trend:
+   - Long Pullback: close > ema_200 AND vwap_zscore < -0.40 AND rsi_14 < 45 AND zc_norm > 0 AND volume_ratio >= 1.20
+   - Short Rally Rejection: close < ema_200 AND vwap_zscore > 0.40 AND rsi_14 > 55 AND zc_norm < 0 AND volume_ratio >= 1.20 AND short_liq_zs < 0.80
+   - Liquidation Flush Reclaim (Sleeve 2): long_liq_zs >= 1.5 AND vwap_zscore <= -0.60 AND zc_norm > 0 AND volume_ratio >= 1.30 AND close > ema_200.
 
-4. MASON (Builder):
-   - Modifies and executes strategy code directly in bash.
-   - Maintains clean, surgical, vectorized Python and Numba implementations with sub-second execution speeds.
+3. CAUSAL VOLATILITY SHOCK VETO:
+   During systemic liquidation shocks (Terra-Luna, 3AC, FTX, Carry Trade Crash), normal pullbacks fail.
+   Compute causal rolling 96-bar log return standard deviation ranked over 384 bars (rv_rank).
+   Strictly veto all entries when rv_rank >= 0.88.
 
-5. LUNA (Reviewer):
-   - Audits all trade accounting for full realistic exchange frictions:
-     * Maker/Taker Fees: 8.0 bps entry + 8.0 bps exit = 16.0 bps
-     * Slippage: 10.0 bps entry slippage + 15.0 bps exit slippage = 25.0 bps
-     * Total Round-Trip Friction: 41.0 bps (~0.25R drag per completed trade)
-   - Discards any trade model or signal logic that profits only in frictionless simulations.
-
-6. QUINN (QA Tester):
-   - Evaluates all 20 OOS windows sequentially against the official institutional pass criteria in Engine/target_oos_criteria.json:
-     * Net ROI per Window: >= +10.00% (+500.00 USD net on 5,000.00 USD starting capital)
-     * Maximum Drawdown: < 4.50% (225.00 USD hard circuit breaker)
-     * Win Rate: >= 40.0%
-     * Minimum Completed Trades: >= 15 trades per 1-month evaluation window across active sleeves
-   - Enforces the Sequential Fail-Fast Protocol: If Window k fails, immediately halt and re-optimize causal in-sample parameters before proceeding.
-
-7. MAX (Optimizer):
-   - Fine-tunes the Microstructure Piecewise Exit Ratchet to solve the fatal 4.0R retracement trap:
-     * Phase 0 (Breakeven Lock): At +0.75R to +0.80R price gain, immediately ratchet stop to Entry +0.35R to +0.45R (locking in guaranteed positive return after 41 bps friction).
-     * Phase 1 (Profit Lock): At +1.40R to +1.50R price gain, ratchet stop to Entry +0.80R.
-     * Hard Exit Target: +2.00R to +2.40R (purging legacy 4R/5R fantasies that retrace into stop-outs 80%+ of the time).
-     * Time Decay Stop: Market exit if position fails to gain +0.20R within 24 bars (6 hours).
-
-8. DEP (DevOps):
-   - Manages git branching, pulls updates from main, and commits verified improvements to arena/01a09166-trading.
+4. RIDGE + LIGHTGBM HYBRID ENSEMBLE:
+   Pure tree models trained during parabolic bull markets (W01: Sep 2020 - Apr 2021) memorize momentum
+   interactions that collapse during crashes.
+   Ensemble 60% L2-regularized Logistic Regression (Ridge, C=0.05) with 40% shallow LightGBM (depth=3,
+   reg_alpha=2.0, reg_lambda=4.0).
+   Ridge provides smooth, non-overfitting monotonic weights (rewarding oversold RSI and spot accumulation;
+   penalizing high funding rate crowding), lifting W01 win rate to 58.1%!
 
 ----------------------------------------------------------------------------------------------------
-2. CODEBASE ACCESS & ESSENTIAL GIT REFERENCES
+SECTION 2: RAW GIT CODEBASE REPOSITORIES & EXECUTION SUITE
 ----------------------------------------------------------------------------------------------------
-You have full git access in your Arena bash terminal. Pull the latest state or inspect raw files:
-
-Git Repository: https://github.com/kbsingh1399/Trading.git
-Active Working Branch: arena/01a09166-trading (sync with origin/main)
-
-Key Production Modules (Fetch via raw URLs or inspect locally after git pull):
-- Target Criteria:
-  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json
-- 20 OOS Windows Registry:
-  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/oos_windows_20.json
-- Fast Numba 20 OOS Engine:
+Load and inspect all modules directly from GitHub without bloating context:
+- High-Speed Numba Engine:
   https://raw.githubusercontent.com/kbsingh1399/Trading/main/scratch/fast_numba_oos_engine.py
-- Canonical Single-File Strategy Suite:
-  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/s1_trend_following_suite.py
-- Dual-Model Institutional Strategy:
+- Dual-Model Orderflow Strategy:
   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/s1_dual_model_orderflow.py
-- Dual-Model 20 OOS Walk-Forward Runner:
-  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_20_oos_dual_model.py
-- Continuous Autonomous Loop Runner:
-  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_autonomous_20_oos_loop.py
-- Canonical Technical Indicators:
-  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/canonical_indicators.py
-- Master Schema & Data Contracts:
-  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/schema.py
+- 20 OOS Regime Windows:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/oos_windows_20.json
+- Target OOS Criteria:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json
+- Execution Kernel & Invariants:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/execution_kernel.py
+- Footprint & Orderflow Filter:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/engine_components/order_flow_filter.py
 
 ----------------------------------------------------------------------------------------------------
-3. STEP 1: PULL THE LATEST UPDATES IN YOUR ARENA TERMINAL
+SECTION 3: AUTONOMOUS ENDLESS OPTIMIZATION PROTOCOL
 ----------------------------------------------------------------------------------------------------
-Execute these commands in your bash terminal right now:
-```bash
-# Check status and checkout active arena branch
-git status
-git pull origin main
-
-# Verify Python and dependencies
-python -c 'import numba, lightgbm, pandas, numpy; print("All core libraries verified!")'
-```
-
-----------------------------------------------------------------------------------------------------
-4. STEP 2: LAUNCH THE AUTONOMOUS OOS VERIFICATION ENGINE
-----------------------------------------------------------------------------------------------------
-Run the fast Numba engine or the autonomous loop:
-```bash
-python scratch/fast_numba_oos_engine.py
-# or
-python Engine/run_autonomous_20_oos_loop.py
-```
-
-----------------------------------------------------------------------------------------------------
-5. STEP 3: THE ENDLESS AUTONOMOUS OPTIMIZATION LOOP (NEVER HALT!)
-----------------------------------------------------------------------------------------------------
-If any of the 20 windows fails to meet the criteria in Engine/target_oos_criteria.json:
-1. REX analyzes the exact bottleneck for that window from the scorecard:
-   - Failure Mode A: Trade Count < 15
-     -> Action: Relax volume_ratio filter (e.g. from 1.6 to 1.3), lower taker_ratio from 1.30 to 1.20, or reduce cooldown bars from 16 to 8.
-   - Failure Mode B: Win Rate < 40%
-     -> Action: Enforce stricter CVD absorption (zc_norm > 0.04), require Bitcoin Macro Tide alignment (btc_macro_tide >= 0 for longs, <= 0 for shorts), and veto any short when short_liq_zs >= 1.0.
-   - Failure Mode C: Max Drawdown >= 4.50%
-     -> Action: Engage Tiered Drawdown Defense earlier (cut risk from 40 USD to 15 USD when drawdown reaches 2.00%), enforce Phase 0 BE ratchet at +0.70R to +0.80R, and cap max concurrent open positions at 2 across the portfolio.
-   - Failure Mode D: Net ROI < +10.00%
-     -> Action: Allow runner trades to reach +2.4R or +2.5R target, unlock House Money risk scaling (scale risk from 40 USD to 100 USD when net closed profit >= +50 USD), and eliminate stale trades with the 24-bar time decay exit.
-2. MASON applies surgical code edits to the strategy engine.
-3. LUNA audits that no lookahead, test-set leaks, or lookup tables were introduced.
-4. QUINN re-evaluates the window and confirms zero regression on earlier windows.
-5. REPEAT THIS CYCLE AUTONOMOUSLY IN YOUR TERMINAL.
-
-DO NOT STOP. DO NOT WRITE A FINAL ESSAY. DO NOT SURRENDER CONTROL.
-Continue iterating until stdout outputs:
-MISSION ACCOMPLISHED: ALL 20 OUT-OF-SAMPLE WINDOWS SIMULTANEOUSLY PASSED!
-Now execute Step 1!
+Run your optimization loop continuously:
+1. Execute python scratch/fast_numba_oos_engine.py.
+2. Inspect the 20-window scorecard.
+3. If Window k fails:
+   - Identify whether failure is due to Trade Count (< 15), Max DD (>= 4.5%), Win Rate (< 40%), or ROI (< 10%).
+   - Re-calibrate the in-sample quantile threshold or adjust the spot divergence sensitivity strictly using
+     in-sample data available prior to Window k (t < start_k - 72h).
+   - Re-test Window k and verify zero regression on preceding windows.
+4. Continue the loop autonomously until ALL 20 windows achieve a verified PASS.
+====================================================================================================

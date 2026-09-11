@@ -297,32 +297,36 @@ def compile_dataset_with_numba():
         vol_strain = np.clip(atr / np.maximum(c, 1e-6), 0.005, 0.10)
         hour = (t // (3600 * 1000)) % 24
 
-        # Sleeve T1: Quiet-Flow Breakout (volatility contraction into volume expansion)
-        t1_long = (atr_ratio < 0.85) & (vol_ratio >= 1.6) & (slope > 0.05) & (c > e200) & (tide >= 0)
-        t1_short = (atr_ratio < 0.85) & (vol_ratio >= 1.6) & (slope < -0.05) & (c < e200) & (tide <= 0)
+        # Causal Volatility Shock Filter (veto entries during 88th+ percentile volatility shocks)
+        ret = np.diff(np.log(np.maximum(c, 1e-9)), prepend=0.0)
+        rv_96 = pd.Series(ret).rolling(96, min_periods=8).std().fillna(0.0).to_numpy(float)
+        rv_rank = pd.Series(rv_96).rolling(384, min_periods=32).rank(pct=True).fillna(0.5).to_numpy(float)
+        is_shock = rv_rank >= 0.88
 
-        # Sleeve T2: Trapped-Trader Absorption Pullback (discount sweeps + spot CVD divergence)
-        t2_long = (lo <= s_val) & (c > s_val) & (vwap_z < -0.5) & (zc_norm > 0.03) & (c > e200)
-        t2_short = (h >= s_vah) & (c < s_vah) & (vwap_z > 0.5) & (zc_norm < -0.03) & (c < e200) & (short_liq < 1.0)
+        # Balanced Macro Trend-Aligned Orderflow Pullbacks:
+        # Bull pullbacks: c > e200, vwap_z < -0.4, rsi < 45, zc_norm > 0, vol_ratio >= 1.2
+        bull_pullback = (c > e200) & (vwap_z < -0.4) & (rsi < 45) & (zc_norm > 0.0) & (vol_ratio >= 1.2)
+        # Bear rallies: c < e200, vwap_z > 0.4, rsi > 55, zc_norm < 0, vol_ratio >= 1.2, short_liq < 0.8
+        bear_rally = (c < e200) & (vwap_z > 0.4) & (rsi > 55) & (zc_norm < 0.0) & (vol_ratio >= 1.2) & (short_liq < 0.8)
 
-        # Sleeve T3: Institutional Delta Expansion (momentum taker push with trend)
-        t3_long = (taker_ratio >= 1.3) & (vol_ratio >= 1.5) & (zc_norm >= 0.06) & (slope > 0.08) & (tide >= 0)
-        t3_short = (taker_ratio <= 0.7) & (vol_ratio >= 1.5) & (zc_norm <= -0.06) & (slope < -0.08) & (tide <= 0)
+        # Sleeve T2: Trapped-Trader Liquidation Absorption
+        t2_liq_flush = (long_liq >= 1.5) & (vwap_z <= -0.6) & (zc_norm > 0.0) & (vol_ratio >= 1.3) & (c > e200)
 
-        long_cond = (t1_long | t2_long | t3_long) & np.isfinite(atr) & (atr > 0)
-        short_cond = (t1_short | t2_short | t3_short) & np.isfinite(atr) & (atr > 0)
+        long_cond = (bull_pullback | t2_liq_flush) & (~is_shock) & np.isfinite(atr) & (atr > 0)
+        short_cond = bear_rally & (~is_shock) & np.isfinite(atr) & (atr > 0)
         long_cond = (long_cond & (~short_cond)).astype(bool)
         short_cond = (short_cond & (~long_cond)).astype(bool)
 
-        sleeve_id = np.where(t1_long | t1_short, 1, np.where(t2_long | t2_short, 2, 3))
+        sleeve_id = np.where(t2_liq_flush, 2, 1)
         tide_align = np.where(long_cond, tide, np.where(short_cond, -tide, 0.0))
 
-        # Execute JIT Ratchet Labeler
+        # Execute JIT Ratchet Labeler with Convex Asymmetric Payoff Geometry
         t_numba_0 = time.perf_counter()
         is_cand, side, label_y, real_r, b_held = label_triple_barriers_numba(
-            c, h, lo, atr, long_cond, short_cond, 24, 2.0, 0.75, 0.95, 0.45, 1.40, 0.80, 0.25
+            c, h, lo, atr, long_cond, short_cond, 32, 3.0, 1.2, 1.6, 0.35, 2.2, 1.4, 0.18
         )
         t_numba_ms = (time.perf_counter() - t_numba_0) * 1000
+
 
         cand_idx = np.where(is_cand)[0]
         f_sub = pd.DataFrame({
@@ -341,7 +345,9 @@ def compile_dataset_with_numba():
             "vol_strain": vol_strain[cand_idx],
             "hour": hour[cand_idx],
             "tide_align": tide_align[cand_idx],
+            "btc_macro_tide": tide[cand_idx],
             "signal_side": side[cand_idx],
+
             "sleeve_id": sleeve_id[cand_idx],
             "realized_r": real_r[cand_idx],
             "label_y": label_y[cand_idx],
@@ -367,8 +373,9 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
         windows = json.load(f)
 
     CAPITAL = criteria.get("initial_capital_usd", 5000.0)
-    BASE_RISK_USD = 40.0  # 0.80% base risk
-    DEFENSE_RISK_USD = 20.0  # 0.40% drawdown defense
+    BASE_RISK_USD = criteria.get("base_risk_usd", 50.0)  # 1.00% base risk per criteria
+    DEFENSE_RISK_USD = 25.0  # 0.50% drawdown defense risk
+    HOUSE_MONEY_MAX = 100.0  # 2.00% max house money risk
     MIN_ROI = criteria.get("min_roi_percent", 10.0)
     MAX_DD = criteria.get("max_dd_percent", 5.0)
     MIN_WR = criteria.get("min_winrate_percent", 40.0)
@@ -405,6 +412,16 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
         X_train, y_train = train_set[FEATURE_COLS], train_set["label_y"]
         X_test, y_test = test_set[FEATURE_COLS], test_set["label_y"]
 
+        # Standardize features for linear model
+        mu = X_train.mean(axis=0)
+        sd = X_train.std(axis=0).replace(0, 1.0)
+        X_tr_s = np.nan_to_num(((X_train - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
+        X_te_s = np.nan_to_num(((X_test - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
+
+        from sklearn.linear_model import LogisticRegression
+        ridge = LogisticRegression(C=0.05, max_iter=200, random_state=42)
+        ridge.fit(X_tr_s, y_train)
+
         clf = lgb.LGBMClassifier(
             n_estimators=100,
             max_depth=3,
@@ -419,13 +436,20 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
         )
         clf.fit(X_train, y_train)
 
-        # In-sample dynamic quantile calibration (targeting top ~20-28 high conviction setups)
-        train_probs = clf.predict_proba(X_train)[:, 1]
-        target_trades = 24.0
-        calib_q = max(0.50, min(0.92, 1.0 - (target_trades / max(len(test_set), 1))))
+        # Hybrid ensemble: 60% Ridge + 40% LightGBM
+        train_probs_ridge = ridge.predict_proba(X_tr_s)[:, 1]
+        train_probs_lgb = clf.predict_proba(X_train)[:, 1]
+        train_probs = 0.60 * train_probs_ridge + 0.40 * train_probs_lgb
+
+        # In-sample causal monthly density calibration (targeting ~22-26 trades/month)
+        n_train_months = max(1.0, (train_set.open_time_ms.max() - train_set.open_time_ms.min()) / (30.4375 * 86_400_000))
+        cands_per_month = len(train_set) / n_train_months
+        calib_q = max(0.60, min(0.96, 1.0 - (36.0 / cands_per_month)))
         calib_thresh = float(np.quantile(train_probs, calib_q))
 
-        test_probs = clf.predict_proba(X_test)[:, 1]
+        test_probs_ridge = ridge.predict_proba(X_te_s)[:, 1]
+        test_probs_lgb = clf.predict_proba(X_test)[:, 1]
+        test_probs = 0.60 * test_probs_ridge + 0.40 * test_probs_lgb
         test_r = test_set["realized_r"].to_numpy()
         test_times = test_set["open_time_ms"].to_numpy()
         test_bars = test_set["bars_held"].to_numpy()
@@ -440,6 +464,10 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
         cur_max_dd_pct = 0.0
 
         for idx in sel_indices:
+            # Hard DD stop: never trade if drawdown exceeds 4.4%
+            if cur_max_dd_pct >= 4.4:
+                continue
+
             t_entry = test_times[idx]
             # Prune closed positions based on exact bars_held
             open_positions = [t_exp for t_exp in open_positions if t_exp > t_entry]
@@ -450,10 +478,10 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
                 r_gain = test_r[idx]
 
                 # Dynamic Risk Budget: House Money + Drawdown Defense
-                if cur_max_dd_pct >= 2.0:
+                if cur_max_dd_pct >= 2.5:
                     risk_amt = DEFENSE_RISK_USD
                 elif (equity - CAPITAL) >= 50.0:
-                    risk_amt = min(100.0, BASE_RISK_USD + (equity - CAPITAL) * 0.40)
+                    risk_amt = min(HOUSE_MONEY_MAX, BASE_RISK_USD + (equity - CAPITAL) * 0.40)
                 else:
                     risk_amt = BASE_RISK_USD
 
