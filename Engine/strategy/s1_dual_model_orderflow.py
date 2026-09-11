@@ -136,7 +136,9 @@ class InstitutionalDualModelEngine:
         selected = test_df.copy()
         selected["prob"] = test_probs
         selected["calib_thresh"] = calib_thresh
-        selected.sort_values("open_time_ms", inplace=True)
+        # Oxford-Man (2020) Cross-Sectional Ranking Priority:
+        # At identical timestamps, prioritize higher model probability candidates first
+        selected.sort_values(by=["open_time_ms", "prob"], ascending=[True, False], inplace=True)
         selected.reset_index(drop=True, inplace=True)
         return selected
 

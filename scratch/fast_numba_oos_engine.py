@@ -458,12 +458,26 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
 
         test_probs_ridge = ridge.predict_proba(X_te_s)[:, 1]
         test_probs_lgb = clf.predict_proba(X_test)[:, 1]
-        test_probs = 0.60 * test_probs_ridge + 0.40 * test_probs_lgb
-        test_r = test_set["realized_r"].to_numpy()
-        test_times = test_set["open_time_ms"].to_numpy()
-        test_bars = test_set["bars_held"].to_numpy()
-        test_syms = test_set["symbol"].to_numpy()
-        test_tides = test_set["btc_macro_tide"].to_numpy()
+        raw_test_probs = 0.60 * test_probs_ridge + 0.40 * test_probs_lgb
+
+        # Oxford-Man (2020) Cross-Sectional Ranking Priority:
+        # At identical 15m timestamps, prioritize higher model probability candidates first
+        df_te = pd.DataFrame({
+            "open_time_ms": test_set["open_time_ms"].to_numpy(),
+            "prob": raw_test_probs,
+            "symbol": test_set["symbol"].to_numpy(),
+            "realized_r": test_set["realized_r"].to_numpy(),
+            "bars_held": test_set["bars_held"].to_numpy(),
+            "btc_macro_tide": test_set["btc_macro_tide"].to_numpy()
+        })
+        df_te.sort_values(by=["open_time_ms", "prob"], ascending=[True, False], inplace=True)
+
+        test_times = df_te["open_time_ms"].to_numpy()
+        test_probs = df_te["prob"].to_numpy()
+        test_syms = df_te["symbol"].to_numpy()
+        test_r = df_te["realized_r"].to_numpy()
+        test_bars = df_te["bars_held"].to_numpy()
+        test_tides = df_te["btc_macro_tide"].to_numpy()
 
         # Concurrency Governor: max 2 concurrent positions
         open_positions = []
