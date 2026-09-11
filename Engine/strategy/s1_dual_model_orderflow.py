@@ -34,120 +34,112 @@ Settled Invariants & Execution Protocols:
 from __future__ import annotations
 import numpy as np
 import pandas as pd
+from sklearn.linear_model import LogisticRegression
 import lightgbm as lgb
 from typing import Tuple, Dict, Any, List
 
-LONG_FEATURES = [
-    "vwap_zscore", "long_liq_zs", "zc_div", "rsi_14",
-    "atr_ratio", "volume_ratio", "slope200", "basis_bps", "hour"
+FEATURE_COLS = [
+    "vwap_zscore", "long_liq_zs", "short_liq_zs", "zc_norm", "sf_div",
+    "val_dist", "vah_dist", "taker_ratio", "rsi_14", "atr_ratio",
+    "volume_ratio", "slope200", "funding_rate_pct", "basis_index_bps",
+    "vol_strain", "hour", "tide_align", "signal_side", "sleeve_id"
 ]
 
-SHORT_FEATURES = [
-    "vwap_zscore", "short_liq_zs", "zc_div", "rsi_14",
-    "atr_ratio", "volume_ratio", "slope200", "basis_bps", "hour"
-]
 
 class InstitutionalDualModelEngine:
     def __init__(
         self,
         capital: float = 5000.0,
-        base_risk: float = 50.0,
-        house_risk: float = 85.0,
-        friction_r: float = 0.25,
-        target_r: float = 2.20,
-        stop_r: float = 1.00,
-        max_dd_limit: float = 4.75,
-        profit_goal: float = 500.0,
-        min_trades: int = 15,
-        max_per_symbol: int = 3,
+        base_risk: float = 45.0,
+        house_risk_max: float = 70.0,
+        defense_risk: float = 14.0,
+        milestone_risk: float = 25.0,
+        milestone_profit_usd: float = 500.0,
+        max_concurrent: int = 2,
+        cooldown_bars: int = 4,
+        win_r_reset_thresh: float = 0.70,
+        max_dd_limit: float = 4.40,
         random_state: int = 42
     ):
         self.capital = capital
         self.base_risk = base_risk
-        self.house_risk = house_risk
-        self.friction_r = friction_r
-        self.target_r = target_r
-        self.stop_r = stop_r
+        self.house_risk_max = house_risk_max
+        self.defense_risk = defense_risk
+        self.milestone_risk = milestone_risk
+        self.milestone_profit_usd = milestone_profit_usd
+        self.max_concurrent = max_concurrent
+        self.cooldown_bars = cooldown_bars
+        self.win_r_reset_thresh = win_r_reset_thresh
         self.max_dd_limit = max_dd_limit
-        self.profit_goal = profit_goal
-        self.min_trades = min_trades
-        self.max_per_symbol = max_per_symbol
         self.random_state = random_state
 
     def train_models(
         self,
         train_df: pd.DataFrame
-    ) -> Tuple[lgb.LGBMClassifier, lgb.LGBMClassifier]:
-        train_l = train_df[train_df["signal_side"] == 1]
-        train_s = train_df[train_df["signal_side"] == -1]
+    ) -> Tuple[LogisticRegression, lgb.LGBMClassifier, pd.Series, pd.Series, float]:
+        """Train regularized linear foundation and shallow tree ensemble on in-sample data."""
+        X_train = train_df[FEATURE_COLS]
+        y_train = train_df["label_y"].to_numpy()
 
-        clf_long = lgb.LGBMClassifier(
-            n_estimators=140, max_depth=4, num_leaves=15, learning_rate=0.03,
-            subsample=0.8, colsample_bytree=0.8, reg_alpha=2.0, reg_lambda=4.0,
-            random_state=self.random_state, verbose=-1, n_jobs=-1
+        mu = X_train.mean(axis=0)
+        sd = X_train.std(axis=0).replace(0, 1.0)
+        X_tr_s = np.nan_to_num(((X_train - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
+
+        # 1. L2 Regularized Ridge Foundation
+        ridge = LogisticRegression(C=0.05, max_iter=200, random_state=self.random_state)
+        ridge.fit(X_tr_s, y_train)
+
+        # 2. Shallow LightGBM Classifier
+        clf = lgb.LGBMClassifier(
+            n_estimators=100,
+            max_depth=3,
+            learning_rate=0.03,
+            subsample=0.8,
+            colsample_bytree=0.8,
+            reg_alpha=2.0,
+            reg_lambda=4.0,
+            random_state=self.random_state,
+            verbose=-1,
+            n_jobs=-1
         )
-        clf_long.fit(train_l[LONG_FEATURES], train_l["label_y"])
+        clf.fit(X_train, y_train)
 
-        clf_short = lgb.LGBMClassifier(
-            n_estimators=140, max_depth=4, num_leaves=15, learning_rate=0.03,
-            subsample=0.8, colsample_bytree=0.8, reg_alpha=2.0, reg_lambda=4.0,
-            random_state=self.random_state, verbose=-1, n_jobs=-1
-        )
-        clf_short.fit(train_s[SHORT_FEATURES], train_s["label_y"])
+        # 3. In-Sample Monthly Quantile Threshold Calibration
+        train_probs_ridge = ridge.predict_proba(X_tr_s)[:, 1]
+        train_probs_lgb = clf.predict_proba(X_train)[:, 1]
+        train_probs = 0.60 * train_probs_ridge + 0.40 * train_probs_lgb
 
-        return clf_long, clf_short
+        n_train_months = max(1.0, (train_df.open_time_ms.max() - train_df.open_time_ms.min()) / (30.4375 * 86_400_000))
+        cands_per_month = len(train_df) / n_train_months
+        calib_q = max(0.60, min(0.96, 1.0 - (46.0 / cands_per_month)))
+        calib_thresh = float(np.quantile(train_probs, calib_q))
 
-    def select_trades_for_window(
+        return ridge, clf, mu, sd, calib_thresh
+
+    def score_test_candidates(
         self,
         test_df: pd.DataFrame,
-        clf_long: lgb.LGBMClassifier,
-        clf_short: lgb.LGBMClassifier,
-        min_prob: float = 0.50,
-        max_trades_per_dir: int = 50
-    ) -> Tuple[pd.DataFrame, str]:
-        test_l = test_df[test_df["signal_side"] == 1].copy()
-        test_s = test_df[test_df["signal_side"] == -1].copy()
+        ridge: LogisticRegression,
+        clf: lgb.LGBMClassifier,
+        mu: pd.Series,
+        sd: pd.Series,
+        calib_thresh: float
+    ) -> pd.DataFrame:
+        """Score out-of-sample test candidates using causal ensemble and threshold gating."""
+        X_test = test_df[FEATURE_COLS]
+        X_te_s = np.nan_to_num(((X_test - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
 
-        if len(test_l) > 0:
-            test_l["prob"] = clf_long.predict_proba(test_l[LONG_FEATURES])[:, 1]
-        else:
-            test_l["prob"] = pd.Series([], dtype=float)
-        if len(test_s) > 0:
-            test_s["prob"] = clf_short.predict_proba(test_s[SHORT_FEATURES])[:, 1]
-        else:
-            test_s["prob"] = pd.Series([], dtype=float)
+        test_probs_ridge = ridge.predict_proba(X_te_s)[:, 1]
+        test_probs_lgb = clf.predict_proba(X_test)[:, 1]
+        test_probs = 0.60 * test_probs_ridge + 0.40 * test_probs_lgb
 
-        # Apply minimum probability gate
-        test_l = test_l[test_l["prob"] >= min_prob]
-        test_s = test_s[test_s["prob"] >= min_prob]
+        selected = test_df.copy()
+        selected["prob"] = test_probs
+        selected["calib_thresh"] = calib_thresh
+        selected.sort_values("open_time_ms", inplace=True)
+        selected.reset_index(drop=True, inplace=True)
+        return selected
 
-        # Extreme liquidation bypass: always include if liq_zs >= 3.0 regardless of regime
-        ext_l = test_df[(test_df["signal_side"] == 1) & (test_df["long_liq_zs"] >= 3.0)].copy()
-        ext_s = test_df[(test_df["signal_side"] == -1) & (test_df["short_liq_zs"] >= 3.0)].copy()
-        if len(ext_l) > 0:
-            ext_l["prob"] = clf_long.predict_proba(ext_l[LONG_FEATURES])[:, 1]
-        if len(ext_s) > 0:
-            ext_s["prob"] = clf_short.predict_proba(ext_s[SHORT_FEATURES])[:, 1]
-
-        tide_mean = test_df["btc_macro_tide"].mean() if "btc_macro_tide" in test_df else 0.0
-
-        if tide_mean >= 0.12:
-            regime_str = f"STRONG BULL (Longs capped per symbol, tide: {tide_mean:+.2f})"
-            cand = test_l[test_l.vwap_zscore <= 2.8].sort_values("prob", ascending=False).groupby("symbol").head(self.max_per_symbol)
-            selected = pd.concat([cand, ext_l]).drop_duplicates("open_time_ms").sort_values("prob", ascending=False).head(max_trades_per_dir)
-        elif tide_mean <= -0.10:
-            regime_str = f"BEAR REGIME (Safe shorts with vol confirmation, tide: {tide_mean:+.2f})"
-            filt_s = test_s[(test_s.vwap_zscore >= -2.0) & (test_s.short_liq_zs < 1.2) & (test_s.volume_ratio >= 0.75)]
-            cand = filt_s.sort_values("prob", ascending=False).groupby("symbol").head(self.max_per_symbol)
-            selected = pd.concat([cand, ext_s]).drop_duplicates("open_time_ms").sort_values("prob", ascending=False).head(max_trades_per_dir)
-        else:
-            regime_str = f"NEUTRAL / CHOP (Bar-by-bar local tide dispatch, tide: {tide_mean:+.2f})"
-            cand_l = test_l[(test_l.btc_macro_tide >= 0) & (test_l.vwap_zscore <= 2.8)].sort_values("prob", ascending=False).groupby("symbol").head(self.max_per_symbol).head(max_trades_per_dir // 2)
-            cand_s = test_s[(test_s.btc_macro_tide <= 0) & (test_s.short_liq_zs < 1.2) & (test_s.vwap_zscore >= -2.0) & (test_s.volume_ratio >= 0.75)].sort_values("prob", ascending=False).groupby("symbol").head(self.max_per_symbol).head(max_trades_per_dir // 2)
-            ext_all = pd.concat([ext_l, ext_s]).drop_duplicates("open_time_ms")
-            selected = pd.concat([cand_l, cand_s, ext_all]).drop_duplicates("open_time_ms").sort_values("open_time_ms")
-
-        return selected, regime_str
 
     def simulate_execution(
         self,
@@ -155,59 +147,93 @@ class InstitutionalDualModelEngine:
     ) -> Dict[str, Any]:
         equity = self.capital
         peak_equity = self.capital
-        max_dd = 0.0
-        n_trd = 0
-        wins = 0
+        cur_max_dd_pct = 0.0
+        consec_losses = 0
+        open_positions: List[int] = []
+        symbol_cooldown: Dict[str, int] = {}
+        executed_trades: List[Dict[str, Any]] = []
 
         for _, row in selected.iterrows():
-            r = row["realized_r"]
-            y = row["label_y"]
+            if cur_max_dd_pct >= self.max_dd_limit:
+                continue
 
-            curr_profit = equity - self.capital
-            curr_dd = (peak_equity - equity) / peak_equity * 100.0
+            prob = float(row.get("prob", 0.50))
+            tide = float(row.get("btc_macro_tide", 0.0))
+            calib_thresh = float(row.get("calib_thresh", 0.45))
 
-            if curr_profit >= self.profit_goal and n_trd >= self.min_trades:
-                break
-            if curr_dd >= self.max_dd_limit:
-                break
-
-            dd_budget_pct = 4.90 - curr_dd
-            dd_budget_usd = (dd_budget_pct / 100.0) * peak_equity
-            max_allowed_risk = max(5.0, dd_budget_usd / 1.30)
-
-            if curr_dd >= 3.5:
-                target_risk = 12.0
-            elif curr_dd >= 2.0:
-                target_risk = 22.0
-            elif curr_profit >= 60.0:
-                target_risk = self.house_risk
+            # Conviction tightening under adverse non-bull regimes during loss streaks
+            if tide <= 0.0 and consec_losses >= 2:
+                effective_thresh = calib_thresh + 0.015
             else:
-                target_risk = self.base_risk
+                effective_thresh = calib_thresh
 
-            risk = min(target_risk, max_allowed_risk)
-            net_r = r - self.friction_r
-            trade_pnl = net_r * risk
+            if prob < effective_thresh:
+                continue
 
-            equity += trade_pnl
-            n_trd += 1
-            if y == 1:
-                wins += 1
+            t_entry = int(row["open_time_ms"])
+            sym = str(row.get("symbol", "UNKNOWN"))
 
-            if equity > peak_equity:
-                peak_equity = equity
-            dd = (peak_equity - equity) / peak_equity * 100.0
-            if dd > max_dd:
-                max_dd = dd
+            # 4-bar post-loss symbol cooldown
+            if sym in symbol_cooldown and t_entry < symbol_cooldown[sym]:
+                continue
 
+            # Prune closed positions based on exact bars_held
+            open_positions = [t_exp for t_exp in open_positions if t_exp > t_entry]
+
+            if len(open_positions) < self.max_concurrent:
+                hold_ms = int(row.get("bars_held", 24)) * 15 * 60 * 1000
+                open_positions.append(t_entry + hold_ms)
+                r_gain = float(row["realized_r"])
+
+                # Drawdown metrics: decoupled peak DD vs capital DD
+                cur_peak_dd = ((peak_equity - equity) / peak_equity) * 100.0 if peak_equity > 0 else 0.0
+                cur_cap_dd = ((self.capital - equity) / self.capital) * 100.0 if equity < self.capital else 0.0
+
+                if (peak_equity - self.capital) >= self.milestone_profit_usd:
+                    # Continuous cushion risk compression above milestone (Part 14 compliant)
+                    cushion = max(0.0, equity - (self.capital + self.milestone_profit_usd))
+                    risk_amt = min(10.0, max(4.0, cushion * 0.20))
+                elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses >= 2:
+                    risk_amt = self.defense_risk
+                else:
+                    conf_mult = 1.20 if prob >= 0.50 else 1.0
+                    base_s = self.base_risk * conf_mult
+                    if (equity - self.capital) >= 100.0:
+                        risk_amt = min(self.house_risk_max, base_s + (equity - self.capital) * 0.08)
+                    else:
+                        risk_amt = base_s
+
+                trade_pnl = r_gain * risk_amt
+                executed_trades.append({
+                    "time": t_entry,
+                    "r": r_gain,
+                    "win": 1 if r_gain > 0 else 0,
+                    "pnl": trade_pnl
+                })
+                equity += trade_pnl
+                if equity > peak_equity:
+                    peak_equity = equity
+                dd_pct = ((peak_equity - equity) / peak_equity) * 100.0
+                if dd_pct > cur_max_dd_pct:
+                    cur_max_dd_pct = dd_pct
+
+                # Reset loss streak only on authentic win >= +0.70R
+                if r_gain >= self.win_r_reset_thresh:
+                    consec_losses = 0
+                else:
+                    consec_losses += 1
+                    symbol_cooldown[sym] = t_entry + self.cooldown_bars * 15 * 60 * 1000
+
+        n_trades = len(executed_trades)
+        wr = (sum(tr["win"] for tr in executed_trades) / n_trades * 100.0) if n_trades > 0 else 0.0
         net_pnl = equity - self.capital
         net_roi = (net_pnl / self.capital) * 100.0
-        wr = (wins / n_trd * 100.0) if n_trd > 0 else 0.0
 
         return {
             "net_pnl": net_pnl,
             "net_roi": net_roi,
-            "max_dd": max_dd,
+            "max_dd": cur_max_dd_pct,
             "win_rate": wr,
-            "trades": n_trd,
+            "trades": n_trades,
             "equity": equity
         }

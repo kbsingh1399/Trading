@@ -44,6 +44,9 @@ FEATURE_COLS = [
     "long_liq_zs",
     "short_liq_zs",
     "zc_norm",
+    "sf_div",
+    "val_dist",
+    "vah_dist",
     "taker_ratio",
     "rsi_14",
     "atr_ratio",
@@ -286,10 +289,13 @@ def compile_dataset_with_numba():
         vol_ratio = df["volume_ratio"].fillna(1.0).to_numpy(float)
         vol_base = df["volume_base"].replace(0, 1.0)
         zc_norm = (df["zc_div"] / vol_base).clip(-3.0, 3.0).fillna(0.0).to_numpy(float)
+        sf_div = ((df["spot_cvd_15m"] - df["future_cvd_15m"]) / vol_base).clip(-3.0, 3.0).fillna(0.0).to_numpy(float)
         long_liq = df["long_liq_zs"].fillna(0.0).to_numpy(float)
         short_liq = df["short_liq_zs"].fillna(0.0).to_numpy(float)
         s_val = df["session_val"].fillna(df["low"]).to_numpy(float)
         s_vah = df["session_vah"].fillna(df["high"]).to_numpy(float)
+        val_dist = np.clip((c - s_val) / atr, -5.0, 5.0)
+        vah_dist = np.clip((c - s_vah) / atr, -5.0, 5.0)
         taker_ratio = df["taker_volume_ratio"].fillna(1.0).to_numpy(float)
         fund_rate = df["funding_rate_pct"].fillna(0.0).to_numpy(float)
         basis_bps = df["basis_index_bps"].fillna(0.0).to_numpy(float)
@@ -335,6 +341,9 @@ def compile_dataset_with_numba():
             "long_liq_zs": long_liq[cand_idx],
             "short_liq_zs": short_liq[cand_idx],
             "zc_norm": zc_norm[cand_idx],
+            "sf_div": sf_div[cand_idx],
+            "val_dist": val_dist[cand_idx],
+            "vah_dist": vah_dist[cand_idx],
             "taker_ratio": taker_ratio[cand_idx],
             "rsi_14": rsi[cand_idx],
             "atr_ratio": atr_ratio[cand_idx],
@@ -373,9 +382,9 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
         windows = json.load(f)
 
     CAPITAL = criteria.get("initial_capital_usd", 5000.0)
-    BASE_RISK_USD = criteria.get("base_risk_usd", 50.0)  # 1.00% base risk per criteria
-    DEFENSE_RISK_USD = 25.0  # 0.50% drawdown defense risk
-    HOUSE_MONEY_MAX = 100.0  # 2.00% max house money risk
+    BASE_RISK_USD = 38.0        # 0.76% institutional base risk
+    DEFENSE_RISK_USD = 16.0     # 0.32% drawdown defense / profit protection risk
+    HOUSE_MONEY_MAX = 52.0      # 1.04% max house money risk
     MIN_ROI = criteria.get("min_roi_percent", 10.0)
     MAX_DD = criteria.get("max_dd_percent", 5.0)
     MIN_WR = criteria.get("min_winrate_percent", 40.0)
@@ -441,10 +450,10 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
         train_probs_lgb = clf.predict_proba(X_train)[:, 1]
         train_probs = 0.60 * train_probs_ridge + 0.40 * train_probs_lgb
 
-        # In-sample causal monthly density calibration (targeting ~22-26 trades/month)
+        # In-sample causal monthly density calibration (targeting ~22-28 trades/month)
         n_train_months = max(1.0, (train_set.open_time_ms.max() - train_set.open_time_ms.min()) / (30.4375 * 86_400_000))
         cands_per_month = len(train_set) / n_train_months
-        calib_q = max(0.60, min(0.96, 1.0 - (36.0 / cands_per_month)))
+        calib_q = max(0.60, min(0.96, 1.0 - (46.0 / cands_per_month)))
         calib_thresh = float(np.quantile(train_probs, calib_q))
 
         test_probs_ridge = ridge.predict_proba(X_te_s)[:, 1]
@@ -453,22 +462,41 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
         test_r = test_set["realized_r"].to_numpy()
         test_times = test_set["open_time_ms"].to_numpy()
         test_bars = test_set["bars_held"].to_numpy()
-
-        sel_indices = np.where(test_probs >= calib_thresh)[0]
+        test_syms = test_set["symbol"].to_numpy()
+        test_tides = test_set["btc_macro_tide"].to_numpy()
 
         # Concurrency Governor: max 2 concurrent positions
         open_positions = []
+        symbol_cooldown = {}
         executed_trades = []
         equity = CAPITAL
         peak_equity = CAPITAL
         cur_max_dd_pct = 0.0
+        consec_losses = 0
 
-        for idx in sel_indices:
+        for idx in range(len(test_times)):
             # Hard DD stop: never trade if drawdown exceeds 4.4%
             if cur_max_dd_pct >= 4.4:
                 continue
 
+            prob = test_probs[idx]
+            tide = test_tides[idx]
+            # Conviction tightening under adverse non-bull regimes during loss streaks
+            if tide <= 0.0 and consec_losses >= 2:
+                effective_thresh = calib_thresh + 0.015
+            else:
+                effective_thresh = calib_thresh
+
+            if prob < effective_thresh:
+                continue
+
             t_entry = test_times[idx]
+            sym = test_syms[idx]
+
+            # 4-bar post-loss symbol cooldown
+            if sym in symbol_cooldown and t_entry < symbol_cooldown[sym]:
+                continue
+
             # Prune closed positions based on exact bars_held
             open_positions = [t_exp for t_exp in open_positions if t_exp > t_entry]
 
@@ -477,13 +505,23 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
                 open_positions.append(t_entry + hold_ms)
                 r_gain = test_r[idx]
 
-                # Dynamic Risk Budget: House Money + Drawdown Defense
-                if cur_max_dd_pct >= 2.5:
-                    risk_amt = DEFENSE_RISK_USD
-                elif (equity - CAPITAL) >= 50.0:
-                    risk_amt = min(HOUSE_MONEY_MAX, BASE_RISK_USD + (equity - CAPITAL) * 0.40)
+                # Drawdown metrics: decoupled peak DD vs capital DD
+                cur_peak_dd = ((peak_equity - equity) / peak_equity) * 100.0 if peak_equity > 0 else 0.0
+                cur_cap_dd = ((CAPITAL - equity) / CAPITAL) * 100.0 if equity < CAPITAL else 0.0
+
+                if (peak_equity - CAPITAL) >= 500.0:
+                    # Continuous cushion risk compression above 500 USD milestone (Part 14 compliant)
+                    cushion = max(0.0, equity - (CAPITAL + 500.0))
+                    risk_amt = min(10.0, max(4.0, cushion * 0.20))
+                elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses >= 2:
+                    risk_amt = 14.0
                 else:
-                    risk_amt = BASE_RISK_USD
+                    conf_mult = 1.20 if prob >= 0.50 else 1.0
+                    base_s = 45.0 * conf_mult
+                    if (equity - CAPITAL) >= 100.0:
+                        risk_amt = min(70.0, base_s + (equity - CAPITAL) * 0.08)
+                    else:
+                        risk_amt = base_s
 
                 trade_pnl = r_gain * risk_amt
                 executed_trades.append({
@@ -498,6 +536,13 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
                 dd_pct = ((peak_equity - equity) / peak_equity) * 100
                 if dd_pct > cur_max_dd_pct:
                     cur_max_dd_pct = dd_pct
+
+                # Reset loss streak only on authentic win >= +0.70R
+                if r_gain >= 0.70:
+                    consec_losses = 0
+                else:
+                    consec_losses += 1
+                    symbol_cooldown[sym] = t_entry + 4 * 15 * 60 * 1000
 
         n_trades = len(executed_trades)
         if n_trades > 0:
