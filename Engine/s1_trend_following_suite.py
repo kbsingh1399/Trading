@@ -215,6 +215,7 @@ def build_signals(f: pd.DataFrame, btc: pd.DataFrame, cfg: Config) -> pd.DataFra
     flow_l = f.flow > cfg.flow_threshold
     flow_s = f.flow < -cfg.flow_threshold
     sponsorship = f.volume_rel >= cfg.volume_threshold
+    compression = f.compression < cfg.compression_ratio
     hi_b = f[f"hi{cfg.breakout_bars}"] if f"hi{cfg.breakout_bars}" in f else f.high.shift(1).rolling(cfg.breakout_bars, min_periods=cfg.breakout_bars).max()
     lo_b = f[f"lo{cfg.breakout_bars}"] if f"lo{cfg.breakout_bars}" in f else f.low.shift(1).rolling(cfg.breakout_bars, min_periods=cfg.breakout_bars).min()
     t1_l = long_trend & flow_l & sponsorship & compression & (f.close > hi_b) & (f.hurst >= 0.45)
