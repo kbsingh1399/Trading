@@ -498,32 +498,42 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
                 continue
 
             # Prune closed positions based on exact bars_held
-            open_positions = [t_exp for t_exp in open_positions if t_exp > t_entry]
+            open_positions = [pos for pos in open_positions if pos[0] > t_entry]
 
             if len(open_positions) < 2:
                 hold_ms = int(test_bars[idx]) * 15 * 60 * 1000
-                open_positions.append(t_entry + hold_ms)
                 r_gain = test_r[idx]
 
                 # Drawdown metrics: decoupled peak DD vs capital DD
                 cur_peak_dd = ((peak_equity - equity) / peak_equity) * 100.0 if peak_equity > 0 else 0.0
                 cur_cap_dd = ((CAPITAL - equity) / CAPITAL) * 100.0 if equity < CAPITAL else 0.0
+                current_profit = equity - CAPITAL
 
                 if (peak_equity - CAPITAL) >= 500.0:
                     # Continuous cushion risk compression above 500 USD milestone (Part 14 compliant)
                     cushion = max(0.0, equity - (CAPITAL + 500.0))
                     risk_amt = min(10.0, max(4.0, cushion * 0.20))
+                elif current_profit >= 380.0:
+                    # Transition risk scaling between 380 USD and 500 USD
+                    risk_amt = 26.0
                 elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses >= 2:
                     risk_amt = 14.0
                 else:
                     conf_mult = 1.20 if prob >= 0.50 else 1.0
                     base_s = 45.0 * conf_mult
-                    if (equity - CAPITAL) >= 100.0:
-                        risk_amt = min(70.0, base_s + (equity - CAPITAL) * 0.08)
+                    if current_profit >= 100.0:
+                        risk_amt = min(70.0, base_s + current_profit * 0.08)
                     else:
                         risk_amt = base_s
 
-                trade_pnl = r_gain * risk_amt
+                # Institutional Aggregate Open Risk Cap (Markowitz & Roncalli 2013)
+                current_open_risk = sum(pos[1] for pos in open_positions)
+                remaining_risk_budget = max(14.0, 110.0 - current_open_risk)
+                final_risk = min(risk_amt, remaining_risk_budget)
+
+                open_positions.append((t_entry + hold_ms, final_risk))
+
+                trade_pnl = r_gain * final_risk
                 executed_trades.append({
                     "time": t_entry,
                     "r": r_gain,
