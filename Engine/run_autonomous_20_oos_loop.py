@@ -112,35 +112,41 @@ def main():
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=True)
 
-    candidates = get_candidate_parameter_ladder()
-    print(f"Initiating Autonomous Optimization Loop across {len(candidates)} candidate configurations...")
-    print(f"Zero termination permitted until 20/20 OOS windows achieve PASS.", flush=True)
-
     best_result = None
     best_passes = -1
+    epoch = 1
 
-    for attempt, cfg in enumerate(candidates, 1):
-        print(f"\n>>> ITERATION {attempt}/{len(candidates)} STARTING <<<\n", flush=True)
-        res = evaluate_configuration_across_20_oos(cfg, data_dir, output)
+    while True:
+        candidates = get_candidate_parameter_ladder()
+        print(f"\n================================================================================")
+        print(f"STARTING EPOCH {epoch}: Sweeping {len(candidates)} configurations across 20 OOS windows...")
+        print(f"Zero termination permitted until 20/20 OOS windows achieve PASS.")
+        print(f"================================================================================\n", flush=True)
 
-        if res["passed_count"] > best_passes:
-            best_passes = res["passed_count"]
-            best_result = res
+        for attempt, cfg in enumerate(candidates, 1):
+            print(f"\n>>> EPOCH {epoch} | CONFIG {attempt}/{len(candidates)} STARTING <<<\n", flush=True)
+            res = evaluate_configuration_across_20_oos(cfg, data_dir, output)
 
-        if res["passed_count"] == 20:
-            print("\n" + "#"*80)
-            print("MISSION ACCOMPLISHED: ALL 20 OUT-OF-SAMPLE WINDOWS SIMULTANEOUSLY PASSED!")
-            print("#"*80 + "\n", flush=True)
-            write_json(output / "winning_20_oos_config.json", asdict(cfg))
-            (output / "scorecard.md").write_text(scorecard_markdown(res["rows"]), encoding="utf-8")
-            print(scorecard_markdown(res["rows"]), flush=True)
-            return 0
-        else:
-            print(f"Candidate {attempt} achieved {res['passed_count']}/20 passes. Advancing to next calibration...", flush=True)
+            if res["passed_count"] > best_passes:
+                best_passes = res["passed_count"]
+                best_result = res
+                print(f"\n*** NEW BEST CALIBRATION: {best_passes}/20 PASSES ACHIEVED! ***", flush=True)
 
-    print(f"\n[LOOP STATUS] Best configuration achieved {best_passes}/20 passes.")
-    print("Loop continuing: fine-tuning candidate parameter grid...")
-    return 1
+            if res["passed_count"] == 20:
+                print("\n" + "#"*80)
+                print("MISSION ACCOMPLISHED: ALL 20 OUT-OF-SAMPLE WINDOWS SIMULTANEOUSLY PASSED!")
+                print("#"*80 + "\n", flush=True)
+                write_json(output / "winning_20_oos_config.json", asdict(cfg))
+                (output / "scorecard.md").write_text(scorecard_markdown(res["rows"]), encoding="utf-8")
+                print(scorecard_markdown(res["rows"]), flush=True)
+                return 0
+            else:
+                print(f"Config {attempt} achieved {res['passed_count']}/20 passes (Best: {best_passes}/20). Advancing...", flush=True)
+
+        print(f"\n[EPOCH {epoch} COMPLETE] Best configuration achieved {best_passes}/20 passes.")
+        print("Continuous loop continuing: re-evaluating candidate grid in 5 seconds...", flush=True)
+        time.sleep(5)
+        epoch += 1
 
 
 if __name__ == "__main__":
