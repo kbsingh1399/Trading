@@ -27,8 +27,13 @@ import lightgbm as lgb
 from hmmlearn.hmm import GaussianHMM
 
 REPO = Path(__file__).resolve().parent.parent
-POOL_DIR = REPO / "scratch" / "battery_pools_v2"
-OUT_JSON = REPO / "scratch" / "ml_reversal_results" / "stage2_v2_scorecard.json"
+import os
+PROFILE = os.environ.get("PROFILE", "maker25")
+GEOMIN = int(os.environ.get("GEOMIN", "0"))
+DAILY2 = int(os.environ.get("DAILY2", "1"))
+CFG_TAG = os.environ.get("CFG_TAG", f"{PROFILE}_g{GEOMIN}_d{DAILY2}")
+POOL_DIR = REPO / "scratch" / f"battery_pools_v2_{PROFILE}"
+OUT_JSON = REPO / "scratch" / "ml_reversal_results" / f"stage2_v2_scorecard_{CFG_TAG}.json"
 WINDOWS_PATH = REPO / "Engine" / "oos_windows_20.json"
 CRITERIA_PATH = REPO / "Engine" / "target_oos_criteria.json"
 BTC_PARQUET = REPO / "Engine" / "binance_backtesting_data" / "BTCUSDT_15m_master_2020_2026.parquet"
@@ -178,7 +183,10 @@ def run():
     print("[stage2] loading store + augmenting...", flush=True)
     store = get_store()
     big = augment_pools(store)
-    big.to_parquet(REPO / "scratch" / "union_pool_v2.parquet", index=False)
+    if GEOMIN:
+        big = big[big.geo_id >= GEOMIN].reset_index(drop=True)
+        print(f"[stage2] geo_id>={GEOMIN} filter -> {len(big):,d} candidates", flush=True)
+    big.to_parquet(REPO / "scratch" / f"union_pool_v2_{PROFILE}.parquet", index=False)
     print(f"[stage2] union: {len(big):,d} | net r mean {big.r.mean():+.4f}", flush=True)
 
     btc_ret4 = btc_4h_returns()
@@ -274,7 +282,7 @@ def run():
             zr = (reg.predict(X_te) - reg.predict(X_tr).mean()) / (reg.predict(X_tr).std() + 1e-9)
             score = zr + 2.0 * (clf.predict_proba(X_te)[:, 1] - 0.5)
 
-        # daily top-2: best overall + best fast/mid-geo (keeps book fluid)
+        # daily top-1 (+ optional second fast/mid slot when DAILY2)
         if X_tr is not None:
             days = pd.to_datetime(test_g["t"].to_numpy(), unit="ms", utc=True).normalize()
             sel = []
@@ -282,9 +290,10 @@ def run():
             for _, arr in pd.Series(np.arange(len(test_g)), index=days).groupby(level=0):
                 arr = np.asarray(arr)
                 sel.append(int(arr[np.argmax(score[arr])]))
-                fast = arr[gids[arr] <= 1]
-                if len(fast):
-                    sel.append(int(fast[np.argmax(score[fast])]))
+                if DAILY2:
+                    fast = arr[gids[arr] <= 1]
+                    if len(fast):
+                        sel.append(int(fast[np.argmax(score[fast])]))
             sel = np.array(sorted(set(sel)), dtype=int)
 
         # ---- executor

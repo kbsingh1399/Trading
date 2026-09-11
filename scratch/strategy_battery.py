@@ -21,6 +21,7 @@ on bar j, evaluated from j onwards; entry at close of signal bar i).
 """
 from __future__ import annotations
 
+import os
 import sys
 import time
 from pathlib import Path
@@ -32,8 +33,9 @@ from numba import njit
 REPO = Path(__file__).resolve().parent.parent
 DATA_DIR = REPO / "Engine" / "binance_backtesting_data"
 CACHE = REPO / "scratch" / "cache_battery_v2.pkl"
-POOL_DIR = REPO / "scratch" / "battery_pools_v2"
-RESULTS_CSV = REPO / "scratch" / "battery_stage1_results_v2.csv"
+PROFILE = os.environ.get("PROFILE", "maker")
+POOL_DIR = REPO / "scratch" / f"battery_pools_v2_{PROFILE}"
+RESULTS_CSV = REPO / "scratch" / f"battery_stage1_results_v2_{PROFILE}.csv"
 
 FRICTION_R = 0.25
 
@@ -52,7 +54,11 @@ GEOS = {
 @njit(cache=True)
 def label_candidates_numba(close, high, low, atr_pct, idx, side,
                            horizon, be_arm, be_lock, decay_bars, decay_min,
-                           trail_arm, trail_k, friction):
+                           trail_arm, trail_k, friction,
+                           maker_fill, max_wait, entry_fee_bps, exit_cost_bps):
+    """friction (R) is charged when maker_fill==0 (legacy constant mode).
+    Otherwise bps-accurate: limit entry at close[i], filled only if price
+    trades through within max_wait bars (adverse selection); exits taker."""
     n = len(idx)
     out_r = np.empty(n, dtype=np.float64)
     out_b = np.empty(n, dtype=np.int32)
@@ -60,46 +66,69 @@ def label_candidates_numba(close, high, low, atr_pct, idx, side,
     for k in range(n):
         i = idx[k]
         s = side[k]
-        entry = close[i]
         a = atr_pct[i]
         if a <= 0 or i + 1 >= m:
             out_r[k] = 0.0
             out_b[k] = 0
             continue
+        entry = close[i]
+        start_j = i + 1
+        if maker_fill == 1:
+            filled = False
+            jf = i + 1
+            lim = 0
+            for lim in range(1, max_wait + 1):
+                jj = i + lim
+                if jj >= m:
+                    break
+                if (s > 0 and low[jj] <= entry) or (s < 0 and high[jj] >= entry):
+                    filled = True
+                    jf = jj
+                    break
+            if not filled:
+                out_r[k] = -999.0  # no fill -> rejected candidate
+                out_b[k] = 0
+                continue
+            start_j = jf + 1
+        if maker_fill >= 1:
+            fr_cost = (entry_fee_bps + exit_cost_bps) / 10000.0 / a
+        else:
+            fr_cost = friction
         stop_r = -1.0
         best_r = 0.0
-        j_end = i + horizon
+        j_end = start_j - 1 + horizon
         if j_end >= m:
             j_end = m - 1
         r_out = 0.0
         b_out = 0
-        for j in range(i + 1, j_end + 1):
+        done = False
+        for j in range(start_j, j_end + 1):
             # adverse extreme first (conservative fill at stop price)
             stop_px = entry * (1.0 + s * stop_r * a)
             hit = (low[j] <= stop_px) if s > 0 else (high[j] >= stop_px)
             move = s * (close[j] - entry) / entry / a
             if hit:
-                r_out = stop_r - friction
-                b_out = j - i
+                r_out = stop_r - fr_cost
+                b_out = j - (start_j - 1)
+                done = True
                 break
             if move > best_r:
                 best_r = move
-            # one-way BE ratchet
             if be_arm > 0 and best_r >= be_arm and be_lock > stop_r:
                 stop_r = be_lock
-            # R-trail
             if trail_arm > 0 and best_r >= trail_arm:
                 ts = best_r - trail_k
                 if ts > stop_r:
                     stop_r = ts
-            # time decay at exactly decay_bars with no progress
-            if decay_bars > 0 and (j - i) == decay_bars and best_r + (move - best_r) < decay_min and move < decay_min:
-                r_out = move - friction
-                b_out = j - i
+            if decay_bars > 0 and (j - (start_j - 1)) == decay_bars and move < decay_min:
+                r_out = move - fr_cost
+                b_out = j - (start_j - 1)
+                done = True
                 break
             if j == j_end:
-                r_out = move - friction
-                b_out = j - i
+                r_out = move - fr_cost
+                b_out = j - (start_j - 1)
+                done = True
                 break
         out_r[k] = r_out
         out_b[k] = b_out
@@ -276,6 +305,15 @@ def spec_signals(fam: str, tag: str, df: pd.DataFrame):
 
 NEEDS_METRIC = {"T5", "T9"}  # signal inputs are ancillary metrics; synthetic-imputed rows must not trade
 
+# fee profiles: (maker_fill, max_wait_bars, entry_fee_bps, exit_cost_bps, label)
+FEE_PROFILES = {
+    # label: (maker_fill, max_wait_bars, entry_fee_bps, exit_cost_bps)
+    "taker41": (2, 0, 18.0, 23.0),     # bps-exact mandate: taker in (8f+10sl), taker out (8f+15sl) = 41bps total
+    "maker25": (1, 8, 2.0, 23.0),      # maker entry 2bps fee, 0 slip; exit taker 8+15
+    "maker35": (1, 8, 2.0, 33.0),      # +10bps stress on exit
+}
+FEE_PROFILE = FEE_PROFILES.get(PROFILE, FEE_PROFILES["maker25"])
+
 def spec_candidates(store: dict, fam: str, tag: str) -> pd.DataFrame:
     geo_key = dict(((f, t), g) for f, t, g in spec_list())[(fam, tag)]
     horizon, be_arm, be_lock, decay_bars, decay_min, trail_arm, trail_k, cd, r_scale = GEOS[geo_key]
@@ -293,14 +331,18 @@ def spec_candidates(store: dict, fam: str, tag: str) -> pd.DataFrame:
         idx = idx[keep]
         if len(idx) == 0:
             continue
+        maker_fill, max_wait, fee_e, cost_x = FEE_PROFILE
         r, bars = label_candidates_numba(
             df["close"].to_numpy(), df["high"].to_numpy(), df["low"].to_numpy(),
             (df["atr_pct"].fillna(0) * r_mult).to_numpy().astype(np.float64),
             idx.astype(np.int64), side[idx].astype(np.int64),
             horizon, be_arm, be_lock, decay_bars, decay_min,
-            trail_arm, trail_k, FRICTION_R)
-        parts.append(pd.DataFrame({"t": df["open_time_ms"].to_numpy()[idx],
-                                   "r": r, "side": side[idx], "bars": bars, "sym": sym}))
+            trail_arm, trail_k, FRICTION_R, maker_fill, max_wait, fee_e, cost_x)
+        live = r > -900
+        idx_l = idx[live]
+        parts.append(pd.DataFrame({"t": df["open_time_ms"].to_numpy()[idx_l],
+                                   "r": r[live], "side": side[idx_l], "bars": bars[live], "sym": sym}))
+        del live
     if not parts:
         return pd.DataFrame(columns=["t", "r", "side", "bars", "sym"])
     return pd.concat(parts, ignore_index=True).sort_values("t").reset_index(drop=True)
@@ -315,9 +357,11 @@ def main():
                            df0["low"].to_numpy()[:2000],
                            df0["atr_pct"].fillna(0).to_numpy()[:2000].astype(np.float64),
                            np.array([100, 500], dtype=np.int64), np.array([1, -1], dtype=np.int64),
-                           48, 0.75, 0.35, 24, 0.2, -1.0, 1.0, FRICTION_R)
+                           48, 0.75, 0.35, 24, 0.2, -1.0, 1.0, FRICTION_R,
+                           1, 8, 2.0, 23.0)
     rows = []
     POOL_DIR.mkdir(parents=True, exist_ok=True)
+    print(f"[battery] PROFILE={PROFILE} fee={FEE_PROFILE}", flush=True)
     print(f"{'FAM':<4} | {'tag':<13} | {'geo':<7} | {'n':>7} | {'netR':>8} | {'grossR':>8} | {'WR%':>6} | {'pf_net':>7} | {'avgbars':>8}", flush=True)
     for fam, tag, geo_key in spec_list():
         pool = spec_candidates(store, fam, tag)

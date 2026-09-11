@@ -22,8 +22,10 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
 WINDOWS_PATH = REPO / "Engine" / "oos_windows_20.json"
-UNION = REPO / "scratch" / "union_pool_v2.parquet"
-OUT = REPO / "scratch" / "ml_reversal_results" / "stage5_oracle.json"
+import os
+PROFILE = os.environ.get("PROFILE", "maker25")
+UNION = REPO / "scratch" / f"union_pool_v2_{PROFILE}.parquet"
+OUT = REPO / "scratch" / "ml_reversal_results" / f"stage5_oracle_{PROFILE}.json"
 CAPITAL = 5000.0
 
 

@@ -1,0 +1,26 @@
+{
+  "sims": 200,
+  "null_total_pnl_pct": {
+    "median": 39.32634864064292,
+    "p05": 3.701752410551394,
+    "p95": 86.01412984373508
+  },
+  "null_max_window_roi": {
+    "median": 25.76139859860605,
+    "p95": 47.088319326619015,
+    "p99": 53.96388062572275,
+    "max": 60.01454883754093
+  },
+  "null_pass_count_distribution": {
+    "0": 70,
+    "1": 83,
+    "2": 38,
+    "3": 8,
+    "5": 1
+  },
+  "observed": {
+    "total_pct": 7.14
+  },
+  "interpretation": null,
+  "P(null total >= observed total)": 0.93
+}

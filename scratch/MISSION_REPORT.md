@@ -186,3 +186,37 @@ tail-mass P(r>2R) 5.0-8.5% everywhere (best bin: dist90hi-high, -0.114R net). Th
 separate tails. Symbol-level: all 18 symbols net-negative (SOL -0.087R best, LTC -0.302R
 worst). Confirms: no scalar conditioning in this feature space carries the tail signal the
 oracle pricing proves is necessary.
+
+---
+
+# CAMPAIGN v3 (2026-09-12): bps-exact accounting, maker-fills authorized, TREND HARVEST deployment
+
+## The accounting discovery (context correction)
+Mandate friction "0.25R/trade" implied R-unit ~1.64% (41bps/0.25). My v1/v2 batteries used
+R-unit = 15m-ATR (~0.2%) for FAST geos (charging ~5bps instead of 41bps) and 16h-ATR
+(2.5-3.5%) for SURV (charging ~80bps). No false passes existed (all runs 0/20), but the
+correct R-invariant accounting is bps-exact per trade. Rebuilt labels: friction
+charged in bps of notional converted per-candidate through its actual vol unit; maker
+entry = limit-at-close with 8-bar fill gate (adverse selection; unfilled trades rejected).
+
+## Corrected stage 1 (mandate taker fees, bps-exact): weekly trend is positive
+T2 tsmom7d_hi15 +0.041R net (WR 46.7%, pf 1.078); T6 xs_decile +0.039R; T1 donch +0.027-0.029R;
+T3W +0.015R. FAST families are terminal friction-pits as physics demands (NR7 -1.33R at taker
+cost), maker25 recovers only to -0.78R. maker25 SURV: T2 +0.066R, T6 +0.057R, T1 +0.043-0.045R.
+
+## Selector science (reality checks enforced)
+- ML-gated daily-pick ensembles at all fee profiles: +3.9..+7.1% totals but P(null>=obs)=90-93%
+  (below matched-count darts) — selection is anti-predictive; edge lives in pool tails.
+- BREADTH harvest (trade all gated candidates, risk budgeting): +33.0%, P=0.35.
+- + BTC-7d tide guard: +49.7%, P=0.18.
+- + direction cap 2 (C2): total +42.1%, CONTINUOUS live-equivalent +39.5% ROI, DD 9.0%,
+  +1.97%/mo, 13/20 pos months, P=0.053.
+- FINAL at mandate taker fees: C2-taker41 continuous +42.5% ROI, DD 6.5%, +2.12%/mo, P=0.037.
+  Stress (+10bps exits): +37.1%, DD 9.2%, P=0.053. DIR-cap-1 safety variant: DD 3.95%, ROI 13.4%.
+
+## Deliverable
+scratch/DEPLOYMENT_SPEC.md — production rules, gates, sizing, kill-switch, ramp plan.
+Mandate joint 20/20: still NOT achieved (per-window C2: 1/20; best variant 4/20 at
+tide-guard-only). Structural incompatibilities: 15-trade/window floor vs weekly holds;
++10%/month-every-month vs +2%/month-mean fat-tail edge. Recommend criteria change or
+paper-trade forward validation of DEPLOYMENT_SPEC.

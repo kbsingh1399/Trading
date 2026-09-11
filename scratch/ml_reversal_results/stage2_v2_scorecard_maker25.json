@@ -1,0 +1,361 @@
+{
+  "results": [
+    {
+      "window_id": 1,
+      "name": "May 2021 Great Liquidation Crash",
+      "candidates": 935,
+      "trades": 9,
+      "win_rate": 22.22222222222222,
+      "pnl_usd": -155.1853322270397,
+      "roi_pct": -3.1037066445407944,
+      "max_dd_pct": 3.10370664454078,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 2,
+      "name": "September 2021 El Salvador Flash Crash",
+      "candidates": 1499,
+      "trades": 16,
+      "win_rate": 31.25,
+      "pnl_usd": -127.34458035070035,
+      "roi_pct": -2.546891607014007,
+      "max_dd_pct": 3.6553729417300014,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3",
+        "T5",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 3,
+      "name": "November 2021 Cycle Peak Reversal",
+      "candidates": 1259,
+      "trades": 20,
+      "win_rate": 55.00000000000001,
+      "pnl_usd": 52.904711062640416,
+      "roi_pct": 1.0580942212528084,
+      "max_dd_pct": 4.10204779764701,
+      "status": "FAIL",
+      "ok_fams": [
+        "T2",
+        "T3",
+        "T4",
+        "T5",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 4,
+      "name": "January 2022 Fed Macro Tightening",
+      "candidates": 1241,
+      "trades": 13,
+      "win_rate": 46.15384615384615,
+      "pnl_usd": -135.39785013697676,
+      "roi_pct": -2.707957002739535,
+      "max_dd_pct": 3.3760187947717535,
+      "status": "FAIL",
+      "ok_fams": [
+        "T2",
+        "T3",
+        "T5",
+        "T6",
+        "T9"
+      ]
+    },
+    {
+      "window_id": 5,
+      "name": "May 2022 Terra-Luna Systemic Shock",
+      "candidates": 1475,
+      "trades": 10,
+      "win_rate": 80.0,
+      "pnl_usd": 861.1508757565973,
+      "roi_pct": 17.223017515131946,
+      "max_dd_pct": 3.395568549594423,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 6,
+      "name": "June 2022 3AC & Celsius Capitulation",
+      "candidates": 1436,
+      "trades": 10,
+      "win_rate": 40.0,
+      "pnl_usd": 49.81030215975559,
+      "roi_pct": 0.9962060431951117,
+      "max_dd_pct": 3.3362958405529026,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3"
+      ]
+    },
+    {
+      "window_id": 7,
+      "name": "September 2022 ETH Merge Chop & Grind",
+      "candidates": 1730,
+      "trades": 32,
+      "win_rate": 37.5,
+      "pnl_usd": -297.57120334912037,
+      "roi_pct": -5.9514240669824074,
+      "max_dd_pct": 6.322592818092071,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3",
+        "T6",
+        "T7"
+      ]
+    },
+    {
+      "window_id": 8,
+      "name": "November 2022 FTX Collapse Bottom",
+      "candidates": 1606,
+      "trades": 10,
+      "win_rate": 40.0,
+      "pnl_usd": -85.16576461831247,
+      "roi_pct": -1.7033152923662493,
+      "max_dd_pct": 2.533630884352772,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3",
+        "T5",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 9,
+      "name": "January 2023 Bullish Short Squeeze Recovery",
+      "candidates": 1874,
+      "trades": 34,
+      "win_rate": 47.05882352941176,
+      "pnl_usd": 258.34353194444924,
+      "roi_pct": 5.166870638888985,
+      "max_dd_pct": 4.346443790947797,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3",
+        "T5",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 10,
+      "name": "March 2023 SVB Bank Run & USDC Depeg",
+      "candidates": 2216,
+      "trades": 29,
+      "win_rate": 44.827586206896555,
+      "pnl_usd": 132.68825591392502,
+      "roi_pct": 2.6537651182785007,
+      "max_dd_pct": 6.817460613513604,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3",
+        "T6",
+        "T8"
+      ]
+    },
+    {
+      "window_id": 11,
+      "name": "June 2023 BlackRock Spot ETF Momentum",
+      "candidates": 2130,
+      "trades": 33,
+      "win_rate": 51.515151515151516,
+      "pnl_usd": 245.3393093189398,
+      "roi_pct": 4.906786186378796,
+      "max_dd_pct": 3.534001143624009,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3",
+        "T5",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 12,
+      "name": "August 2023 Mid-Summer Flash Liquidation",
+      "candidates": 910,
+      "trades": 24,
+      "win_rate": 66.66666666666666,
+      "pnl_usd": 110.58286785329531,
+      "roi_pct": 2.2116573570659064,
+      "max_dd_pct": 3.0247093549205473,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T5",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 13,
+      "name": "October 2023 Uptober Spot ETF Ignition",
+      "candidates": 2054,
+      "trades": 30,
+      "win_rate": 46.666666666666664,
+      "pnl_usd": -171.3830437775796,
+      "roi_pct": -3.427660875551592,
+      "max_dd_pct": 3.9933040199158136,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3",
+        "T5",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 14,
+      "name": "January 2024 Spot ETF Approval Shakeout",
+      "candidates": 2056,
+      "trades": 29,
+      "win_rate": 41.37931034482759,
+      "pnl_usd": -230.08284234622937,
+      "roi_pct": -4.6016568469245875,
+      "max_dd_pct": 5.565338669555694,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3",
+        "T5",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 15,
+      "name": "March 2024 Pre-Halving All-Time High Run",
+      "candidates": 1152,
+      "trades": 11,
+      "win_rate": 45.45454545454545,
+      "pnl_usd": 7.156091274070251,
+      "roi_pct": 0.14312182548140504,
+      "max_dd_pct": 1.1412996437001313,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 16,
+      "name": "August 2024 Global Carry Trade Liquidation",
+      "candidates": 1725,
+      "trades": 14,
+      "win_rate": 71.42857142857143,
+      "pnl_usd": 72.46725893042145,
+      "roi_pct": 1.449345178608429,
+      "max_dd_pct": 3.201089219040279,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3"
+      ]
+    },
+    {
+      "window_id": 17,
+      "name": "November 2024 US Election Mega Breakout",
+      "candidates": 2202,
+      "trades": 23,
+      "win_rate": 52.17391304347826,
+      "pnl_usd": 51.48735135852982,
+      "roi_pct": 1.0297470271705964,
+      "max_dd_pct": 2.912611078558912,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3",
+        "T5",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 18,
+      "name": "February 2025 Post-Inauguration Consolidation",
+      "candidates": 2148,
+      "trades": 32,
+      "win_rate": 37.5,
+      "pnl_usd": -167.159176339016,
+      "roi_pct": -3.3431835267803205,
+      "max_dd_pct": 4.8197677708860285,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3",
+        "T5",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 19,
+      "name": "July 2025 Mid-Year Volatility Expansion",
+      "candidates": 2080,
+      "trades": 26,
+      "win_rate": 46.15384615384615,
+      "pnl_usd": -127.13337366501494,
+      "roi_pct": -2.5426674733002987,
+      "max_dd_pct": 3.3767150563199797,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3",
+        "T5",
+        "T6"
+      ]
+    },
+    {
+      "window_id": 20,
+      "name": "March 2026 Late-Cycle Microstructure Shock",
+      "candidates": 1565,
+      "trades": 13,
+      "win_rate": 38.46153846153847,
+      "pnl_usd": -151.19220068209748,
+      "roi_pct": -3.0238440136419498,
+      "max_dd_pct": 3.494013699456063,
+      "status": "FAIL",
+      "ok_fams": [
+        "T1",
+        "T2",
+        "T3"
+      ]
+    }
+  ],
+  "total_pnl": 194.31518808053735,
+  "pass_count": 0,
+  "mc": {
+    "P_ROI>=10": 0.0862,
+    "P_DD>5": 0.2842,
+    "median_ROI": -1.1167529346678111,
+    "median_DD": 3.727165765528659,
+    "p05_ROI": -6.93729264061739,
+    "p95_ROI": 13.882879000653247
+  }
+}

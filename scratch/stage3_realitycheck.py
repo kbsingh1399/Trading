@@ -26,23 +26,33 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 WINDOWS_PATH = REPO / "Engine" / "oos_windows_20.json"
-UNION = REPO / "scratch" / "union_pool_v2.parquet"
-OUT = REPO / "scratch" / "ml_reversal_results" / "stage3_realitycheck.json"
+import os
+PROFILE = os.environ.get("PROFILE", "maker25")
+GEOMIN = int(os.environ.get("GEOMIN", "0"))
+DAILY2 = int(os.environ.get("DAILY2", "1"))
+CFG_TAG = os.environ.get("CFG_TAG", f"{PROFILE}_g{GEOMIN}_d{DAILY2}")
+UNION = REPO / "scratch" / f"union_pool_v2_{PROFILE}.parquet"
+OUT = REPO / "scratch" / "ml_reversal_results" / f"stage3_realitycheck_{CFG_TAG}.json"
 
 CAPITAL = 5000.0
 SIMS = 200
 
 
 def exec_window(test_g, score, capital=CAPITAL):
+    if GEOMIN:
+        test_g = test_g[test_g.geo_id >= GEOMIN].reset_index(drop=True)
+        if len(test_g) == 0:
+            return 0.0, 0.0, 0.0, 0, 0.0
     days = pd.to_datetime(test_g["t"].to_numpy(), unit="ms", utc=True).normalize()
     sel = []
     gids = test_g["geo_id"].to_numpy()
     for _, arr in pd.Series(np.arange(len(test_g)), index=days).groupby(level=0):
         arr = np.asarray(arr)
         sel.append(int(arr[np.argmax(score[arr])]))
-        fast = arr[gids[arr] <= 1]
-        if len(fast):
-            sel.append(int(fast[np.argmax(score[fast])]))
+        if DAILY2:
+            fast = arr[gids[arr] <= 1]
+            if len(fast):
+                sel.append(int(fast[np.argmax(score[fast])]))
     sel = np.array(sorted(set(sel)), dtype=int)
     tt = test_g["t"].to_numpy()
     rr = test_g["r"].to_numpy()
@@ -81,6 +91,8 @@ def exec_window(test_g, score, capital=CAPITAL):
 def main():
     t0 = time.perf_counter()
     big = pd.read_parquet(UNION)
+    if GEOMIN:
+        big = big[big.geo_id >= GEOMIN].reset_index(drop=True)
     with open(WINDOWS_PATH) as f:
         windows = json.load(f)
     # pre-slice windows
@@ -124,18 +136,16 @@ def main():
             "max": float(max_rois.max()),
         },
         "null_pass_count_distribution": {str(k): int(v) for k, v in zip(*np.unique(pass_counts, return_counts=True))},
-        "observed": {
-            "v1_total_pct": -54.25, "v1_best_window_roi": 10.49,
-            "v2_total_pct": -41.41, "v2_best_window_roi": 12.93,
-        },
+        "observed": json.loads(os.environ.get("RC_OBS", "{}")),
         "interpretation": None,
     }
-    p_best = float((max_rois >= 12.93).mean())
-    p_10_49 = float((max_rois >= 10.49).mean())
-    summary["P(null max-window ROI >= observed v1 10.49%)"] = p_10_49
-    summary["P(null max-window ROI >= observed v2 12.93%)"] = p_best
-    summary["P(null total <= v2 observed -41.41%)"] = float((totals / CAPITAL * 100 <= -41.41).mean())
-    summary["P(null total <= v1 observed -54.25%)"] = float((totals / CAPITAL * 100 <= -54.25).mean())
+    obs = summary["observed"]
+    obs_total = obs.get("total_pct")
+    obs_best = obs.get("best_window_roi")
+    if obs_best is not None:
+        summary["P(null max-window ROI >= observed best)"] = float((max_rois >= obs_best).mean())
+    if obs_total is not None:
+        summary["P(null total >= observed total)"] = float((totals / CAPITAL * 100 >= obs_total).mean())
     OUT.write_text(json.dumps(summary, indent=2))
     print(json.dumps(summary, indent=2))
     print(f"[rc] done in {time.perf_counter()-t0:.0f}s")

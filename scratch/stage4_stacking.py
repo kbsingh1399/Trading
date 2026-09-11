@@ -31,8 +31,10 @@ from scratch.stage2_ensemble import fit_forward_states, btc_4h_returns  # reuse 
 from scratch.stage3_realitycheck import exec_window  # reuse executor for reality check
 
 WINDOWS_PATH = REPO / "Engine" / "oos_windows_20.json"
-UNION = REPO / "scratch" / "union_pool_v2.parquet"
-OUT = REPO / "scratch" / "ml_reversal_results" / "stage4_stacking.json"
+import os
+PROFILE = os.environ.get("PROFILE", "maker25")
+UNION = REPO / "scratch" / f"union_pool_v2_{PROFILE}.parquet"
+OUT = REPO / "scratch" / "ml_reversal_results" / f"stage4_stacking_{PROFILE}.json"
 PURGE_MS = 72 * 3600 * 1000
 CAPITAL = 5000.0
 FAST_GEO_MAX = 1  # geo_id <= 1 are FAST/MID
