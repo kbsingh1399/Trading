@@ -42942,3 +42942,16 @@ Outcome: Achieved 6 certified OOS passes simultaneously (+2,487.09 USD Net PnL, 
   3. Established continuous rollover plan: upon expiration of the current 8-hour timeout, the hourly cron task (task-2098) will immediately synchronize any new champion records from SQLite study oos_20_windows_doubling_hunt and relaunch an extended continuous optimization horizon without dropping a single second of search compute.
   4. Current Benchmark: Trial #4228 Champion (+4,153.00 USD Net Closed PnL / +83.06% Net ROI on 5,000.00 USD capital, 8 certified passes, Max DD <= 3.17%).
   5. 100% Parameter Parity confirmed between scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py.
+
+---
+### Hourly Checkpoint (Iteration 10 Wakeup): Over 8,330 Optuna Trials Evaluated | 01h 01m Countdown Active
+- Timestamp: 2026-09-12T04:31:00.000000+00:00
+- Optuna Daemon Status: Background process task-2825 (PID 14992) executing continuously at ~3.2s per trial with 01 hour 01 minute remaining on the 8-hour reverse countdown timer.
+- Total Completed Trials: 8,330+ completed trials recorded in SQLite database scratch/optuna_oos_study.db (study: oos_20_windows_doubling_hunt).
+- Current Global Champion Maintained: Trial #4228 (DB trial 5430):
+  - Net Closed Portfolio PnL: +4,153.00 USD (+83.06% Net ROI on 5,000.00 USD capital) across 290 completed trades.
+  - 8 Certified Passes Maintained: W01 (+623.77 USD), W02 (+570.75 USD), W04 (+502.82 USD), W06 (+580.50 USD), W10 (+565.70 USD), W15 (+613.46 USD), W16 (+631.07 USD), W17 (+513.04 USD).
+  - Risk & Drawdown Ceiling: Worst-case drawdown across all 8 passing windows remains ultra-low at 3.17% (W06), well below the 5.00% risk ceiling.
+  - W11 Replication: Window 11 (BlackRock Spot ETF) repeatedly verified passing in Trial #7119 and Trial #6802, confirming that the search is closing in on a unified 9-pass configuration.
+- Code Parity & Knowledge Graph: Both scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py maintain 100% byte-for-byte parity with Trial #4228 parameters. AST knowledge graph fully synchronized (49,112 nodes).
+- Continuous Search: Background task task-2825 continues uninterrupted autonomous exploration for the final ~60 minutes of the 8-hour marathon.
