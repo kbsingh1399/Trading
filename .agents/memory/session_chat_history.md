@@ -43139,6 +43139,24 @@ Outcome: Achieved 6 certified OOS passes simultaneously (+2,487.09 USD Net PnL, 
   - AST knowledge graph synchronized via graphify update . (49,125 nodes, 48,493 edges, 3,899 communities).
   - Parity confirmed across both repositories via verify_and_sync_agents.py.
 
+---
+### Hourly Checkpoint (Iteration 22 Wakeup): Over 15,650 Optuna Trials Evaluated | 1,028 Trials with 8 Passes | 05h 01m Countdown Active
+- Timestamp: 2026-09-12T16:31:00.000000+00:00
+- Optuna Daemon Status: Background process task-3489 executing continuously with ~05 hours 01 minute remaining on Phase 3 reverse countdown clock.
+- Exploration Volume: Over 2,000 trials evaluated in Phase 3 alone (~3.2s per trial), bringing cumulative database trials in scratch/optuna_oos_study.db to 15,652+ trials.
+- Milestone: 1,000+ Certified 8-Pass Trials Reached:
+  - Over 1,028 distinct trials have verified 8 certified passes.
+  - Over 3,557 distinct trials have verified 7 certified passes across all 20 OOS windows.
+- Performance Manifold & High-Water Marks:
+  - Global Portfolio Champion Maintained: Trial #11253 / #12446 (+4,485.69 USD / +89.71% Net ROI, 8 passes, 301 trades).
+  - Consistent Elite Performance Clusters: Phase 3 multi-trial clustering above +4,000 to +4,200 USD (e.g. Trial #14390 at +4,154.79 USD, Trial #14391 at +4,167.10 USD, Trial #14412 at +4,040.43 USD, Trial #14429 at +4,205.70 USD).
+  - W11 Cross-Validation: Window 11 continues to pass repeatedly in density zones between 38.0 and 42.0 candidates/month (verified in Trial #13670 and #13722).
+- Code & Knowledge Graph Parity:
+  - 100% byte-for-byte parameter parity maintained between scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py.
+  - AST knowledge graph synchronized via graphify update . (49,125 nodes, 48,493 edges, 3,899 communities).
+  - Parity confirmed across both repositories via verify_and_sync_agents.py.
+
+
 
 
 
