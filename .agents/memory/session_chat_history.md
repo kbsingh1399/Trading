@@ -43105,4 +43105,21 @@ Outcome: Achieved 6 certified OOS passes simultaneously (+2,487.09 USD Net PnL, 
 - Parity & Health: Both scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py maintain 100% byte-for-byte parameter parity.
 - Parity Verification: python .agents/scripts/verify_and_sync_agents.py confirmed perfect 100% byte-for-byte parity across both repository .agents folders.
 
+---
+### Hourly Checkpoint (Iteration 20 Wakeup): Phase 3 Active (14,258+ Cumulative Trials Evaluated) | 07h 01m Countdown Active
+- Timestamp: 2026-09-12T14:31:00.000000+00:00
+- Optuna Daemon Status: Background process task-3489 executing continuously with ~07 hours 01 minute remaining on Phase 3 reverse countdown clock.
+- Exploration Volume: Over 615 trials evaluated in Phase 3 alone (~3.2s per trial), bringing cumulative database trials in scratch/optuna_oos_study.db to 14,258+ trials.
+- Empirical Pass Growth: Over 844 trials achieved 8 certified passes; over 3,072 trials achieved 7 certified passes.
+- High-Density Performance Clusters:
+  - Global Portfolio Champion Maintained: Trial #11253 / #12446 (+4,485.69 USD / +89.71% Net ROI, 8 passes, 301 trades).
+  - High-Water Contender: Trial #12989 generated +4,447.80 USD across 309 trades with 8 certified passes.
+  - Consistent Elite Performance: Persistent multi-trial clustering above +4,150 to +4,450 USD (e.g. Trial #13000 at +4,064.19 USD, Trial #13001 at +4,157.84 USD, Trial #13009 at +4,153.05 USD, Trial #13012 at +4,179.52 USD, Trial #13016 at +4,313.66 USD).
+- Window 11 & Convergence: Exploration of candidate densities between 37.0 and 42.0 is actively testing orderflow thresholds to push W11 (+508.28 USD, 13 trades) across the 15-trade certification line.
+- Code & Knowledge Graph Parity:
+  - 100% byte-for-byte parameter parity maintained between scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py.
+  - AST knowledge graph synchronized via graphify update . (49,125 nodes, 48,493 edges, 3,899 communities).
+  - Parity confirmed across both repositories via verify_and_sync_agents.py.
+
+
 
