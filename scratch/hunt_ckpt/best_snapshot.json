@@ -1,6 +1,6 @@
 {
-  "round": 3,
-  "trials": 750,
+  "round": 4,
+  "trials": 1550,
   "best_value": 736.6922386993903,
   "best_params": {
     "profile": "taker41",
@@ -44,5 +44,5 @@
   },
   "design_passes": 7,
   "design_total_pct": 71.60506687723974,
-  "elapsed_h": 10.10554386344221
+  "elapsed_h": 10.353526768949298
 }
