@@ -27,6 +27,7 @@ WINDOWS_PATH = REPO / "Engine" / "oos_windows_20.json"
 CAPITAL = 5000.0
 PURGE_MS = 72 * 3600 * 1000
 HUNT_SECONDS = int(float(os.environ.get("HUNT_HOURS", "8")) * 3600)
+TARGET_TRIALS = int(os.environ.get("TARGET_TRIALS", "0"))
 HUNT_DIR = REPO / "scratch" / os.environ.get("HUNT_DIR_NAME", "hunt")
 DB = "sqlite:///" + str(HUNT_DIR / "optuna_hunt.db")
 
@@ -293,7 +294,9 @@ def main():
         t_start = time.time()
         start_file.write_text(str(t_start))
     deadline = t_start + HUNT_SECONDS
-    print(f"[hunt] deadline in {(deadline - time.time()) / 3600:.2f}h", flush=True)
+    if TARGET_TRIALS:
+        deadline = t_start + 100 * 365 * 24 * 3600  # target-driven; time cap only as backstop via remaining check
+    print(f"[hunt] deadline in {(deadline - time.time()) / 3600:.2f}h | target {TARGET_TRIALS or 'time'}", flush=True)
 
     wins = load_windows()
     design_ids = [w[0] for w in wins if w[0] <= 16]
@@ -315,11 +318,19 @@ def main():
     budget = 50
     while True:
         remaining = deadline - time.time()
+        done_n = len([t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE])
+        if TARGET_TRIALS and done_n >= TARGET_TRIALS:
+            print(f"[hunt] TARGET_TRIALS {TARGET_TRIALS} reached at {done_n}", flush=True)
+            break
         if remaining < 60:
             break
         print(f"[hunt] round {rnd}: {budget} trials | elapsed {(time.time() - t_start) / 3600:.2f}h", flush=True)
+        def _target_cb(study, trial):
+            if TARGET_TRIALS and len([t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE]) >= TARGET_TRIALS:
+                study.stop()
+        cbs = [_target_cb] if TARGET_TRIALS else None
         try:
-            study.optimize(obj, n_trials=budget, timeout=remaining, gc_after_trial=True, show_progress_bar=False)
+            study.optimize(obj, n_trials=budget, timeout=remaining, gc_after_trial=True, show_progress_bar=False, callbacks=cbs)
         except Exception as e:
             print(f"[hunt] round {rnd} error: {e}", flush=True)
         comp = [t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE]
@@ -336,7 +347,7 @@ def main():
         budget *= 2
     comp_total = len([t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE])
     (HUNT_DIR / "DONE").write_text(f"finished {time.ctime()} after {comp_total} trials")
-    print(f"[hunt] DEADLINE reached — {comp_total} trials. Run validate_hunt.py", flush=True)
+    print(f"[hunt] STOP — {comp_total} trials. Run validate_hunt.py", flush=True)
 
 
 if __name__ == "__main__":

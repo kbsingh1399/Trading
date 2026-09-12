@@ -99,6 +99,20 @@ def main():
     study = optuna.load_study(study_name="hunt20", storage=drv.DB)
     comp = [t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE]
     print(f"trials: {len(comp)}")
+    dpass = [t.user_attrs.get("design_passes", 0) for t in comp]
+    dvals = [t.value for t in comp if t.value is not None]
+    design_dist = {"n": len(dpass),
+                   "passes_max": int(max(dpass)) if dpass else 0,
+                   "passes_ge1": int(sum(1 for d in dpass if d >= 1)),
+                   "passes_ge2": int(sum(1 for d in dpass if d >= 2)),
+                   "passes_ge3": int(sum(1 for d in dpass if d >= 3)),
+                   "passes_ge4": int(sum(1 for d in dpass if d >= 4)),
+                   "passes_ge5": int(sum(1 for d in dpass if d >= 5)),
+                   "passes_ge6": int(sum(1 for d in dpass if d >= 6)),
+                   "value_median": float(np.median(dvals)) if dvals else 0.0,
+                   "value_p95": float(np.quantile(dvals, 0.95)) if dvals else 0.0,
+                   "value_p99": float(np.quantile(dvals, 0.99)) if dvals else 0.0}
+    print("design dist:", design_dist, flush=True)
 
     # dedupe by param signature
     seen = {}
@@ -163,7 +177,8 @@ def main():
                       "null": {"median": float(np.median(sims)),
                                "p95": float(np.quantile(sims, 0.95)),
                                "P_null_ge_observed": p_ge}}
-    OUT.write_text(json.dumps({"top_design": results, "champion_full": champ_full}, indent=2))
+    OUT.write_text(json.dumps({"design_dist": design_dist, "top_design": results,
+                               "champion_full": champ_full}, indent=2))
     print(f"wrote {OUT}")
 
 
