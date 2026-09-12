@@ -1,0 +1,855 @@
+{
+  "top_design": [
+    {
+      "design_value": 653.6912732468339,
+      "design_passes": 6,
+      "design_total_pct": 105.75466701608853,
+      "holdout": {
+        "passes": 0,
+        "total_pct": 44.31446933228585,
+        "rows": [
+          {
+            "wid": 17,
+            "roi": 26.967397591763774,
+            "dd": 1.0667108848020708,
+            "n": 10,
+            "wr": 90.0,
+            "pass": false
+          },
+          {
+            "wid": 18,
+            "roi": 0.48748251014422994,
+            "dd": 4.938995523013087,
+            "n": 19,
+            "wr": 68.42105263157895,
+            "pass": false
+          },
+          {
+            "wid": 19,
+            "roi": 18.813685572712735,
+            "dd": 2.609832321583308,
+            "n": 13,
+            "wr": 76.92307692307693,
+            "pass": false
+          },
+          {
+            "wid": 20,
+            "roi": -1.9540963423348883,
+            "dd": 4.501702064082293,
+            "n": 18,
+            "wr": 44.44444444444444,
+            "pass": false
+          }
+        ]
+      },
+      "params": {
+        "profile": "taker41",
+        "mode": "breadth",
+        "on_T1__donchW_tide": 0,
+        "on_T1__donchW_free": 0,
+        "on_T2__tsmom7d": 0,
+        "on_T2__tsmom7d_hi15": 0,
+        "on_T3__pullback_M": 1,
+        "on_T3__pullback_W": 1,
+        "on_T6__xs_decile": 1,
+        "geo_T1": "SURV_L",
+        "geo_T2": "SURV_L",
+        "geo_T3W": "SURV_XL",
+        "geo_T6": "SURV_L",
+        "tide_on": 1,
+        "tide_min_sig": 0.5,
+        "trail_days": 90,
+        "gate_min": 0.0,
+        "fb_k": 4,
+        "book": 5,
+        "dir_max": 0,
+        "daily_cap": 1,
+        "risk": 60.0,
+        "dd_def": 0.0
+      }
+    },
+    {
+      "design_value": 653.6912732468339,
+      "design_passes": 6,
+      "design_total_pct": 105.75466701608853,
+      "holdout": {
+        "passes": 0,
+        "total_pct": 44.31446933228585,
+        "rows": [
+          {
+            "wid": 17,
+            "roi": 26.967397591763774,
+            "dd": 1.0667108848020708,
+            "n": 10,
+            "wr": 90.0,
+            "pass": false
+          },
+          {
+            "wid": 18,
+            "roi": 0.48748251014422994,
+            "dd": 4.938995523013087,
+            "n": 19,
+            "wr": 68.42105263157895,
+            "pass": false
+          },
+          {
+            "wid": 19,
+            "roi": 18.813685572712735,
+            "dd": 2.609832321583308,
+            "n": 13,
+            "wr": 76.92307692307693,
+            "pass": false
+          },
+          {
+            "wid": 20,
+            "roi": -1.9540963423348883,
+            "dd": 4.501702064082293,
+            "n": 18,
+            "wr": 44.44444444444444,
+            "pass": false
+          }
+        ]
+      },
+      "params": {
+        "profile": "taker41",
+        "mode": "breadth",
+        "on_T1__donchW_tide": 0,
+        "on_T1__donchW_free": 0,
+        "on_T2__tsmom7d": 0,
+        "on_T2__tsmom7d_hi15": 0,
+        "on_T3__pullback_M": 1,
+        "on_T3__pullback_W": 1,
+        "on_T6__xs_decile": 1,
+        "geo_T1": "SURV_L",
+        "geo_T2": "SURV_L",
+        "geo_T3W": "SURV_XL",
+        "geo_T6": "SURV_L",
+        "tide_on": 1,
+        "tide_min_sig": 0.5,
+        "trail_days": 90,
+        "gate_min": 0.02,
+        "fb_k": 4,
+        "book": 5,
+        "dir_max": 0,
+        "daily_cap": 1,
+        "risk": 60.0,
+        "dd_def": 0.0
+      }
+    },
+    {
+      "design_value": 653.6912732468339,
+      "design_passes": 6,
+      "design_total_pct": 105.75466701608853,
+      "holdout": {
+        "passes": 0,
+        "total_pct": 44.31446933228585,
+        "rows": [
+          {
+            "wid": 17,
+            "roi": 26.967397591763774,
+            "dd": 1.0667108848020708,
+            "n": 10,
+            "wr": 90.0,
+            "pass": false
+          },
+          {
+            "wid": 18,
+            "roi": 0.48748251014422994,
+            "dd": 4.938995523013087,
+            "n": 19,
+            "wr": 68.42105263157895,
+            "pass": false
+          },
+          {
+            "wid": 19,
+            "roi": 18.813685572712735,
+            "dd": 2.609832321583308,
+            "n": 13,
+            "wr": 76.92307692307693,
+            "pass": false
+          },
+          {
+            "wid": 20,
+            "roi": -1.9540963423348883,
+            "dd": 4.501702064082293,
+            "n": 18,
+            "wr": 44.44444444444444,
+            "pass": false
+          }
+        ]
+      },
+      "params": {
+        "profile": "taker41",
+        "mode": "breadth",
+        "on_T1__donchW_tide": 0,
+        "on_T1__donchW_free": 0,
+        "on_T2__tsmom7d": 0,
+        "on_T2__tsmom7d_hi15": 0,
+        "on_T3__pullback_M": 1,
+        "on_T3__pullback_W": 1,
+        "on_T6__xs_decile": 1,
+        "geo_T1": "SURV_L",
+        "geo_T2": "SURV_W",
+        "geo_T3W": "SURV_XL",
+        "geo_T6": "SURV_L",
+        "tide_on": 1,
+        "tide_min_sig": 0.5,
+        "trail_days": 90,
+        "gate_min": 0.0,
+        "fb_k": 4,
+        "book": 5,
+        "dir_max": 0,
+        "daily_cap": 1,
+        "risk": 60.0,
+        "dd_def": 0.0
+      }
+    },
+    {
+      "design_value": 653.6912732468339,
+      "design_passes": 6,
+      "design_total_pct": 105.75466701608853,
+      "holdout": {
+        "passes": 0,
+        "total_pct": 44.31446933228585,
+        "rows": [
+          {
+            "wid": 17,
+            "roi": 26.967397591763774,
+            "dd": 1.0667108848020708,
+            "n": 10,
+            "wr": 90.0,
+            "pass": false
+          },
+          {
+            "wid": 18,
+            "roi": 0.48748251014422994,
+            "dd": 4.938995523013087,
+            "n": 19,
+            "wr": 68.42105263157895,
+            "pass": false
+          },
+          {
+            "wid": 19,
+            "roi": 18.813685572712735,
+            "dd": 2.609832321583308,
+            "n": 13,
+            "wr": 76.92307692307693,
+            "pass": false
+          },
+          {
+            "wid": 20,
+            "roi": -1.9540963423348883,
+            "dd": 4.501702064082293,
+            "n": 18,
+            "wr": 44.44444444444444,
+            "pass": false
+          }
+        ]
+      },
+      "params": {
+        "profile": "taker41",
+        "mode": "breadth",
+        "on_T1__donchW_tide": 0,
+        "on_T1__donchW_free": 0,
+        "on_T2__tsmom7d": 0,
+        "on_T2__tsmom7d_hi15": 0,
+        "on_T3__pullback_M": 1,
+        "on_T3__pullback_W": 1,
+        "on_T6__xs_decile": 1,
+        "geo_T1": "SURV_W",
+        "geo_T2": "SURV_L",
+        "geo_T3W": "SURV_XL",
+        "geo_T6": "SURV_L",
+        "tide_on": 1,
+        "tide_min_sig": 0.5,
+        "trail_days": 90,
+        "gate_min": 0.0,
+        "fb_k": 4,
+        "book": 5,
+        "dir_max": 0,
+        "daily_cap": 1,
+        "risk": 60.0,
+        "dd_def": 0.0
+      }
+    },
+    {
+      "design_value": 653.4775180460049,
+      "design_passes": 6,
+      "design_total_pct": 104.69963121942084,
+      "holdout": {
+        "passes": 0,
+        "total_pct": 44.31446933228585,
+        "rows": [
+          {
+            "wid": 17,
+            "roi": 26.967397591763774,
+            "dd": 1.0667108848020708,
+            "n": 10,
+            "wr": 90.0,
+            "pass": false
+          },
+          {
+            "wid": 18,
+            "roi": 0.48748251014422994,
+            "dd": 4.938995523013087,
+            "n": 19,
+            "wr": 68.42105263157895,
+            "pass": false
+          },
+          {
+            "wid": 19,
+            "roi": 18.813685572712735,
+            "dd": 2.609832321583308,
+            "n": 13,
+            "wr": 76.92307692307693,
+            "pass": false
+          },
+          {
+            "wid": 20,
+            "roi": -1.9540963423348883,
+            "dd": 4.501702064082293,
+            "n": 18,
+            "wr": 44.44444444444444,
+            "pass": false
+          }
+        ]
+      },
+      "params": {
+        "profile": "taker41",
+        "mode": "breadth",
+        "on_T1__donchW_tide": 0,
+        "on_T1__donchW_free": 0,
+        "on_T2__tsmom7d": 0,
+        "on_T2__tsmom7d_hi15": 0,
+        "on_T3__pullback_M": 1,
+        "on_T3__pullback_W": 1,
+        "on_T6__xs_decile": 1,
+        "geo_T1": "SURV_L",
+        "geo_T2": "SURV_L",
+        "geo_T3W": "SURV_XL",
+        "geo_T6": "SURV_L",
+        "tide_on": 1,
+        "tide_min_sig": 0.5,
+        "trail_days": 90,
+        "gate_min": 0.0,
+        "fb_k": 4,
+        "book": 8,
+        "dir_max": 0,
+        "daily_cap": 1,
+        "risk": 60.0,
+        "dd_def": 0.0
+      }
+    },
+    {
+      "design_value": 653.4601147314672,
+      "design_passes": 6,
+      "design_total_pct": 105.3063595923471,
+      "holdout": {
+        "passes": 0,
+        "total_pct": 44.6779033756127,
+        "rows": [
+          {
+            "wid": 17,
+            "roi": 26.967397591763774,
+            "dd": 1.0667108848020708,
+            "n": 10,
+            "wr": 90.0,
+            "pass": false
+          },
+          {
+            "wid": 18,
+            "roi": 0.23432812301765532,
+            "dd": 4.938995523013087,
+            "n": 18,
+            "wr": 66.66666666666666,
+            "pass": false
+          },
+          {
+            "wid": 19,
+            "roi": 18.813685572712735,
+            "dd": 2.609832321583308,
+            "n": 13,
+            "wr": 76.92307692307693,
+            "pass": false
+          },
+          {
+            "wid": 20,
+            "roi": -1.3375079118814535,
+            "dd": 4.501702064082293,
+            "n": 20,
+            "wr": 50.0,
+            "pass": false
+          }
+        ]
+      },
+      "params": {
+        "profile": "taker41",
+        "mode": "breadth",
+        "on_T1__donchW_tide": 0,
+        "on_T1__donchW_free": 0,
+        "on_T2__tsmom7d": 0,
+        "on_T2__tsmom7d_hi15": 1,
+        "on_T3__pullback_M": 1,
+        "on_T3__pullback_W": 1,
+        "on_T6__xs_decile": 1,
+        "geo_T1": "SURV_L",
+        "geo_T2": "SURV_L",
+        "geo_T3W": "SURV_XL",
+        "geo_T6": "SURV_L",
+        "tide_on": 1,
+        "tide_min_sig": 0.5,
+        "trail_days": 90,
+        "gate_min": 0.0,
+        "fb_k": 4,
+        "book": 5,
+        "dir_max": 0,
+        "daily_cap": 1,
+        "risk": 60.0,
+        "dd_def": 0.0
+      }
+    },
+    {
+      "design_value": 652.8463769947172,
+      "design_passes": 6,
+      "design_total_pct": 103.36510854473977,
+      "holdout": {
+        "passes": 0,
+        "total_pct": 41.10684459695826,
+        "rows": [
+          {
+            "wid": 17,
+            "roi": 21.146387193487367,
+            "dd": 2.156595525255584,
+            "n": 10,
+            "wr": 80.0,
+            "pass": false
+          },
+          {
+            "wid": 18,
+            "roi": 3.6039017595088763,
+            "dd": 4.938995523013087,
+            "n": 21,
+            "wr": 71.42857142857143,
+            "pass": false
+          },
+          {
+            "wid": 19,
+            "roi": 18.813685572712735,
+            "dd": 2.609832321583308,
+            "n": 13,
+            "wr": 76.92307692307693,
+            "pass": false
+          },
+          {
+            "wid": 20,
+            "roi": -2.4571299287507182,
+            "dd": 4.551539105492916,
+            "n": 22,
+            "wr": 45.45454545454545,
+            "pass": false
+          }
+        ]
+      },
+      "params": {
+        "profile": "taker41",
+        "mode": "breadth",
+        "on_T1__donchW_tide": 0,
+        "on_T1__donchW_free": 1,
+        "on_T2__tsmom7d": 0,
+        "on_T2__tsmom7d_hi15": 0,
+        "on_T3__pullback_M": 1,
+        "on_T3__pullback_W": 1,
+        "on_T6__xs_decile": 1,
+        "geo_T1": "SURV_L",
+        "geo_T2": "SURV_L",
+        "geo_T3W": "SURV_XL",
+        "geo_T6": "SURV_L",
+        "tide_on": 1,
+        "tide_min_sig": 0.5,
+        "trail_days": 90,
+        "gate_min": 0.0,
+        "fb_k": 4,
+        "book": 5,
+        "dir_max": 0,
+        "daily_cap": 1,
+        "risk": 60.0,
+        "dd_def": 0.0
+      }
+    },
+    {
+      "design_value": 652.8261677546334,
+      "design_passes": 6,
+      "design_total_pct": 103.571036583129,
+      "holdout": {
+        "passes": 0,
+        "total_pct": 42.85242858099101,
+        "rows": [
+          {
+            "wid": 17,
+            "roi": 27.262064074702458,
+            "dd": 1.0550729097164067,
+            "n": 10,
+            "wr": 90.0,
+            "pass": false
+          },
+          {
+            "wid": 18,
+            "roi": 0.9353589622643455,
+            "dd": 4.678831590519547,
+            "n": 18,
+            "wr": 66.66666666666666,
+            "pass": false
+          },
+          {
+            "wid": 19,
+            "roi": 16.29420008496315,
+            "dd": 3.802210382713274,
+            "n": 14,
+            "wr": 64.28571428571429,
+            "pass": false
+          },
+          {
+            "wid": 20,
+            "roi": -1.6391945409389388,
+            "dd": 3.9738503017795384,
+            "n": 18,
+            "wr": 55.55555555555556,
+            "pass": false
+          }
+        ]
+      },
+      "params": {
+        "profile": "maker25",
+        "mode": "breadth",
+        "on_T1__donchW_tide": 0,
+        "on_T1__donchW_free": 0,
+        "on_T2__tsmom7d": 0,
+        "on_T2__tsmom7d_hi15": 0,
+        "on_T3__pullback_M": 1,
+        "on_T3__pullback_W": 1,
+        "on_T6__xs_decile": 1,
+        "geo_T1": "SURV_W",
+        "geo_T2": "SURV_XL",
+        "geo_T3W": "SURV_XL",
+        "geo_T6": "SURV_L",
+        "tide_on": 1,
+        "tide_min_sig": 0.5,
+        "trail_days": 90,
+        "gate_min": 0.02,
+        "fb_k": 4,
+        "book": 5,
+        "dir_max": 0,
+        "daily_cap": 1,
+        "risk": 60.0,
+        "dd_def": 0.0
+      }
+    },
+    {
+      "design_value": 651.6269827515308,
+      "design_passes": 6,
+      "design_total_pct": 104.17880640229609,
+      "holdout": {
+        "passes": 0,
+        "total_pct": 27.916368588476708,
+        "rows": [
+          {
+            "wid": 17,
+            "roi": 14.034555421950975,
+            "dd": 6.435165632791195,
+            "n": 23,
+            "wr": 60.86956521739131,
+            "pass": false
+          },
+          {
+            "wid": 18,
+            "roi": 0.6639233603578976,
+            "dd": 4.678831590519547,
+            "n": 17,
+            "wr": 64.70588235294117,
+            "pass": false
+          },
+          {
+            "wid": 19,
+            "roi": 16.29420008496315,
+            "dd": 3.802210382713274,
+            "n": 14,
+            "wr": 64.28571428571429,
+            "pass": false
+          },
+          {
+            "wid": 20,
+            "roi": -3.0763102787953143,
+            "dd": 3.9738503017795384,
+            "n": 23,
+            "wr": 56.52173913043478,
+            "pass": false
+          }
+        ]
+      },
+      "params": {
+        "profile": "maker25",
+        "mode": "breadth",
+        "on_T1__donchW_tide": 1,
+        "on_T1__donchW_free": 1,
+        "on_T2__tsmom7d": 1,
+        "on_T2__tsmom7d_hi15": 0,
+        "on_T3__pullback_M": 1,
+        "on_T3__pullback_W": 1,
+        "on_T6__xs_decile": 1,
+        "geo_T1": "SURV_XL",
+        "geo_T2": "SURV_XL",
+        "geo_T3W": "SURV_L",
+        "geo_T6": "SURV_L",
+        "tide_on": 1,
+        "tide_min_sig": 0.5,
+        "trail_days": 60,
+        "gate_min": 0.0,
+        "fb_k": 3,
+        "book": 6,
+        "dir_max": 0,
+        "daily_cap": 1,
+        "risk": 60.0,
+        "dd_def": 0.0
+      }
+    },
+    {
+      "design_value": 650.0798716508615,
+      "design_passes": 6,
+      "design_total_pct": 98.84770634511139,
+      "holdout": {
+        "passes": 0,
+        "total_pct": 44.061314945159275,
+        "rows": [
+          {
+            "wid": 17,
+            "roi": 26.967397591763774,
+            "dd": 1.0667108848020708,
+            "n": 10,
+            "wr": 90.0,
+            "pass": false
+          },
+          {
+            "wid": 18,
+            "roi": 0.23432812301765532,
+            "dd": 4.938995523013087,
+            "n": 18,
+            "wr": 66.66666666666666,
+            "pass": false
+          },
+          {
+            "wid": 19,
+            "roi": 18.813685572712735,
+            "dd": 2.609832321583308,
+            "n": 13,
+            "wr": 76.92307692307693,
+            "pass": false
+          },
+          {
+            "wid": 20,
+            "roi": -1.9540963423348883,
+            "dd": 4.501702064082293,
+            "n": 18,
+            "wr": 44.44444444444444,
+            "pass": false
+          }
+        ]
+      },
+      "params": {
+        "profile": "taker41",
+        "mode": "breadth",
+        "on_T1__donchW_tide": 0,
+        "on_T1__donchW_free": 0,
+        "on_T2__tsmom7d": 0,
+        "on_T2__tsmom7d_hi15": 0,
+        "on_T3__pullback_M": 1,
+        "on_T3__pullback_W": 0,
+        "on_T6__xs_decile": 1,
+        "geo_T1": "SURV_L",
+        "geo_T2": "SURV_L",
+        "geo_T3W": "SURV_XL",
+        "geo_T6": "SURV_L",
+        "tide_on": 1,
+        "tide_min_sig": 0.5,
+        "trail_days": 90,
+        "gate_min": 0.0,
+        "fb_k": 4,
+        "book": 5,
+        "dir_max": 0,
+        "daily_cap": 1,
+        "risk": 60.0,
+        "dd_def": 0.0
+      }
+    }
+  ],
+  "champion_full": {
+    "rows": [
+      {
+        "wid": 1,
+        "roi": 14.035651439254277,
+        "dd": 3.7077058248829937,
+        "n": 21,
+        "wr": 66.66666666666666,
+        "pass": true
+      },
+      {
+        "wid": 2,
+        "roi": -3.9104735325412614,
+        "dd": 9.833078994712343,
+        "n": 24,
+        "wr": 54.166666666666664,
+        "pass": false
+      },
+      {
+        "wid": 3,
+        "roi": -1.1570464512072405,
+        "dd": 7.41467238353138,
+        "n": 18,
+        "wr": 50.0,
+        "pass": false
+      },
+      {
+        "wid": 4,
+        "roi": 13.302610967002892,
+        "dd": 4.989322402034232,
+        "n": 23,
+        "wr": 52.17391304347826,
+        "pass": true
+      },
+      {
+        "wid": 5,
+        "roi": 10.777176058918696,
+        "dd": 2.4831746077807293,
+        "n": 16,
+        "wr": 68.75,
+        "pass": true
+      },
+      {
+        "wid": 6,
+        "roi": 3.0273663500407633,
+        "dd": 4.629774803329717,
+        "n": 18,
+        "wr": 55.55555555555556,
+        "pass": false
+      },
+      {
+        "wid": 7,
+        "roi": -10.046268127299149,
+        "dd": 10.046268127299117,
+        "n": 13,
+        "wr": 15.384615384615385,
+        "pass": false
+      },
+      {
+        "wid": 8,
+        "roi": -0.3111834677701113,
+        "dd": 2.881482973391332,
+        "n": 7,
+        "wr": 42.857142857142854,
+        "pass": false
+      },
+      {
+        "wid": 9,
+        "roi": 40.862889267482146,
+        "dd": 1.831215038881381,
+        "n": 23,
+        "wr": 60.86956521739131,
+        "pass": true
+      },
+      {
+        "wid": 10,
+        "roi": -3.2920838601982876,
+        "dd": 8.058130032117331,
+        "n": 18,
+        "wr": 44.44444444444444,
+        "pass": false
+      },
+      {
+        "wid": 11,
+        "roi": 12.036929685384816,
+        "dd": 4.188211051920362,
+        "n": 19,
+        "wr": 52.63157894736842,
+        "pass": true
+      },
+      {
+        "wid": 12,
+        "roi": 3.235416936825931,
+        "dd": 2.5005197054128803,
+        "n": 11,
+        "wr": 54.54545454545454,
+        "pass": false
+      },
+      {
+        "wid": 13,
+        "roi": 6.6377552364622,
+        "dd": 4.763394900883086,
+        "n": 13,
+        "wr": 46.15384615384615,
+        "pass": false
+      },
+      {
+        "wid": 14,
+        "roi": 7.1606365634420825,
+        "dd": 5.528926246364212,
+        "n": 23,
+        "wr": 43.47826086956522,
+        "pass": false
+      },
+      {
+        "wid": 15,
+        "roi": 1.6902533220529419,
+        "dd": 2.6787509569417622,
+        "n": 12,
+        "wr": 66.66666666666666,
+        "pass": false
+      },
+      {
+        "wid": 16,
+        "roi": 11.70503662823785,
+        "dd": 3.48557066592498,
+        "n": 16,
+        "wr": 56.25,
+        "pass": true
+      },
+      {
+        "wid": 17,
+        "roi": 26.967397591763774,
+        "dd": 1.0667108848020708,
+        "n": 10,
+        "wr": 90.0,
+        "pass": false
+      },
+      {
+        "wid": 18,
+        "roi": 0.48748251014422994,
+        "dd": 4.938995523013087,
+        "n": 19,
+        "wr": 68.42105263157895,
+        "pass": false
+      },
+      {
+        "wid": 19,
+        "roi": 18.813685572712735,
+        "dd": 2.609832321583308,
+        "n": 13,
+        "wr": 76.92307692307693,
+        "pass": false
+      },
+      {
+        "wid": 20,
+        "roi": -1.9540963423348883,
+        "dd": 4.501702064082293,
+        "n": 18,
+        "wr": 44.44444444444444,
+        "pass": false
+      }
+    ],
+    "total_pct": 150.06913634837437,
+    "passes": 6,
+    "null": {
+      "median": 23.260534886630168,
+      "p95": 65.21368881418982,
+      "P_null_ge_observed": 0.0
+    }
+  }
+}

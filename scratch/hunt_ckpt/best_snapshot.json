@@ -1,7 +1,7 @@
 {
-  "round": 3,
-  "trials": 788,
-  "best_value": 653.6912732468339,
+  "round": 2,
+  "trials": 1666,
+  "best_value": 653.8003436612257,
   "best_params": {
     "profile": "taker41",
     "mode": "breadth",
@@ -21,13 +21,13 @@
     "trail_days": 90,
     "gate_min": 0.0,
     "fb_k": 4,
-    "book": 5,
+    "book": 6,
     "dir_max": 0,
     "daily_cap": 1,
     "risk": 60.0,
     "dd_def": 0.0
   },
   "design_passes": 6,
-  "design_total_pct": 105.75466701608853,
-  "elapsed_h": 7.792832195626365
+  "design_total_pct": 105.32571726106119,
+  "elapsed_h": 8.23608868069119
 }
