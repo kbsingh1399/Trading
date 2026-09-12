@@ -42931,3 +42931,14 @@ Outcome: Achieved 6 certified OOS passes simultaneously (+2,487.09 USD Net PnL, 
   - W11 Breakthrough in Trial #6802: Window 11 (BlackRock Spot ETF) officially achieved passing status in Trial #6802 with trans_risk=22.0 USD, confirming the viability of expanding into a 9-pass architecture.
 - Codebase Parity & Git Parity: scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py maintain 100% byte-for-byte parity with Trial #4228 champion parameters. Git branches main and arena/01a082b5-trading fully synchronized.
 - Continuous Search: Background task task-2825 continues uninterrupted autonomous exploration for the remaining 90 minutes.
+
+---
+### User Mandate Reaffirmation: Uncapped Continuous Hunt for 20/20 OOS Passes
+- Timestamp: 2026-09-12T04:04:00.000000+00:00
+- User: still continue hunting to pass all 20 oos windows
+- Action & Strategy Confirmation:
+  1. Verified background Optuna process task-2825 (PID 14992) executing continuously at ~3.2s per trial, having surpassed 8,032 completed trials.
+  2. Confirmed 01 hour 25 minutes remaining on current 8-hour countdown cycle.
+  3. Established continuous rollover plan: upon expiration of the current 8-hour timeout, the hourly cron task (task-2098) will immediately synchronize any new champion records from SQLite study oos_20_windows_doubling_hunt and relaunch an extended continuous optimization horizon without dropping a single second of search compute.
+  4. Current Benchmark: Trial #4228 Champion (+4,153.00 USD Net Closed PnL / +83.06% Net ROI on 5,000.00 USD capital, 8 certified passes, Max DD <= 3.17%).
+  5. 100% Parameter Parity confirmed between scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py.
