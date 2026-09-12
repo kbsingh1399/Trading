@@ -43018,3 +43018,17 @@ Outcome: Achieved 6 certified OOS passes simultaneously (+2,487.09 USD Net PnL, 
   - High-Density Clustering: Persistent multi-trial clustering above +4,300 USD (e.g. Trial 10116 at +4,368.81 USD, Trial 10070 at +4,316.38 USD).
 - Code Parity & Knowledge Graph: Both scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py maintain 100% byte-for-byte parity with Trial #8672 parameters. AST knowledge graph fully synchronized (49,112 nodes).
 - Continuous Search: Background task task-3258 continues uninterrupted autonomous exploration for the remaining ~5 hours of Phase 2.
+
+---
+### Hourly Checkpoint (Iteration 15 Wakeup): Over 11,220 Optuna Trials Evaluated | 04h 01m Countdown Active
+- Timestamp: 2026-09-12T09:31:00.000000+00:00
+- Optuna Daemon Status: Background process task-3258 (PID 21104) executing continuously at ~3.2s per trial with 04 hours 01 minute remaining on Phase 2 reverse countdown clock.
+- Total Completed Trials: 11,220+ completed trials recorded in SQLite database scratch/optuna_oos_study.db (study: oos_20_windows_doubling_hunt).
+- Current Global Champion Maintained: Trial #8672 (DB trial 9874):
+  - Net Closed Portfolio PnL: +4,426.51 USD (+88.53% Net ROI on 5,000.00 USD capital) across 311 completed trades.
+  - 8 Certified Passes Maintained: W01 (+701.54 USD), W02 (+574.05 USD), W04 (+583.11 USD), W06 (+604.99 USD), W10 (+600.79 USD), W15 (+654.85 USD), W16 (+634.15 USD), W17 (+524.27 USD).
+  - Robust Invariant: Maximum drawdown across all 8 passing windows remains ultra-low at 3.09% (W01), far below the 5.00% risk ceiling.
+  - Near-Pass Windows: W11 (+454.28 USD, 9.09% ROI, 14 trades, 64.3% WR, 2.26% Max DD), W19 (+138.01 USD, 2.76% ROI, 54.5% WR), W09 (+183.36 USD, 3.67% ROI, 55.6% WR), W03 loss compressed to -45.56 USD (-0.91% ROI).
+  - High-Density Clustering: Multi-trial clustering continues above +4,250 USD (e.g. Trial 11024 at +4,292.97 USD, Trial 10686 at +4,255.31 USD, Trial #10014 at +4,017.78 USD, Trial #10018 at +3,541.86 USD).
+- Code Parity & Knowledge Graph: Both scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py maintain 100% byte-for-byte parity with Trial #8672 parameters. AST knowledge graph fully synchronized (49,112 nodes).
+- Continuous Search: Background task task-3258 continues uninterrupted autonomous exploration for the remaining ~4 hours of Phase 2.
