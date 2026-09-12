@@ -1,0 +1,178 @@
+[
+  {
+    "window_id": 1,
+    "start_date": "2020-09-01",
+    "end_date": "2020-09-30",
+    "name": "B-field month 1",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 2,
+    "start_date": "2020-10-01",
+    "end_date": "2020-10-31",
+    "name": "B-field month 2",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 3,
+    "start_date": "2020-11-01",
+    "end_date": "2020-11-30",
+    "name": "B-field month 3",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 4,
+    "start_date": "2020-12-01",
+    "end_date": "2020-12-31",
+    "name": "B-field month 4",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 5,
+    "start_date": "2021-01-01",
+    "end_date": "2021-01-31",
+    "name": "B-field month 5",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 6,
+    "start_date": "2021-02-01",
+    "end_date": "2021-02-28",
+    "name": "B-field month 6",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 7,
+    "start_date": "2021-03-01",
+    "end_date": "2021-03-31",
+    "name": "B-field month 7",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 8,
+    "start_date": "2021-07-01",
+    "end_date": "2021-07-31",
+    "name": "B-field month 8",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 9,
+    "start_date": "2022-03-01",
+    "end_date": "2022-03-31",
+    "name": "B-field month 9",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 10,
+    "start_date": "2024-05-01",
+    "end_date": "2024-05-31",
+    "name": "B-field month 10",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 11,
+    "start_date": "2024-06-01",
+    "end_date": "2024-06-30",
+    "name": "B-field month 11",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 12,
+    "start_date": "2025-04-01",
+    "end_date": "2025-04-30",
+    "name": "B-field month 12",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 13,
+    "start_date": "2025-05-01",
+    "end_date": "2025-05-31",
+    "name": "B-field month 13",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 14,
+    "start_date": "2025-09-01",
+    "end_date": "2025-09-30",
+    "name": "B-field month 14",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 15,
+    "start_date": "2025-10-01",
+    "end_date": "2025-10-31",
+    "name": "B-field month 15",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 16,
+    "start_date": "2025-11-01",
+    "end_date": "2025-11-30",
+    "name": "B-field month 16",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 17,
+    "start_date": "2025-12-01",
+    "end_date": "2025-12-31",
+    "name": "B-field month 17",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 18,
+    "start_date": "2026-01-01",
+    "end_date": "2026-01-31",
+    "name": "B-field month 18",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 19,
+    "start_date": "2026-05-01",
+    "end_date": "2026-05-31",
+    "name": "B-field month 19",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 20,
+    "start_date": "2026-06-01",
+    "end_date": "2026-06-30",
+    "name": "B-field month 20",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 21,
+    "start_date": "2026-07-01",
+    "end_date": "2026-07-31",
+    "name": "B-field month 21",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  },
+  {
+    "window_id": 22,
+    "start_date": "2026-08-01",
+    "end_date": "2026-08-31",
+    "name": "B-field month 22",
+    "regime": "untouched-gap",
+    "description": "gap month >34d clear of all W01-W20 windows; never scored by optimizer"
+  }
+]

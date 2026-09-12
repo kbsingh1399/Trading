@@ -1,0 +1,248 @@
+{
+  "source": "params_file",
+  "profile": "taker41",
+  "mode": "breadth",
+  "params": {
+    "profile": "taker41",
+    "mode": "breadth",
+    "on_T1__donchW_tide": 1,
+    "on_T1__donchW_free": 1,
+    "on_T2__tsmom7d": 1,
+    "on_T2__tsmom7d_hi15": 1,
+    "on_T3__pullback_M": 1,
+    "on_T3__pullback_W": 1,
+    "on_T6__xs_decile": 1,
+    "on_T5__fundcarry_W": 1,
+    "on_T8__btclead_W": 0,
+    "on_T4__nr7_S": 1,
+    "on_T1__donch_S": 0,
+    "on_T6__xs_S": 1,
+    "on_OF1__takerflow_W": 0,
+    "on_OF2__cvdslope_W": 1,
+    "on_OF4__liqcascade_S": 0,
+    "on_OF5__oiexp_S": 1,
+    "geo_T1": "SURV_L",
+    "geo_T2": "SURV_W",
+    "geo_T3W": "SURV_W",
+    "geo_T6": "SURV_L",
+    "geo_T5W": "SURV_L",
+    "geo_T8W": "SURV_XL",
+    "geo_OF1": "SURV_XL",
+    "geo_OF2": "SURV_W",
+    "geo_OF4": "SURV_W",
+    "geo_OF5": "SURV_S",
+    "tide_on": 1,
+    "tide_min_sig": 0.5,
+    "trail_days": 60,
+    "gate_min": -0.05,
+    "fb_k": 4,
+    "book": 8,
+    "dir_max": 0,
+    "daily_cap": 2,
+    "risk": 60.0,
+    "dd_def": 2.5
+  },
+  "passes": 3,
+  "n_windows": 22,
+  "total_pct": 56.81898179450048,
+  "rows": [
+    {
+      "wid": 1,
+      "start": "2020-09",
+      "roi": -6.43,
+      "dd": 6.8,
+      "n": 17,
+      "wr": 11.8,
+      "pass": false
+    },
+    {
+      "wid": 2,
+      "start": "2020-10",
+      "roi": -2.4,
+      "dd": 3.28,
+      "n": 11,
+      "wr": 27.3,
+      "pass": false
+    },
+    {
+      "wid": 3,
+      "start": "2020-11",
+      "roi": 1.53,
+      "dd": 4.1,
+      "n": 33,
+      "wr": 54.5,
+      "pass": false
+    },
+    {
+      "wid": 4,
+      "start": "2020-12",
+      "roi": 0.39,
+      "dd": 4.65,
+      "n": 30,
+      "wr": 46.7,
+      "pass": false
+    },
+    {
+      "wid": 5,
+      "start": "2021-01",
+      "roi": 10.45,
+      "dd": 4.59,
+      "n": 28,
+      "wr": 57.1,
+      "pass": true
+    },
+    {
+      "wid": 6,
+      "start": "2021-02",
+      "roi": 27.97,
+      "dd": 4.56,
+      "n": 29,
+      "wr": 58.6,
+      "pass": true
+    },
+    {
+      "wid": 7,
+      "start": "2021-03",
+      "roi": -4.15,
+      "dd": 6.15,
+      "n": 28,
+      "wr": 35.7,
+      "pass": false
+    },
+    {
+      "wid": 8,
+      "start": "2021-07",
+      "roi": 6.58,
+      "dd": 2.69,
+      "n": 27,
+      "wr": 81.5,
+      "pass": false
+    },
+    {
+      "wid": 9,
+      "start": "2022-03",
+      "roi": -1.03,
+      "dd": 7.45,
+      "n": 26,
+      "wr": 46.2,
+      "pass": false
+    },
+    {
+      "wid": 10,
+      "start": "2024-05",
+      "roi": -9.57,
+      "dd": 10.62,
+      "n": 33,
+      "wr": 30.3,
+      "pass": false
+    },
+    {
+      "wid": 11,
+      "start": "2024-06",
+      "roi": 0.0,
+      "dd": 0.0,
+      "n": 0,
+      "wr": 0.0,
+      "pass": false
+    },
+    {
+      "wid": 12,
+      "start": "2025-04",
+      "roi": 6.76,
+      "dd": 4.4,
+      "n": 26,
+      "wr": 61.5,
+      "pass": false
+    },
+    {
+      "wid": 13,
+      "start": "2025-05",
+      "roi": 0.63,
+      "dd": 3.52,
+      "n": 34,
+      "wr": 50.0,
+      "pass": false
+    },
+    {
+      "wid": 14,
+      "start": "2025-09",
+      "roi": 11.66,
+      "dd": 3.88,
+      "n": 28,
+      "wr": 64.3,
+      "pass": true
+    },
+    {
+      "wid": 15,
+      "start": "2025-10",
+      "roi": 8.83,
+      "dd": 4.26,
+      "n": 32,
+      "wr": 56.2,
+      "pass": false
+    },
+    {
+      "wid": 16,
+      "start": "2025-11",
+      "roi": 1.71,
+      "dd": 4.53,
+      "n": 34,
+      "wr": 58.8,
+      "pass": false
+    },
+    {
+      "wid": 17,
+      "start": "2025-12",
+      "roi": -5.01,
+      "dd": 6.78,
+      "n": 29,
+      "wr": 51.7,
+      "pass": false
+    },
+    {
+      "wid": 18,
+      "start": "2026-01",
+      "roi": 1.48,
+      "dd": 8.23,
+      "n": 34,
+      "wr": 38.2,
+      "pass": false
+    },
+    {
+      "wid": 19,
+      "start": "2026-05",
+      "roi": 6.23,
+      "dd": 3.69,
+      "n": 24,
+      "wr": 50.0,
+      "pass": false
+    },
+    {
+      "wid": 20,
+      "start": "2026-06",
+      "roi": 5.91,
+      "dd": 4.5,
+      "n": 20,
+      "wr": 55.0,
+      "pass": false
+    },
+    {
+      "wid": 21,
+      "start": "2026-07",
+      "roi": -6.97,
+      "dd": 7.02,
+      "n": 28,
+      "wr": 32.1,
+      "pass": false
+    },
+    {
+      "wid": 22,
+      "start": "2026-08",
+      "roi": 2.27,
+      "dd": 6.34,
+      "n": 39,
+      "wr": 35.9,
+      "pass": false
+    }
+  ]
+}
