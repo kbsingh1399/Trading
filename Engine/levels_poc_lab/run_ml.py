@@ -26,6 +26,7 @@ from . import PURGE_MS
 from .data import ALTCOINS, BTC, attach_cross_section, load_all, windows, window_bounds
 from .kernel import LabConfig, prepare_execution_frame, simulate
 from .ml_gate import FEATURE_COLUMNS, event_table, train_gate
+from . import signals as _signals
 from .signals import build_signal_frame, default_specs, naked_poc_series
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -90,6 +91,8 @@ def main():
                     help="gate label: P(net_r > label_r) instead of P(net_r > 0)")
     ap.add_argument("--regressor", action="store_true",
                     help="rank candidates by predicted expected net R")
+    ap.add_argument("--stop-scale", type=float, default=None,
+                    help="use the certified pure-ATR stop max(k*ATR, 1.2%% of price)")
     ap.add_argument("--pending", type=int, default=0,
                     help="bars a break stays actionable after the breakout")
     ap.add_argument("--pending-step", type=int, default=4)
@@ -107,6 +110,9 @@ def main():
     ap.add_argument("--out", default="lpl_ml")
     args = ap.parse_args()
 
+    if args.stop_scale:
+        _signals.ATR_STOP_SCALE = float(args.stop_scale)
+        print(f"stop geometry: certified pure-ATR, stop = max({args.stop_scale}*ATR, 1.2% of price)")
     syms = [s.strip() for s in args.symbols.split(",") if s.strip()]
     data = load_all(list(dict.fromkeys([BTC] + syms)))
     specs = default_specs(args.group.split(",") if args.group else None)
@@ -200,7 +206,7 @@ def main():
                "config": {**cfg.__dict__, "cands_per_month": args.cands_per_month,
                           "target_r": args.target_r, "horizon": args.horizon,
                           "label_r": args.label_r, "regressor": args.regressor,
-                          "pending": args.pending,
+                          "pending": args.pending, "stop_scale": args.stop_scale,
                           "sel_per_window": args.sel_per_window},
                "rows": rows}
     SCORE_DIR.mkdir(exist_ok=True)

@@ -216,6 +216,48 @@ tested with the same walk-forward protocol (`scratch/pos_check.py` / `.csv`,
   transfer. They are implemented (`data.attach_cross_section`) but deliberately
   excluded from the gate, and the exclusion is documented rather than silent.
 
+### 4.1c The stop geometry is the single biggest lever (and the lab had it wrong)
+
+The certified suite's own pre-registered hypothesis family is a **pure ATR stop**
+`stop = max(stop_atr * ATR, min_stop_fraction * close)` with
+`stop_atr ∈ {2.5, 3.0}`, `target_r ∈ {2.0, 2.2}` and `max_hold_bars = 144`
+(`s1_trend_following_suite.Config`, `candidate_configs()`), the 1.2 % floor being
+`min_stop_fraction`. The lab's own families instead used a *structural* stop — the
+gap beyond the broken level, floored at 0.5×ATR — which is far tighter.
+
+Screening both on identical events with the certified 41 bps friction
+(`Engine/levels_poc_lab/geometry.py` → `scratch/geom_screen.csv`, 40,458 events, 18 symbols,
+7 break families):
+
+| stop / target / hold | pooled net R | cost in R | win rate | stop size |
+|---|---|---|---|---|
+| **1.25 ATR / 4R / 288 (lab default)** | **−0.544** | 0.309 | 22.1 % | 142 bps |
+| 2.00 ATR / 2R / 288 | −0.465 | 0.257 | 34.9 % | 189 bps |
+| 2.50 ATR / 2R / 144 (certified grid) | −0.391 | 0.224 | 35.1 % | 228 bps |
+| 2.50 ATR / 4R / 288 | −0.365 | 0.224 | 23.8 % | 228 bps |
+| **3.00 ATR / 4R / 288** | **−0.302** | **0.197** | 25.4 % | 270 bps |
+
+and per family at the best geometry:
+
+| family | lab geometry net R | 3.0 ATR / 4R net R | win rate |
+|---|---|---|---|
+| `x_ath_brk_lowvol` | −0.256 | **+0.335** | 35.5 % |
+| `brk_ath` | −0.283 | **+0.064** | 29.3 % |
+| `brk_pmh` | −0.499 | −0.245 | 27.0 % |
+| `brk_pwh` | −0.541 | −0.305 | 25.8 % |
+| `brk_multi_lvl` | −0.560 | −0.327 | 24.8 % |
+
+Two mechanisms explain the 0.24 R/trade swing (and the swing is much larger for
+the best families, +0.59 R): a wider stop pays **1.6× less friction per R**
+(0.197 vs 0.309 R) and is far less likely to be removed by noise — the win rate
+rises from 22 % to 35 % on the certified grid even though the target sits at the
+same 10–12 ATR distance. The lesson generalizes: with a fixed cost floor in bps,
+a strategy's R-based expectancy depends on the *ratio* of stop distance to that
+cost, so "tight stop, far target" is structurally the worst corner of the
+geometry space when the mission charges 41 bps round trip.
+
+`run_ml.py --stop-scale k` switches every family to the certified pure-ATR stop.
+
 ### 4.2 The objective function matters more than the feature set
 
 The gate was fitting `label = (net_r > 0)`. Under a 4R-target / time-stop
@@ -295,6 +337,19 @@ walk-forward (gate trained only on events ending before `window_start − 72 h`)
 | `lpl_ml_regime` — direction label, threshold selection, tide filter | 0/20 | 135 | +$767.98 | +15.36 % | **12/20** |
 | `lpl_ml_pos` — as `lpl_ml_soft` + positioning features | 0/20 | 184 | −$1,152.83 | −23.06 % | 5/20 |
 | `lpl_ml_soft_ride` — as `lpl_ml_soft` + trailing winner-riding exits | 0/20 | 184 | −$1,202.22 | −24.04 % | 5/20 |
+| `lpl_ml_geom3` — as `lpl_ml_soft` + **certified 3-ATR stop** | 0/20 | 190 | −$1,535.88 | −30.72 % | 5/20 |
+| `lpl_ml_final` — keeper families only + certified stop | 0/20 | 89 | −$370.45 | −7.41 % | 6/20 |
+
+The geometry result deserves care: the *per-family* screen says the certified stop
+is worth +0.28 to +0.59 R per trade on the families that matter (§4.1c), yet the
+*portfolio* did worse with it. The reason is the interaction with the gate: the
+certified geometry changes the label distribution (a 4R target is now 12 ATR away),
+the gate's out-of-sample AUC drops to 0.42–0.60, and the pool of *executable*
+candidates per window shrinks — so the book trades fewer, noisier candidates and
+gives back the per-trade gain. Restricting the pool to the keeper families
+(`lpl_ml_final`, 118,601 candidates vs 708,718) makes each trade better on average
+(−7.41 % vs −30.72 %) but leaves several windows with no eligible candidate at all,
+which the ≥ 15-trade rule fails outright.
 
 **Read the spread, not just the ranking.** The last two rows are the *same
 strategy* as row 1 with one change each, and they swing the 20-window result by
@@ -372,6 +427,7 @@ python -m Engine.levels_poc_lab.run_study --target-r 4 --horizon 288   # barrier
 python -m Engine.levels_poc_lab.frontier                   # cost frontier / break-even friction
 python -m Engine.levels_poc_lab.run_portfolio              # geometric scorecard, 20 windows
 python -m Engine.levels_poc_lab.flow                       # footprint-ladder flow features
+python -m Engine.levels_poc_lab.geometry                   # stop-geometry screen (certified vs tight)
 python -m Engine.levels_poc_lab.run_ml --cost-profile certified   # ML-gated scorecard
 python -m Engine.levels_poc_lab.run_ml --cost-profile zero        # cost-free ceiling
 python -m Engine.levels_poc_lab.run_ml --macro-filter --label-r 1.0 --cands-per-month 60 \

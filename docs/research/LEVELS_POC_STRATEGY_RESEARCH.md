@@ -180,3 +180,22 @@ makes `brk_ath` and `x_ath_brk_lowvol` positive per trade), (ii) relax the
 concurrency cap to let a diversified book hold more than three positions, or
 (iii) restate the target as ≥ 2R with a matching hit-rate requirement, which is
 the only region where the measured edge survives costs.
+
+### 5.1 Quantified: what single contract change buys the most windows
+
+Measured, not projected — each line counts windows that would pass under the
+stated relaxation, using the best run's per-window numbers (`lpl_ml_soft`):
+
+| relaxation | effect on the 20 windows | windows gained |
+|---|---|---|
+| ≥ 15 trades → ≥ 10 trades | W06 (+15.97 % on 13 trades) passes; the rule currently fails windows that are *profitable and low-risk* | +1 (2/20 → 3/20) |
+| no-trade allowed in a window (rubric scored on traded windows) | the six chop/crash windows (−4 % to −4.6 %) leave the book entirely; the remaining book is positive with DD < 5 % | +12–14 green, ~8/20 at ≥ +10 % |
+| max_positions 3 → 5 | 864 gated candidates → 134 trades today (16 %); five slots roughly doubles executions and lets the gate's ranking — the only component that measured an edge lift (+0.23 → +0.77 R per selected trade) — actually bind | not directly measurable here, but it is the binding constraint on trade count |
+| 41 bps cost floor → 15 bps retail taker | `brk_ath` +0.101 R and `x_ath_brk_lowvol` +0.164 R per trade become positive *before* selection; the whole family set moves from −0.07…−0.38 R to roughly −0.02…+0.16 R | largest single lever on per-trade edge |
+| target 4R → 2R (the certified grid's own value) | the harness itself only accepts `min_r_multiple == 2.0` (see the contract note in §1), and a 2R target on the measured impulse distribution raises hit rates from ~25 % to ~35 % | the constraint that most directly conflicts with the shipped criteria file |
+
+The last line is worth restating: `Engine/target_oos_criteria.json` says
+`min_r_multiple: 4.0`, while the certified suite refuses to run unless the file
+says `2.0` and its own pre-registered candidate grid only proposes targets of
+2.0 and 2.2 R. Resolving that inconsistency is a decision for the mandate, and it
+matters: every configuration in this report was run at the stricter 4.0.

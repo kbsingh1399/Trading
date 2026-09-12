@@ -54,9 +54,26 @@ def _atr(f: pd.DataFrame) -> np.ndarray:
     return np.maximum(f.atr.to_numpy(float), f.close.to_numpy(float) * 0.004)
 
 
+# The certified suite's own pre-registered geometry is a *pure* ATR stop:
+#   stop = max(stop_atr * ATR, min_stop_fraction * close),  stop_atr in (2.5, 3.0)
+# (s1_trend_following_suite.apply_signals / candidate_configs).  The lab's default
+# structural stop (gap beyond the broken level, floored at 0.5 ATR) is much tighter;
+# a geometry screen (scratch/geom_screen.csv) shows the tight stop is stopped out by
+# noise and pays ~1.6x the friction per R, which is why every family read negative.
+# Setting ATR_STOP_SCALE switches the break families to the certified geometry.
+ATR_STOP_SCALE: float | None = None
+
+
 def _stop(gap: np.ndarray, atr: np.ndarray, close: np.ndarray, mult: float) -> np.ndarray:
-    """Stop distance = max(structural gap, mult*ATR, 1.2 % of price)."""
-    return np.maximum(np.maximum(gap, mult * atr), close * MIN_STOP_FRACTION)
+    """Stop distance = max(structural gap, mult*ATR, 1.2 % of price).
+
+    With ``ATR_STOP_SCALE`` set the certified pure-ATR stop is used instead:
+    ``max(ATR_STOP_SCALE * ATR, 1.2 % of price)``.
+    """
+    floor = close * MIN_STOP_FRACTION
+    if ATR_STOP_SCALE is not None:
+        return np.maximum(ATR_STOP_SCALE * atr, floor)
+    return np.maximum(np.maximum(gap, mult * atr), floor)
 
 
 def _vol_confirm(f: pd.DataFrame, thr: float = 1.2) -> np.ndarray:
