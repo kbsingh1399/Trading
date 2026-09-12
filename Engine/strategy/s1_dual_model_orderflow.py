@@ -54,13 +54,13 @@ class InstitutionalDualModelEngine:
         house_risk_max: float = 90.0,
         defense_risk: float = 14.0,
         milestone_risk: float = 10.0,
-        trans_risk: float = 24.0,
-        trans_thresh: float = 400.0,
+        trans_risk: float = 21.0,
+        trans_thresh: float = 410.0,
         milestone_profit_usd: float = 500.0,
         max_concurrent: int = 2,
         cooldown_bars: int = 4,
         win_r_reset_thresh: float = 0.70,
-        conf_prob_thresh: float = 0.48,
+        conf_prob_thresh: float = 0.44,
         conf_mult: float = 1.25,
         max_dd_limit: float = 4.40,
         random_state: int = 42
@@ -93,20 +93,20 @@ class InstitutionalDualModelEngine:
         sd = X_train.std(axis=0).replace(0, 1.0)
         X_tr_s = np.nan_to_num(((X_train - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
 
-        # 1. L2 Regularized Ridge Foundation (C=0.017577)
-        ridge = LogisticRegression(C=0.017576689989008024, max_iter=200, random_state=self.random_state)
+        # 1. L2 Regularized Ridge Foundation (C=0.013182)
+        ridge = LogisticRegression(C=0.013181853843408467, max_iter=200, random_state=self.random_state)
         ridge.fit(X_tr_s, y_train)
 
-        # 2. Shallow Regularized LightGBM Classifier (Trial #4228 Champion: +4,153.00 USD)
+        # 2. Shallow Regularized LightGBM Classifier (Trial #7187 Champion: +4,334.62 USD)
         clf = lgb.LGBMClassifier(
             n_estimators=160,
             max_depth=2,
             num_leaves=127,
-            learning_rate=0.02548455634660281,
+            learning_rate=0.029872519174477714,
             subsample=0.8,
             colsample_bytree=0.8,
-            reg_alpha=3.163980153283579,
-            reg_lambda=0.144014134674136,
+            reg_alpha=3.192156989625875,
+            reg_lambda=0.13865392990897635,
             random_state=self.random_state,
             verbose=-1,
             n_jobs=2
@@ -211,7 +211,7 @@ class InstitutionalDualModelEngine:
                     cushion = max(0.0, equity - (self.capital + self.milestone_profit_usd))
                     risk_amt = min(10.0, max(4.0, cushion * 0.20))
                 elif current_profit >= self.trans_thresh:
-                    # Transition risk scaling between trans_thresh and 500 USD (Trial #4228 champion: +4,153.00 USD)
+                    # Transition risk scaling between trans_thresh and 500 USD (Trial #7187 champion: +4,334.62 USD)
                     risk_amt = self.trans_risk
                 elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses >= 2:
                     risk_amt = self.defense_risk

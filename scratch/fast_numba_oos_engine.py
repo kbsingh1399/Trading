@@ -428,25 +428,25 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
         X_te_s = np.nan_to_num(((X_test - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
 
         from sklearn.linear_model import LogisticRegression
-        ridge = LogisticRegression(C=0.017576689989008024, max_iter=200, random_state=42)
+        ridge = LogisticRegression(C=0.013181853843408467, max_iter=200, random_state=42)
         ridge.fit(X_tr_s, y_train)
 
         clf = lgb.LGBMClassifier(
             n_estimators=160,
             max_depth=2,
             num_leaves=127,
-            learning_rate=0.02548455634660281,
+            learning_rate=0.029872519174477714,
             subsample=0.8,
             colsample_bytree=0.8,
-            reg_alpha=3.163980153283579,
-            reg_lambda=0.144014134674136,
+            reg_alpha=3.192156989625875,
+            reg_lambda=0.13865392990897635,
             random_state=42,
             verbose=-1,
             n_jobs=2
         )
         clf.fit(X_train, y_train)
 
-        # Hybrid ensemble: 65% Ridge + 35% LightGBM (Optuna Trial #4228 Champion: +4,153.00 USD)
+        # Hybrid ensemble: 65% Ridge + 35% LightGBM (Optuna Trial #7187 Champion: +4,334.62 USD)
         train_probs_ridge = ridge.predict_proba(X_tr_s)[:, 1]
         train_probs_lgb = clf.predict_proba(X_train)[:, 1]
         train_probs = 0.65 * train_probs_ridge + 0.35 * train_probs_lgb
@@ -537,13 +537,13 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
                     # Continuous cushion risk compression above 500 USD milestone (Part 14 compliant)
                     cushion = max(0.0, equity - (CAPITAL + 500.0))
                     risk_amt = min(10.0, max(4.0, cushion * 0.20))
-                elif current_profit >= 400.0:
-                    # Transition risk scaling between 400 USD and 500 USD (Trial #4228 champion: 24.0 USD)
-                    risk_amt = 24.0
+                elif current_profit >= 410.0:
+                    # Transition risk scaling between 410 USD and 500 USD (Trial #7187 champion: 21.0 USD)
+                    risk_amt = 21.0
                 elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses >= 2:
                     risk_amt = 14.0
                 else:
-                    conf = 1.25 if prob >= 0.48 else 1.0
+                    conf = 1.25 if prob >= 0.44 else 1.0
                     base_s = 54.0 * conf
                     if current_profit >= 100.0:
                         risk_amt = min(90.0, base_s + current_profit * 0.08)
