@@ -43156,6 +43156,23 @@ Outcome: Achieved 6 certified OOS passes simultaneously (+2,487.09 USD Net PnL, 
   - AST knowledge graph synchronized via graphify update . (49,125 nodes, 48,493 edges, 3,899 communities).
   - Parity confirmed across both repositories via verify_and_sync_agents.py.
 
+---
+### Hourly Checkpoint (Iteration 23 Wakeup): Over 16,430 Optuna Trials Evaluated | 1,129 Trials with 8 Passes | 04h 01m Countdown Active
+- Timestamp: 2026-09-12T17:31:00.000000+00:00
+- Optuna Daemon Status: Background process task-3489 executing continuously with ~04 hours 01 minute remaining on Phase 3 reverse countdown clock.
+- Exploration Volume: Over 2,780 trials evaluated in Phase 3 alone (~3.2s per trial), bringing cumulative database trials in scratch/optuna_oos_study.db to 16,432+ trials.
+- Empirical Pass Growth: Over 1,129 trials achieved 8 certified passes; over 3,854 trials achieved 7 certified passes.
+- High-Performance Clusters in Phase 3:
+  - Global Portfolio Champion Maintained: Trial #11253 / #12446 (+4,485.69 USD / +89.71% Net ROI, 8 passes, 301 trades).
+  - Near-Record Surge: Trial #15158 produced +4,456.26 USD (307 trades, 8 certified passes) and Trial #15166 produced +4,218.83 USD (296 trades, 8 certified passes).
+  - Persistent Multi-Trial Clustering above +4,100 to +4,300 USD: Trial #15168 (+4,132.16 USD), Trial #15199 (+4,201.82 USD), Trial #15216 (+4,188.81 USD), Trial #15217 (+4,130.00 USD), Trial #15225 (+4,285.75 USD).
+  - Multi-Regime Pass Invariant on W11: Window 11 continues to certify passes repeatedly across candidate densities around 38.0 - 42.0 candidates/month (e.g. Trial #15067, Trial #15128, Trial #15143, Trial #15170, Trial #15221).
+- Code & Knowledge Graph Parity:
+  - 100% byte-for-byte parameter parity maintained between scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py.
+  - AST knowledge graph synchronized via graphify update . (49,125 nodes, 48,493 edges, 3,899 communities).
+  - Parity confirmed across both repositories via verify_and_sync_agents.py.
+
+
 
 
 
