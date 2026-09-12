@@ -51,16 +51,16 @@ class InstitutionalDualModelEngine:
         self,
         capital: float = 5000.0,
         base_risk: float = 52.0,
-        house_risk_max: float = 95.0,
+        house_risk_max: float = 100.0,
         defense_risk: float = 14.0,
         milestone_risk: float = 10.0,
-        trans_risk: float = 22.0,
+        trans_risk: float = 20.0,
         trans_thresh: float = 420.0,
         milestone_profit_usd: float = 500.0,
         max_concurrent: int = 2,
         cooldown_bars: int = 4,
         win_r_reset_thresh: float = 0.70,
-        conf_prob_thresh: float = 0.46,
+        conf_prob_thresh: float = 0.44,
         conf_mult: float = 1.35,
         max_dd_limit: float = 4.40,
         random_state: int = 42
@@ -93,20 +93,20 @@ class InstitutionalDualModelEngine:
         sd = X_train.std(axis=0).replace(0, 1.0)
         X_tr_s = np.nan_to_num(((X_train - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
 
-        # 1. L2 Regularized Ridge Foundation (C=0.010658)
-        ridge = LogisticRegression(C=0.010658188624713164, max_iter=200, random_state=self.random_state)
+        # 1. L2 Regularized Ridge Foundation (C=0.014596)
+        ridge = LogisticRegression(C=0.014595690447495408, max_iter=200, random_state=self.random_state)
         ridge.fit(X_tr_s, y_train)
 
-        # 2. Shallow Regularized LightGBM Classifier (Trial #8672 Champion: +4,426.51 USD)
+        # 2. Shallow Regularized LightGBM Classifier (Trial #11253 Champion: +4,485.69 USD)
         clf = lgb.LGBMClassifier(
             n_estimators=160,
             max_depth=2,
-            num_leaves=511,
-            learning_rate=0.02792166203088802,
+            num_leaves=255,
+            learning_rate=0.029522692368079945,
             subsample=0.8,
             colsample_bytree=0.8,
-            reg_alpha=2.192610389023172,
-            reg_lambda=0.21384739625777482,
+            reg_alpha=2.3670297037631096,
+            reg_lambda=0.17139101083784006,
             random_state=self.random_state,
             verbose=-1,
             n_jobs=2
@@ -120,7 +120,7 @@ class InstitutionalDualModelEngine:
 
         n_train_months = max(1.0, (train_df.open_time_ms.max() - train_df.open_time_ms.min()) / (30.4375 * 86_400_000))
         cands_per_month = len(train_df) / n_train_months
-        calib_q = max(0.60, min(0.96, 1.0 - (37.5 / cands_per_month)))
+        calib_q = max(0.60, min(0.96, 1.0 - (37.0 / cands_per_month)))
         calib_thresh = float(np.quantile(train_probs, calib_q))
 
         return ridge, clf, mu, sd, calib_thresh
@@ -140,7 +140,7 @@ class InstitutionalDualModelEngine:
 
         test_probs_ridge = ridge.predict_proba(X_te_s)[:, 1]
         test_probs_lgb = clf.predict_proba(X_test)[:, 1]
-        test_probs = 0.65 * test_probs_ridge + 0.35 * test_probs_lgb
+        test_probs = 0.70 * test_probs_ridge + 0.30 * test_probs_lgb
 
         selected = test_df.copy()
         selected["prob"] = test_probs
@@ -211,7 +211,7 @@ class InstitutionalDualModelEngine:
                     cushion = max(0.0, equity - (self.capital + self.milestone_profit_usd))
                     risk_amt = min(10.0, max(4.0, cushion * 0.20))
                 elif current_profit >= self.trans_thresh:
-                    # Transition risk scaling between trans_thresh and 500 USD (Trial #8672 champion: +4,426.51 USD)
+                    # Transition risk scaling between trans_thresh and 500 USD (Trial #11253 champion: +4,485.69 USD)
                     risk_amt = self.trans_risk
                 elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses >= 2:
                     risk_amt = self.defense_risk
