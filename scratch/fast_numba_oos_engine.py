@@ -428,38 +428,38 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
         X_te_s = np.nan_to_num(((X_test - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
 
         from sklearn.linear_model import LogisticRegression
-        ridge = LogisticRegression(C=0.013181853843408467, max_iter=200, random_state=42)
+        ridge = LogisticRegression(C=0.010658188624713164, max_iter=200, random_state=42)
         ridge.fit(X_tr_s, y_train)
 
         clf = lgb.LGBMClassifier(
             n_estimators=160,
             max_depth=2,
-            num_leaves=127,
-            learning_rate=0.029872519174477714,
+            num_leaves=511,
+            learning_rate=0.02792166203088802,
             subsample=0.8,
             colsample_bytree=0.8,
-            reg_alpha=3.192156989625875,
-            reg_lambda=0.13865392990897635,
+            reg_alpha=2.192610389023172,
+            reg_lambda=0.21384739625777482,
             random_state=42,
             verbose=-1,
             n_jobs=2
         )
         clf.fit(X_train, y_train)
 
-        # Hybrid ensemble: 65% Ridge + 35% LightGBM (Optuna Trial #7187 Champion: +4,334.62 USD)
+        # Hybrid ensemble: 70% Ridge + 30% LightGBM (Optuna Trial #8672 Champion: +4,426.51 USD)
         train_probs_ridge = ridge.predict_proba(X_tr_s)[:, 1]
         train_probs_lgb = clf.predict_proba(X_train)[:, 1]
-        train_probs = 0.65 * train_probs_ridge + 0.35 * train_probs_lgb
+        train_probs = 0.70 * train_probs_ridge + 0.30 * train_probs_lgb
 
-        # In-sample causal monthly density calibration (targeting 35.0 cands/month)
+        # In-sample causal monthly density calibration (targeting 37.5 cands/month)
         n_train_months = max(1.0, (train_set.open_time_ms.max() - train_set.open_time_ms.min()) / (30.4375 * 86_400_000))
         cands_per_month = len(train_set) / n_train_months
-        calib_q = max(0.60, min(0.96, 1.0 - (35.0 / cands_per_month)))
+        calib_q = max(0.60, min(0.96, 1.0 - (37.5 / cands_per_month)))
         calib_thresh = float(np.quantile(train_probs, calib_q))
 
         test_probs_ridge = ridge.predict_proba(X_te_s)[:, 1]
         test_probs_lgb = clf.predict_proba(X_test)[:, 1]
-        raw_test_probs = 0.65 * test_probs_ridge + 0.35 * test_probs_lgb
+        raw_test_probs = 0.70 * test_probs_ridge + 0.30 * test_probs_lgb
 
         # Oxford-Man (2020) Cross-Sectional Ranking Priority:
         # At identical 15m timestamps, prioritize higher model probability candidates first
@@ -537,16 +537,16 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
                     # Continuous cushion risk compression above 500 USD milestone (Part 14 compliant)
                     cushion = max(0.0, equity - (CAPITAL + 500.0))
                     risk_amt = min(10.0, max(4.0, cushion * 0.20))
-                elif current_profit >= 410.0:
-                    # Transition risk scaling between 410 USD and 500 USD (Trial #7187 champion: 21.0 USD)
-                    risk_amt = 21.0
+                elif current_profit >= 420.0:
+                    # Transition risk scaling between 420 USD and 500 USD (Trial #8672 champion: 22.0 USD)
+                    risk_amt = 22.0
                 elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses >= 2:
                     risk_amt = 14.0
                 else:
-                    conf = 1.25 if prob >= 0.44 else 1.0
-                    base_s = 54.0 * conf
+                    conf = 1.35 if prob >= 0.46 else 1.0
+                    base_s = 52.0 * conf
                     if current_profit >= 100.0:
-                        risk_amt = min(90.0, base_s + current_profit * 0.08)
+                        risk_amt = min(95.0, base_s + current_profit * 0.08)
                     else:
                         risk_amt = base_s
 

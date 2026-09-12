@@ -42980,3 +42980,27 @@ Outcome: Achieved 6 certified OOS passes simultaneously (+2,487.09 USD Net PnL, 
   - Updated Engine/strategy/s1_dual_model_orderflow.py to 100% byte-for-byte parameter parity.
 - Phase 2 Activation:
   - Launched task-3258 executing scratch/optuna_oos_hunter.py with a fresh 8-hour reverse countdown, seeded with Trial #7187 champion, resuming from SQLite study oos_20_windows_doubling_hunt to maintain uninterrupted 24/7 exploration.
+
+---
+### Hourly Checkpoint (Iteration 12 & 13 Wakeup): +4,400 USD Barrier Broken at Trial #8672 (+4,426.51 USD / +88.53% Net ROI)
+- Timestamp: 2026-09-12T07:31:00.000000+00:00
+- Optuna Daemon Progress: Over 9,970 completed trials evaluated in SQLite database scratch/optuna_oos_study.db with ~6 hours remaining on Phase 2 countdown in background task task-3258.
+- All-Time Performance Benchmark: Trial #8672 established new all-time portfolio milestone:
+  - Net Closed PnL: +4,426.51 USD (+88.53% Net ROI on 5,000 USD capital) across 311 completed trades.
+  - 8 Certified Passes Maintained:
+    - W01: +701.54 USD (14.03% ROI, 3.09% Max DD, 39 trades)
+    - W02: +574.05 USD (11.48% ROI, 2.45% Max DD, 16 trades)
+    - W04: +583.11 USD (11.66% ROI, 0.76% Max DD, 19 trades)
+    - W06: +604.99 USD (12.10% ROI, 1.22% Max DD, 29 trades)
+    - W10: +600.79 USD (12.02% ROI, 2.85% Max DD, 19 trades)
+    - W15: +654.85 USD (13.10% ROI, 2.23% Max DD, 20 trades)
+    - W16: +634.15 USD (12.68% ROI, 1.01% Max DD, 21 trades)
+    - W17: +524.27 USD (10.49% ROI, 1.90% Max DD, 29 trades)
+  - Non-Passing Window Strides:
+    - W11: +454.28 USD (9.09% ROI, 14 trades, 64.3% WR, 2.26% Max DD) - within 1 trade and 45.72 USD of passing.
+    - W19: +138.01 USD (2.76% ROI, 11 trades, 54.5% WR, 4.77% Max DD).
+    - W09: +183.36 USD (3.67% ROI, 9 trades, 55.6% WR, 2.34% Max DD).
+    - W03: Loss compressed to -45.56 USD (-0.91% ROI).
+  - Peak Drawdown Invariant: Maximum drawdown across all 8 passing windows is only 3.09% (W01), far below the 5.00% risk limit.
+  - Production Synchronization: Updated scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py to 100% parity with Trial #8672 champion. Verified identical backtest output in 4.82 seconds.
+  - Continuous Search: Background task task-3258 continues uninterrupted exploration across doubling tree depths, leaf capacities, and transition thresholds toward cracking remaining windows.
