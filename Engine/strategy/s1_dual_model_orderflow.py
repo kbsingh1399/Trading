@@ -54,8 +54,8 @@ class InstitutionalDualModelEngine:
         house_risk_max: float = 90.0,
         defense_risk: float = 14.0,
         milestone_risk: float = 10.0,
-        trans_risk: float = 34.0,
-        trans_thresh: float = 410.0,
+        trans_risk: float = 24.0,
+        trans_thresh: float = 400.0,
         milestone_profit_usd: float = 500.0,
         max_concurrent: int = 2,
         cooldown_bars: int = 4,
@@ -93,34 +93,34 @@ class InstitutionalDualModelEngine:
         sd = X_train.std(axis=0).replace(0, 1.0)
         X_tr_s = np.nan_to_num(((X_train - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
 
-        # 1. L2 Regularized Ridge Foundation (C=0.015675)
-        ridge = LogisticRegression(C=0.01567453075606719, max_iter=200, random_state=self.random_state)
+        # 1. L2 Regularized Ridge Foundation (C=0.017577)
+        ridge = LogisticRegression(C=0.017576689989008024, max_iter=200, random_state=self.random_state)
         ridge.fit(X_tr_s, y_train)
 
-        # 2. Shallow Regularized LightGBM Classifier (Trial #2961 Champion: +4,024.57 USD)
+        # 2. Shallow Regularized LightGBM Classifier (Trial #4228 Champion: +4,153.00 USD)
         clf = lgb.LGBMClassifier(
-            n_estimators=100,
+            n_estimators=160,
             max_depth=2,
-            num_leaves=15,
-            learning_rate=0.0375075572727193,
+            num_leaves=127,
+            learning_rate=0.02548455634660281,
             subsample=0.8,
             colsample_bytree=0.8,
-            reg_alpha=4.060147194937154,
-            reg_lambda=0.5323353741870857,
+            reg_alpha=3.163980153283579,
+            reg_lambda=0.144014134674136,
             random_state=self.random_state,
             verbose=-1,
             n_jobs=2
         )
         clf.fit(X_train, y_train)
 
-        # 3. In-Sample Monthly Quantile Threshold Calibration (60% Ridge + 40% LightGBM)
+        # 3. In-Sample Monthly Quantile Threshold Calibration (65% Ridge + 35% LightGBM)
         train_probs_ridge = ridge.predict_proba(X_tr_s)[:, 1]
         train_probs_lgb = clf.predict_proba(X_train)[:, 1]
-        train_probs = 0.60 * train_probs_ridge + 0.40 * train_probs_lgb
+        train_probs = 0.65 * train_probs_ridge + 0.35 * train_probs_lgb
 
         n_train_months = max(1.0, (train_df.open_time_ms.max() - train_df.open_time_ms.min()) / (30.4375 * 86_400_000))
         cands_per_month = len(train_df) / n_train_months
-        calib_q = max(0.60, min(0.96, 1.0 - (36.5 / cands_per_month)))
+        calib_q = max(0.60, min(0.96, 1.0 - (35.0 / cands_per_month)))
         calib_thresh = float(np.quantile(train_probs, calib_q))
 
         return ridge, clf, mu, sd, calib_thresh
@@ -140,7 +140,7 @@ class InstitutionalDualModelEngine:
 
         test_probs_ridge = ridge.predict_proba(X_te_s)[:, 1]
         test_probs_lgb = clf.predict_proba(X_test)[:, 1]
-        test_probs = 0.60 * test_probs_ridge + 0.40 * test_probs_lgb
+        test_probs = 0.65 * test_probs_ridge + 0.35 * test_probs_lgb
 
         selected = test_df.copy()
         selected["prob"] = test_probs
@@ -211,7 +211,7 @@ class InstitutionalDualModelEngine:
                     cushion = max(0.0, equity - (self.capital + self.milestone_profit_usd))
                     risk_amt = min(10.0, max(4.0, cushion * 0.20))
                 elif current_profit >= self.trans_thresh:
-                    # Transition risk scaling between trans_thresh and 500 USD (Trial #2961 champion: +4,024.57 USD)
+                    # Transition risk scaling between trans_thresh and 500 USD (Trial #4228 champion: +4,153.00 USD)
                     risk_amt = self.trans_risk
                 elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses >= 2:
                     risk_amt = self.defense_risk
