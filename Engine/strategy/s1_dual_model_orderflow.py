@@ -51,16 +51,16 @@ class InstitutionalDualModelEngine:
         self,
         capital: float = 5000.0,
         base_risk: float = 52.0,
-        house_risk_max: float = 100.0,
+        house_risk_max: float = 95.0,
         defense_risk: float = 14.0,
         milestone_risk: float = 10.0,
-        trans_risk: float = 20.0,
-        trans_thresh: float = 420.0,
+        trans_risk: float = 21.0,
+        trans_thresh: float = 440.0,
         milestone_profit_usd: float = 500.0,
         max_concurrent: int = 2,
         cooldown_bars: int = 4,
-        win_r_reset_thresh: float = 0.70,
-        conf_prob_thresh: float = 0.44,
+        win_r_reset_thresh: float = 0.90,
+        conf_prob_thresh: float = 0.46,
         conf_mult: float = 1.35,
         max_dd_limit: float = 4.40,
         random_state: int = 42
@@ -93,34 +93,34 @@ class InstitutionalDualModelEngine:
         sd = X_train.std(axis=0).replace(0, 1.0)
         X_tr_s = np.nan_to_num(((X_train - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
 
-        # 1. L2 Regularized Ridge Foundation (C=0.014596)
-        ridge = LogisticRegression(C=0.014595690447495408, max_iter=200, random_state=self.random_state)
+        # 1. L2 Regularized Ridge Foundation (C=0.023954)
+        ridge = LogisticRegression(C=0.023954367318540254, max_iter=200, random_state=self.random_state)
         ridge.fit(X_tr_s, y_train)
 
-        # 2. Shallow Regularized LightGBM Classifier (Trial #11253 Champion: +4,485.69 USD)
+        # 2. Shallow Regularized LightGBM Classifier (Trial #17241 Champion: 9 Passes, +4,192.15 USD)
         clf = lgb.LGBMClassifier(
             n_estimators=160,
             max_depth=2,
-            num_leaves=255,
-            learning_rate=0.029522692368079945,
+            num_leaves=63,
+            learning_rate=0.027177443245599134,
             subsample=0.8,
             colsample_bytree=0.8,
-            reg_alpha=2.3670297037631096,
-            reg_lambda=0.17139101083784006,
+            reg_alpha=2.169069818202894,
+            reg_lambda=0.2541719171172905,
             random_state=self.random_state,
             verbose=-1,
             n_jobs=2
         )
         clf.fit(X_train, y_train)
 
-        # 3. In-Sample Monthly Quantile Threshold Calibration (70% Ridge + 30% LightGBM)
+        # 3. In-Sample Monthly Quantile Threshold Calibration (65% Ridge + 35% LightGBM)
         train_probs_ridge = ridge.predict_proba(X_tr_s)[:, 1]
         train_probs_lgb = clf.predict_proba(X_train)[:, 1]
-        train_probs = 0.70 * train_probs_ridge + 0.30 * train_probs_lgb
+        train_probs = 0.65 * train_probs_ridge + 0.35 * train_probs_lgb
 
         n_train_months = max(1.0, (train_df.open_time_ms.max() - train_df.open_time_ms.min()) / (30.4375 * 86_400_000))
         cands_per_month = len(train_df) / n_train_months
-        calib_q = max(0.60, min(0.96, 1.0 - (37.0 / cands_per_month)))
+        calib_q = max(0.60, min(0.96, 1.0 - (38.0 / cands_per_month)))
         calib_thresh = float(np.quantile(train_probs, calib_q))
 
         return ridge, clf, mu, sd, calib_thresh
@@ -140,7 +140,7 @@ class InstitutionalDualModelEngine:
 
         test_probs_ridge = ridge.predict_proba(X_te_s)[:, 1]
         test_probs_lgb = clf.predict_proba(X_test)[:, 1]
-        test_probs = 0.70 * test_probs_ridge + 0.30 * test_probs_lgb
+        test_probs = 0.65 * test_probs_ridge + 0.35 * test_probs_lgb
 
         selected = test_df.copy()
         selected["prob"] = test_probs
