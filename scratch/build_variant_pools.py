@@ -21,7 +21,7 @@ def main():
     store = get_store()
     frames = []
     dirs = [REPO / "scratch" / f"battery_pools_v2_{profile}"]
-    for gg in ("SURV_L", "SURV_XL"):
+    for gg in ("SURV_L", "SURV_XL", "SURV_XXL", "SURV_MEGA"):
         d = REPO / "scratch" / f"battery_pools_v2_{profile}_{gg}"
         if d.exists():
             dirs.append(d)

@@ -53,6 +53,9 @@ GEOS = {
     "SURV_WD": (1344, 1.00, 0.15, 672, 0.50, 1.2, 1.8, 96, 3584.0),
     "SURV_L": (2016, 1.10, 0.20, 0, 0.0, 1.4, 2.2, 144, 5376.0),
     "SURV_XL": (2688, 1.25, 0.25, 0, 0.0, 1.6, 2.5, 192, 7168.0),
+    "SURV_S": (384, 0.90, 0.10, 0, 0.0, 0.9, 1.2, 48, 1536.0),
+    "SURV_XXL": (4032, 1.40, 0.30, 0, 0.0, 1.8, 2.8, 288, 10080.0),
+    "SURV_MEGA": (5760, 1.60, 0.40, 0, 0.0, 2.0, 3.2, 384, 13824.0),
 }
 
 
@@ -170,6 +173,14 @@ def build_store() -> dict:
         df["basis_z"] = _z(df["basis_index_bps"].fillna(0.0))
         df["oi_z"] = _z(df["oi_change_pct"].fillna(0.0))
         df["lst_z"] = _z(df["ls_ratio_top"].fillna(50.0))
+        tb = df["taker_buy_vol_btc"].fillna(0.0)
+        tsv = df["taker_sell_vol_btc"].fillna(0.0)
+        tb_sum = tb + tsv
+        df["taker_imb"] = (tb - tsv) / tb_sum.replace(0, np.nan)
+        df["taker_imb_z"] = _z(df["taker_imb"].fillna(0.0))
+        df["cvd_slope"] = df["future_cvd_15m"].diff(288) / (df["atr_14"] * 288).replace(0, np.nan)
+        df["cvd_slope_z"] = _z(df["cvd_slope"].fillna(0.0))
+        df["whale_z"] = _z(df["whale_index"].fillna(0.0))
         nr6 = (h.rolling(6).max() - l.rolling(6).min()) / c
         df["nr_flag"] = (nr6 <= nr6.rolling(672, min_periods=200).min().shift(1)).fillna(False)
         df["atr_ratio"] = (df["atr_14"] / df["atr_100"].replace(0, np.nan)).fillna(1.0)
@@ -246,6 +257,16 @@ def spec_list():
         ("T7", "orb_fast",     "FAST"),
         ("T8", "btc_lead",     "FAST"),
         ("T9", "oi_break",     "FAST"),
+        ("T5", "fundcarry_W",  "SURV_W"),
+        ("T8", "btclead_W",    "SURV_W"),
+        ("T4", "nr7_S",        "SURV_S"),
+        ("T1", "donch_S",      "SURV_S"),
+        ("T6", "xs_S",         "SURV_S"),
+        ("OF1", "takerflow_W", "SURV_W"),
+        ("OF2", "cvdslope_W",  "SURV_W"),
+        ("OF3", "crowdfade_M", "SURV_M"),
+        ("OF4", "liqcascade_S","SURV_S"),
+        ("OF5", "oiexp_S",     "SURV_S"),
     ]
 
 
@@ -303,6 +324,31 @@ def spec_signals(fam: str, tag: str, df: pd.DataFrame):
         dn = (df["oi_z"] > 1.5) & (df["ret_16"] < 0)
         mask = (up | dn).fillna(False)
         side = np.where(up, 1, -1)
+    elif fam == "OF1":
+        up = df["taker_imb_z"] > 1.2
+        dn = df["taker_imb_z"] < -1.2
+        mask = (up | dn).fillna(False)
+        side = np.where(up, 1, -1)
+    elif fam == "OF2":
+        up = df["cvd_slope_z"] > 1.0
+        dn = df["cvd_slope_z"] < -1.0
+        mask = (up | dn).fillna(False)
+        side = np.where(up, 1, -1)
+    elif fam == "OF3":
+        dn = df["lst_z"] > 1.5
+        up = df["lst_z"] < -1.5
+        mask = (up | dn).fillna(False)
+        side = np.where(up, 1, -1)
+    elif fam == "OF4":
+        up = (df["short_liq_zs"].fillna(0) > 1.5) & (df["rsi_14"].fillna(50) > 60)
+        dn = (df["long_liq_zs"].fillna(0) > 1.5) & (df["rsi_14"].fillna(50) < 40)
+        mask = (up | dn).fillna(False)
+        side = np.where(up, 1, -1)
+    elif fam == "OF5":
+        up = (df["oi_z"] > 1.5) & (df["ret_16"] > 0)
+        dn = (df["oi_z"] > 1.5) & (df["ret_16"] < 0)
+        mask = (up | dn).fillna(False)
+        side = np.where(up, 1, -1)
     else:
         raise ValueError(fam)
     return mask, side.astype(np.int8)
@@ -322,7 +368,8 @@ FEE_PROFILE = FEE_PROFILES.get(PROFILE, FEE_PROFILES["maker25"])
 GEO_OVR = os.environ.get("GEO_OVR", "")
 def spec_candidates(store: dict, fam: str, tag: str) -> pd.DataFrame:
     geo_key = dict(((f, t), g) for f, t, g in spec_list())[(fam, tag)]
-    if GEO_OVR and geo_key.startswith("SURV"):
+    FIXED_GEO_TAGS = {"donch_S", "nr7_S", "xs_S", "fundcarry_W", "btclead_W"}
+    if GEO_OVR and geo_key.startswith("SURV") and tag not in FIXED_GEO_TAGS:
         geo_key = GEO_OVR
     horizon, be_arm, be_lock, decay_bars, decay_min, trail_arm, trail_k, cd, r_scale = GEOS[geo_key]
     r_mult = float(np.sqrt(r_scale / 14.0))

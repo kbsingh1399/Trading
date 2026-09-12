@@ -28,16 +28,26 @@ CAPITAL = 5000.0
 PURGE_MS = 72 * 3600 * 1000
 HUNT_SECONDS = int(float(os.environ.get("HUNT_HOURS", "8")) * 3600)
 TARGET_TRIALS = int(os.environ.get("TARGET_TRIALS", "0"))
+STUDY_TAG = os.environ.get("STUDY_TAG", "")
 HUNT_DIR = REPO / "scratch" / os.environ.get("HUNT_DIR_NAME", "hunt")
-DB = "sqlite:///" + str(HUNT_DIR / "optuna_hunt.db")
+DB = "sqlite:///" + str(HUNT_DIR / f"optuna_hunt{STUDY_TAG}.db")
 
-GEOS_SURV = ["SURV_W", "SURV_L", "SURV_XL"]
+GEOS_SURV = ["SURV_S", "SURV_W", "SURV_L", "SURV_XL", "SURV_XXL", "SURV_MEGA"]
+GEOS_DEEP = ["SURV_W", "SURV_L", "SURV_XL", "SURV_XXL", "SURV_MEGA"]
+GEOS_MID = ["SURV_W", "SURV_L", "SURV_XL"]
 TAGS = ["T1__donchW_tide", "T1__donchW_free", "T2__tsmom7d", "T2__tsmom7d_hi15",
-        "T3__pullback_M", "T3__pullback_W", "T6__xs_decile"]
+        "T3__pullback_M", "T3__pullback_W", "T6__xs_decile",
+        "T5__fundcarry_W", "T8__btclead_W", "T4__nr7_S", "T1__donch_S", "T6__xs_S",
+        "OF1__takerflow_W", "OF2__cvdslope_W", "OF4__liqcascade_S", "OF5__oiexp_S"]
 FAM_OF = {"T1__donchW_tide": "T1", "T1__donchW_free": "T1", "T2__tsmom7d": "T2",
           "T2__tsmom7d_hi15": "T2", "T3__pullback_M": "T3M", "T3__pullback_W": "T3W",
-          "T6__xs_decile": "T6"}
-GEO_CHOICE_FAMS = ["T1", "T2", "T3W", "T6"]
+          "T6__xs_decile": "T6", "T5__fundcarry_W": "T5W", "T8__btclead_W": "T8W",
+          "T4__nr7_S": "FIX", "T1__donch_S": "FIX", "T6__xs_S": "FIX",
+          "OF1__takerflow_W": "OF1", "OF2__cvdslope_W": "OF2",
+          "OF4__liqcascade_S": "OF4", "OF5__oiexp_S": "OF5"}
+GEO_CHOICE_FAMS = ["T1", "T2", "T3W", "T6", "T5W", "T8W", "OF1", "OF2", "OF4", "OF5"]
+GEO_FIXED_TAG = {"T3__pullback_M": "SURV_M", "T4__nr7_S": "SURV_S",
+                 "T1__donch_S": "SURV_S", "T6__xs_S": "SURV_S"}
 ML_FEATS = ["vwap_zscore", "rsi_14", "atr_ratio", "volume_ratio", "tide", "hour",
             "dow", "mom_3d", "ret_672", "dist90hi", "ret_1344", "r7_z", "xs_rank",
             "side", "geo_id"]
@@ -60,7 +70,7 @@ def load_windows():
 
 def slices_for(profile, windows):
     df = pd.read_parquet(REPO / "scratch" / f"variant_pool_{profile}.parquet")
-    df = df[df.geo.isin(GEOS_SURV + ["SURV_M"])].reset_index(drop=True)
+    df = df[df.geo.str.startswith("SURV")].reset_index(drop=True)
     keys = (df["fam"] + "__" + df["tag"]).to_numpy()
     geo = df["geo"].to_numpy()
     t = df["t"].to_numpy()
@@ -101,7 +111,10 @@ def apply_config(per_w, params):
     active = {}
     for tg in TAGS:
         if params.get("on_" + tg, 1):
-            active[tg] = params["geo_" + FAM_OF[tg]] if FAM_OF[tg] in GEO_CHOICE_FAMS else "SURV_M"
+            if tg in GEO_FIXED_TAG:
+                active[tg] = GEO_FIXED_TAG[tg]
+            else:
+                active[tg] = params["geo_" + FAM_OF[tg]]
     if len(active) < 2:
         return None
     allowed = set(active.items())
@@ -177,23 +190,24 @@ def execute_window(W, mask, book, dir_max, daily_cap, risk, dd_def):
 
 def ml_scores(trd, W):
     import lightgbm as lgb
-    from sklearn.ensemble import ExtraTreesClassifier
     Xtr = trd[ML_FEATS]
     yreg = np.clip(trd["r"].to_numpy(), -1.6, 8.0)
     ycls = (trd["r"] > 0).astype(int)
-    reg = lgb.LGBMRegressor(n_estimators=120, max_depth=3, learning_rate=0.05,
+    reg = lgb.LGBMRegressor(n_estimators=80, max_depth=3, learning_rate=0.06,
                             subsample=0.8, colsample_bytree=0.8, random_state=13,
                             verbose=-1, n_jobs=2)
-    clf = lgb.LGBMClassifier(n_estimators=120, max_depth=3, learning_rate=0.05,
+    clf = lgb.LGBMClassifier(n_estimators=80, max_depth=3, learning_rate=0.06,
                              subsample=0.8, colsample_bytree=0.8, random_state=13,
                              verbose=-1, n_jobs=2)
-    et = ExtraTreesClassifier(n_estimators=80, max_depth=6, n_jobs=2, random_state=13)
+    clf2 = lgb.LGBMClassifier(n_estimators=80, max_depth=5, learning_rate=0.10,
+                              subsample=0.7, colsample_bytree=0.6, min_child_samples=80,
+                              reg_lambda=8.0, random_state=29, verbose=-1, n_jobs=2)
     reg.fit(Xtr, yreg)
     clf.fit(Xtr, ycls)
-    et.fit(Xtr, ycls)
+    clf2.fit(Xtr, ycls)
     Xte = pd.DataFrame({c: W["ml"][c] for c in ML_FEATS})
     z = (reg.predict(Xte) - reg.predict(Xtr).mean()) / (reg.predict(Xtr).std() + 1e-9)
-    return z + 1.5 * (clf.predict_proba(Xte)[:, 1] - 0.5) + 1.5 * (et.predict_proba(Xte)[:, 1] - 0.5)
+    return z + 1.5 * (clf.predict_proba(Xte)[:, 1] - 0.5) + 1.5 * (clf2.predict_proba(Xte)[:, 1] - 0.5)
 
 
 def objective_factory(df_by, wins_by, design_ids):
@@ -205,7 +219,13 @@ def objective_factory(df_by, wins_by, design_ids):
         if sum(trial.params["on_" + tg] for tg in TAGS) < 2:
             raise optuna.TrialPruned("need >=2 tags")
         for f in GEO_CHOICE_FAMS:
-            trial.suggest_categorical("geo_" + f, GEOS_SURV)
+            if f in ("T1", "T2", "T3W", "T6"):
+                pool = GEOS_DEEP
+            elif f in ("OF4", "OF5"):
+                pool = ["SURV_S", "SURV_W"]
+            else:
+                pool = GEOS_MID
+            trial.suggest_categorical("geo_" + f, pool)
         trial.suggest_categorical("tide_on", [0, 1])
         trial.suggest_categorical("tide_min_sig", [0.0, 0.25, 0.5])
         trail_days = trial.suggest_categorical("trail_days", [0, 30, 60, 90])
@@ -257,8 +277,8 @@ def objective_factory(df_by, wins_by, design_ids):
                 gg = df["geo"].to_numpy()
                 trm = (df.t.to_numpy() < cutoff) & np.array([(k, g) in pairset for k, g in zip(kk, gg)])
                 trd = df[trm]
-                if len(trd) > 40000:
-                    trd = trd.sample(40000, random_state=13)
+                if len(trd) > 25000:
+                    trd = trd.sample(12000, random_state=13)
                 if len(trd) >= 800:
                     try:
                         s_all = ml_scores(trd, W)
@@ -311,7 +331,7 @@ def main():
         print(f"[hunt] {prof}: {len(df):,d} rows", flush=True)
 
     obj = objective_factory(df_by, wins_by, design_ids)
-    study = optuna.create_study(study_name="hunt20", storage=DB, direction="maximize",
+    study = optuna.create_study(study_name="hunt20" + STUDY_TAG, storage=DB, direction="maximize",
                                 load_if_exists=True,
                                 sampler=optuna.samplers.TPESampler(seed=2026, multivariate=True))
     rnd = 0
