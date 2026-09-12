@@ -35,6 +35,9 @@ FEATURE_COLUMNS = [
     "atr_ratio", "volume_rel", "atr_z", "rsi_14", "flow4", "flow_ratio",
     "trend_up", "trend_dn", "slope200", "slope200_4h", "ret_96", "ret_672", "rv_24h",
     "d_sess_vwap", "d_week_open", "d_month_open", "taker_volume_ratio",
+    # positioning / derivatives flow (funding, basis, liquidations, OI, spot-vs-perp CVD)
+    "funding_z", "funding_8", "basis_rel", "liq_net", "liq_intensity", "liq_cum8",
+    "oi_rel", "oi_roc96", "zc_div_z", "avg_trade_rel", "taker_ratio_c",
     # order flow from the shipped footprint ladder (candle-level, causal)
     "ld_delta_rel", "ld_cvd_4", "ld_cvd_8", "ld_cvd_32", "ld_delta_z",
     "ld_imb_net", "ld_imb_net_8", "ld_stack_net", "ld_d_poc", "ld_d_vah", "ld_d_val",

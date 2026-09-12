@@ -30,6 +30,18 @@ commands.
 
 ## 1. Setup
 
+> **Contract note.** `Engine/target_oos_criteria.json` specifies
+> `min_r_multiple: 4.0`, and the certified suite's own protocol text says
+> "minimum planned target net4R; achieved average R reported separately". But
+> `Engine/s1_trend_following_suite.py::run()` *validates* the criteria file
+> against `min_r_multiple == 2.0` and raises `Contract changed: min_r_multiple`
+> against the shipped file, while its PASS logic only tests `cfg.target_r >= 2.0`.
+> Everything in this report is run at **target_r = 4.0**, i.e. the stricter
+> reading, so the results here satisfy either reading of the check (and the
+> harness's `min_r_multiple` self-check is currently inconsistent with the file
+> it reads).
+
+
 | Item | Value |
 |---|---|
 | Universe | 17 altcoin USDT-M perpetuals (BTC used as macro context, per `protocol.json`) |
@@ -180,6 +192,30 @@ windows. Artifacts: `scratch/lpl_ml_all17.json`, `scratch/lpl_portfolio_baseline
   `ld_d_poc` is a close-strength measure, not "distance to the session POC"
   (median |Δ| vs the reconstructed session POC = 1.24 ATR).
 
+### 4.1b What does move the gate: positioning, not price structure, and not flow
+
+Two feature blocks were built from master columns the gate had never seen and
+tested with the same walk-forward protocol (`scratch/pos_check.py` / `.csv`,
+6 symbols, 5 windows, top-k by predicted `P(net_r > 1R)`):
+
+| feature set | mean net R of top-k | hit rate | P(≥ 2R) |
+|---|---|---|---|
+| geometry + regime (previous set) | +0.673 | 45.7 % | 37.0 % |
+| **+ funding / basis / liquidations / OI** | **+0.771** | **48.0 %** | **39.9 %** |
+| + cross-sectional panel breadth | +0.523 | 42.9 % | 34.7 % |
+
+* The **positioning block** (`funding_z`, `funding_8`, `basis_rel`, `liq_net`,
+  `liq_intensity`, `liq_cum8`, `oi_rel`, `oi_roc96`, `zc_div_z`, `avg_trade_rel`,
+  `taker_ratio_c`) is the first feature addition that pays: `funding_z`,
+  `funding_8` and `oi_rel` land in the top-20 importances in *every* window
+  tested. Crowded-funding and open-interest expansion are exactly the "who is
+  offside" information a 4R breakout needs.
+* The **cross-sectional block** (`xs_*`: break breadth, return dispersion, share
+  of the panel above its 200-bar mean, systemic liquidation pressure, own rank)
+  *hurt* (+0.77 → +0.52) — the features fit the training regimes well and do not
+  transfer. They are implemented (`data.attach_cross_section`) but deliberately
+  excluded from the gate, and the exclusion is documented rather than silent.
+
 ### 4.2 The objective function matters more than the feature set
 
 The gate was fitting `label = (net_r > 0)`. Under a 4R-target / time-stop
@@ -198,6 +234,32 @@ realized expectancy of the selected set (`scratch/label_check.csv`, 6 symbols,
 
 +0.67 R/trade × 15 trades = +10 % ROI, exactly the mission threshold, so the
 ranking side of the arithmetic is now *satisfiable*.
+
+### 4.2b Slot allocation: why a better ranking did not translate into a better book
+
+The positioning block improved the *offline* top-k ranking (+0.77R vs +0.67R
+mean net R), yet the matching full scorecard (`lpl_ml_pos`) lost 23 % — because
+the kernel fills a free slot with whichever candidate arrives **first**, so the
+cross-sectional ranking barely influences which trades are taken. Making the
+ranking operative requires a slot-allocation policy, so `kernel.LabConfig`
+gained a reservation schedule: the required gate score decays linearly from a
+high quantile of the *training* score distribution down to the gate threshold
+across the window (early slots are reserved for the best candidates; late in the
+window the bar drops so otherwise idle slots are still used).
+
+Measured on seven windows (`scratch/reserve_check.py`, identical candidates in
+all arms):
+
+| policy | mean trades | mean ROI | mean win rate |
+|---|---|---|---|
+| first-come (current) | 10.0 | +0.07 % | 35.3 % |
+| reservation from p99 | 9.9 | +0.03 % | 34.5 % |
+| reservation from **p99.9** | **6.7** | **+1.72 %** | **46.8 %** |
+
+Reservation clearly improves the quality of what gets traded — and just as
+clearly costs trades, which the rubric forbids (≥ 15). With three slots, quality
+and count cannot both be satisfied: this is the same trade-off as §4.3, seen from
+the other side.
 
 ### 4.3 The execution side: three slots is the hard constraint
 
@@ -231,6 +293,16 @@ walk-forward (gate trained only on events ending before `window_start − 72 h`)
 | `lpl_ml_soft` — expectancy label, carried breaks, no hard tide filter | **1/20** | 204 | +$1,431.76 | **+28.64 %** | 8/20 |
 | `lpl_ml_hold` — same + hard tide filter | **2/20** (W04, W11) | 193 | +$887.72 | +17.75 % | 9/20 |
 | `lpl_ml_regime` — direction label, threshold selection, tide filter | 0/20 | 135 | +$767.98 | +15.36 % | **12/20** |
+| `lpl_ml_pos` — as `lpl_ml_soft` + positioning features | 0/20 | 184 | −$1,152.83 | −23.06 % | 5/20 |
+| `lpl_ml_soft_ride` — as `lpl_ml_soft` + trailing winner-riding exits | 0/20 | 184 | −$1,202.22 | −24.04 % | 5/20 |
+
+**Read the spread, not just the ranking.** The last two rows are the *same
+strategy* as row 1 with one change each, and they swing the 20-window result by
+50 percentage points. Per window there are only 2–22 trades, and each 4R winner is
+worth 4 % of the account, so a single trade flips a window from −4 % to +8 %. Any
+configuration ranking below is therefore weakly identified: the honest statement
+is "the best variants are around break-even with two individual window passes",
+not "row 1 is 50 points better than row 4".
 
 Per-window ROI (%, trades in brackets) for the best variant:
 

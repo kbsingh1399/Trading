@@ -62,6 +62,15 @@ class LabConfig:
     risk_ceiling_usd: float = 200.0
     champion_mode: bool = True       # risk up while ahead, down while behind
     max_concurrent_risk_frac: float = 0.04   # total open risk <= 4 % of capital
+    # Reservation schedule for the scarce slots: with 2-3 concurrent positions the
+    # kernel otherwise fills a free slot with whatever candidate arrives first,
+    # which makes the gate's cross-sectional ranking nearly irrelevant.  With
+    # ``reserve`` the required score starts at ``reserve_hi`` and decays linearly to
+    # ``reserve_lo`` across the window, so early slots go to the best candidates and
+    # the remaining slots are filled late with the best of what is left.
+    reserve: bool = False
+    reserve_hi: float = 1.0
+    reserve_lo: float = 0.0
 
 
 def simulate(data: dict[str, pd.DataFrame], start_ms: int, end_ms: int, cfg: LabConfig,
@@ -151,7 +160,11 @@ def simulate(data: dict[str, pd.DataFrame], start_ms: int, end_ms: int, cfg: Lab
                         and np.isfinite(prev[ix["signal"]]) and prev[ix["signal"]] != 0):
                     candidates.append((float(prev[ix["score"]]), s, prev))
 
-        for _, s, sig in sorted(candidates, key=lambda x: (-x[0], x[1])):
+        frac = ((t - start_ms) / max(1, end_ms - start_ms)) if (cfg.reserve and end_ms > start_ms) else 0.0
+        need = cfg.reserve_hi + (cfg.reserve_lo - cfg.reserve_hi) * min(1.0, max(0.0, frac))
+        for score_, s, sig in sorted(candidates, key=lambda x: (-x[0], x[1])):
+            if cfg.reserve and score_ < need:
+                continue
             if len(positions) >= cfg.max_positions:
                 break
             side = int(sig[ix["signal"]])

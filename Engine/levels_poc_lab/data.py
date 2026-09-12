@@ -150,6 +150,39 @@ def build_symbol_features(symbol: str, bin_width: float = 0.0005) -> pd.DataFram
     m = dz.rolling(192, min_periods=48).mean()
     s = dz.rolling(192, min_periods=48).std(ddof=0).replace(0, np.nan)
     f["z_dev_poc"] = ((dz - m) / s).fillna(0.0)
+
+    # --- positioning / derivatives flow (all evaluated on the completed candle) ---
+    # Funding, basis, liquidation cascades, open interest and the spot-vs-futures
+    # CVD divergence are the only master columns that carry information about
+    # *who is offside*.  A 4R breakout needs fuel: crowded shorts (negative
+    # funding / short liquidations) or a fresh OI expansion, not a crowded long.
+    fr = f.funding_rate_pct.astype("float64")
+    frp = fr.shift(1).rolling(480, min_periods=120)
+    f["funding_z"] = ((fr - frp.mean()) / frp.std(ddof=0).replace(0, np.nan)
+                      ).fillna(0.0).clip(-6, 6)
+    f["funding_8"] = fr.rolling(8, min_periods=1).sum().clip(-2, 2)
+    f["basis_rel"] = (f.basis_usd / c).replace([np.inf, -np.inf], np.nan).fillna(0.0).clip(-0.01, 0.01)
+
+    ll = f.long_liq_zs.astype("float64")
+    sl = f.short_liq_zs.astype("float64")
+    f["liq_net"] = (ll - sl).clip(-10, 10)
+    f["liq_intensity"] = np.maximum(ll, sl).clip(0, 10)
+    f["liq_cum8"] = (ll + sl).rolling(8, min_periods=1).sum().clip(0, 60)
+
+    oi = f.open_interest_usd.astype("float64").replace(0, np.nan)
+    oi_base = oi.shift(1).rolling(1920, min_periods=480).mean()
+    f["oi_rel"] = (oi / oi_base).replace([np.inf, -np.inf], np.nan).fillna(1.0).clip(0.2, 5.0)
+    f["oi_roc96"] = oi.pct_change(96).replace([np.inf, -np.inf], np.nan).fillna(0.0).clip(-1, 3)
+
+    zc = f.zc_div.astype("float64")
+    zp = zc.shift(1).rolling(1920, min_periods=480)
+    f["zc_div_z"] = ((zc - zp.mean()) / zp.std(ddof=0).replace(0, np.nan)
+                     ).fillna(0.0).clip(-6, 6)
+    at = f.avg_trade_size_usd.astype("float64")
+    atp = at.shift(1).rolling(1920, min_periods=480).mean()
+    f["avg_trade_rel"] = (at / atp).replace([np.inf, -np.inf], np.nan).fillna(1.0).clip(0.1, 10.0)
+    f["taker_ratio_c"] = f.taker_volume_ratio.astype("float64").clip(0, 5)
+
     f["symbol"] = symbol
     return f
 
@@ -166,15 +199,23 @@ def load_all(symbols=ALL_SYMBOLS, cache: bool = True, rebuild: bool = False,
             f = pd.read_parquet(path)
         else:
             f = build_symbol_features(s, bin_width=bin_width)
+            # float32 everywhere: the full 18-symbol panel has to fit in ~4 GB, and
+            # float64 doubles it for no measurable benefit (all features are ratios).
+            _downcast(f)
             if cache:
-                keep = f.copy()
-                for col in keep.columns:
-                    if keep[col].dtype == np.float64:
-                        keep[col] = keep[col].astype(np.float32)
-                keep.to_parquet(path, index=False)
+                f.to_parquet(path, index=False)
         f = attach_flow(f, s)
         out[s] = f
     return out
+
+
+def _downcast(f: pd.DataFrame) -> pd.DataFrame:
+    for col in f.columns:
+        if f[col].dtype == np.float64:
+            f[col] = f[col].astype(np.float32)
+        elif f[col].dtype == np.int64 and col != "open_time_ms":
+            f[col] = f[col].astype(np.int32)
+    return f
 
 
 def attach_flow(f: pd.DataFrame, symbol: str) -> pd.DataFrame:
@@ -190,11 +231,56 @@ def attach_flow(f: pd.DataFrame, symbol: str) -> pd.DataFrame:
         return f
     flow = pd.read_parquet(flow_path(symbol))
     if len(flow) == len(f) and np.array_equal(flow.open_time_ms.to_numpy(), f.open_time_ms.to_numpy()):
-        out = f.copy()
         for c in FLOW_COLUMNS:
-            out[c] = flow[c].to_numpy("float32")
-        return out
+            f[c] = flow[c].to_numpy("float32")
+        return f
     return f.merge(flow, on="open_time_ms", how="left")
+
+
+XS_COLUMNS = [
+    "xs_brk_up_share", "xs_brk_dn_share", "xs_ret96_mean", "xs_ret96_disp",
+    "xs_above200_share", "xs_liq_mean", "xs_ret96_rank",
+]
+
+
+def attach_cross_section(frames: dict[str, pd.DataFrame], min_symbols: int = 5) -> None:
+    """Add panel-breadth features to every symbol frame, in place.
+
+    A level break is a *cross-sectional* event: the same weekly-high break that
+    follows through when the whole panel is breaking out is a fakeout when it is
+    the only one.  These features give the gate the panel context it otherwise
+    cannot see (breadth of breaks, dispersion of returns, share of the panel above
+    its 200-bar mean, systemic liquidation pressure, and the symbol's own rank).
+    Everything is computed at the completed candle, so it is causal.
+    """
+    parts = []
+    for s, f in frames.items():
+        parts.append(pd.DataFrame({
+            "open_time_ms": f.open_time_ms.to_numpy(),
+            "s": s,
+            "ret": f.ret_96.to_numpy("float32"),
+            "above": (f.close > f.e200).astype("float32").to_numpy(),
+            "brk_up": f.brk_pwh.to_numpy("float32"),
+            "brk_dn": f.brk_pwl.to_numpy("float32"),
+            "liq": f.liq_intensity.to_numpy("float32"),
+        }))
+    panel = pd.concat(parts, ignore_index=True)
+    g = panel.groupby("open_time_ms")
+    agg = g.agg(xs_brk_up_share=("brk_up", "mean"), xs_brk_dn_share=("brk_dn", "mean"),
+                xs_ret96_mean=("ret", "mean"), xs_ret96_disp=("ret", "std"),
+                xs_above200_share=("above", "mean"), xs_liq_mean=("liq", "mean"))
+    counts = g["s"].transform("size")
+    panel["xs_ret96_rank"] = panel.groupby("open_time_ms")["ret"].rank(pct=True)
+    panel.loc[counts < min_symbols, "xs_ret96_rank"] = np.nan
+    rank_wide = panel.pivot_table(index="open_time_ms", columns="s",
+                                  values="xs_ret96_rank", aggfunc="last")
+    del panel
+    for s, f in frames.items():
+        idx = pd.Index(f.open_time_ms.to_numpy())
+        for c in agg.columns:
+            f[c] = agg[c].reindex(idx).to_numpy("float32")
+        if s in rank_wide.columns:
+            f["xs_ret96_rank"] = rank_wide[s].reindex(idx).to_numpy("float32")
 
 
 def windows() -> list[dict]:

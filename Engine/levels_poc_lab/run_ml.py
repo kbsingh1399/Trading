@@ -16,13 +16,14 @@ from __future__ import annotations
 
 import argparse
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from . import PURGE_MS
-from .data import ALTCOINS, BTC, load_all, windows, window_bounds
+from .data import ALTCOINS, BTC, attach_cross_section, load_all, windows, window_bounds
 from .kernel import LabConfig, prepare_execution_frame, simulate
 from .ml_gate import FEATURE_COLUMNS, event_table, train_gate
 from .signals import build_signal_frame, default_specs, naked_poc_series
@@ -33,9 +34,15 @@ SCORE_DIR = REPO_ROOT / "scratch"
 
 def build_all(data: dict, specs, target_r: float, horizon: int,
               pending: int = 0, pending_step: int = 4):
+    # NOTE: cross-sectional panel features are deliberately NOT attached here: they
+    # were measured to hurt out-of-sample ranking (scratch/pos_check.csv) and they
+    # cost ~120 MB across the panel.  `data.attach_cross_section` is kept for the
+    # record.  Symbol frames are released as soon as their signals/events exist so
+    # the full 18-symbol panel fits in memory.
     signals = {}
     events = []
-    for sym, f in data.items():
+    for sym in list(data):
+        f = data[sym]
         if sym == BTC:
             continue
         t = f.open_time_ms.to_numpy(np.int64)
@@ -49,6 +56,7 @@ def build_all(data: dict, specs, target_r: float, horizon: int,
                         pending=pending, pending_step=pending_step)
         if len(ev):
             events.append(ev)
+        del data[sym]          # free the wide feature frame; signals carry what the kernel needs
     ev_all = pd.concat(events, ignore_index=True) if events else pd.DataFrame()
     return signals, ev_all
 
@@ -87,6 +95,10 @@ def main():
     ap.add_argument("--pending-step", type=int, default=4)
     ap.add_argument("--sel-per-window", type=int, default=0,
                     help="select the top-N scoring candidates per window (0=threshold)")
+    ap.add_argument("--reserve", action="store_true",
+                    help="reserve scarce slots for top-ranked candidates: required score "
+                         "decays from a high quantile to the gate threshold across the window")
+    ap.add_argument("--reserve-q", type=float, default=0.999)
     ap.add_argument("--cost-profile", default="certified")
     ap.add_argument("--macro-filter", action="store_true")
     ap.add_argument("--ride-winners", action="store_true")
@@ -154,7 +166,14 @@ def main():
             sub.loc[~keep, "stop_distance"] = np.nan
             sub["score"] = [prob_map.get((sym, int(tt)), 0.0) for tt in sub.open_time_ms]
             per_symbol[sym] = sub
-        res = simulate(per_symbol, start_ms, end_ms, cfg)
+        cfg_w = cfg
+        if args.reserve:
+            p_tr = gate.predict(train)
+            hi = float(np.quantile(p_tr, args.reserve_q))
+            lo = float(gate.threshold)
+            if hi > lo:
+                cfg_w = replace(cfg, reserve=True, reserve_hi=hi, reserve_lo=lo)
+        res = simulate(per_symbol, start_ms, end_ms, cfg_w)
         m = res["metrics"]
         is_pass = m["verdict"] == "PASS"
         passed += int(is_pass)
