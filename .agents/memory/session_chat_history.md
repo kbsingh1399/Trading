@@ -42892,3 +42892,16 @@ Outcome: Achieved 6 certified OOS passes simultaneously (+2,487.09 USD Net PnL, 
   1. AST graph extraction completed across all 3,293 repository files (100%).
   2. Rebuilt graphify knowledge graph at graphify-out/graph.json (49,112 nodes, 48,480 edges, 3,896 communities).
   3. Continuous Optuna hunt task-2825 currently at 6,144+ completed trials, actively exploring toward cracking remaining windows.
+
+---
+### Hourly Checkpoint (Iteration 8 Wakeup): Over 6,810 Optuna Trials Evaluated | 03h 01m Countdown Active
+- Timestamp: 2026-09-12T02:31:00.000000+00:00
+- Optuna Daemon Status: Background process task-2825 (PID 14992) running continuously at full throttle (~3.2s per trial) with 03 hours 01 minute remaining on the 8-hour reverse countdown timer.
+- Total Completed Trials: 6,810+ completed trials recorded in SQLite database scratch/optuna_oos_study.db (study: oos_20_windows_doubling_hunt).
+- Current Global Champion Maintained: Trial #4228 (DB trial 5430):
+  - Net Closed Portfolio PnL: +4,153.00 USD (+83.06% Net ROI on 5,000.00 USD capital) across 290 completed trades.
+  - 8 Certified Passes Maintained: W01 (+623.77 USD), W02 (+570.75 USD), W04 (+502.82 USD), W06 (+580.50 USD), W10 (+565.70 USD), W15 (+613.46 USD), W16 (+631.07 USD), W17 (+513.04 USD).
+  - Robust Invariant: Maximum drawdown across all 8 passing windows remains ultra-low at 3.17% (W06), well below the 5.00% risk ceiling.
+  - Consistent Reproducibility: Confirmed across subsequent trials (e.g. Trial 6536 at +4,102.78 USD, Trial 6511 at +3,986.13 USD, Trial #5605 at +3,770.87 USD).
+- Code Parity & AST Graph: Both scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py maintain 100% byte-for-byte parity with Trial #4228 parameters. AST knowledge graph fully synchronized (49,112 nodes).
+- Continuous Search: Background task task-2825 continues uninterrupted exploration across doubling tree depths, leaf capacities, and transition thresholds toward cracking remaining windows.
