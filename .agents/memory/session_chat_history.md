@@ -43242,6 +43242,24 @@ Outcome: Achieved 6 certified OOS passes simultaneously (+2,487.09 USD Net PnL, 
   - Verified execution in 4.69 seconds confirming 9 certified passes and +4,192.15 USD PnL.
   - Parity confirmed across both repositories via verify_and_sync_agents.py.
 
+---
+### Hourly Checkpoint (Iteration 27 Wakeup): 15 Distinct 9-Pass Trials | 19,384 Trials Evaluated | Phase 3 Completing | Phase 4 Primed
+- Timestamp: 2026-09-12T21:31:00.000000+00:00
+- Optuna Daemon Status: Background process task-3489 completing its final 100 seconds of the 8-hour reverse countdown timer (08h 00m 00s total run time).
+- Exploration Volume: Over 5,735 trials evaluated in Phase 3 alone (~3.2s per trial), bringing cumulative database trials in scratch/optuna_oos_study.db to 19,384+ trials (19,384 completed).
+- Milestone: 15 Distinct Trials Verified With 9 Certified Passes:
+  - All 15 top trials on the all-time objective leaderboard are now 9-pass configurations.
+  - New 9-pass contenders discovered this hour: Trial #18167 (+4,010.88 USD), Trial #17775 (+3,952.01 USD), Trial #18125 (+3,932.83 USD), Trial #17635 (+3,905.42 USD), Trial #17942 (+3,849.16 USD), Trial #17859 (+3,752.70 USD).
+  - 8-Pass Density: 1,467 distinct configurations (+64 added this hour).
+  - 7-Pass Density: 3,383 distinct configurations (+152 added this hour).
+- All-Time Champion Maintained: Trial #17241 (9 Certified Passes, +4,192.15 USD Net Closed Profit, 307 trades).
+- Phase 4 Primed:
+  - Updated scratch/optuna_oos_hunter.py to seed exploration directly from Trial #17241 champion parameters and baseline set to 9 passes and +4,192.15 USD.
+- Code Parity & Dual-Repo Parity:
+  - 100% byte-for-byte parameter parity maintained between scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py.
+  - Parity confirmed across both repositories via verify_and_sync_agents.py.
+
+
 
 
 
