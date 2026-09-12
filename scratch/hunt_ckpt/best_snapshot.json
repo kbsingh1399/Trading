@@ -1,0 +1,33 @@
+{
+  "round": 2,
+  "trials": 402,
+  "best_value": 652.8261677546334,
+  "best_params": {
+    "profile": "maker25",
+    "mode": "breadth",
+    "on_T1__donchW_tide": 0,
+    "on_T1__donchW_free": 0,
+    "on_T2__tsmom7d": 0,
+    "on_T2__tsmom7d_hi15": 0,
+    "on_T3__pullback_M": 1,
+    "on_T3__pullback_W": 1,
+    "on_T6__xs_decile": 1,
+    "geo_T1": "SURV_W",
+    "geo_T2": "SURV_XL",
+    "geo_T3W": "SURV_XL",
+    "geo_T6": "SURV_L",
+    "tide_on": 1,
+    "tide_min_sig": 0.5,
+    "trail_days": 90,
+    "gate_min": 0.02,
+    "fb_k": 4,
+    "book": 5,
+    "dir_max": 0,
+    "daily_cap": 1,
+    "risk": 60.0,
+    "dd_def": 0.0
+  },
+  "design_passes": 6,
+  "design_total_pct": 103.571036583129,
+  "elapsed_h": 7.622762085331811
+}
