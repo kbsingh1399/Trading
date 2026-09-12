@@ -220,3 +220,43 @@ Mandate joint 20/20: still NOT achieved (per-window C2: 1/20; best variant 4/20 
 tide-guard-only). Structural incompatibilities: 15-trade/window floor vs weekly holds;
 +10%/month-every-month vs +2%/month-mean fat-tail edge. Recommend criteria change or
 paper-trade forward validation of DEPLOYMENT_SPEC.
+
+---
+
+# CAMPAIGN v4 (the 8-hour Optuna hunt — user-directed, time-boxed)
+
+## Protocol
+1,321 trials (rounds 50/100/200/400/800 doubling; >3x the requested 400 trials) over
+~10^9-config space: 2 fee profiles x family geometry {SURV_W 14d / SURV_L 21d / SURV_XL 28d}
+x 7 sleeve toggles x mode {breadth | 3-model ML ensemble (LGBM reg+clf, ExtraTrees)}
+x gates (trail 30-90d/min/fallback) x tide guard (on/off, sigma 0-0.5) x book/dir/daily caps
+x risk {40-60} x dd-defense {0-3.5}. OBJECTIVE USED DESIGN WINDOWS W01-W16 ONLY;
+W17-W20 sealed until the deadline fired (anti-curvefit firewall).
+
+## Results
+- Best-by-design: 6/16 passes (score 653.69, r3; stable through +800 trials).
+- Sealed holdout eval of top-10 design configs: ALL 0/4 formal window passes; holdout
+  totals +27.9..+44.7% over the 4 windows (~+7-11%/window-month) — strongly positive,
+  formal passes lost on margins.
+- CHAMPION full-20: TOTAL +150.07%; 6/20 full-criteria passes:
+  W01 +14.04% (DD 3.7, WR 66.7, n21), W04 +13.30% (DD 5.0, n23), W05 +10.78% (DD 2.5, n16),
+  W09 +40.86% (DD 1.8, n23), W11 +12.04% (DD 4.2, n19), W16 +11.71% (DD 3.5, n16).
+- Holdout near-passes failing ONLY on the 15-trade floor:
+  W17 +26.97% ROI, DD 1.07%, WR 90.0%, n=10 (<15 floor);
+  W19 +18.81% ROI, DD 2.61%, WR 76.9%, n=13 (<15 floor).
+- Champion matched-count null (300 sims, same gates/book/risk): median +23.3%, p95 +65.2%;
+  P(null >= champion +150.07%) =~ 0.000 -> policy STRUCTURE is doing real work.
+  Across-trial selection (1,321) still implies luck in the top spot; the robust claim is at
+  config-FAMILY level (top-10 holdout totals cluster +28-45%).
+
+## Champion policy (best-of-hunt, holdout-validated family)
+maker25 profile | ML-lite (3-model ensemble, q=0.55) + breadth hybrid | tags {T1_free, T2, T3M,
+T3W, T6} | geo T1/T2=SURV_XL(28d), T3W/T6=SURV_L(21d) | tide guard sigma 0.25 | family gate
+60d, min 0, fallback 4 | book 4 | no dir/daily caps | risk $50, no dd-defense.
+
+## Verdict
+20/20 joint: NOT achieved (best 6/20). But: (a) the 41bps-friction canyon is crossed only by
+weekly/monthly-horizon trading with maker-grade entries; (b) the hunt found a config family
+whose UNTOUCHED holdout runs +7..11%/month at DD 1-5%, limited mainly by trade-count floor;
+(c) W09 passes in 3 independent configurations (breadth A, C1 tide, champion) — the most
+reproducible pass of the campaign.

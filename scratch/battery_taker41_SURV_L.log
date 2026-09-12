@@ -1,0 +1,19 @@
+[battery] loading cache
+[battery] PROFILE=taker41 fee=(2, 0, 18.0, 23.0)
+FAM  | tag           | geo     |       n |     netR |   grossR |    WR% |  pf_net |  avgbars
+T1   | donchW_tide   | SURV_W  |   10502 |  +0.0543 |  +0.3043 |  48.1% |   1.117 |     1277
+T1   | donchW_free   | SURV_W  |   10582 |  +0.0528 |  +0.3028 |  48.0% |   1.114 |     1278
+T2   | tsmom7d       | SURV_W  |   24060 |  +0.0305 |  +0.2805 |  47.3% |   1.061 |     1139
+T2   | tsmom7d_hi15  | SURV_W  |    2427 |  +0.1407 |  +0.3907 |  47.7% |   1.272 |      975
+T3   | pullback_M    | SURV_M  |   14036 |  +0.0312 |  +0.2812 |  47.9% |   1.065 |     1219
+T3   | pullback_W    | SURV_W  |   14036 |  +0.0312 |  +0.2812 |  47.9% |   1.065 |     1219
+T6   | xs_decile     | SURV_W  |    8260 |  +0.0767 |  +0.3267 |  48.1% |   1.162 |     1244
+fam          tag    geo     n    net_r  gross_r        wr       pf    avg_bars
+ T2 tsmom7d_hi15 SURV_W  2427 0.140697 0.390697 47.672023 1.272436  975.404203
+ T6    xs_decile SURV_W  8260 0.076710 0.326710 48.123487 1.161722 1243.719370
+ T1  donchW_tide SURV_W 10502 0.054332 0.304332 48.133689 1.117312 1277.375167
+ T1  donchW_free SURV_W 10582 0.052793 0.302793 48.034398 1.113831 1278.337554
+ T3   pullback_M SURV_M 14036 0.031237 0.281237 47.855514 1.065232 1219.456540
+ T3   pullback_W SURV_W 14036 0.031237 0.281237 47.855514 1.065232 1219.456540
+ T2      tsmom7d SURV_W 24060 0.030475 0.280475 47.290108 1.060952 1138.745220
+[battery] done in 4s → /home/user/Trading/scratch/battery_pools_v2_taker41_SURV_L

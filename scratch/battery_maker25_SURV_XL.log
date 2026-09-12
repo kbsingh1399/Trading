@@ -1,0 +1,19 @@
+[battery] loading cache
+[battery] PROFILE=maker25 fee=(1, 8, 2.0, 23.0)
+FAM  | tag           | geo     |       n |     netR |   grossR |    WR% |  pf_net |  avgbars
+T1   | donchW_tide   | SURV_W  |    9143 |  +0.0841 |  +0.3341 |  46.3% |   1.179 |     1729
+T1   | donchW_free   | SURV_W  |    9206 |  +0.0810 |  +0.3310 |  46.2% |   1.172 |     1729
+T2   | tsmom7d       | SURV_W  |   17979 |  +0.0813 |  +0.3313 |  46.9% |   1.166 |     1578
+T2   | tsmom7d_hi15  | SURV_W  |    2136 |  +0.2163 |  +0.4663 |  47.6% |   1.430 |     1321
+T3   | pullback_M    | SURV_M  |   11736 |  +0.0891 |  +0.3391 |  47.8% |   1.189 |     1669
+T3   | pullback_W    | SURV_W  |   11736 |  +0.0891 |  +0.3391 |  47.8% |   1.189 |     1669
+T6   | xs_decile     | SURV_W  |    6739 |  +0.1193 |  +0.3693 |  46.3% |   1.250 |     1683
+fam          tag    geo     n    net_r  gross_r        wr       pf    avg_bars
+ T2 tsmom7d_hi15 SURV_W  2136 0.216255 0.466255 47.565543 1.429963 1321.214888
+ T6    xs_decile SURV_W  6739 0.119348 0.369348 46.312509 1.249767 1682.984271
+ T3   pullback_M SURV_M 11736 0.089100 0.339100 47.818678 1.189096 1669.184816
+ T3   pullback_W SURV_W 11736 0.089100 0.339100 47.818678 1.189096 1669.184816
+ T1  donchW_tide SURV_W  9143 0.084100 0.334100 46.308651 1.178625 1729.461555
+ T2      tsmom7d SURV_W 17979 0.081323 0.331323 46.871350 1.165767 1578.234273
+ T1  donchW_free SURV_W  9206 0.081019 0.331019 46.165544 1.171602 1729.174017
+[battery] done in 3s → /home/user/Trading/scratch/battery_pools_v2_maker25_SURV_XL
