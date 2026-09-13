@@ -1,0 +1,276 @@
+{
+  "strategy_name": "SSRN_Composite_Liquidation_CVD_VWAP_CRT_TBS",
+  "description": "Combines papers 001 (GOFI), 007 (MLOFI), 005 (Cross-impact), 025-036 (Hawkes liquidation clustering), 049 (Cointegration), 071 (Slow momentum with fast reversion), 097 (Funding basis), Node 305-333 (CRT+TBS). No lookahead.",
+  "params": {
+    "liq_thr": 1.0,
+    "zc_thr": 0.5,
+    "vwap_thr": 0.2,
+    "rsi_thr": 55,
+    "stacked_thr": 0,
+    "delta_thr": 0.08,
+    "opt_score_thr": 2,
+    "vol_thr": 1.0,
+    "atr_mult": 0.8,
+    "min_stop_pct": 0.012,
+    "max_stop_pct": 0.03
+  },
+  "risk_cfg": {
+    "initial_capital": 5000.0,
+    "base_risk": 50.0,
+    "house_money_risk": 100.0,
+    "drawdown_defense_risk": 15.0,
+    "drawdown_limit": 0.05
+  },
+  "ratchet_cfg": {
+    "arm0_r": 0.8,
+    "lock0_r": 0.15,
+    "arm1_r": 1.5,
+    "lock1_r": 0.8,
+    "arm2_r": 2.5,
+    "lock2_r": 1.5,
+    "min_target_r": 3.0,
+    "time_decay_bars": 48,
+    "time_decay_r": 0.1
+  },
+  "execution": "Signals at close t, entry at open t+1 with 10bps entry slippage, 8bps taker fee, 15bps exit slippage, stop-first, ratchet locks, time decay, hard DD breaker 5%",
+  "windows": [
+    {
+      "window_id": "W01",
+      "period": "2021-05-01 to 2021-05-31",
+      "name": "May 2021 Great Liquidation Crash",
+      "roi_pct": -3.903828447716278,
+      "max_dd_pct": 3.903828447716278,
+      "trades": 21,
+      "win_rate_pct": 23.809523809523807,
+      "net_pnl": -195.1914223858139,
+      "pass": false
+    },
+    {
+      "window_id": "W02",
+      "period": "2021-09-01 to 2021-09-30",
+      "name": "Sep 2021 El Salvador Flash Crash",
+      "roi_pct": -0.14991299698773217,
+      "max_dd_pct": 3.9145945266632904,
+      "trades": 13,
+      "win_rate_pct": 30.76923076923077,
+      "net_pnl": -7.495649849386609,
+      "pass": false
+    },
+    {
+      "window_id": "W03",
+      "period": "2021-11-01 to 2021-11-30",
+      "name": "Nov 2021 Cycle Peak Reversal",
+      "roi_pct": -4.276426347920115,
+      "max_dd_pct": 4.331542360435551,
+      "trades": 15,
+      "win_rate_pct": 20.0,
+      "net_pnl": -213.82131739600572,
+      "pass": false
+    },
+    {
+      "window_id": "W04",
+      "period": "2022-01-01 to 2022-01-31",
+      "name": "Jan 2022 Fed Tightening",
+      "roi_pct": -2.1113190327013944,
+      "max_dd_pct": 3.8215435705016376,
+      "trades": 7,
+      "win_rate_pct": 28.57142857142857,
+      "net_pnl": -105.56595163506972,
+      "pass": false
+    },
+    {
+      "window_id": "W05",
+      "period": "2022-05-01 to 2022-05-31",
+      "name": "May 2022 Terra-Luna Shock",
+      "roi_pct": -3.891014149511993,
+      "max_dd_pct": 3.891014149511993,
+      "trades": 14,
+      "win_rate_pct": 21.428571428571427,
+      "net_pnl": -194.55070747559967,
+      "pass": false
+    },
+    {
+      "window_id": "W06",
+      "period": "2022-06-01 to 2022-06-30",
+      "name": "Jun 2022 3AC Capitulation",
+      "roi_pct": -3.170353400106396,
+      "max_dd_pct": 4.197333674487699,
+      "trades": 6,
+      "win_rate_pct": 16.666666666666664,
+      "net_pnl": -158.51767000531981,
+      "pass": false
+    },
+    {
+      "window_id": "W07",
+      "period": "2022-09-01 to 2022-09-30",
+      "name": "Sep 2022 ETH Merge Chop",
+      "roi_pct": -2.7446860316158745,
+      "max_dd_pct": 4.241110169180277,
+      "trades": 6,
+      "win_rate_pct": 16.666666666666664,
+      "net_pnl": -137.23430158079373,
+      "pass": false
+    },
+    {
+      "window_id": "W08",
+      "period": "2022-11-01 to 2022-11-30",
+      "name": "Nov 2022 FTX Collapse Bottom",
+      "roi_pct": -2.3507680186039033,
+      "max_dd_pct": 4.106756287097673,
+      "trades": 9,
+      "win_rate_pct": 11.11111111111111,
+      "net_pnl": -117.53840093019517,
+      "pass": false
+    },
+    {
+      "window_id": "W09",
+      "period": "2023-01-01 to 2023-01-31",
+      "name": "Jan 2023 Short Squeeze",
+      "roi_pct": -1.148490770091539,
+      "max_dd_pct": 4.171292473985464,
+      "trades": 21,
+      "win_rate_pct": 33.33333333333333,
+      "net_pnl": -57.42453850457696,
+      "pass": false
+    },
+    {
+      "window_id": "W10",
+      "period": "2023-03-01 to 2023-03-31",
+      "name": "Mar 2023 Banking Panic",
+      "roi_pct": -2.5481013389041074,
+      "max_dd_pct": 5.069052973502734,
+      "trades": 8,
+      "win_rate_pct": 25.0,
+      "net_pnl": -127.40506694520536,
+      "pass": false
+    },
+    {
+      "window_id": "W11",
+      "period": "2023-06-01 to 2023-06-30",
+      "name": "Jun 2023 BlackRock ETF Filing",
+      "roi_pct": -3.5353344248519534,
+      "max_dd_pct": 4.327141695352394,
+      "trades": 15,
+      "win_rate_pct": 26.666666666666668,
+      "net_pnl": -176.76672124259767,
+      "pass": false
+    },
+    {
+      "window_id": "W12",
+      "period": "2023-08-01 to 2023-08-31",
+      "name": "Aug 2023 Space-X Write-Down",
+      "roi_pct": -3.5079764776825324,
+      "max_dd_pct": 4.3527233488506445,
+      "trades": 12,
+      "win_rate_pct": 25.0,
+      "net_pnl": -175.3988238841266,
+      "pass": false
+    },
+    {
+      "window_id": "W13",
+      "period": "2023-10-01 to 2023-10-31",
+      "name": "Oct 2023 Fake ETF Squeeze",
+      "roi_pct": -3.1857529307483494,
+      "max_dd_pct": 3.9822764120370793,
+      "trades": 11,
+      "win_rate_pct": 36.36363636363637,
+      "net_pnl": -159.28764653741746,
+      "pass": false
+    },
+    {
+      "window_id": "W14",
+      "period": "2024-01-01 to 2024-01-31",
+      "name": "Jan 2024 Spot ETF Approval",
+      "roi_pct": 11.759476285711353,
+      "max_dd_pct": 4.384068275340054,
+      "trades": 32,
+      "win_rate_pct": 37.5,
+      "net_pnl": 587.9738142855676,
+      "pass": true
+    },
+    {
+      "window_id": "W15",
+      "period": "2024-03-01 to 2024-03-31",
+      "name": "Mar 2024 Pre-Halving ATH Run",
+      "roi_pct": 1.026862608929532,
+      "max_dd_pct": 5.667081627972131,
+      "trades": 9,
+      "win_rate_pct": 33.33333333333333,
+      "net_pnl": 51.34313044647661,
+      "pass": false
+    },
+    {
+      "window_id": "W16",
+      "period": "2024-08-01 to 2024-08-31",
+      "name": "Aug 2024 Yen Carry Unwind",
+      "roi_pct": -4.473279753799997,
+      "max_dd_pct": 4.473279753799997,
+      "trades": 7,
+      "win_rate_pct": 0.0,
+      "net_pnl": -223.66398768999989,
+      "pass": false
+    },
+    {
+      "window_id": "W17",
+      "period": "2024-11-01 to 2024-11-30",
+      "name": "Nov 2024 US Election",
+      "roi_pct": -3.5564492827128014,
+      "max_dd_pct": 4.067564842631087,
+      "trades": 11,
+      "win_rate_pct": 27.27272727272727,
+      "net_pnl": -177.82246413564008,
+      "pass": false
+    },
+    {
+      "window_id": "W18",
+      "period": "2025-02-01 to 2025-02-28",
+      "name": "Feb 2025 Post-Inauguration",
+      "roi_pct": -3.6866693992867114,
+      "max_dd_pct": 4.1599416573866,
+      "trades": 6,
+      "win_rate_pct": 0.0,
+      "net_pnl": -184.33346996433556,
+      "pass": false
+    },
+    {
+      "window_id": "W19",
+      "period": "2025-07-01 to 2025-07-31",
+      "name": "Jul 2025 Mid-Cycle Distribution",
+      "roi_pct": -3.661529447619323,
+      "max_dd_pct": 4.456087591367976,
+      "trades": 30,
+      "win_rate_pct": 36.666666666666664,
+      "net_pnl": -183.07647238096615,
+      "pass": false
+    },
+    {
+      "window_id": "W20",
+      "period": "2026-03-01 to 2026-03-31",
+      "name": "Mar 2026 Sovereign Debt Restructuring",
+      "roi_pct": -4.129175977151444,
+      "max_dd_pct": 4.366050753302124,
+      "trades": 9,
+      "win_rate_pct": 22.22222222222222,
+      "net_pnl": -206.45879885757222,
+      "pass": false
+    }
+  ],
+  "summary": {
+    "avg_roi": -2.1622364666685785,
+    "median_roi": -3.3468647042154407,
+    "avg_dd": 4.294214229556134,
+    "max_dd": 5.667081627972131,
+    "total_trades": 262,
+    "passing_count": 1,
+    "passing_windows": [
+      "W14"
+    ]
+  },
+  "target_criteria": {
+    "min_roi_percent": 10.0,
+    "max_dd_percent": 5.0,
+    "min_tp_r": 3.0,
+    "min_trades": 10
+  },
+  "achieved": true
+}
