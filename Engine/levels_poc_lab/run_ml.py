@@ -78,6 +78,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--symbols", default=",".join(ALTCOINS))
     ap.add_argument("--group", default=None)
+    ap.add_argument("--families", default=None,
+                    help="comma-separated family names (overrides --group)")
     ap.add_argument("--target-r", type=float, default=4.0)
     ap.add_argument("--horizon", type=int, default=288)
     ap.add_argument("--max-hold", type=int, default=288)
@@ -116,6 +118,10 @@ def main():
     syms = [s.strip() for s in args.symbols.split(",") if s.strip()]
     data = load_all(list(dict.fromkeys([BTC] + syms)))
     specs = default_specs(args.group.split(",") if args.group else None)
+    if args.families:
+        keep = {x.strip() for x in args.families.split(",") if x.strip()}
+        specs = [s for s in specs if s.name in keep]
+        print(f"family pool: {[s.name for s in specs]}")
     print(f"building candidate events for {len(syms)} symbols ...")
     signals, ev_all = build_all(data, specs, args.target_r, args.horizon,
                                 pending=args.pending, pending_step=args.pending_step)
@@ -207,7 +213,8 @@ def main():
                           "target_r": args.target_r, "horizon": args.horizon,
                           "label_r": args.label_r, "regressor": args.regressor,
                           "pending": args.pending, "stop_scale": args.stop_scale,
-                          "sel_per_window": args.sel_per_window},
+                          "sel_per_window": args.sel_per_window,
+                          "families": args.families},
                "rows": rows}
     SCORE_DIR.mkdir(exist_ok=True)
     (SCORE_DIR / f"{args.out}.json").write_text(json.dumps(summary, indent=2, default=float), encoding="utf-8")

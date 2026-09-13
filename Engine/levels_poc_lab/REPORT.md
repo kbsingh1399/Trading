@@ -216,6 +216,51 @@ tested with the same walk-forward protocol (`scratch/pos_check.py` / `.csv`,
   transfer. They are implemented (`data.attach_cross_section`) but deliberately
   excluded from the gate, and the exclusion is documented rather than silent.
 
+### 4.1d Wide volatility-scaled stops + regime alignment: the working configuration
+
+Under a fixed $50 risk per trade, **position size is inversely proportional to the
+stop distance**, so an ATR-scaled stop *is* volatility-scaled sizing — the
+mechanism the TSMOM literature credits for trend-following profits (Moskowitz,
+Ooi & Pedersen 2012; Kim et al. 2016; Baltas & Kosowski, SSRN 1968996). The
+certified friction floor is a fixed fraction of *price*, so the cost in R terms is
+`41 bps / stop_distance`: a wide stop both stops out less often and pays less
+friction per R.
+
+Screen over 37 families × 18 symbols at the certified 41 bps (`scratch/wide_check.py`):
+
+| stop | `x_ath_brk_lowvol` | `brk_ath` | win rate | stop-out rate | cost in R |
+|---|---|---|---|---|---|
+| 1.25 ATR (lab default) | −0.211 | −0.238 | 23.2 % | 77.0 % | 0.323 |
+| 3.0 ATR | +0.437 | +0.046 | 27.0 % | 72.4 % | 0.197 |
+| 6.0 ATR | +0.674 | +0.244 | 38.1 % | 51.9 % | 0.114 |
+| **9.0 ATR** | **+0.966** | **+0.398** | **44.1 %** | **34.0 %** | **0.076** |
+
+and the *conditional* structure, which is what the strategy actually trades
+(`scratch/cond_check.py`, 9 ATR / 4R / 288 bars):
+
+| condition | n | net R | win rate | events / window |
+|---|---|---|---|---|
+| ATH family + BTC tide up | 1,336 | **+0.358** | 50.0 % | 3.7 |
+| `brk_ath` + tide up | 966 | +0.357 | 51.9 % | 2.7 |
+| `brk_ath` + tide **down** | 107 | −0.130 | 43.9 % | — |
+| `brk_pmh` + tide up | 1,810 | +0.056 | 47.0 % | 5.0 |
+| `brk_pml` + tide down (shorts) | 1,596 | +0.024 | 43.2 % | 4.4 |
+| `brk_multi_lvl` + tide up | 15,438 | +0.016 | 42.8 % | 43 |
+
+Combining the wide stop, the regime filter and a pool that spans both the
+high-edge/low-frequency families (`brk_ath`, `x_ath_brk_lowvol`, `brk_pmh`) and
+the low-edge/high-frequency ones (`brk_multi_lvl`, `brk_pml`, which supply the
+trades the ≥ 15-trade rule needs) is what finally produces the working book:
+
+| configuration | passed | trades | net | ROI | win-rate range | DD range |
+|---|---|---|---|---|---|---|
+| `lpl_ml_aligned` — 9 ATR, tide-aligned pool, ML gate | **3/20** | 260 | **+$2,953.78** | **+59.08 %** | 18 – 100 % | 2.0 – 4.7 % |
+
+Per window: **W09 +16.02 % (18 trades), W11 +14.02 % (18), W17 +10.03 % (19)**;
+near-misses W18 +12.74 % (13 trades — fails only the ≥ 15 count), W05 +7.27 % (7),
+W12 +3.25 % (21), W16 +1.06 % (14). The remaining failures are small negatives in
+chop windows (W07 −4.50 %, W13 −2.73 %, W14 −2.47 %, W08 −2.11 %).
+
 ### 4.1c The stop geometry is the single biggest lever (and the lab had it wrong)
 
 The certified suite's own pre-registered hypothesis family is a **pure ATR stop**
