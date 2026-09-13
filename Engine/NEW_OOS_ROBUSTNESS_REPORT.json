@@ -1,0 +1,82 @@
+{
+  "summary": {
+    "total_windows": 30,
+    "per_window_best_pass_limited_grid": 6,
+    "per_window_best_pass_exhaustive": 10,
+    "best_single_config_pass": 2,
+    "original_20_pass": 4,
+    "seed42_10_pass": 4,
+    "new10_pass": 2,
+    "seed42_exhaustive_8_10": true,
+    "new10_bb_2_10": true
+  },
+  "single_config_robustness": {
+    "Donchian15d_short_TP3R_30/80": {
+      "total_30": "2/30 PASS",
+      "seed42_10": "2/10 PASS W04 12.76% W01 18.42%",
+      "new10_10": "0/10 PASS",
+      "new15_15": "0/15 PASS",
+      "regime": "crash/high-vol bear"
+    },
+    "BB_96_2.0_30/70_both_TP3R_60/150": {
+      "total_30": "2/30 PASS",
+      "seed42_10": "0/10 PASS",
+      "new10_10": "2/10 PASS W21 12.82% W23 10.77%",
+      "regime": "chop/bull ATH"
+    }
+  },
+  "per_window_best_6_30_limited_grid": [
+    {"window": "W01 May21 Crash", "roi": 22.55, "dd": 4.14, "trades": 46, "wr": 39.1, "strategy": "Donchian15d_both_TP5R_30/80", "pass": true},
+    {"window": "W04 Jan22 Fed", "roi": 12.42, "dd": 4.23, "trades": 33, "wr": 57.6, "strategy": "Donchian15d_short_TP3R_30/80", "pass": true},
+    {"window": "W09 Jan23 Squeeze", "roi": 14.04, "dd": 4.02, "trades": 13, "wr": 53.8, "strategy": "Donchian10d_both_TP5R_50/120", "pass": true},
+    {"window": "W17 Nov24 Election", "roi": 13.84, "dd": 3.98, "trades": 26, "wr": 34.6, "strategy": "SlowFastCPD_1920_35/65_TP3R_0.1", "pass": true},
+    {"window": "W21 Feb21 ATH", "roi": 12.82, "dd": 3.92, "trades": 21, "wr": 42.9, "strategy": "BB_96_2.0_30/70_both_TP3R_60/150", "pass": true},
+    {"window": "W23 Mar22 Fed Hike", "roi": 11.09, "dd": 4.22, "trades": 11, "wr": 54.5, "strategy": "BB_96_2.0_30/70_long_TP3R_60/150", "pass": true}
+  ],
+  "seed42_8_10_per_window_best": [
+    {"window": "W04 Jan22 Fed Tightening", "roi": 12.76, "dd": 4.6, "trades": 33, "wr": 54.5, "strategy": "Donchian15d_short_TP3R_30/80", "pass": true},
+    {"window": "W01 May21 Crash", "roi": 27.81, "dd": 4.77, "trades": 35, "wr": 42.9, "strategy": "Donchian15d_both_TP5R_30/80", "pass": true},
+    {"window": "W09 Jan23 Squeeze", "roi": 13.44, "dd": 4.18, "trades": 16, "wr": 50.0, "strategy": "Donchian10d_both_TP5R_50/120", "pass": true},
+    {"window": "W08 Nov22 FTX", "roi": 30.18, "dd": 2.82, "trades": 14, "wr": 85.7, "strategy": "Funding_0.04_1.5_TP5R_60/150", "pass": true},
+    {"window": "W17 Nov24 Election", "roi": 18.67, "dd": 4.74, "trades": 26, "wr": 57.6, "strategy": "SlowFastCPD_1920_35/65_TP3R_0.1", "pass": true},
+    {"window": "W02 Sep21 El Salvador", "roi": 10.28, "dd": 4.17, "trades": 12, "wr": 58.3, "strategy": "Donchian10d_short_TP3R_50/120", "pass": true},
+    {"window": "W11 Jun23 BlackRock", "roi": 16.05, "dd": 4.63, "trades": 27, "wr": 55.6, "strategy": "PDL_both_TP4R_50/120", "pass": true},
+    {"window": "W18 Feb25 Post-Inaug", "roi": 11.89, "dd": 4.19, "trades": 15, "wr": 53.3, "strategy": "Pullback_21_45-60_TP3R_60/150", "pass": true},
+    {"window": "W03 Nov21 Peak", "roi": 2.98, "dd": 4.65, "trades": 11, "wr": 45.4, "strategy": "Pullback risk100/250 FAIL", "pass": false},
+    {"window": "W12 Aug23 Space-X", "roi": 7.69, "dd": 4.51, "trades": 10, "wr": 70.0, "strategy": "PDL both TP3R max3 risk60/150 FAIL", "pass": false}
+  ],
+  "new10_per_window_best": [
+    {"window": "W21 Feb21 ATH", "roi": 12.82, "dd": 3.92, "trades": 21, "wr": 42.9, "strategy": "BB_96_2.0_30/70_both_TP3R_60/150", "pass": true},
+    {"window": "W23 Mar22 Fed Hike", "roi": 11.09, "dd": 4.22, "trades": 11, "wr": 54.5, "strategy": "BB_96_2.0_30/70_long_TP3R_60/150", "pass": true},
+    {"window": "W22 Jul21 Bottom", "roi": 3.89, "dd": 4.22, "trades": 4, "wr": 50.0, "strategy": "PDL short", "pass": false},
+    {"window": "W24 Aug22 Bear Rally", "roi": 3.19, "dd": 4.18, "trades": 19, "wr": 42.1, "strategy": "Donchian15d_short", "pass": false},
+    {"window": "W25 Feb23 Post-FTX", "roi": -0.39, "dd": 1.19, "trades": 4, "wr": 25.0, "strategy": "Donchian short", "pass": false},
+    {"window": "W26 Apr23 Banking", "roi": -1.22, "dd": 4.24, "trades": 6, "wr": 33.3, "strategy": "Donchian short", "pass": false},
+    {"window": "W27 Nov23 ETF Anticip", "roi": -0.8, "dd": 4.14, "trades": 7, "wr": 42.9, "strategy": "Donchian both", "pass": false},
+    {"window": "W28 Feb24 Pre-halving", "roi": -1.52, "dd": 3.91, "trades": 8, "wr": 62.5, "strategy": "BB short", "pass": false},
+    {"window": "W29 Jun24 Chop", "roi": 3.65, "dd": 4.24, "trades": 13, "wr": 38.5, "strategy": "PDL short", "pass": false},
+    {"window": "W30 Jan25 New ATH", "roi": 6.56, "dd": 3.86, "trades": 17, "wr": 41.2, "strategy": "Donchian short", "pass": false}
+  ],
+  "hard_windows_analysis": {
+    "W03_Nov21_Peak": "0 configs >5% ROI even with exhaustive BB search 24/48/96/192 period, 1.0/1.5/2.0/2.5 std, RSI 25/75,30/70,35/65, ATR 0.5/0.6/0.8, both/long/short",
+    "W12_Aug23_SpaceX": "0 configs >5% ROI same exhaustive search",
+    "conclusion": "No edge with price/volume only, need order flow, funding, LS ratio, or external data"
+  },
+  "strategies_tested_failed": [
+    "BB Squeeze (BB inside KC, squeeze_recent 5/10, vol>1.0): 0 configs >5% W03/W12",
+    "Tight Short (ema 8/21 vs 50/200, rsi_ob 60-70, atr 0.4-0.6, min_stop 0.004-0.005 max_stop 0.015-0.02, agg ratchet lock0.20/0.80/1.80 decay64): 0 configs >8% W03/W12",
+    "PDL+Pullback HF (vol_thr 0.2/0.3/0.5, atr 0.5/0.6/0.8, both/short, pullback T/F, TP 3/4/5, max3/4, risk 60/150 80/200): 0 configs >8% W12/W03",
+    "RSI Divergence + OB + FVG (lookback 24/48/96, atr 0.6/0.8): FAIL all windows best -0.80% to 7.24%",
+    "Regime Adaptive (slow 960/1920, BB 48/96, strong_up >10% long, strong_down <-10% short, chop both): FAIL best -3.85% to 7.24%",
+    "EMA Pullback + FVG (ema_fast 21/50, ema_slow 200, FVG): FAIL best -3.20% to 0.20%",
+    "Combined BB long + Donchian short: 1/10 new (W23 12.64%) and 1/10 original (W09 13.63%)"
+  ],
+  "next_steps": [
+    "ML Meta-Labeler: RF/XGBoost predict best strategy per regime using 20d return, vol, funding_z, ER, ATR, LS ratio, OI change, volume_ratio",
+    "Funding + LS Ratio Filter: Funding extreme only in W08, need LS contrarian + liquidation cascade",
+    "Order Flow Imbalance: Use footprint ladder taker buy/sell imbalance, CVD divergence",
+    "OB + FVG + Displacement: 4H structure, daily FVG, OB age, stop hunt",
+    "Walk-Forward with Regime Detection: Rolling 3-month training, 72h purge",
+    "Increase Frequency: vol_thr 0.2, 18 symbols max_pos 4 risk 80/200 50+ trades/month, aggressive ratchet lock0.20/0.80/1.80 decay64"
+  ]
+}
