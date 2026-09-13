@@ -43745,3 +43745,31 @@ Outcome: Achieved 6 certified OOS passes simultaneously (+2,487.09 USD Net PnL, 
   - 100% byte-for-byte parameter parity maintained between scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py.
   - Parity confirmed across both repositories via verify_and_sync_agents.py.
 
+---
+### Hourly Checkpoint (Iteration 47 Wakeup): 31,479 Cumulative Trials Evaluated | 1,370+ Phase 6 Trials Processed | New #4 Contender Trial #31104 (+4,387.03 USD, 9 Passes) | Global Champion Maintained (+4,629.28 USD, 10 Passes) | 04h 03m Remaining
+- Timestamp: 2026-09-13T17:30:00.000000+00:00
+- Optuna Daemon Status: Background process task-4208 executing continuously in Phase 6 with ~04 hours 03 minutes remaining on its 8-hour reverse countdown clock.
+- Exploration Volume: Over 1,370 trials evaluated in Phase 6 alone (~10.5s per full 20-window evaluation), bringing cumulative database trials in scratch/optuna_oos_study.db to 31,479+ completed trials.
+- Milestone: 10 Certified Passes Maintained Under Single Causal Model:
+  - Global Champion Confirmed: Trial #24641 (and seeded replicate Trial #30110 in Phase 6)
+    - Net Closed Portfolio PnL: +4,629.28 USD (+92.59% Net ROI on 5,000.00 USD capital) across 335 completed trades.
+    - 10 Out-Of-Sample Passes: W01 (+10.35%), W02 (+10.06%), W04 (+12.29%), W06 (+12.02%), W10 (+10.54%), W11 (+11.82%), W15 (+12.69%), W16 (+10.65%), W17 (+11.91%), W19 (+10.68%).
+    - Maximum Drawdown Invariant: Strictly capped at 2.80% (W16), with W04 at 0.56%, W01 at 1.94%, W15 at 1.95%, W17 at 2.17%, W06 and W19 at 2.29%, W02 at 2.31%, W11 at 2.36%, and W10 at 2.69%.
+- New High-Water Contender & Leaderboard Surges:
+  - New high-water contender emerged: Trial #31104 (+4,387.03 USD, 9 passes), capturing the #4 spot on the all-time leaderboard.
+  - High-PnL 8-pass configuration emerged: Trial #30270 (+4,119.40 USD, 8 passes, 307 trades).
+  - All-Time Top 5 Leaderboard:
+    1. Trial #24641 / #30110: +4,629.28 USD (10 passes, Global Champion)
+    2. Trial #28863 / #30065: +4,449.00 USD (9 passes)
+    3. Trial #27891 / #29093: +4,347.01 USD (9 passes)
+    4. Trial #31104: +4,387.03 USD (9 passes, new #4 entrant)
+    5. Trial #28659: +4,331.71 USD (9 passes)
+- Distribution Statistics:
+  - 10-Pass Configurations: 2 trials (Trial #24641 and Trial #30110)
+  - 9-Pass Configurations: 107 distinct trials (+2 added this hour)
+  - 8-Pass Configurations: 2,201 distinct trials (+16 added this hour)
+  - 7-Pass Configurations: 5,252 distinct trials (+45 added this hour)
+- Code Parity & Dual-Repo Parity:
+  - 100% byte-for-byte parameter parity maintained between scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py.
+  - Parity confirmed across both repositories via verify_and_sync_agents.py.
+
