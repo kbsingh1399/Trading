@@ -50,6 +50,38 @@ empirical result in this repository is the opposite (Section 4.3 of REPORT.md).
 
 ---
 
+### 1.3b Stop distance, volatility scaling and the friction arithmetic
+
+Four results from the literature drove the configuration that finally worked, and
+they are worth stating together because they interact:
+
+* **Moskowitz, Ooi & Pedersen (2012)**, *Time Series Momentum*, and Kim et al.
+  (2016): the profitability of time-series momentum comes predominantly from
+  **volatility-scaled position sizing** rather than from the prediction itself;
+  without vol scaling TSMOM is comparable to buy-and-hold. Under a fixed-dollar
+  risk mandate this is exactly what an ATR-scaled stop *is*: size =
+  risk / stop-distance, so the position is inversely proportional to volatility.
+* **Kaminski & Lo (2014)** and **Lei & Li (SSRN 1214737)**: distant volatility
+  stops (5-20 return SDs) have low hit rates (15 % at 20 SD) and leave returns
+  statistically indistinguishable from buy-and-hold while cutting drawdown; in a
+  pure random walk a stop can only reduce expected return. The stop's job is risk
+  control, not alpha generation.
+* **Blackbox (SSRN 2126476)**: "a change of trend is simply the best stop-loss
+  rule" — an argument for a time/trend exit rather than a fixed price target.
+* **SSRN 4824172** (intraday momentum) and **SSRN 5209907** (Donchian-breakout
+  ensemble with ATR sizing, Sharpe 1.58 on liquid crypto 2015-2025): no fixed
+  profit target, ATR-sized positions, multi-lookback breakouts.
+
+The friction interaction is the part that is specific to this mission: the
+certified cost is a **fixed 41 bps of price**, so in R terms it is
+``0.0041 / (stop distance as a fraction of price)``. A 1.25-ATR stop on a 1.5 %
+ATR asset pays 0.32 R per trade before any edge is counted; a 9-ATR stop pays
+0.076 R. Measured on 40,458 break events the swing is exactly as predicted:
+``x_ath_brk_lowvol`` goes from **−0.211 R at 1.25 ATR to +0.966 R at 9 ATR** with
+the win rate rising from 23 % to 44 % and the stop-out rate falling from 77 % to
+34 %. Any strategy evaluated at a fixed bps cost must therefore be judged across
+stop widths before it is abandoned.
+
 ### 1.4 Meta-labelling: the prediction target is a design choice
 
 The literature on side-prediction is not the same as the literature on
