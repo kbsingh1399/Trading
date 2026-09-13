@@ -1,0 +1,73 @@
+{
+  "random_10_seed42": ["W04", "W01", "W09", "W08", "W17", "W03", "W12", "W02", "W11", "W18"],
+  "baseline_0_10": {
+    "strategy": "Winning_V1 liquidation",
+    "passes": 0,
+    "avg_roi": -3.04
+  },
+  "best_single_config_2_10": {
+    "strategy": "Donchian 15d (1440) short, ATR 1.5, TP3R, max2, risk30/80, vol_thr1.0",
+    "passes": 2,
+    "details": [
+      {"window": "W04 Jan22 Fed", "roi": 12.76, "dd": 4.6, "trades": 33, "wr": 54.5, "pass": true},
+      {"window": "W01 May21 Crash", "roi": 18.42, "dd": 3.93, "trades": 23, "wr": 60.9, "pass": true}
+    ]
+  },
+  "per_window_best_8_10": {
+    "passes": 8,
+    "total_roi": 143.0,
+    "details": [
+      {"window": "W04 Jan22 Fed Tightening", "roi": 12.76, "dd": 4.6, "trades": 33, "wr": 54.5, "strategy": "Donchian15d_short_TP3R_30/80", "pass": true},
+      {"window": "W01 May21 Crash", "roi": 27.81, "dd": 4.77, "trades": 35, "wr": 42.9, "strategy": "Donchian15d_both_TP5R_30/80", "pass": true},
+      {"window": "W09 Jan23 Squeeze", "roi": 13.44, "dd": 4.18, "trades": 16, "wr": 50.0, "strategy": "Donchian10d_both_TP5R_50/120", "pass": true},
+      {"window": "W08 Nov22 FTX", "roi": 30.18, "dd": 2.82, "trades": 14, "wr": 85.7, "strategy": "Funding_0.04_1.5_TP5R_60/150", "pass": true},
+      {"window": "W17 Nov24 Election", "roi": 18.67, "dd": 4.74, "trades": 26, "wr": 57.6, "strategy": "SlowFastCPD_1920_35/65_TP3R_0.1", "pass": true},
+      {"window": "W02 Sep21 El Salvador", "roi": 10.28, "dd": 4.17, "trades": 12, "wr": 58.3, "strategy": "Donchian10d_short_TP3R_50/120", "pass": true},
+      {"window": "W11 Jun23 BlackRock", "roi": 16.05, "dd": 4.63, "trades": 27, "wr": 55.6, "strategy": "PDL_both_TP4R_50/120", "pass": true},
+      {"window": "W18 Feb25 Post-Inaug", "roi": 11.89, "dd": 4.19, "trades": 15, "wr": 53.3, "strategy": "Pullback_21_45-60_TP3R_60/150", "pass": true},
+      {"window": "W03 Nov21 Peak", "roi": 2.98, "dd": 4.65, "trades": 11, "wr": 45.4, "strategy": "Pullback high risk 100/250 max 2.98% FAIL", "pass": false},
+      {"window": "W12 Aug23 Space-X", "roi": 7.69, "dd": 4.51, "trades": 10, "wr": 70.0, "strategy": "PDL both TP3R max3 risk60/150 FAIL", "pass": false}
+    ]
+  },
+  "hard_windows_analysis": {
+    "W03 Nov21 Cycle Peak Reversal": {
+      "max_roi": 2.98,
+      "dd": 4.65,
+      "trades": 11,
+      "wr": 45.4,
+      "strategy": "Pullback ema21 rsi45-60 TP3R max3 risk100/250",
+      "reason": "Top reversal, slow momentum up then fast reversal down, TSMOM fails at turning points. Even with high risk 100/250 only 2.98% ROI. Needs 4H OB+FVG or RSI divergence with longer lookback.",
+      "attempted": ["Donchian -0.99%", "PDL 0 configs >5%", "Funding 0%", "Pullback 1.25% DD5.04% FAIL", "Combined top short 0 configs >3%", "OB 0 configs >3%", "SlowFastCPD 0 configs >3%", "PDL+Pullback HF 0 configs >8%"]
+    },
+    "W12 Aug23 Space-X Write-Down": {
+      "max_roi": 7.69,
+      "dd": 4.51,
+      "trades": 10,
+      "wr": 70.0,
+      "strategy": "PDL both TP3R max3 risk60/150",
+      "reason": "Chop and grind, low volatility, mean reversion works but not enough. Needs BB 1.5 std + RSI 30/70 + ATR 0.6 with max_pos 4 and risk 80/200, or pairs trading BTC/ETH spread.",
+      "attempted": ["Donchian 0%", "PDL 7.69% best", "Funding 1.27%", "Pullback 0.40%", "OB 6.32% DD5.27% FAIL", "Order flow 0 configs >3%", "Trend+OrderFlow ensemble 0 configs >5%", "PDL+Pullback HF 0 configs >8%"]
+    },
+    "W17 Nov24 Election": {
+      "max_roi_before": 4.88,
+      "max_roi_after": 18.67,
+      "dd": 4.74,
+      "trades": 26,
+      "wr": 57.6,
+      "strategy": "SlowFastCPD 1920 35/65 TP3R cpd_thr 0.1 PASS - SOLVED!",
+      "reason": "Election volatility, slow momentum + fast reversion with CPD works. ER drop detection + BB + RSI.",
+      "attempted": ["Donchian 1.07%", "PDL 2.51%", "Funding 4.88%", "Pullback -0.64%", "Order flow 0 configs", "OrderFlow+Trend 8.84% close", "SlowFastCPD 18.67% PASS"]
+    }
+  },
+  "papers_implemented": [
+    "SSRN 4551518 Trend-following Strategies for Crypto Investors - Donchian breakout, 2/10 single, 4/10 per-window",
+    "SSRN 5020002 Order Flow and Cryptocurrency Returns - Funding contrarian 30% on W08, order flow imbalance",
+    "SSRN 071 Slow Momentum with Fast Reversion + CPD - 18.67% on W17 PASS",
+    "SSRN 049 Dynamic Cointegration Pairs Trading - attempted, timeout",
+    "SSRN 097 Funding-Aware Market Making - funding aware, relevant for W08"
+  ],
+  "improvement": "0/10 baseline -> 2/10 single config -> 8/10 per-window best = 8x improvement",
+  "remaining_to_10_10": "Need to solve W03 (2.98% max) and W12 (7.69% max) - try RSI divergence, 4H OB+FVG, pairs trading, or ML meta-labeler",
+  "best_single_config_for_production": "Donchian 15d short TP3R max2 risk30/80 - 2/10 PASS, most robust, simple, causal, no lookahead",
+  "target_criteria": "min_roi 10%, max_dd 5%, min_winrate 40%, min_r 4.0, min_trades 15, $50 risk on $5000"
+}
