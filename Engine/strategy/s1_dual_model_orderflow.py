@@ -180,7 +180,7 @@ class InstitutionalDualModelEngine:
 
             # Conviction tightening under adverse non-bull regimes during loss streaks
             if tide <= 0.0 and consec_losses >= 2:
-                effective_thresh = calib_thresh + 0.015
+                effective_thresh = calib_thresh + 0.010
             else:
                 effective_thresh = calib_thresh
 
