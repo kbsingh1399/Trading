@@ -183,6 +183,13 @@ def build_symbol_features(symbol: str, bin_width: float = 0.0005) -> pd.DataFram
     f["avg_trade_rel"] = (at / atp).replace([np.inf, -np.inf], np.nan).fillna(1.0).clip(0.1, 10.0)
     f["taker_ratio_c"] = f.taker_volume_ratio.astype("float64").clip(0, 5)
 
+    # CUSUM structural-move events (AFML ch. 2; cf. the crypto TBM+CUSUM study)
+    from .cusum import CUSUM_COLUMNS, cusum_features
+
+    cs = cusum_features(f.close.to_numpy(float), f.atr.to_numpy(float), k=2.0)
+    for c in CUSUM_COLUMNS:
+        f[c] = cs[c]
+
     f["symbol"] = symbol
     return f
 
@@ -237,6 +244,93 @@ def attach_flow(f: pd.DataFrame, symbol: str) -> pd.DataFrame:
     return f.merge(flow, on="open_time_ms", how="left")
 
 
+MKT_COLUMNS = [
+    "mkt_btc_dist_ath", "mkt_btc_ret96", "mkt_btc_atr_z", "mkt_breadth",
+    "rel_ret96", "hour_sin", "hour_cos", "mkt_atr_pct_z",
+]
+
+
+def attach_market_context(frames: dict[str, pd.DataFrame], min_symbols: int = 5) -> None:
+    """Add market-wide context and the symbol's position in it, in place.
+
+    Distinct from the ``xs_*`` block (which measured *harmful*): this is the
+    *market* state a breakout is embedded in -- how far the market proxy (BTC) is
+    from its own all-time high, its 24h return and volatility z-score, the breadth
+    of participation (share of the panel trading above its 200-bar mean), plus the
+    symbol's 24h return relative to the panel and the hour of day.  A period-high
+    break that happens when the whole market is pressing new highs is a different
+    trade from one that happens while the market bleeds, and the gate has so far had
+    only the binary ``btc_tide`` to describe that.
+    """
+    t0 = None
+    for s, f in frames.items():
+        if s == BTC:
+            t0 = f
+    if t0 is None:
+        return
+    base = pd.DataFrame({
+        "open_time_ms": t0.open_time_ms.to_numpy(),
+        "mkt_btc_dist_ath": ((t0.close - t0.ath) / t0.atr.replace(0, np.nan)).to_numpy("float32"),
+        "mkt_btc_ret96": t0.ret_96.to_numpy("float32"),
+        "mkt_btc_atr_z": t0.atr_z.to_numpy("float32"),
+    })
+    # panel breadth + relative strength
+    parts = []
+    for s, f in frames.items():
+        parts.append(pd.DataFrame({
+            "open_time_ms": f.open_time_ms.to_numpy(),
+            "above": (f.close > f.e200).astype("float32").to_numpy(),
+            "ret": f.ret_96.to_numpy("float32"),
+            "s": s,
+        }))
+    panel = pd.concat(parts, ignore_index=True)
+    # Universe volatility state: median ATR% of the tradable panel and its 30-day
+    # z-score.  This is the causal "dormancy" state that routes a window between the
+    # breakout sleeve and the range/absorption sleeve (Ox Alpha 19, step 2): breakout
+    # trading in a dormant market is the documented false-breakout regime.
+    parts_atr = []
+    for s_, f_ in frames.items():
+        if s_ == BTC:
+            continue
+        parts_atr.append(pd.DataFrame({
+            "open_time_ms": f_.open_time_ms.to_numpy(),
+            "atrp": (f_.atr / f_.close.replace(0, np.nan) * 100.0).to_numpy("float32"),
+        }))
+    univ_atr = pd.concat(parts_atr, ignore_index=True).groupby("open_time_ms")["atrp"].median()
+    del parts_atr
+    _win = 2880                                  # 30 days of 15m bars
+    _mu = univ_atr.rolling(_win, min_periods=480).mean()
+    _sd = univ_atr.rolling(_win, min_periods=480).std().replace(0, np.nan)
+    atr_z_univ = ((univ_atr - _mu) / _sd).rename("mkt_atr_pct_z").clip(-5.0, 5.0).fillna(0.0)
+    g = panel.groupby("open_time_ms")
+    breadth = g["above"].mean().rename("mkt_breadth")
+    mean_ret = g["ret"].mean().rename("_panel_ret")
+    rel = panel.set_index("open_time_ms").join(mean_ret, how="left")
+    rel["rel_ret96"] = rel["ret"] - rel["_panel_ret"]
+    rel_wide = rel.reset_index().pivot_table(index="open_time_ms", columns="s",
+                                             values="rel_ret96", aggfunc="last")
+    ctx = base.set_index("open_time_ms").join(breadth, how="left").join(atr_z_univ, how="left")
+    ctx["mkt_atr_pct_z"] = ctx["mkt_atr_pct_z"].fillna(0.0)
+    del panel, parts, rel
+    for s, f in frames.items():
+        idx = pd.Index(f.open_time_ms.to_numpy())
+        for c in ("mkt_btc_dist_ath", "mkt_btc_ret96", "mkt_btc_atr_z", "mkt_breadth",
+                  "mkt_atr_pct_z"):
+            f[c] = ctx[c].reindex(idx).to_numpy("float32")
+        # clip the heavy tails so distance-based learners stay stable
+        f["mkt_btc_dist_ath"] = f["mkt_btc_dist_ath"].clip(-40.0, 5.0).fillna(0.0)
+        f["mkt_btc_atr_z"] = f["mkt_btc_atr_z"].clip(-6.0, 6.0).fillna(0.0)
+        f["mkt_btc_ret96"] = f["mkt_btc_ret96"].clip(-0.5, 0.5).fillna(0.0)
+        f["mkt_breadth"] = f["mkt_breadth"].fillna(0.5)
+        if s in rel_wide.columns:
+            f["rel_ret96"] = rel_wide[s].reindex(idx).to_numpy("float32")
+        else:
+            f["rel_ret96"] = np.float32(0)
+        hours = ((f.open_time_ms.to_numpy() % 86_400_000) // 3_600_000).astype("float32")
+        f["hour_sin"] = np.sin(2 * np.pi * hours / 24).astype("float32")
+        f["hour_cos"] = np.cos(2 * np.pi * hours / 24).astype("float32")
+
+
 XS_COLUMNS = [
     "xs_brk_up_share", "xs_brk_dn_share", "xs_ret96_mean", "xs_ret96_disp",
     "xs_above200_share", "xs_liq_mean", "xs_ret96_rank",
@@ -265,6 +359,24 @@ def attach_cross_section(frames: dict[str, pd.DataFrame], min_symbols: int = 5) 
             "liq": f.liq_intensity.to_numpy("float32"),
         }))
     panel = pd.concat(parts, ignore_index=True)
+    # Universe volatility state: median ATR% of the tradable panel and its 30-day
+    # z-score.  This is the causal "dormancy" state that routes a window between the
+    # breakout sleeve and the range/absorption sleeve (Ox Alpha 19, step 2): breakout
+    # trading in a dormant market is the documented false-breakout regime.
+    parts_atr = []
+    for s_, f_ in frames.items():
+        if s_ == BTC:
+            continue
+        parts_atr.append(pd.DataFrame({
+            "open_time_ms": f_.open_time_ms.to_numpy(),
+            "atrp": (f_.atr / f_.close.replace(0, np.nan) * 100.0).to_numpy("float32"),
+        }))
+    univ_atr = pd.concat(parts_atr, ignore_index=True).groupby("open_time_ms")["atrp"].median()
+    del parts_atr
+    _win = 2880                                  # 30 days of 15m bars
+    _mu = univ_atr.rolling(_win, min_periods=480).mean()
+    _sd = univ_atr.rolling(_win, min_periods=480).std().replace(0, np.nan)
+    atr_z_univ = ((univ_atr - _mu) / _sd).rename("mkt_atr_pct_z").clip(-5.0, 5.0).fillna(0.0)
     g = panel.groupby("open_time_ms")
     agg = g.agg(xs_brk_up_share=("brk_up", "mean"), xs_brk_dn_share=("brk_dn", "mean"),
                 xs_ret96_mean=("ret", "mean"), xs_ret96_disp=("ret", "std"),

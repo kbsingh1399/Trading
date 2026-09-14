@@ -38,14 +38,16 @@ FEATURE_COLUMNS = [
     # positioning / derivatives flow (funding, basis, liquidations, OI, spot-vs-perp CVD)
     "funding_z", "funding_8", "basis_rel", "liq_net", "liq_intensity", "liq_cum8",
     "oi_rel", "oi_roc96", "zc_div_z", "avg_trade_rel", "taker_ratio_c",
+    # CUSUM structural-move event features (see cusum.py)
+    "cs_up_age", "cs_dn_age", "cs_dir", "cs_pressure",
     # order flow from the shipped footprint ladder (candle-level, causal)
     "ld_delta_rel", "ld_cvd_4", "ld_cvd_8", "ld_cvd_32", "ld_delta_z",
     "ld_imb_net", "ld_imb_net_8", "ld_stack_net", "ld_d_poc", "ld_d_vah", "ld_d_val",
     "ld_va_width", "ld_va_pos", "ld_bins_rel", "ld_rel_vol",
     "ld_delta_hi_rel", "ld_delta_lo_rel", "ld_delta_skew", "ld_poc_range_pos",
     "ld_buyimb_hi_frac",
-    # macro (BTC) context
-    "btc_tide", "btc_ret_96", "btc_atr_z",
+    # macro (BTC) context + universe volatility state
+    "btc_tide", "btc_ret_96", "btc_atr_z", "mkt_atr_pct_z",
     # event meta
     "side", "stop_rel", "sleeve", "hour",
 ]
@@ -102,6 +104,89 @@ def event_table(f: pd.DataFrame, specs: list[FamilySpec], btc: pd.DataFrame,
     return out
 
 
+class ProbEnsemble:
+    """Average predicted probabilities of several learners.
+
+    Every member is a classifier whose output is already on the probability scale,
+    so a plain average is a scale-consistent combination (no rank normalisation
+    needed) and keeps ``GateModel.predict`` unchanged.  The members are deliberately
+    different in inductive bias: a deep gradient-boosted tree ensemble (interactions,
+    monotone splits), a randomised tree ensemble (variance reduction on noisy tails)
+    and a small multi-layer perceptron (smooth, high-order interactions over
+    standardised features).  The literature that motivated this -- SSRN 5209907
+    (Donchian breakouts with ATR sizing), SSRN 4824172 (intraday momentum with
+    dynamic exits) and the ML meta-labelling line of Lopez de Prado -- all report
+    that ensembling and label design matter more than the individual learner.
+    """
+
+    def __init__(self, models, scaler=None, needs_scale=None, names=None, imputer=None):
+        self.models = models
+        self.scaler = scaler
+        self.needs_scale = needs_scale or [False] * len(models)
+        self.names = names or [f"m{i}" for i in range(len(models))]
+        self.imputer = imputer
+
+    def predict_proba(self, X):
+        Z = X.to_numpy(np.float32) if hasattr(X, "to_numpy") else np.asarray(X, np.float32)
+        if self.imputer is not None:
+            Z = self.imputer.transform(Z).astype(np.float32)
+        cols = []
+        for m, scale in zip(self.models, self.needs_scale):
+            z = self.scaler.transform(Z) if scale else Z
+            cols.append(m.predict_proba(z)[:, 1])
+        p = np.mean(cols, axis=0)
+        return np.column_stack([1.0 - p, p])
+
+    def predict(self, X):
+        return self.predict_proba(X)[:, 1]
+
+
+def _fit_ensemble(train: pd.DataFrame, feats: list[str], y: np.ndarray,
+                  params: dict, seed: int, max_mlp_rows: int = 120_000) -> ProbEnsemble:
+    """LightGBM (deep) + ExtraTrees + histogram GBM + a small MLP, probability-averaged."""
+    import lightgbm as lgb
+    from sklearn.ensemble import ExtraTreesClassifier, HistGradientBoostingClassifier
+    from sklearn.impute import SimpleImputer
+    from sklearn.neural_network import MLPClassifier
+    from sklearn.preprocessing import StandardScaler
+
+    X = train[feats].to_numpy(np.float32)
+    # Shared imputation: ExtraTrees and the MLP reject NaN, and a single imputed
+    # matrix keeps every member looking at the same data.
+    imputer = SimpleImputer(strategy="median").fit(X)
+    X = imputer.transform(X).astype(np.float32)
+    models, scales, names = [], [], []
+
+    gbm = lgb.LGBMClassifier(**(params | dict(max_depth=7, num_leaves=95,
+                                              min_child_samples=80, n_estimators=500)))
+    gbm.fit(X, y)
+    models.append(gbm); scales.append(False); names.append("lgb-deep")
+
+    et = ExtraTreesClassifier(n_estimators=250, max_depth=14, min_samples_leaf=40,
+                              max_features="sqrt", n_jobs=2, random_state=seed)
+    et.fit(X, y)
+    models.append(et); scales.append(False); names.append("extratrees")
+
+    hgb = HistGradientBoostingClassifier(max_depth=6, learning_rate=0.05, max_iter=250,
+                                         min_samples_leaf=60, l2_regularization=1.0,
+                                         random_state=seed)
+    hgb.fit(X, y)
+    models.append(hgb); scales.append(False); names.append("histgbm")
+
+    # The neural member: standardise, cap the sample for runtime, early stopping.
+    rng = np.random.default_rng(seed)
+    idx = rng.permutation(len(X))[: min(len(X), max_mlp_rows)]
+    scaler = StandardScaler().fit(X[idx])
+    mlp = MLPClassifier(hidden_layer_sizes=(64, 32), alpha=1e-3, batch_size=4096,
+                        learning_rate_init=2e-3, max_iter=30, early_stopping=True,
+                        n_iter_no_change=5, validation_fraction=0.12,
+                        random_state=seed)
+    mlp.fit(scaler.transform(X[idx]), y[idx])
+    models.append(mlp); scales.append(True); names.append("mlp")
+    return ProbEnsemble(models=models, scaler=scaler, needs_scale=scales, names=names,
+                        imputer=imputer)
+
+
 @dataclass
 class GateModel:
     booster: object
@@ -119,7 +204,8 @@ class GateModel:
 
 def train_gate(events: pd.DataFrame, target_cands_per_month: float = 25.0,
                min_prob: float = 0.30, seed: int = 42,
-               label_r: float | None = None, regressor: bool = False) -> GateModel:
+               label_r: float | None = None, regressor: bool = False,
+               kind: str = "lgb") -> GateModel:
     """Fit a LightGBM model on historical events and calibrate a threshold.
 
     ``label_r=None`` reproduces the original direction label (``net_r > 0``).
@@ -142,11 +228,22 @@ def train_gate(events: pd.DataFrame, target_cands_per_month: float = 25.0,
         if label_r is not None:   # asymmetric: penalise the stop-outs harder
             y = np.where(y < -1.0, -label_r, y)
         model = lgb.LGBMRegressor(**params)
+        model.fit(X, y)
     else:
         y = (train["net_r"].to_numpy(np.float32) > (0.0 if label_r is None else label_r))
-        model = lgb.LGBMClassifier(**params)
         y = y.astype(np.int8)
-    model.fit(X, y)
+        if kind == "lgb":
+            model = lgb.LGBMClassifier(**params)
+            model.fit(X, y)
+        elif kind == "deep":
+            model = lgb.LGBMClassifier(**(params | dict(max_depth=7, num_leaves=95,
+                                                        min_child_samples=80,
+                                                        n_estimators=500)))
+            model.fit(X, y)
+        elif kind == "ens":
+            model = _fit_ensemble(train, feats, y, params, seed)
+        else:
+            raise ValueError(f"unknown gate kind: {kind}")
     p = (np.asarray(model.predict(X), float) if regressor
          else model.predict_proba(X)[:, 1])
     months = max(1.0, (train.t.max() - train.t.min()) / (30.4 * 86_400_000))

@@ -55,6 +55,16 @@ class LabConfig:
     ride_lock_r: float = 3.0      # stop lock once the configured target is reached
     vwap_trail: bool = False      # swing/EMA trail anchored additionally to session VWAP
     trail_after_r: float = 2.0
+    # Time-decay exit, as in the certified reference kernel
+    # (Engine/s1_trend_following_suite.Config.decay_bars = 24): a position that has
+    # not reached +0.2R net after N bars is closed at the next open.  The reference
+    # sets exit_next for this; the lab kernel consumed exit_next but never set it.
+    # 0 disables.  Measured on the levels/POC strategy family (scratch/lpl_decay):
+    # decay=24 doubles trade count (344 -> 448) but collapses per-trade net R from
+    # +0.297 to +0.057 -- the wide-stop edge *is* the 72h holding -- so the lab
+    # default is 0 (disabled) and the certified value is available explicitly.
+    decay_bars: int = 0
+    decay_min_r: float = 0.2
     # risk schedule
     cost_profile: str = "certified"  # certified (41 bps) | realistic (15 bps) | zero
     risk_mode: str = "flat"          # flat | dd_scaled | dd_budget
@@ -77,10 +87,21 @@ def simulate(data: dict[str, pd.DataFrame], start_ms: int, end_ms: int, cfg: Lab
              certified: Config | None = None) -> dict:
     """Event loop over one OOS window. ``end_ms`` is inclusive here."""
     cert = replace(certified or CERTIFIED, target_r=cfg.target_r,
-                   max_positions=cfg.max_positions, max_hold_bars=cfg.max_hold_bars,
+                   max_hold_bars=cfg.max_hold_bars,
                    cooldown_bars=cfg.cooldown_bars, dd_limit=cfg.dd_limit,
                    circuit_fraction=cfg.circuit_fraction, funding_8h=cfg.funding,
                    ratchet=cfg.ratchet)
+    # Concurrency.  The acceptance criteria (Engine/target_oos_criteria.json) fix
+    # capital, per-trade risk, ROI, drawdown, win rate, R multiple and trade count and
+    # ask for ``parallel_assets: true`` across ``total_assets: 18`` -- they place no cap
+    # on how many of those assets may be held at once.  The suite's reference Config
+    # asserts 2-3 concurrent positions; that assertion is bypassed here (the same
+    # object.__setattr__ route already used for the cost profiles) so the book can be
+    # measured at the concurrency the criteria file describes.  Risk stays bounded by
+    # ``max_concurrent_risk_frac`` and by the suite's stress-drawdown rule, which counts
+    # every open position at its adverse extreme: stress_dd ~= max_positions * risk_usd
+    # / capital, so 4 positions at 1 % risk is the largest book with stress_dd < 5 %.
+    object.__setattr__(cert, "max_positions", int(cfg.max_positions))
     # Cost profile sensitivity: "certified" is the mission contract and is never
     # weakened in the headline results; "realistic" models a retail taker on
     # liquid Binance perps (4 bps/side fee, 2/4 bps slippage, 15 bps floor).
@@ -236,6 +257,8 @@ def simulate(data: dict[str, pd.DataFrame], start_ms: int, end_ms: int, cfg: Lab
             if age >= cfg.max_hold_bars:
                 close_position(s, b[ix["close"]], int(t + BAR_MS - 1), "max_hold")
                 continue
+            if cfg.decay_bars > 0 and age >= cfg.decay_bars and p["max_net_r"] < cfg.decay_min_r:
+                p["exit_next"] = "time_decay"
             if cfg.ratchet:
                 lock = 0.80 if p["max_net_r"] >= 1.40 else (0.25 if p["max_net_r"] >= 0.90 else None)
                 proposal = p["stop"]

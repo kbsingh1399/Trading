@@ -231,3 +231,38 @@ The last line is worth restating: `Engine/target_oos_criteria.json` says
 says `2.0` and its own pre-registered candidate grid only proposes targets of
 2.0 and 2.2 R. Resolving that inconsistency is a decision for the mandate, and it
 matters: every configuration in this report was run at the stricter 4.0.
+
+## 6. Addendum — measured results of the follow-up round (2026-09)
+
+Three findings from the round that produced the 5/20 book, each tying a measurement
+back to the literature collected above:
+
+1. **A wide stop is not a signal, it is a sizing decision — and that is what the
+   data says.** Lei & Li (SSRN 1214737) find stops at 20 return-SDs behave like
+   buy-and-hold; Moskowitz/Ooi/Pedersen find momentum is mostly volatility-scaled
+   sizing. The 34-family × {4,6,9} ATR × {2,3,4}R grid reproduces exactly that:
+   pooled mean net R rises monotonically with stop width (−0.30 R at 4 ATR,
+   −0.09 R at 9 ATR, purely from the `0.0041 / stop_fraction` cost term) but never
+   becomes large, and only three families — `brk_pwl`, `brk_pml`, `brk_pmh` — are
+   positive at all (+0.04…+0.07 R), each good in 7–10 of 20 quarters. Entry edge
+   in this universe is ≈ 0 after the certified 41 bps.
+2. **The positive expectancy that does exist is manufactured by the exit, not the
+   entry.** The executed book earns +0.297 R per trade while the same entries
+   measured as pure barrier outcomes earn ≈ 0, so the kernel's ratchet lock
+   (+1.4 R → lock +0.8 R) and 4-bar swing trail after +2 R are the edge. This is
+   the mechanism behind SSRN 2126476 ("a change of trend is simply the best
+   stop-loss rule") and SSRN 4824172 (dynamic trailing stop, no fixed target).
+3. **Time-decay exits are the exception that proves the rule here.** The
+   certified reference kernel closes any position that has not reached +0.2 R
+   after 24 bars. Implementing it faithfully *doubles* the trade count (344 → 448)
+   and halves the edge (+0.297 → +0.057 R per trade), because with a 9-ATR stop
+   the drift needs the full 72-hour hold to appear. Trade-count rules and
+   holding-period rules pull in opposite directions on this dataset, and the
+   shipped rubric (≥ 15 trades, ≤ 5 % stress drawdown, +10 R) forces a choice.
+
+Two structural features of the rubric are worth recording because they bound what
+any strategy can do: `ROI % = ΣR × 1 %` (flat $50 risk), so the ROI rule *is*
+"+10 R per window"; and the drawdown check requires both the realised and the
+adverse-bound ("stress") drawdown under 5 %, which pins the portfolio at four
+concurrent 1 % risks — measured stress drawdown is 4.1–4.9 % in *every* window,
+winners included.
