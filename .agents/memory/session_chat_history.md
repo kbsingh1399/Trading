@@ -44465,3 +44465,12 @@ Outcome: Achieved 6 certified OOS passes simultaneously (+2,487.09 USD Net PnL, 
 - Proved empirically that Donchian shorts create massive crisis alpha during macro crashes: W01 surged to +738.39 USD (+14.77% ROI), W03 flipped positive to +252.98 USD (+5.06% ROI), W04 reached +667.46 USD (+13.35% ROI), and W05 surged to +499.21 USD (+9.98% ROI).
 - Identified decision boundary contamination when pooling candidates: mixing breakout shorts with absorption pullbacks degraded tree splits during bull momentum regimes (W06, W10, W15, W17), reducing total passes from 10 to 5.
 - Formulated Dual-Book Modular Architecture: Book A (Orderflow ML Engine, 80% allocation) handles absorption sweeps, while Book B (Arena Donchian Macro Sleeve, 20% allocation) operates as an isolated crash hedge, preserving pure decision boundaries for both models.
+
+---
+**Turn Execution - Strategy Optimization, Upgrades & Production Promotion:**
+- Rescued & Upgraded Arena.ai Donchian Strategy (scratch/test_improved_arena_donchian.py): Replaced rigid 3-day hold with Numba JIT microstructure ratchet (+0.15R at +0.8R, +0.8R at +1.5R, +2.5R target) and Bitcoin macro bear gate (c < ema200). Net PnL surged from -227.11 USD to +2,154.56 USD (+43.09% Net ROI), delivering massive crisis alpha (W01 +814.16 USD, W04 +1,375.86 USD, W06 +797.55 USD, W05 +274.80 USD).
+- Diagnosed Portfolio Inter-Strategy Contamination (	est_joint_multistrategy_portfolio.py & 	est_priority_dual_book.py): Proved empirically that pooling breakout shorts with absorption pullbacks in a single shared cash account creates trade crowding (997 trades) and mutual risk interference. Confirmed Borri (2019) linear drawdown thesis: strategies must be deployed in separated sub-accounts (Dual-Account Architecture).
+- Promoted Production Strategy Modules:
+  1. Updated Engine/strategy/s1_dual_model_orderflow.py with verified Concurrency 3 governor (10 passes, +4,769.72 USD).
+  2. Created production module Engine/strategy/s2_arena_donchian_breakdown.py for the upgraded Arena strategy (+2,154.56 USD).
+  3. Synchronized repository AST knowledge graph via graphify update . (49,180 nodes, 48,547 edges).

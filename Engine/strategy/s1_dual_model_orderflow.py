@@ -57,7 +57,7 @@ class InstitutionalDualModelEngine:
         trans_risk: float = 31.0,
         trans_thresh: float = 440.0,
         milestone_profit_usd: float = 500.0,
-        max_concurrent: int = 2,
+        max_concurrent: int = 3,
         cooldown_bars: int = 4,
         win_r_reset_thresh: float = 0.90,
         conf_prob_thresh: float = 0.46,
