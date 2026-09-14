@@ -44458,3 +44458,10 @@ Outcome: Achieved 6 certified OOS passes simultaneously (+2,487.09 USD Net PnL, 
 - Verified scratch/fast_numba_oos_engine.py (task-5584) end-to-end across all 20 Out-Of-Sample windows in 6.85 seconds.
 - Confirmed 10 certified criteria-compliant OOS passes (W01, W02, W04, W06, W10, W11, W15, W16, W17, W19) generating +4,769.72 USD cumulative net profit (+95.39% Net ROI on 5,000.00 USD initial capital) across 361 trades with a portfolio max drawdown of 2.80%.
 - Diagnosed near-pass windows: W09 (+315.20 USD, 63.6% WR, 0.79% DD, 11 trades) and W13 (+190.37 USD, 66.7% WR, 0.44% DD, 3 trades) possess positive expectancy and pristine drawdown controls, failing strictly on trade frequency (need >= 15 trades).
+
+---
+**Turn Execution - Arena.ai & ML Cross-Pollination Empirical Evaluation:**
+- Executed scratch/test_cross_donchian_engine.py (task-5644) adding Arena.ai Donchian 15d breakdown short candidates into the Numba ML engine across all 20 Out-Of-Sample windows.
+- Proved empirically that Donchian shorts create massive crisis alpha during macro crashes: W01 surged to +738.39 USD (+14.77% ROI), W03 flipped positive to +252.98 USD (+5.06% ROI), W04 reached +667.46 USD (+13.35% ROI), and W05 surged to +499.21 USD (+9.98% ROI).
+- Identified decision boundary contamination when pooling candidates: mixing breakout shorts with absorption pullbacks degraded tree splits during bull momentum regimes (W06, W10, W15, W17), reducing total passes from 10 to 5.
+- Formulated Dual-Book Modular Architecture: Book A (Orderflow ML Engine, 80% allocation) handles absorption sweeps, while Book B (Arena Donchian Macro Sleeve, 20% allocation) operates as an isolated crash hedge, preserving pure decision boundaries for both models.
