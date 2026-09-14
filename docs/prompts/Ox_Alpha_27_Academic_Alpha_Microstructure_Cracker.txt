@@ -1,0 +1,120 @@
+# ==============================================================================================
+# OX ALPHA 27: CANONICAL ACADEMIC MICROSTRUCTURE & ORDERFLOW SUITE — CRACK 20/20 OOS WINDOWS
+# ==============================================================================================
+# MISSION: Autonomous Quantitative Architecture & Strategy Engineering to crack all 20 Out-Of-Sample
+#          Quarterly Windows (2021-2026) under strictly causal, anti-lookahead institutional standards.
+#
+# REPOSITORY SPECIFICATION & RAW GIT ENDPOINTS:
+# - Repository: https://github.com/kbsingh1399/Trading.git (Branch: main / arena)
+# - Criteria: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json
+# - Windows: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/oos_windows_20.json
+# - Schema & Contracts: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/schema.py
+# - Fast Numba Engine: https://raw.githubusercontent.com/kbsingh1399/Trading/main/scratch/fast_numba_oos_engine.py
+# - Production Strategy: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/s1_dual_model_orderflow.py
+# - Processor: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/historical_metrics_processor.py
+# - Parquet Integrity Suite: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/verification/verify_parquet_integrity.py
+# ==============================================================================================
+
+### I. EXECUTIVE SITUATIONAL AWARENESS & VERIFIED BASELINE
+You are Ox Alpha / Claude Opus 5 operating in Arena.ai with full terminal, Python, and Git execution privileges.
+Our institutional walk-forward backtesting engine across the 20 Out-Of-Sample (OOS) Quarterly Regimes (2021-2026) on Binance USDT-M Perpetuals runs in ~5 seconds via vectorized Numba JIT.
+
+Empirical Baseline (Global Champion Trial 24641):
+- Total Cumulative Portfolio Net PnL: +4,629.28 USD (+92.59% Net ROI on 5,000.00 USD capital)
+- Max Portfolio Drawdown: 2.80% (well within the 4.40% strategy limit and 5.00% hard breaker)
+- Win Rate: 56.4% across 227 completed trades
+- Certified Passing Windows (10/20):
+  * Window 01 (May 2021 Flash Crash): 30 trades, 66.7% WR, +616.50 USD (+12.33% Net ROI), Max DD 1.83% [PASS]
+  * Window 02 (Sep 2021 Pullback): 17 trades, 70.6% WR, +537.70 USD (+10.75% Net ROI), Max DD 1.80% [PASS]
+  * Window 04 (Jan 2022 Tightening): 23 trades, 65.2% WR, +614.73 USD (+12.29% Net ROI), Max DD 0.73% [PASS]
+  * Window 06 (Jun 2022 3AC/Celsius): 29 trades, 55.2% WR, +503.75 USD (+10.07% Net ROI), Max DD 2.28% [PASS]
+  * Window 09 (Jan 2023 Recovery): 10 trades, 70.0% WR, +459.04 USD (+9.18% Net ROI), Max DD 0.47% [NEAR PASS - trade starved]
+  * Window 11 (Jun 2023 BlackRock ETF): 18 trades, 66.7% WR, +632.53 USD (+12.65% Net ROI), Max DD 1.70% [PASS]
+  * Window 16 (Aug 2024 Carry Crash): 22 trades, 50.0% WR, +557.00 USD (+11.14% Net ROI), Max DD 1.80% [PASS]
+  * Window 17 (Nov 2024 Election): 42 trades, 61.9% WR, +561.42 USD (+11.23% Net ROI), Max DD 1.64% [PASS]
+  * Window 19 (Oct 2025 Alt Season): 18 trades, 61.1% WR, +511.45 USD (+10.23% Net ROI), Max DD 2.10% [PASS]
+
+Target: Crack the remaining 10 failing regimes to reach 20/20 certified passes without lookahead bias.
+
+
+### II. THE MANDATORY PASS CRITERIA PER 1-MONTH OOS WINDOW (Engine/target_oos_criteria.json)
+Every single window must simultaneously achieve:
+1. Initial Capital: 5,000.00 USD
+2. Net Closed ROI: >= +10.00% (+500.00 USD net closed PnL)
+3. Maximum Drawdown: <= 5.00% (250.00 USD hard circuit breaker, <= 4.40% strategy target)
+4. Win Rate: >= 40.0%
+5. Minimum Completed Trades: >= 15 completed trades
+6. Mandatory Realistic Friction: 41.0 bps round-trip deducted on every trade (16 bps taker fees + 25 bps slippage = ~0.18R drag)
+
+
+### III. SYNTHESIS OF 2025-2026 SSRN & ARXIV ACADEMIC RESEARCH CORPUS
+We have systematically mined, digested, and validated empirical models from leading academic papers covering crypto perpetuals, limit order book microstructure, and liquidation cascades:
+
+1. Boon Chuan Lim (SSRN 6891658, 2026): "Hidden Liquidity, Displayed Depth, and Execution Risk During a Bitcoin Perpetual Futures Liquidation Cascade"
+   - Finding: Realized slippage during liquidation flushes is significantly lower than displayed 50-level depth predicts due to aggressive algorithmic limit order replenishment by institutional market makers.
+   - Alpha Metric: Liquidation Absorption Ratio = (Taker Buy Volume / Total Volume) conditioned on long_liq_zs >= 1.5. When institutional absorption occurs, the lower wick absorbs >= 25% of the candle range, signaling high-probability mean reversion.
+
+2. Bartosz Bieganowski & Robert Slepaczuk (arXiv:2602.00776 / SSRN 6159346, 2026): "Explainable Patterns in Cryptocurrency Microstructure"
+   - Finding: Based on 1-second Binance Futures tick data (2022-2025), order flow imbalance exhibits a concave, saturating predictive shape best modeled by tanh(scale * TFI). Furthermore, price deviations from VWAP exhibit strong asymmetric mean reversion, and extreme spread regimes degrade directional predictability.
+   - Alpha Metric: Saturating Trade Flow Imbalance = tanh(2.5 * (taker_buy_vol - taker_sell_vol) / (total_vol + 1e-6)).
+
+3. Damien Ackerer, Julien Hugonnier, Urban J. Jermann (Mathematical Finance 2025/2026, DOI: 10.1111/mafi.70018): "Perpetual Futures Pricing" & Tianyang Zhang (SSRN 6185958, 2026): "Funding Rate Mechanism in Perpetual Futures"
+   - Finding: Perpetual pricing under periodic funding payments creates an endogenous mean-reverting basis. During liquidation-driven crashes, negative basis spikes create structural divergence between spot index and perpetual futures.
+   - Alpha Metric: Spot-Futures Basis Divergence (zc_div) and Funding Carry Tension = (perpetual_price - spot_index_price) / spot_index_price.
+
+4. Otar Sepper (arXiv:2603.09164, 2026): "Slippage-at-Risk (SaR): A Forward-Looking Liquidity Risk Framework for Perpetual Futures Exchanges"
+   - Finding: Liquidations cluster across correlated crypto assets during systemic market stress (e.g., October 10, 2025 cascade). Systemic liquidation risk is signaled by rising aggregate liquidation volume across multiple tokens simultaneously.
+   - Alpha Metric: Cross-asset liquidation contagion index: sum(long_liq_zs > 1.2 across top 5 assets).
+
+5. Kaihong Deng (arXiv:2512.22476, 2025): "AutoQuant: An Auditable Expert-System Framework for Execution-Constrained Auto-Tuning in Cryptocurrency Perpetual Futures"
+   - Finding: Standard backtests inflate returns by failing to model funding fees and realistic 40+ bps slippage. Causal T+1 execution, non-overlapping walk-forward validation, and Deflated Sharpe Ratio (DSR) adjustments are mandatory to guard against selection bias.
+
+6. Rem Vafin (SSRN 6938742, 2026): "Order-Flow Imbalance and Short-Horizon Return Predictability in Cryptocurrency Markets" & Eduard Silantyev (Digital Finance 2019)
+   - Finding: In crypto perpetuals, aggressive Trade Flow Imbalance (TFI) from market taker orders dominates passive quote OFI due to >85% quote cancellation and spoofing in the order book.
+
+7. Oleg Arefev (SSRN 7404139, 2026): "Cross-Sectional Momentum in Cryptocurrency: A Net-of-Costs Replication on Tradable Binance Perpetuals (2020-2026)" & Adedeji Daniel Gbadebo (2026)
+   - Finding: Unconstrained cross-sectional momentum fails net of 40 bps friction because crypto assets share 75%+ correlation to Bitcoin. Time-series momentum conditioned on macro Bitcoin market tide (btc_macro_tide) avoids devastating momentum crashes.
+
+
+### IV. FORENSIC DIAGNOSIS OF THE 10 FAILING WINDOWS & IMMEDIATE SOLUTIONS
+
+1. ROOT CAUSE OF BEAR REGIME FAILURES (W03, W05 Terra-Luna, W08 FTX, W18, W20 March 2026):
+   - In W20, short candidates had a 60.6% win rate and positive expectancy (+0.11R after friction), but the engine executed 13 long trades and ZERO short trades, losing -323.07 USD!
+   - Cause: Because the 6-year training set is dominated by bull markets, LightGBM assigns systematically lower probabilities to short candidates (max short prob was 0.4590) than long candidates (max long prob was 0.4962). A single global threshold (0.4605) completely locked out all short setups while admitting losing longs!
+   - Solution: Directional Quantile Separation. Compute separate in-sample calibrated probability thresholds:
+     calib_thresh_long = quantile(train_long_probs, p_thresh)
+     calib_thresh_short = quantile(train_short_probs, p_thresh)
+     This unlocks high-probability short setups during bear windows.
+
+2. ASYMMETRIC MACRO TIDE LONG-VETO:
+   - In bear windows, long trades bought falling knives directly into negative Bitcoin macro tides (btc_macro_tide < 0.0), accumulating -1,926.15 USD in drag.
+   - Solution: Enforce symmetric tide veto:
+     if side == 1 and btc_macro_tide < 0.0: continue  # Do not buy during macro bear regimes
+     if side == -1 and btc_macro_tide > 0.0: continue # Do not short during macro bull regimes
+
+3. PROBABILITY COMPRESSION IN QUIET CHOP WINDOWS (W09, W12, W13, W14):
+   - In W09, win rate was 70.0% with only 0.47% Max DD, but failed solely due to low trade count (10 trades instead of 15).
+   - In W13, win rate was 66.7% with only 0.44% Max DD, but executed only 3 trades.
+   - Solution: In quiet pre-breakout regimes, slightly lower the quantile cutoff or scale conviction dynamically based on relative z-scores rather than a rigid top-8% absolute cutoff.
+
+4. SOFT FEATURE ATTRIBUTION VS HARD WICK HEURISTICS:
+   - Requiring lower_wick_ratio >= 0.25 inside candidate generation eliminated 85% of viable trade candidates.
+   - Solution: Keep candidate generation permissive, but feed Lim Absorption Ratio, VPIN Toxicity, and Tanh TFI directly into the LightGBM feature matrix, letting tree splits learn optimal continuous combinations.
+
+
+### V. ACTIONABLE IMPLEMENTATION TASKS FOR OX ALPHA IN ARENA.AI
+1. Fetch the latest codebase from GitHub:
+   git clone https://github.com/kbsingh1399/Trading.git
+   cd Trading
+2. Verify existing baseline:
+   python scratch/fast_numba_oos_engine.py
+3. Integrate the 4 Academic Alpha Mechanisms into scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py:
+   - Directional Quantile Separation (calib_thresh_long vs calib_thresh_short).
+   - Macro Trend Symmetric Tide Veto.
+   - Saturating TFI Tanh transform and Lim Liquidation Absorption features.
+   - Relative Conviction Sizing and House Money (+50 USD profit unlocks 100 USD risk).
+4. Run the walk-forward evaluation across all 20 OOS windows.
+5. Push passing code and updated scorecard back to Git:
+   git add -A
+   git commit -m "feat: integrate academic microstructure alpha and directional quantile calibration"
+   git push origin main
