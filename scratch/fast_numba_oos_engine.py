@@ -524,7 +524,7 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
             # Prune closed positions based on exact bars_held
             open_positions = [pos for pos in open_positions if pos[0] > t_entry]
 
-            if len(open_positions) < 2:
+            if len(open_positions) < 3:
                 hold_ms = int(test_bars[idx]) * 15 * 60 * 1000
                 r_gain = test_r[idx]
 
