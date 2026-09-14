@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Estimating Latency Floor of the Crypto Limit Order Book",
+    "file": "docs\\research_papers\\estimating_latency_floor_crypto_lob.pdf",
+    "size_bytes": 657656,
+    "source": "arXiv",
+    "pdf_url": "https://arxiv.org/pdf/2402.04071.pdf"
+  },
+  {
+    "title": "Optimal Execution in Cryptocurrency Markets",
+    "file": "docs\\research_papers\\optimal_execution_cryptocurrency_markets.pdf",
+    "size_bytes": 153391,
+    "source": "arXiv",
+    "pdf_url": "https://arxiv.org/pdf/2303.13327.pdf"
+  },
+  {
+    "title": "Analyzing Price-Volume Interactions in Cryptocurrency Markets: Order Flow Tracking and Volume Profile",
+    "file": "docs\\research_papers\\price_volume_orderflow_profile_crypto.pdf",
+    "size_bytes": 1367214,
+    "source": "arXiv",
+    "pdf_url": "https://arxiv.org/pdf/2303.11183.pdf"
+  },
+  {
+    "title": "High-Frequency Trading and Market Quality in Cryptocurrency Markets",
+    "file": "docs\\research_papers\\hft_market_quality_crypto.pdf",
+    "size_bytes": 524820,
+    "source": "arXiv",
+    "pdf_url": "https://arxiv.org/pdf/2103.00844.pdf"
+  },
+  {
+    "title": "Price Dynamics in Bitcoin Order Books",
+    "file": "docs\\research_papers\\price_dynamics_bitcoin_order_books.pdf",
+    "size_bytes": 555494,
+    "source": "arXiv",
+    "pdf_url": "https://arxiv.org/pdf/2101.07727.pdf"
+  }
+]
