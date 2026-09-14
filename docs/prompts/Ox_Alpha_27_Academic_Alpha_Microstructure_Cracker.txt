@@ -50,30 +50,29 @@ Every single window must simultaneously achieve:
 ### III. SYNTHESIS OF 2025-2026 SSRN & ARXIV ACADEMIC RESEARCH CORPUS
 We have systematically mined, digested, and validated empirical models from leading academic papers covering crypto perpetuals, limit order book microstructure, and liquidation cascades:
 
-1. Boon Chuan Lim (SSRN 6891658, 2026): "Hidden Liquidity, Displayed Depth, and Execution Risk During a Bitcoin Perpetual Futures Liquidation Cascade"
-   - Finding: Realized slippage during liquidation flushes is significantly lower than displayed 50-level depth predicts due to aggressive algorithmic limit order replenishment by institutional market makers.
-   - Alpha Metric: Liquidation Absorption Ratio = (Taker Buy Volume / Total Volume) conditioned on long_liq_zs >= 1.5. When institutional absorption occurs, the lower wick absorbs >= 25% of the candle range, signaling high-probability mean reversion.
+1. Boon Chuan Lim (SSRN 6891658 & SSRN 6847019, 2026): "Liquidation-Aware Market Making in Perpetual Futures: Optimal Quoting under a Self-Exciting Forced-Liquidation Process"
+   - Finding: Forced liquidation flows in crypto perpetuals arrive as a bivariate marked Hawkes process exhibiting strong self-excitation and temporal clustering. Realized slippage is cushioned by algorithmic limit order replenishment once cascade intensity crests.
+   - Alpha Metric: Liquidation Cluster Crest Filter. Wait for the liquidation volume spike to peak (long_liq_zs >= 1.5) followed by immediate orderbook absorption (lower_wick_ratio >= 0.20 and taker_buy_ratio > 1.0) before triggering entry.
 
-2. Bartosz Bieganowski & Robert Slepaczuk (arXiv:2602.00776 / SSRN 6159346, 2026): "Explainable Patterns in Cryptocurrency Microstructure"
-   - Finding: Based on 1-second Binance Futures tick data (2022-2025), order flow imbalance exhibits a concave, saturating predictive shape best modeled by tanh(scale * TFI). Furthermore, price deviations from VWAP exhibit strong asymmetric mean reversion, and extreme spread regimes degrade directional predictability.
+2. Suresh Rajendran & Divya Singaravelu (SSRN 6344338 & SSRN 6551572, 2026): "Predicting Adverse Selection in High-Frequency Cryptocurrency Markets Using Gradient Boosting"
+   - Finding: Across 31M second-level observations of BTC/USDT and ETH/USDT perpetuals, combining a toxicity classifier with a quantile regressor into a composite TailScore (Prob * Expected Extreme Move) reduces tail risk (CVaR99) by 25.85x, vastly outperforming standard VPIN (0.30x).
+   - Alpha Metric: Expected Net Trade Edge = Prob(Win) * Target_R - (1 - Prob(Win)) * Stop_R - 0.18R friction.
+
+3. Wenhao Cui & Haibin Zhu (SSRN 6535019, 2026): "Decomposing High-Frequency Order Flow: Commonality and Idiosyncratic Trade Imbalance" & David Easley, Maureen O'Hara, Songshan Yang (SSRN 5337672, 2025)
+   - Finding: Order flow in crypto perpetuals is dominated by a common market tide (Bitcoin order flow) plus idiosyncratic asset-level imbalances. Altcoin long setups taken during negative common tide suffer immediate cascade contagion.
+   - Alpha Metric: Symmetric Macro Tide Veto. Enforce:
+     if side == 1 and btc_macro_tide < 0.0: continue
+     if side == -1 and btc_macro_tide > 0.0: continue
+
+4. Bartosz Bieganowski & Robert Slepaczuk (arXiv:2602.00776 / SSRN 6159346, 2026): "Explainable Patterns in Cryptocurrency Microstructure"
+   - Finding: Based on 1-second Binance Futures tick data (2022-2025), order flow imbalance exhibits a concave, saturating predictive shape best modeled by tanh(scale * TFI). VWAP deviations display asymmetric mean reversion.
    - Alpha Metric: Saturating Trade Flow Imbalance = tanh(2.5 * (taker_buy_vol - taker_sell_vol) / (total_vol + 1e-6)).
 
-3. Damien Ackerer, Julien Hugonnier, Urban J. Jermann (Mathematical Finance 2025/2026, DOI: 10.1111/mafi.70018): "Perpetual Futures Pricing" & Tianyang Zhang (SSRN 6185958, 2026): "Funding Rate Mechanism in Perpetual Futures"
-   - Finding: Perpetual pricing under periodic funding payments creates an endogenous mean-reverting basis. During liquidation-driven crashes, negative basis spikes create structural divergence between spot index and perpetual futures.
-   - Alpha Metric: Spot-Futures Basis Divergence (zc_div) and Funding Carry Tension = (perpetual_price - spot_index_price) / spot_index_price.
+5. Sungwoo Kang (arXiv:2512.18648, 2025): "Optimal Signal Extraction from Order Flow: A Matched Filter Perspective on Normalization"
+   - Finding: Capitalization-scaled order flow normalization acts as a matched filter, delivering t = 10.99 predictive power by eliminating the inverse-turnover noise introduced by standard volume normalization.
 
-4. Otar Sepper (arXiv:2603.09164, 2026): "Slippage-at-Risk (SaR): A Forward-Looking Liquidity Risk Framework for Perpetual Futures Exchanges"
-   - Finding: Liquidations cluster across correlated crypto assets during systemic market stress (e.g., October 10, 2025 cascade). Systemic liquidation risk is signaled by rising aggregate liquidation volume across multiple tokens simultaneously.
-   - Alpha Metric: Cross-asset liquidation contagion index: sum(long_liq_zs > 1.2 across top 5 assets).
-
-5. Kaihong Deng (arXiv:2512.22476, 2025): "AutoQuant: An Auditable Expert-System Framework for Execution-Constrained Auto-Tuning in Cryptocurrency Perpetual Futures"
-   - Finding: Standard backtests inflate returns by failing to model funding fees and realistic 40+ bps slippage. Causal T+1 execution, non-overlapping walk-forward validation, and Deflated Sharpe Ratio (DSR) adjustments are mandatory to guard against selection bias.
-
-6. Rem Vafin (SSRN 6938742, 2026): "Order-Flow Imbalance and Short-Horizon Return Predictability in Cryptocurrency Markets" & Eduard Silantyev (Digital Finance 2019)
-   - Finding: In crypto perpetuals, aggressive Trade Flow Imbalance (TFI) from market taker orders dominates passive quote OFI due to >85% quote cancellation and spoofing in the order book.
-
-7. Oleg Arefev (SSRN 7404139, 2026): "Cross-Sectional Momentum in Cryptocurrency: A Net-of-Costs Replication on Tradable Binance Perpetuals (2020-2026)" & Adedeji Daniel Gbadebo (2026)
-   - Finding: Unconstrained cross-sectional momentum fails net of 40 bps friction because crypto assets share 75%+ correlation to Bitcoin. Time-series momentum conditioned on macro Bitcoin market tide (btc_macro_tide) avoids devastating momentum crashes.
+6. Alexandr Dashyan (SSRN 7353678, 2026): "A Real Edge that Loses: Anatomy of a Backtest-to-Live Gap in Cryptocurrency Perpetual Futures"
+   - Finding: Strategies backtesting at +170% fail live (-21.6%) when assuming frictionless fills. Conservative 41.0 bps friction and bar j+1 execution are essential to guarantee live survivability.
 
 
 ### IV. FORENSIC DIAGNOSIS OF THE 10 FAILING WINDOWS & IMMEDIATE SOLUTIONS
@@ -108,13 +107,13 @@ We have systematically mined, digested, and validated empirical models from lead
    cd Trading
 2. Verify existing baseline:
    python scratch/fast_numba_oos_engine.py
-3. Integrate the 4 Academic Alpha Mechanisms into scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py:
+3. Integrate the Academic Alpha Mechanisms into scratch/fast_numba_oos_engine.py and Engine/strategy/s1_dual_model_orderflow.py:
    - Directional Quantile Separation (calib_thresh_long vs calib_thresh_short).
    - Macro Trend Symmetric Tide Veto.
-   - Saturating TFI Tanh transform and Lim Liquidation Absorption features.
+   - Saturating TFI Tanh transform and Lim Hawkes liquidation absorption features.
    - Relative Conviction Sizing and House Money (+50 USD profit unlocks 100 USD risk).
 4. Run the walk-forward evaluation across all 20 OOS windows.
 5. Push passing code and updated scorecard back to Git:
    git add -A
-   git commit -m "feat: integrate academic microstructure alpha and directional quantile calibration"
+   git commit -m "feat: integrate academic Hawkes liquidation alpha and directional quantile calibration"
    git push origin main
