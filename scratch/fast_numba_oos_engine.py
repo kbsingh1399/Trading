@@ -618,6 +618,7 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
     print(f"  Total Cumulative PnL             : {total_pnl:+,.2f} USD (Net ROI: {overall_roi:+.2f}%)")
     print(f"  Criteria Compliant Windows Passed: {pass_count} / {len(results)}")
     print("=" * 125)
+    return pd.DataFrame(results)
 
 
 
