@@ -29,9 +29,11 @@ with this strategy class under this contract.
   (certified time-decay exit, walk-forward family allocation, regime-switched
   two-sleeve book).
 * The POC *mean-reversion* perspectives (magnet, reclaim, rejection) carry no
-  edge at all; the "liquidity sweep fade" is systematically on the wrong side;
-  the shipped footprint ladder is a candle-level footprint too coarse to add
-  anything (median 4 bins per candle).
+  pooled edge at this geometry — individual chop quarters do show positive point
+  estimates, but they do not survive as a sleeve (§4.4c: the regime-switched
+  two-sleeve book scores 2/20). The "liquidity sweep fade" is systematically on
+  the wrong side, and the shipped footprint ladder is a candle-level footprint
+  too coarse to add anything (median 4 bins per candle).
 
 Sections 3–5 give the measured arithmetic for why, and §6 gives the reproduce
 commands.
