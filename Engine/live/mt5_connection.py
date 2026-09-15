@@ -82,20 +82,38 @@ class MT5Connection:
             return None
         return tick
         
+    def get_broker_utc_offset(self) -> int:
+        """
+        Calculates broker server time offset from UTC in seconds.
+        Blueberry Markets server time is UTC+3 in summer (+10800s).
+        """
+        if not self.connected:
+            return 3 * 3600
+        tick = mt5.symbol_info_tick("EURUSD.pi") or mt5.symbol_info_tick("EURUSD") or mt5.symbol_info_tick("EURUSD.p")
+        if tick is None:
+            return 3 * 3600
+        from datetime import datetime, timezone
+        now_utc_ts = datetime.now(timezone.utc).timestamp()
+        offset_seconds = int(round((tick.time - now_utc_ts) / 3600.0) * 3600)
+        return offset_seconds
+
     def get_15m_bars(self, symbol, count=100):
         if not self.connected:
             logging.error("Not connected to MT5")
             return pd.DataFrame()
             
         real_symbol = self.resolve_symbol(symbol)
-        # mt5.TIMEFRAME_M15 is 15 minutes
         rates = mt5.copy_rates_from_pos(real_symbol, mt5.TIMEFRAME_M15, 0, count)
         if rates is None or len(rates) == 0:
             logging.error(f"Failed to fetch rates for {real_symbol} (original: {symbol}), error code = {mt5.last_error()}")
             return pd.DataFrame()
         
         df = pd.DataFrame(rates)
-        df['time'] = pd.to_datetime(df['time'], unit='s')
+        offset = self.get_broker_utc_offset()
+        # Convert broker server time to true UTC
+        df['time_broker'] = df['time']
+        df['time'] = df['time'] - offset
+        df['datetime'] = pd.to_datetime(df['time'], unit='s', utc=True)
         return df
 
     def get_4h_bars(self, symbol, count=250):
@@ -110,5 +128,9 @@ class MT5Connection:
             return pd.DataFrame()
         
         df = pd.DataFrame(rates)
-        df['time'] = pd.to_datetime(df['time'], unit='s')
+        offset = self.get_broker_utc_offset()
+        # Convert broker server time to true UTC
+        df['time_broker'] = df['time']
+        df['time'] = df['time'] - offset
+        df['datetime'] = pd.to_datetime(df['time'], unit='s', utc=True)
         return df

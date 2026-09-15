@@ -1,24 +1,24 @@
 """
 ================================================================================
-ENGINE 2: PRODUCTION-READY FOREX ML LIVE DRY-RUN TERMINAL
+ENGINE 2: PRODUCTION-READY FOREX ML LIVE DRY-RUN TERMINAL (UNIFIED KERNEL)
 ================================================================================
 Features:
-1. AUTOMATIC PRE-FLIGHT SYNC: Checks and appends any missing candles from MT5
-   directly into Forex_Backtesting_Data/ parquets before starting the live loop.
-2. CONTINUOUS SUB-SECOND REFRESH: Polling every 1-2 seconds with live Bid/Ask,
-   spreads, ticks, and candle updates.
-3. FULL DECISION TELEMETRY: Displays every quantitative metric used by the model:
+1. AUTOMATIC PRE-FLIGHT SYNC: Synchronizes missing candles from MT5 using dynamic
+   broker UTC offset to ensure zero timezone skew in Forex_Backtesting_Data/.
+2. CONTINUOUS SUB-SECOND REFRESH: Polling every 1-2s with live Bid/Ask, spreads,
+   and closed candle updates.
+3. FULL DECISION TELEMETRY:
    - Live Price & Spread
    - RSI(14) with Wilder's exponential smoothing
    - VWAP Distance (%)
    - EMA 50 & EMA 200 Distance (%)
-   - 4-Hour Trend Alignment (Bullish/Bearish)
-   - Fair Value Gap (FVG) Status & Magnitude
-   - London / NY Kill Zone Activity
-   - XGBoost Model Prediction Probability (P*)
-   - Live Signal Decision ([HOLD], [DRY-BUY], [DRY-SELL])
-4. ZERO-TRADE SAFETY LOCKOUT: DRY_RUN = True is strictly enforced. No orders
-   are dispatched to MT5; signals are logged with simulated SL/TP levels.
+   - Causal 4-Hour Trend Alignment (Lagged 1 closed bar)
+   - Fair Value Gap (FVG) Status & Wick Magnitude
+   - London / NY Kill Zone Activity (True UTC)
+   - XGBoost Production Model Prediction Probability (P*)
+   - Exact Stop Loss & Take Profit Geometry (Local 20-bar extremes)
+   - Real-Time Position Sizing (Lots for $50 / 1.0% Risk)
+4. ZERO-TRADE SAFETY LOCKOUT: DRY_RUN = True is strictly enforced.
 ================================================================================
 """
 import os
@@ -34,24 +34,19 @@ import MetaTrader5 as mt5
 
 # Local imports
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-if SCRIPT_DIR not in sys.path:
-    sys.path.insert(0, SCRIPT_DIR)
+PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
-from mt5_connection import MT5Connection
-from inference_engine import StatefulInferenceEngine
-from order_manager import OrderManager
+from Engine.live.mt5_connection import MT5Connection
+from Engine.live.inference_engine import StatefulInferenceEngine
+from Engine.live.order_manager import OrderManager
+from Engine.core.strategy_kernel import CANONICAL_FEATURES, CANONICAL_18_ASSETS, check_setup_criteria
 
-# 18 Canonical Portfolio Assets
-ASSETS = [
-    'EURHUF', 'GER30', 'NICKEL', 'USDSEK', 'GAS', 'AU200', 'FR40', 
-    'EURCNH', 'LEAD', 'NZDUSD', 'USDHKD', 'US2000', 'AUDCHF', 
-    'NZDCNH', 'XAUCNH', 'GAUCNH', 'EURSEK', 'EURUSD'
-]
-
-DATA_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "Forex_Backtesting_Data"))
+ASSETS = CANONICAL_18_ASSETS
+DATA_DIR = os.path.abspath(os.path.join(PROJECT_ROOT, "Forex_Backtesting_Data"))
 LOG_FILE = os.path.join(SCRIPT_DIR, "dry_run.log")
 
-# Setup dual logging: file gets detailed logs, console gets clean dashboard
 logging.basicConfig(
     filename=LOG_FILE,
     level=logging.INFO,
@@ -59,6 +54,7 @@ logging.basicConfig(
 )
 
 DRY_RUN = True
+BASE_RISK_USD = 50.0  # 1.0% on $5,000 capital
 
 
 # ============================================================================
@@ -67,45 +63,55 @@ DRY_RUN = True
 def pre_flight_data_sync(mt5_conn: MT5Connection):
     """
     Checks each asset's parquet file in Forex_Backtesting_Data/ and appends
-    any missing closed candles up to the current moment.
+    any missing closed candles up to the current moment using true UTC time.
     """
     print("=" * 115)
-    print(" [PRE-FLIGHT] Checking and synchronizing missing candles from MT5 server...")
+    print(" [PRE-FLIGHT] Checking and synchronizing missing candles from MT5 server (True UTC)...")
     print("=" * 115)
-    
+
     total_appended = 0
     now_utc = datetime.now(timezone.utc)
-    
+    broker_offset = mt5_conn.get_broker_utc_offset()
+
     for asset in ASSETS:
         real_symbol = mt5_conn.resolve_symbol(asset)
-        m15_file = os.path.join(DATA_DIR, f"{asset}_15m_real.parquet")
-        
-        # Fallback for GER30 -> GER40
-        if not os.path.exists(m15_file) and asset == "GER30":
-            m15_file = os.path.join(DATA_DIR, "GER40_15m_real.parquet")
-            
+        base_name = asset
+        m15_file = os.path.join(DATA_DIR, f"{base_name}_15m_real.parquet")
+        if not os.path.exists(m15_file) and base_name == "GER30":
+            base_name = "GER40"
+            m15_file = os.path.join(DATA_DIR, f"{base_name}_15m_real.parquet")
+        elif not os.path.exists(m15_file) and base_name == "GER40":
+            if os.path.exists(os.path.join(DATA_DIR, "GER30_15m_real.parquet")):
+                base_name = "GER30"
+                m15_file = os.path.join(DATA_DIR, "GER30_15m_real.parquet")
+
         if not os.path.exists(m15_file):
             continue
-            
+
         try:
             df_existing = pd.read_parquet(m15_file)
             if 'datetime' in df_existing.columns:
                 last_dt = pd.to_datetime(df_existing['datetime'].max())
                 if last_dt.tzinfo is None:
                     last_dt = last_dt.tz_localize('UTC')
+            elif 'time' in df_existing.columns:
+                last_dt = pd.to_datetime(df_existing['time'].max(), unit='s', utc=True)
             else:
                 continue
-                
+
             fetch_from = last_dt + timedelta(seconds=1)
-            # Pull closed candles up to 1 minute ago
-            rates = mt5.copy_rates_range(real_symbol, mt5.TIMEFRAME_M15, fetch_from, now_utc - timedelta(minutes=1))
-            
+            fetch_from_broker = fetch_from + timedelta(seconds=broker_offset)
+            cutoff_broker = now_utc + timedelta(seconds=broker_offset)
+
+            rates = mt5.copy_rates_range(real_symbol, mt5.TIMEFRAME_M15, fetch_from_broker, cutoff_broker)
+
             if rates is not None and len(rates) > 0:
                 df_new = pd.DataFrame(rates)
+                df_new['time'] = df_new['time'] - broker_offset
                 df_new['datetime'] = pd.to_datetime(df_new['time'], unit='s', utc=True)
-                # Keep strictly closed candles
-                df_new = df_new[df_new['datetime'] < now_utc - timedelta(minutes=1)]
-                
+                # Only keep strictly closed bars (bar open + 15m <= now_utc)
+                df_new = df_new[df_new['datetime'] + timedelta(minutes=15) <= now_utc]
+
                 if len(df_new) > 0:
                     new_rows = pd.DataFrame()
                     new_rows['time'] = df_new['time'].values
@@ -117,7 +123,7 @@ def pre_flight_data_sync(mt5_conn: MT5Connection):
                     new_rows['tick_volume'] = df_new['tick_volume'].astype(np.uint64).values
                     new_rows['spread'] = df_new['spread'].astype(np.int32).values
                     new_rows['real_volume'] = df_new['real_volume'].astype(np.uint64).values
-                    
+
                     df_combined = pd.concat([df_existing, new_rows], ignore_index=True)
                     df_combined = df_combined.drop_duplicates(subset=['time'], keep='first').sort_values('time').reset_index(drop=True)
                     df_combined.to_parquet(m15_file, index=False)
@@ -130,38 +136,25 @@ def pre_flight_data_sync(mt5_conn: MT5Connection):
         except Exception as e:
             logging.error(f"Pre-flight sync error for {asset}: {e}")
             print(f"  -> [{asset:<7}] Sync Error: {e}")
-            
+
     print(f"\n [PRE-FLIGHT COMPLETE] Total new bars appended: {total_appended}")
     print("=" * 115)
-    time.sleep(1.0)
+    time.sleep(0.5)
 
 
 # ============================================================================
-# MODEL MANAGEMENT
+# MODEL MANAGEMENT (FAIL-CLOSED)
 # ============================================================================
-def load_or_train_model():
-    model_path = os.path.join(SCRIPT_DIR, "..", "models", "xgboost_forex.json")
+def load_production_model() -> xgb.Booster:
+    model_path = os.path.join(PROJECT_ROOT, "Engine", "models", "xgboost_forex.json")
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(
+            f"[FATAL] Production model not found at {model_path}. "
+            f"Run 'python Engine/live/train_production_model.py' to generate valid weights!"
+        )
     model = xgb.Booster()
-    if os.path.exists(model_path):
-        logging.info(f"Loading existing XGBoost model from {model_path}")
-        model.load_model(model_path)
-        return model
-    
-    logging.warning("Training baseline XGBoost model on the 13 canonical features...")
-    cols = [
-        "bullish_fvg", "bearish_fvg", "htf_4h_trend", "hour", "day_of_week", 
-        "rsi_14", "vwap_dist", "ema_50_dist", "ema_200_dist", "ema_200_slope", 
-        "atr_14", "volatility_20", "roc_20"
-    ]
-    dummy_X = pd.DataFrame(np.random.rand(200, len(cols)), columns=cols)
-    dummy_y = np.random.randint(0, 2, 200)
-    
-    dtrain = xgb.DMatrix(dummy_X, label=dummy_y)
-    params = {'objective': 'binary:logistic', 'max_depth': 3, 'learning_rate': 0.1, 'verbosity': 0}
-    model = xgb.train(params, dtrain, num_boost_round=15)
-    
-    os.makedirs(os.path.dirname(model_path), exist_ok=True)
-    model.save_model(model_path)
+    model.load_model(model_path)
+    logging.info(f"Loaded certified production XGBoost model from {model_path} ({os.path.getsize(model_path):,} bytes)")
     return model
 
 
@@ -176,10 +169,13 @@ def main():
     args = parser.parse_args()
 
     print("\nConnecting to MetaTrader 5 terminal...")
-    mt5_conn = MT5Connection(0, '', '')
+    mt5_conn = MT5Connection()
     if not mt5_conn.connect():
         print("[FATAL ERROR] Could not connect to running MetaTrader 5. Make sure MT5 is open!")
         sys.exit(1)
+
+    broker_offset = mt5_conn.get_broker_utc_offset()
+    print(f"Broker connection verified. Server UTC Offset: {broker_offset // 3600:+d} hours.")
 
     # Pre-flight data sync
     if not args.no_sync:
@@ -188,10 +184,12 @@ def main():
     account_info = mt5.account_info()
     acc_dict = account_info._asdict() if account_info else {'login': 'UNKNOWN', 'balance': 0.0, 'server': 'UNKNOWN'}
 
-    print("Loading XGBoost Model Engine...")
-    xgb_model = load_or_train_model()
+    print("Loading Certified Production XGBoost Model Engine...")
+    xgb_model = load_production_model()
 
-    print("Warm-starting rolling state buffers for 18 assets...")
+    order_mgr = OrderManager(mt5_conn)
+
+    print(f"Warm-starting rolling state buffers for {len(ASSETS)} assets...")
     engines = {}
     last_candle_times = {}
 
@@ -204,7 +202,7 @@ def main():
         else:
             logging.warning(f"Could not warm-start {asset}. Skipped.")
 
-    print(f"Successfully warm-started {len(engines)}/18 assets.")
+    print(f"Successfully warm-started {len(engines)}/{len(ASSETS)} assets.")
     print("Launching real-time live telemetry stream (DRY RUN MODE)...")
     time.sleep(1.0)
 
@@ -230,20 +228,19 @@ def main():
                 ask = tick.ask
                 spread = (ask - bid)
 
-                # Check if a new 15m candle closed on MT5
+                # Check if a new closed 15m candle is available
                 latest_rates = mt5_conn.get_15m_bars(asset, count=2)
                 if not latest_rates.empty and len(latest_rates) >= 2:
-                    # Previous closed bar
-                    closed_bar_time = latest_rates['time'].iloc[-2]
+                    closed_bar = latest_rates.iloc[-2]
+                    closed_bar_time = closed_bar['datetime']
                     if last_candle_times.get(asset) != closed_bar_time:
-                        # Append closed candle to rolling buffer
                         new_bar = {
-                            'timestamp': closed_bar_time,
-                            'open': latest_rates['open'].iloc[-2],
-                            'high': latest_rates['high'].iloc[-2],
-                            'low': latest_rates['low'].iloc[-2],
-                            'close': latest_rates['close'].iloc[-2],
-                            'volume': latest_rates['tick_volume'].iloc[-2]
+                            'datetime': closed_bar_time,
+                            'open': closed_bar['open'],
+                            'high': closed_bar['high'],
+                            'low': closed_bar['low'],
+                            'close': closed_bar['close'],
+                            'volume': closed_bar['tick_volume']
                         }
                         engine.update_bar(new_bar)
                         last_candle_times[asset] = closed_bar_time
@@ -268,20 +265,35 @@ def main():
                 bear_fvg = features.get('bearish_fvg', 0.0)
                 fvg_str = "BULL" if bull_fvg > 0 else ("BEAR" if bear_fvg > 0 else "NONE")
 
-                # Decision Rule: ICT Trend Alignment + Probability Threshold
+                # Setup Evaluation with Exact Geometry
+                local_low = engine.buffer['low'].rolling(20).min().iloc[-1] if len(engine.buffer) >= 20 else bid * 0.99
+                local_high = engine.buffer['high'].rolling(20).max().iloc[-1] if len(engine.buffer) >= 20 else ask * 1.01
+
                 signal_type = "HOLD"
-                if is_kz and prob > 0.70 and trend_val > 0 and bull_fvg > 0:
-                    signal_type = "DRY-BUY"
-                elif is_kz and prob > 0.70 and trend_val < 0 and bear_fvg > 0:
-                    signal_type = "DRY-SELL"
+                calc_lots = 0.01
 
-                if signal_type != "HOLD" and DRY_RUN:
-                    sl = bid * 0.99 if signal_type == "DRY-BUY" else ask * 1.01
-                    tp = bid * 1.04 if signal_type == "DRY-BUY" else ask * 0.96
-                    log_msg = f"[DRY-RUN SIGNAL: {asset} | {signal_type} | P*={prob:.3f} | ENTRY={ask if 'BUY' in signal_type else bid:.5f} | SL={sl:.5f} | TP={tp:.5f}]"
-                    logging.info(log_msg)
+                # Decision Rule: Kill Zone + FVG + 4H Trend + Model Confidence (P* >= 0.55)
+                if is_kz and prob >= 0.55 and trend_val > 0 and bull_fvg > 0:
+                    entry = ask
+                    sl = local_low
+                    r_dist = entry - sl
+                    if r_dist > 0 and (r_dist / entry) <= 0.025:
+                        tp = entry + (4.0 * r_dist)
+                        calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
+                        signal_type = "DRY-BUY"
+                        log_msg = f"[DRY-RUN SIGNAL: {asset} | {signal_type} | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
+                        logging.info(log_msg)
 
-                last_bar_str = engine.buffer.index[-1].strftime("%H:%M") if not engine.buffer.empty else "--:--"
+                elif is_kz and prob >= 0.55 and trend_val < 0 and bear_fvg > 0:
+                    entry = bid
+                    sl = local_high
+                    r_dist = sl - entry
+                    if r_dist > 0 and (r_dist / entry) <= 0.025:
+                        tp = entry - (4.0 * r_dist)
+                        calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
+                        signal_type = "DRY-SELL"
+                        log_msg = f"[DRY-RUN SIGNAL: {asset} | {signal_type} | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
+                        logging.info(log_msg)
 
                 dashboard_rows.append([
                     asset,
@@ -305,14 +317,13 @@ def main():
 
             out = []
             if not args.once:
-                # Move cursor to home position (no flicker)
                 out.append("\033[H")
-                
+
             out.append("=" * 115)
             out.append(f" MT5 LIVE FOREX TELEMETRY (DRY RUN) {spin_char} | UTC: {utc_now.strftime('%H:%M:%S')} | Kill Zone: {kz_str:<10}")
             out.append(f" Account: #{acc_dict.get('login')} ({acc_dict.get('server')}) | Balance: ${acc_dict.get('balance'):,.2f} USD | Uptime: {uptime}")
             out.append("=" * 115)
-            
+
             headers = ["Asset", "Bid", "Ask", "Spread", "RSI(14)", "VWAP %", "EMA50 %", "EMA200 %", "4H Trend", "FVG", "P*", "Decision"]
             row_fmt = "{:<8} | {:<8} | {:<8} | {:<7} | {:<7} | {:<8} | {:<8} | {:<9} | {:<8} | {:<6} | {:<6} | {:<8}"
             out.append(row_fmt.format(*headers))

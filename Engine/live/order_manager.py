@@ -8,24 +8,54 @@ class OrderManager:
         self.conn = connection
         self.open_trades = {}  # ticket -> trade_info
         
-    def place_market_order(self, symbol, order_type, volume, sl_price, tp_price=None, risk_r=None):
+    def calculate_lot_size(self, symbol: str, risk_usd: float, sl_dist: float) -> float:
+        """
+        Calculates exact MT5 lot size for risk_usd and stop distance sl_dist in price.
+        Clamps to broker volume_min, volume_max, and steps.
+        """
+        real_symbol = self.conn.resolve_symbol(symbol)
+        info = mt5.symbol_info(real_symbol)
+        if info is None or sl_dist <= 0:
+            return 0.01  # Safe minimum fallback
+            
+        tick_value = info.trade_tick_value if info.trade_tick_value > 0 else 1.0
+        tick_size = info.trade_tick_size if info.trade_tick_size > 0 else (info.point if info.point > 0 else 0.0001)
+        
+        # Loss per 1.0 lot for this stop distance
+        loss_per_lot = (sl_dist / tick_size) * tick_value
+        if loss_per_lot <= 0:
+            return info.volume_min
+            
+        raw_lots = risk_usd / loss_per_lot
+        step = info.volume_step if info.volume_step > 0 else 0.01
+        lots = round(raw_lots / step) * step
+        lots = max(info.volume_min, min(lots, info.volume_max))
+        return round(float(lots), 2)
+
+    def place_market_order(self, symbol, order_type, volume=None, sl_price=None, tp_price=None, risk_usd=50.0):
         if not self.conn.connected:
             logging.error("Not connected to MT5")
             return None
             
-        tick = self.conn.get_last_tick(symbol)
+        real_symbol = self.conn.resolve_symbol(symbol)
+        tick = self.conn.get_last_tick(real_symbol)
         if tick is None:
             return None
             
         price = tick.ask if order_type == mt5.ORDER_TYPE_BUY else tick.bid
         
+        # Dynamic lot sizing if volume not specified
+        if volume is None or volume <= 0:
+            sl_dist = abs(price - sl_price) if sl_price is not None else 0.0
+            volume = self.calculate_lot_size(real_symbol, risk_usd=risk_usd, sl_dist=sl_dist)
+            
         request = {
             "action": mt5.TRADE_ACTION_DEAL,
-            "symbol": symbol,
+            "symbol": real_symbol,
             "volume": float(volume),
             "type": order_type,
             "price": price,
-            "sl": float(sl_price),
+            "sl": float(sl_price) if sl_price is not None else 0.0,
             "deviation": 20,
             "magic": 123456,
             "comment": "ML Forex Strategy",
@@ -41,19 +71,22 @@ class OrderManager:
             logging.error(f"Order send failed, retcode={result.retcode}")
             return None
             
-        logging.info(f"Order placed successfully: ticket={result.order}")
+        logging.info(f"Order placed successfully: ticket={result.order}, fill_price={result.price}, volume={volume}")
         
-        # Calculate R value (distance from entry to SL)
-        r_dist = abs(price - sl_price)
+        # Use actual execution fill price from MT5 result
+        entry_fill_price = result.price if result.price > 0 else price
+        
+        # Calculate R value (distance from fill price to SL)
+        r_dist = abs(entry_fill_price - sl_price) if sl_price is not None else 0.0001
         if r_dist == 0:
-            r_dist = 0.0001 # prevent division by zero
+            r_dist = 0.0001
             
         self.open_trades[result.order] = {
-            "symbol": symbol,
+            "symbol": real_symbol,
             "ticket": result.order,
             "type": order_type,
             "volume": volume,
-            "entry_price": price,
+            "entry_price": entry_fill_price,
             "sl": sl_price,
             "tp": tp_price,
             "r_dist": r_dist,
@@ -113,19 +146,30 @@ class OrderManager:
         if position is None or len(position) == 0:
             return False
             
-        position = position[0]
+        pos = position[0]
+        
+        # Check minimum broker stop distance (trade_stops_level)
+        info = mt5.symbol_info(pos.symbol)
+        if info is not None:
+            min_dist = info.trade_stops_level * info.point
+            tick = self.conn.get_last_tick(pos.symbol)
+            if tick is not None:
+                current_price = tick.bid if pos.type == mt5.POSITION_TYPE_BUY else tick.ask
+                if abs(new_sl - current_price) < min_dist:
+                    logging.warning(f"Proposed SL {new_sl:.5f} too close to current price {current_price:.5f} (min dist: {min_dist:.5f}). Skipping modify.")
+                    return False
         
         request = {
             "action": mt5.TRADE_ACTION_SLTP,
             "position": ticket,
-            "symbol": position.symbol,
+            "symbol": pos.symbol,
             "sl": float(new_sl),
-            "tp": position.tp
+            "tp": pos.tp
         }
         
         result = mt5.order_send(request)
         if result.retcode != mt5.TRADE_RETCODE_DONE:
-            logging.error(f"Modify SL failed, retcode={result.retcode}")
+            logging.error(f"Modify SL failed for {ticket}, retcode={result.retcode}")
             return False
             
         logging.info(f"SL modified for {ticket} to {new_sl}")

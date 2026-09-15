@@ -38,9 +38,26 @@ def get_mt5_symbol(parquet_name):
             return sym
     return None
 
+def get_broker_utc_offset():
+    """Calculates broker server time offset from UTC in seconds."""
+    tick = mt5.symbol_info_tick("EURUSD.pi") or mt5.symbol_info_tick("EURUSD") or mt5.symbol_info_tick("EURUSD.p")
+    if tick is None:
+        return 3 * 3600
+    now_utc_ts = datetime.now(timezone.utc).timestamp()
+    return int(round((tick.time - now_utc_ts) / 3600.0) * 3600)
+
+TF_DELTA = {
+    "15m": timedelta(minutes=15),
+    "1h":  timedelta(hours=1),
+    "4h":  timedelta(hours=4),
+    "d1":  timedelta(days=1),
+}
+
 def append_candles_for_file(parquet_path, mt5_symbol, tf_key, cutoff_utc):
     """Read existing parquet, fetch new bars from MT5, append, save."""
     tf_mt5 = TF_MAP[tf_key]
+    tf_delta = TF_DELTA[tf_key]
+    broker_offset = get_broker_utc_offset()
     
     df_existing = pd.read_parquet(parquet_path)
     
@@ -56,17 +73,22 @@ def append_candles_for_file(parquet_path, mt5_symbol, tf_key, cutoff_utc):
         return 0
     
     fetch_from = last_dt + timedelta(seconds=1)
+    # Query MT5 in broker server time
+    fetch_from_broker = fetch_from + timedelta(seconds=broker_offset)
+    cutoff_broker = cutoff_utc + timedelta(seconds=broker_offset)
     
-    rates = mt5.copy_rates_range(mt5_symbol, tf_mt5, fetch_from, cutoff_utc)
+    rates = mt5.copy_rates_range(mt5_symbol, tf_mt5, fetch_from_broker, cutoff_broker)
     
     if rates is None or len(rates) == 0:
         return 0
     
     df_new = pd.DataFrame(rates)
+    # Convert broker server timestamp to true UTC
+    df_new['time'] = df_new['time'] - broker_offset
     df_new['datetime'] = pd.to_datetime(df_new['time'], unit='s', utc=True)
     
-    # Only keep bars strictly BEFORE cutoff (fully closed)
-    df_new = df_new[df_new['datetime'] < cutoff_utc]
+    # Strictly enforce: bar open + duration <= cutoff (only fully completed bars)
+    df_new = df_new[df_new['datetime'] + tf_delta <= cutoff_utc]
     
     if len(df_new) == 0:
         return 0

@@ -10,6 +10,8 @@ trigger: always_on
 ## 1. User Master Mandate (Strict & Non-Negotiable)
 - **GIT-BASED PROMPTS ONLY**: When generating prompts for Claude Opus (Ox Alpha / Arena), they MUST be strictly Git-based. NEVER inject massive source code blocks directly into the prompts. Point strictly to raw GitHub URLs (`https://raw.githubusercontent.com/kbsingh1399/Trading/main/...`) so Opus fetches and reads the codebase directly from GitHub.
 - **ZERO LOCAL CODING / EXECUTION — LET OPUS DO IT**: Stop doing coding, optimization, or backtesting runs locally in this environment. Do NOT run local backtest scripts or try to solve the strategy locally. Let Opus do the engineering, execution, coding, and backtesting! Our sole role is to facilitate Opus, author concise Git-based prompts, manage memory, and let Opus execute.
+- **MANDATORY BUY & HOLD BENCHMARKING**: ALWAYS compare strategy performance, equity curves, ROI, and drawdowns directly against the Buy and Hold benchmark (BTC Buy & Hold normalized to identical starting capital).
+- **MANDATORY EQUITY CURVE IMAGE SHARING**: Whenever reporting on backtest performance or equity curves, ALWAYS generate and share a visual chart image (`![caption](path)`) comparing Strategy Equity vs Buy & Hold and underwater drawdowns.
 
 ## 2. Active Mission & Quantitative Target
 - **Universe**: Certified Genuine 11 Binance USDT-M Perpetuals (BTC, ETH, XRP, BNB, DOGE, ADA, TRX, LINK, DOT, LTC, BCH) with 100% verified tick footprint ladders. The 7 synthetic assets are quarantined.
