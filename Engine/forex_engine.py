@@ -123,16 +123,17 @@ def dynamic_retrain():
 # -------------------------------------------------------------------------
 # STAGE 4: LIVE INFERENCE & TELEMETRY
 # -------------------------------------------------------------------------
-def run_telemetry(once: bool = False, skip_preflight_sync: bool = False):
+def run_telemetry(once: bool = False, ignore_kz: bool = False):
     """Launches the real-time live dry-run telemetry terminal."""
     print("\n" + "=" * 85)
     print(" [STAGE 4] LAUNCHING LIVE TELEMETRY STREAM & DECISION ENGINE...")
     print("=" * 85)
     from Engine.live.run_forex_dry_run import main as dry_run_main
-    # If we already did pre-flight sync, run_forex_dry_run will quickly verify and proceed
     sys.argv = [sys.argv[0]]
     if once:
         sys.argv.append("--once")
+    if ignore_kz:
+        sys.argv.append("--ignore-kz")
     dry_run_main()
 
 
@@ -187,6 +188,11 @@ Standard Usage:
         action="store_true",
         help="Skip model deletion and retraining; run live telemetry immediately."
     )
+    parser.add_argument(
+        "--ignore-kz",
+        action="store_true",
+        help="Bypass the London/NY kill zone filter for 24/7 dry-run signal testing."
+    )
 
     args = parser.parse_args()
 
@@ -211,7 +217,7 @@ Standard Usage:
 
     # Run live telemetry (continuous or single snapshot)
     is_once = (args.mode == "snapshot")
-    run_telemetry(once=is_once)
+    run_telemetry(once=is_once, ignore_kz=args.ignore_kz)
 
 
 if __name__ == "__main__":

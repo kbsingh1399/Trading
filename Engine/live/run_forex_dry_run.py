@@ -1,24 +1,15 @@
 """
 ================================================================================
-ENGINE 2: PRODUCTION-READY FOREX ML LIVE DRY-RUN TERMINAL (UNIFIED KERNEL)
+ENGINE 2: PRODUCTION-READY FOREX ML LIVE DRY-RUN TERMINAL (RICH DASHBOARD)
 ================================================================================
 Features:
-1. AUTOMATIC PRE-FLIGHT SYNC: Synchronizes missing candles from MT5 using dynamic
-   broker UTC offset to ensure zero timezone skew in Forex_Backtesting_Data/.
-2. CONTINUOUS SUB-SECOND REFRESH: Polling every 1-2s with live Bid/Ask, spreads,
-   and closed candle updates.
-3. FULL DECISION TELEMETRY:
-   - Live Price & Spread
-   - RSI(14) with Wilder's exponential smoothing
-   - VWAP Distance (%)
-   - EMA 50 & EMA 200 Distance (%)
-   - Causal 4-Hour Trend Alignment (Lagged 1 closed bar)
-   - Fair Value Gap (FVG) Status & Wick Magnitude
-   - London / NY Kill Zone Activity (True UTC)
-   - XGBoost Production Model Prediction Probability (P*)
-   - Exact Stop Loss & Take Profit Geometry (Local 20-bar extremes)
-   - Real-Time Position Sizing (Lots for $50 / 1.0% Risk)
-4. ZERO-TRADE SAFETY LOCKOUT: DRY_RUN = True is strictly enforced.
+1. RICH INSTITUTIONAL UI: Color-coded live telemetry table using the `rich` library.
+2. TRANSPARENT DECISION TELEMETRY: Explicitly shows WHY trades are held
+   (e.g., HOLD (Off-Hours), HOLD (No FVG), HOLD (P* < 0.55), or DRY-BUY / DRY-SELL).
+3. 24/7 OVERRIDE (--ignore-kz): Allows testing signal triggers and order geometry
+   outside standard London/NY kill zones.
+4. ATOMIC PRE-FLIGHT SYNC: Zero file locking on Windows via temporary file replacement.
+5. ZERO-TRADE SAFETY LOCKOUT: DRY_RUN = True is strictly enforced.
 ================================================================================
 """
 import os
@@ -32,6 +23,11 @@ import numpy as np
 import xgboost as xgb
 import MetaTrader5 as mt5
 
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+from rich.text import Text
+
 # Local imports
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
@@ -41,7 +37,7 @@ if PROJECT_ROOT not in sys.path:
 from Engine.live.mt5_connection import MT5Connection
 from Engine.live.inference_engine import StatefulInferenceEngine
 from Engine.live.order_manager import OrderManager
-from Engine.core.strategy_kernel import CANONICAL_FEATURES, CANONICAL_18_ASSETS, check_setup_criteria
+from Engine.core.strategy_kernel import CANONICAL_FEATURES, CANONICAL_18_ASSETS
 
 ASSETS = CANONICAL_18_ASSETS
 DATA_DIR = os.path.abspath(os.path.join(PROJECT_ROOT, "Forex_Backtesting_Data"))
@@ -53,8 +49,16 @@ logging.basicConfig(
     format='%(asctime)s [%(levelname)s] %(message)s'
 )
 
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
+console = Console(force_terminal=True, width=135)
 DRY_RUN = True
-BASE_RISK_USD = 50.0  # 1.0% on $5,000 capital
+BASE_RISK_USD = 50.0  # 1.0% on 5,000 USD capital
 
 
 # ============================================================================
@@ -109,7 +113,6 @@ def pre_flight_data_sync(mt5_conn: MT5Connection):
                 df_new = pd.DataFrame(rates)
                 df_new['time'] = df_new['time'] - broker_offset
                 df_new['datetime'] = pd.to_datetime(df_new['time'], unit='s', utc=True)
-                # Only keep strictly closed bars (bar open + 15m <= now_utc)
                 df_new = df_new[df_new['datetime'] + timedelta(minutes=15) <= now_utc]
 
                 if len(df_new) > 0:
@@ -145,14 +148,14 @@ def pre_flight_data_sync(mt5_conn: MT5Connection):
 
 
 # ============================================================================
-# MODEL MANAGEMENT (FAIL-CLOSED)
+# MODEL MANAGEMENT
 # ============================================================================
 def load_production_model() -> xgb.Booster:
     model_path = os.path.join(PROJECT_ROOT, "Engine", "models", "xgboost_forex.json")
     if not os.path.exists(model_path):
         raise FileNotFoundError(
             f"[FATAL] Production model not found at {model_path}. "
-            f"Run 'python Engine/live/train_production_model.py' to generate valid weights!"
+            f"Run 'python Engine/forex_engine.py --mode train' to generate valid weights!"
         )
     model = xgb.Booster()
     model.load_model(model_path)
@@ -161,65 +164,93 @@ def load_production_model() -> xgb.Booster:
 
 
 # ============================================================================
-# MAIN LIVE DRY-RUN TERMINAL
+# MAIN LIVE DRY-RUN TERMINAL (RICH UI)
 # ============================================================================
 def main():
-    parser = argparse.ArgumentParser(description="Production Live Dry-Run Telemetry Terminal.")
-    parser.add_argument('--once', action='store_true', help="Run single evaluation snapshot and exit.")
-    parser.add_argument('--interval', type=float, default=1.5, help="Refresh interval in seconds (default: 1.5s).")
-    parser.add_argument('--no-sync', action='store_true', help="Skip pre-flight data append check.")
+    parser = argparse.ArgumentParser(description="Production Live Dry-Run Telemetry Terminal (Rich UI).")
+    parser.add_argument("--interval", type=float, default=1.5, help="Polling interval in seconds (default: 1.5)")
+    parser.add_argument("--once", action="store_true", help="Run a single evaluation pass across all assets and exit.")
+    parser.add_argument("--ignore-kz", action="store_true", help="Bypass the London/NY kill zone filter for 24/7 dry-run signal testing.")
     args = parser.parse_args()
 
-    print("\nConnecting to MetaTrader 5 terminal...")
+    console.print(Panel("[bold cyan]INITIALIZING INSTITUTIONAL MT5 DRY-RUN TERMINAL[/bold cyan]\n[dim]Connecting to MetaTrader 5 broker feed...[/dim]", border_style="cyan"))
+
     mt5_conn = MT5Connection()
     if not mt5_conn.connect():
-        print("[FATAL ERROR] Could not connect to running MetaTrader 5. Make sure MT5 is open!")
+        console.print("[bold red][FATAL] Could not connect to MetaTrader 5 terminal. Ensure MT5 is running![/bold red]")
         sys.exit(1)
 
-    broker_offset = mt5_conn.get_broker_utc_offset()
-    print(f"Broker connection verified. Server UTC Offset: {broker_offset // 3600:+d} hours.")
+    acc = mt5.account_info()
+    acc_dict = acc._asdict() if acc is not None else {"login": "UNKNOWN", "server": "UNKNOWN", "balance": 0.0, "equity": 0.0}
 
     # Pre-flight data sync
-    if not args.no_sync:
-        pre_flight_data_sync(mt5_conn)
+    pre_flight_data_sync(mt5_conn)
 
-    account_info = mt5.account_info()
-    acc_dict = account_info._asdict() if account_info else {'login': 'UNKNOWN', 'balance': 0.0, 'server': 'UNKNOWN'}
-
-    print("Loading Certified Production XGBoost Model Engine...")
+    # Load Model
     xgb_model = load_production_model()
 
+    # Initialize Order Manager
     order_mgr = OrderManager(mt5_conn)
 
-    print(f"Warm-starting rolling state buffers for {len(ASSETS)} assets...")
+    # Warm-start Stateful Inference Engines
     engines = {}
     last_candle_times = {}
-
+    console.print("[bold cyan]Warm-starting rolling state buffers for 18 assets...[/bold cyan]")
     for asset in ASSETS:
-        engine = StatefulInferenceEngine(symbol=asset)
-        success = engine.warm_start(mt5_conn)
-        if success:
+        engine = StatefulInferenceEngine(asset, max_bars=250)
+        if engine.warm_start(mt5_conn):
             engines[asset] = engine
-            last_candle_times[asset] = engine.buffer.index[-1] if not engine.buffer.empty else None
+            if not engine.buffer.empty:
+                last_candle_times[asset] = engine.buffer.index[-1]
         else:
             logging.warning(f"Could not warm-start {asset}. Skipped.")
 
-    print(f"Successfully warm-started {len(engines)}/{len(ASSETS)} assets.")
-    print("Launching real-time live telemetry stream (DRY RUN MODE)...")
+    console.print(f"[bold green]Successfully warm-started {len(engines)}/{len(ASSETS)} assets.[/bold green]")
+    console.print("[bold yellow]Launching real-time live telemetry stream (DRY RUN MODE)...[/bold yellow]\n")
     time.sleep(1.0)
 
-    spinner = ['|', '/', '-', '\\']
-    spin_idx = 0
     start_time = datetime.now()
+    signals_count = 0
 
     try:
         while True:
             utc_now = datetime.now(timezone.utc)
             # London KZ: 07-10 UTC | NY KZ: 12-15 UTC
-            is_kz = (7 <= utc_now.hour <= 10) or (12 <= utc_now.hour <= 15)
-            kz_str = "ACTIVE" if is_kz else "OFF-HOURS"
+            is_london = (7 <= utc_now.hour <= 10)
+            is_ny = (12 <= utc_now.hour <= 15)
+            is_natural_kz = is_london or is_ny
+            is_kz = True if args.ignore_kz else is_natural_kz
 
-            dashboard_rows = []
+            if args.ignore_kz:
+                kz_display = "[bold magenta]BYPASSED (24/7 TEST)[/bold magenta]"
+            elif is_london:
+                kz_display = "[bold green]ACTIVE (London Open)[/bold green]"
+            elif is_ny:
+                kz_display = "[bold green]ACTIVE (NY Open)[/bold green]"
+            else:
+                kz_display = "[dim red]OFF-HOURS[/dim red]"
+
+            # Build Rich Table
+            table = Table(
+                title=f"MT5 LIVE FOREX & CFD TELEMETRY | UTC: {utc_now.strftime('%H:%M:%S')}",
+                header_style="bold bright_white on blue",
+                border_style="blue",
+                show_lines=False,
+                expand=True
+            )
+
+            table.add_column("Asset", style="bold cyan", width=8, no_wrap=True)
+            table.add_column("Bid", justify="right", width=10)
+            table.add_column("Ask", justify="right", width=10)
+            table.add_column("Spread", justify="right", style="yellow", width=8)
+            table.add_column("RSI", justify="right", width=6)
+            table.add_column("VWAP%", justify="right", width=7)
+            table.add_column("EMA50%", justify="right", width=7)
+            table.add_column("EMA200%", justify="right", width=7)
+            table.add_column("4H Trend", justify="center", width=8)
+            table.add_column("FVG", justify="center", width=6)
+            table.add_column("P*", justify="right", width=6)
+            table.add_column("Decision / Trigger Reason", justify="left", width=24)
 
             for asset, engine in engines.items():
                 tick = mt5_conn.get_last_tick(asset)
@@ -230,7 +261,7 @@ def main():
                 ask = tick.ask
                 spread = (ask - bid)
 
-                # Check if a new closed 15m candle is available
+                # Check for new closed 15m candle
                 latest_rates = mt5_conn.get_15m_bars(asset, count=2)
                 if not latest_rates.empty and len(latest_rates) >= 2:
                     closed_bar = latest_rates.iloc[-2]
@@ -261,84 +292,127 @@ def main():
                 ema200_dist = features.get('ema_200_dist', 0.0) * 100.0
 
                 trend_val = features.get('htf_4h_trend', 0.0)
-                trend_str = "BULL" if trend_val > 0 else ("BEAR" if trend_val < 0 else "FLAT")
+                if trend_val > 0:
+                    trend_cell = "[bold green]BULL[/bold green]"
+                elif trend_val < 0:
+                    trend_cell = "[bold red]BEAR[/bold red]"
+                else:
+                    trend_cell = "[dim]FLAT[/dim]"
 
                 bull_fvg = features.get('bullish_fvg', 0.0)
                 bear_fvg = features.get('bearish_fvg', 0.0)
-                fvg_str = "BULL" if bull_fvg > 0 else ("BEAR" if bear_fvg > 0 else "NONE")
+                if bull_fvg > 0:
+                    fvg_cell = "[bold green]BULL[/bold green]"
+                elif bear_fvg > 0:
+                    fvg_cell = "[bold red]BEAR[/bold red]"
+                else:
+                    fvg_cell = "[dim]NONE[/dim]"
+
+                # Format RSI styling
+                if rsi >= 70:
+                    rsi_cell = f"[bold red]{rsi:.1f}[/bold red]"
+                elif rsi <= 30:
+                    rsi_cell = f"[bold green]{rsi:.1f}[/bold green]"
+                else:
+                    rsi_cell = f"{rsi:.1f}"
+
+                # Format P* styling
+                if prob >= 0.55:
+                    prob_cell = f"[bold green]{prob:.3f}[/bold green]"
+                else:
+                    prob_cell = f"[dim]{prob:.3f}[/dim]"
 
                 # Setup Evaluation with Exact Geometry
                 local_low = engine.buffer['low'].rolling(20).min().iloc[-1] if len(engine.buffer) >= 20 else bid * 0.99
                 local_high = engine.buffer['high'].rolling(20).max().iloc[-1] if len(engine.buffer) >= 20 else ask * 1.01
 
-                signal_type = "HOLD"
+                decision_cell = "[dim]HOLD[/dim]"
                 calc_lots = 0.01
 
-                # Decision Rule: Kill Zone + FVG + 4H Trend + Model Confidence (P* >= 0.55)
-                if is_kz and prob >= 0.55 and trend_val > 0 and bull_fvg > 0:
-                    entry = ask
-                    sl = local_low
-                    r_dist = entry - sl
-                    if r_dist > 0 and (r_dist / entry) <= 0.025:
-                        tp = entry + (4.0 * r_dist)
-                        calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
-                        signal_type = "DRY-BUY"
-                        log_msg = f"[DRY-RUN SIGNAL: {asset} | {signal_type} | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
-                        logging.info(log_msg)
+                # 1. EVALUATE LONG SETUP
+                if trend_val > 0 and bull_fvg > 0 and prob >= 0.55:
+                    if not is_kz:
+                        decision_cell = "[dim yellow]HOLD (Off-Hours)[/dim yellow]"
+                    else:
+                        entry = ask
+                        sl = local_low
+                        r_dist = entry - sl
+                        if r_dist <= 0:
+                            decision_cell = "[dim red]HOLD (Invalid SL)[/dim red]"
+                        elif (r_dist / entry) > 0.025:
+                            decision_cell = "[dim red]HOLD (SL > 2.5%)[/dim red]"
+                        else:
+                            tp = entry + (4.0 * r_dist)
+                            calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
+                            decision_cell = f"[bold white on green] DRY-BUY ({calc_lots:.2f}L) [/bold white on green]"
+                            signals_count += 1
+                            log_msg = f"[DRY-RUN SIGNAL: {asset} | BUY | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
+                            logging.info(log_msg)
 
-                elif is_kz and prob >= 0.55 and trend_val < 0 and bear_fvg > 0:
-                    entry = bid
-                    sl = local_high
-                    r_dist = sl - entry
-                    if r_dist > 0 and (r_dist / entry) <= 0.025:
-                        tp = entry - (4.0 * r_dist)
-                        calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
-                        signal_type = "DRY-SELL"
-                        log_msg = f"[DRY-RUN SIGNAL: {asset} | {signal_type} | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
-                        logging.info(log_msg)
+                # 2. EVALUATE SHORT SETUP
+                elif trend_val < 0 and bear_fvg > 0 and prob >= 0.55:
+                    if not is_kz:
+                        decision_cell = "[dim yellow]HOLD (Off-Hours)[/dim yellow]"
+                    else:
+                        entry = bid
+                        sl = local_high
+                        r_dist = sl - entry
+                        if r_dist <= 0:
+                            decision_cell = "[dim red]HOLD (Invalid SL)[/dim red]"
+                        elif (r_dist / entry) > 0.025:
+                            decision_cell = "[dim red]HOLD (SL > 2.5%)[/dim red]"
+                        else:
+                            tp = entry - (4.0 * r_dist)
+                            calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
+                            decision_cell = f"[bold white on red] DRY-SELL ({calc_lots:.2f}L) [/bold white on red]"
+                            signals_count += 1
+                            log_msg = f"[DRY-RUN SIGNAL: {asset} | SELL | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
+                            logging.info(log_msg)
 
-                dashboard_rows.append([
+                # 3. DIAGNOSTIC REASON FOR NO SIGNAL
+                else:
+                    if bull_fvg == 0 and bear_fvg == 0:
+                        decision_cell = "[dim]HOLD (No FVG)[/dim]"
+                    elif prob < 0.55:
+                        decision_cell = f"[dim]HOLD (P*={prob:.2f}<0.55)[/dim]"
+                    elif (trend_val > 0 and bear_fvg > 0) or (trend_val < 0 and bull_fvg > 0):
+                        decision_cell = "[dim yellow]HOLD (Trend Opposed)[/dim yellow]"
+
+                table.add_row(
                     asset,
-                    f"{bid:.5f}"[:8],
-                    f"{ask:.5f}"[:8],
-                    f"{spread:.5f}"[:7],
-                    f"{rsi:.1f}",
+                    f"{bid:.5f}",
+                    f"{ask:.5f}",
+                    f"{spread:.5f}",
+                    rsi_cell,
                     f"{vwap_dist:+.2f}%",
                     f"{ema50_dist:+.2f}%",
                     f"{ema200_dist:+.2f}%",
-                    trend_str,
-                    fvg_str,
-                    f"{prob:.3f}",
-                    signal_type
-                ])
+                    trend_cell,
+                    fvg_cell,
+                    prob_cell,
+                    decision_cell
+                )
 
-            # RENDER FLICKER-FREE LIVE TERMINAL
-            spin_char = spinner[spin_idx % len(spinner)]
-            spin_idx += 1
+            # Header info panel
             uptime = str(datetime.now() - start_time).split('.')[0]
+            header_text = (
+                f"[bold white]Account:[/bold white] #{acc_dict.get('login')} ({acc_dict.get('server')})  |  "
+                f"[bold white]Balance:[/bold white] ${acc_dict.get('balance'):,.2f} USD  |  "
+                f"[bold white]Equity:[/bold white] ${acc_dict.get('equity'):,.2f} USD\n"
+                f"[bold white]Kill Zone:[/bold white] {kz_display}  |  "
+                f"[bold white]Uptime:[/bold white] {uptime}  |  "
+                f"[bold white]Signals Logged:[/bold white] {signals_count}  |  "
+                f"[bold white]Safety:[/bold white] [bold green]DRY_RUN = True (Orders Locked)[/bold green]"
+            )
+            header_panel = Panel(header_text, title="[bold bright_cyan]ENGINE 2: FOREX & CFD INSTITUTIONAL TERMINAL[/bold bright_cyan]", border_style="cyan")
 
-            out = []
+            # Clear screen for live loop
             if not args.once:
-                out.append("\033[H")
+                os.system('cls' if os.name == 'nt' else 'clear')
 
-            out.append("=" * 115)
-            out.append(f" MT5 LIVE FOREX TELEMETRY (DRY RUN) {spin_char} | UTC: {utc_now.strftime('%H:%M:%S')} | Kill Zone: {kz_str:<10}")
-            out.append(f" Account: #{acc_dict.get('login')} ({acc_dict.get('server')}) | Balance: ${acc_dict.get('balance'):,.2f} USD | Uptime: {uptime}")
-            out.append("=" * 115)
-
-            headers = ["Asset", "Bid", "Ask", "Spread", "RSI(14)", "VWAP %", "EMA50 %", "EMA200 %", "4H Trend", "FVG", "P*", "Decision"]
-            row_fmt = "{:<8} | {:<8} | {:<8} | {:<7} | {:<7} | {:<8} | {:<8} | {:<9} | {:<8} | {:<6} | {:<6} | {:<8}"
-            out.append(row_fmt.format(*headers))
-            out.append("-" * 115)
-
-            for r in dashboard_rows:
-                out.append(row_fmt.format(*r))
-
-            out.append("=" * 115)
-            out.append(" [SAFETY ACTIVE] DRY_RUN = True. Real orders are LOCKED. Live tick telemetry updating in real-time.")
-            out.append(" Press Ctrl+C to safely exit.")
-
-            print("\n".join(out), flush=True)
+            console.print(header_panel)
+            console.print(table)
+            console.print("[dim]Press Ctrl+C to safely disconnect and exit.[/dim]\n")
 
             if args.once:
                 break
@@ -346,10 +420,10 @@ def main():
             time.sleep(args.interval)
 
     except KeyboardInterrupt:
-        print("\n\n[SHUTDOWN] Exiting live dry-run loop safely. Disconnecting from MT5...")
+        console.print("\n\n[bold yellow][SHUTDOWN] Exiting live dry-run loop safely. Disconnecting from MT5...[/bold yellow]")
     finally:
         mt5_conn.disconnect()
-        print("[SHUTDOWN] MT5 disconnected cleanly. All state saved.\n")
+        console.print("[bold green][SHUTDOWN] MT5 disconnected cleanly. All state saved.[/bold green]\n")
 
 
 if __name__ == "__main__":
