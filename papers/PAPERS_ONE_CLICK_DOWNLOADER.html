@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SSRN Direct PDF Download Manager</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 25px; }
+  h1 { color: #38bdf8; margin-bottom: 5px; }
+  .subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
+  .stats-bar { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+  .stat-card { background: #1e293b; padding: 14px 20px; border-radius: 8px; border: 1px solid #334155; }
+  .stat-val { font-size: 24px; font-weight: bold; color: #38bdf8; display: block; }
+  .batch-bar { background: #1e293b; padding: 16px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 25px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .btn-batch { background: #0284c7; color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
+  .btn-batch:hover { background: #0369a1; }
+  .search-box { padding: 10px 16px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; font-size: 14px; min-width: 280px; }
+  table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 8px; overflow: hidden; font-size: 13px; }
+  th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #334155; }
+  th { background: #0f172a; color: #38bdf8; font-weight: 600; }
+  tr:hover { background: #243248; }
+  .badge-downloaded { background: #065f46; color: #a7f3d0; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .badge-pending { background: #b45309; color: #fef3c7; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  a.btn-dl { background: #2563eb; color: white; text-decoration: none; padding: 6px 14px; border-radius: 4px; font-size: 12px; font-weight: 500; display: inline-block; margin-right: 6px; }
+  a.btn-dl:hover { background: #1d4ed8; }
+  a.btn-abs { background: #334155; color: #cbd5e1; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; display: inline-block; }
+  a.btn-abs:hover { background: #475569; color: white; }
+  a.btn-open-local { background: #059669; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; display: inline-block; }
+  a.btn-open-local:hover { background: #047857; }
+</style>
+</head>
+<body>
+<h1>📥 SSRN Direct PDF Download Manager</h1>
+<div class="subtitle">Filtered and converted from <code>PAPERS.txt</code> into direct delivery download endpoints.</div>
+
+<div class="stats-bar">
+  <div class="stat-card"><span class="stat-val">156</span> Total SSRN Papers</div>
+  <div class="stat-card"><span class="stat-val" style="color: #34d399;">29</span> Already Downloaded</div>
+  <div class="stat-card"><span class="stat-val" style="color: #fbbf24;">127</span> Pending Download</div>
+</div>
+
+<div style="background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border: 2px solid #6366f1; border-radius: 12px; padding: 20px; margin-bottom: 25px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+    <h2 style="margin: 0; color: #a5b4fc; font-size: 18px;">⚡ Option 1: Ultra-Fast In-Browser Auto-Downloader (Recommended)</h2>
+    <span style="background: #4338ca; color: #e0e7ff; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold;">0 EXTRA SOFTWARE NEEDED</span>
+  </div>
+  <p style="color: #cbd5e1; font-size: 13px; line-height: 1.6; margin: 0 0 15px 0;">
+    Because SSRN blocks direct links from external windows, running this tiny script inside Chrome on <code>papers.ssrn.com</code> automatically uses your browser's active cookies and Referer, downloading all 127 papers directly to your <code>Downloads</code> folder in 4 minutes!
+  </p>
+  <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+    <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6891658" target="_blank" style="background: #f59e0b; color: black; font-weight: bold; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-size: 13px;">1. Open SSRN in Chrome</a>
+    <button onclick="copyConsoleScript()" style="background: #4f46e5; color: white; font-weight: bold; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 13px;" id="copyBtn">2. Copy Console Script (127 Papers)</button>
+    <span style="color: #94a3b8; font-size: 12px;">Press <strong>F12</strong> &rarr; <strong>Console</strong> &rarr; Paste &amp; Enter!</span>
+  </div>
+</div>
+
+<div style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 16px 20px; margin-bottom: 25px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+    <h3 style="margin: 0; color: #38bdf8; font-size: 15px;">🤖 Option 2: Automated Background Python Runner</h3>
+    <span style="background: #0284c7; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px;">PLAYWRIGHT CHROME</span>
+  </div>
+  <p style="color: #94a3b8; font-size: 12px; margin: 0 0 10px 0;">
+    Run this command in your terminal to launch real Chrome with automatic session persistence and auto-downloads:
+  </p>
+  <div style="display: flex; gap: 10px; align-items: center;">
+    <code style="background: #0f172a; padding: 10px 14px; border-radius: 6px; color: #34d399; font-size: 13px; flex-grow: 1; border: 1px solid #1e293b;">python c:\Users\SIGMA\Documents\Trading\scratch\download_all_ssrn_papers.py</code>
+    <button onclick="navigator.clipboard.writeText('python c:\\Users\\SIGMA\\Documents\\Trading\\scratch\\download_all_ssrn_papers.py'); alert('Command copied to clipboard!');" style="background: #334155; color: #e2e8f0; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 12px;">Copy Command</button>
+  </div>
+</div>
+
+<div class="batch-bar">
+  <span style="font-weight: 600; color: #cbd5e1;">Batch Open Pending Links:</span>
+  <button class="btn-batch" onclick="openBatch(10)">Open Next 10 in Tabs</button>
+  <button class="btn-batch" onclick="openBatch(25)">Open Next 25 in Tabs</button>
+  <button class="btn-batch" onclick="openBatch(50)">Open Next 50 in Tabs</button>
+  <div style="flex-grow: 1;"></div>
+  <input type="text" id="filterInput" class="search-box" placeholder="Filter by ID or status..." onkeyup="filterList()">
+</div>
+
+<table id="linksTable">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>SSRN Paper ID</th>
+      <th>Status</th>
+      <th>Direct Delivery URL</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr data-aid="6847019" data-status="downloaded">
+      <td>1</td>
+      <td><strong>SSRN-6847019</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6847019.pdf?abstractid=6847019&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-6847019 (1).pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6847019" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6891658" data-status="downloaded">
+      <td>2</td>
+      <td><strong>SSRN-6891658</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6891658.pdf?abstractid=6891658&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-6891658 (1).pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6891658" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6883362" data-status="downloaded">
+      <td>3</td>
+      <td><strong>SSRN-6883362</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6883362.pdf?abstractid=6883362&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-6883362.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6883362" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6636998" data-status="downloaded">
+      <td>4</td>
+      <td><strong>SSRN-6636998</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6636998.pdf?abstractid=6636998&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-6636998.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6636998" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7228999" data-status="downloaded">
+      <td>5</td>
+      <td><strong>SSRN-7228999</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7228999.pdf?abstractid=7228999&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-7228999.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7228999" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6658879" data-status="downloaded">
+      <td>6</td>
+      <td><strong>SSRN-6658879</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6658879.pdf?abstractid=6658879&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/D3_Working_2026_Patrick_Gruhn_Research_Institute_of_Entrepren_ssrn-6658879.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6658879" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7189219" data-status="downloaded">
+      <td>7</td>
+      <td><strong>SSRN-7189219</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7189219.pdf?abstractid=7189219&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-7189219.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7189219" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6639558" data-status="downloaded">
+      <td>8</td>
+      <td><strong>SSRN-6639558</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6639558.pdf?abstractid=6639558&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-6639558.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6639558" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7018520" data-status="downloaded">
+      <td>9</td>
+      <td><strong>SSRN-7018520</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7018520.pdf?abstractid=7018520&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-7018520.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7018520" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6558841" data-status="downloaded">
+      <td>10</td>
+      <td><strong>SSRN-6558841</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6558841.pdf?abstractid=6558841&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-6558841.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6558841" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6920018" data-status="pending">
+      <td>11</td>
+      <td><strong>SSRN-6920018</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6920018.pdf?abstractid=6920018&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6920018.pdf?abstractid=6920018&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6920018" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6660119" data-status="downloaded">
+      <td>12</td>
+      <td><strong>SSRN-6660119</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6660119.pdf?abstractid=6660119&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-6660119.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6660119" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6977818" data-status="downloaded">
+      <td>13</td>
+      <td><strong>SSRN-6977818</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6977818.pdf?abstractid=6977818&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-6977818.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6977818" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6932882" data-status="pending">
+      <td>14</td>
+      <td><strong>SSRN-6932882</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6932882.pdf?abstractid=6932882&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6932882.pdf?abstractid=6932882&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6932882" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6579278" data-status="downloaded">
+      <td>15</td>
+      <td><strong>SSRN-6579278</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6579278.pdf?abstractid=6579278&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-6579278.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6579278" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3781646" data-status="downloaded">
+      <td>16</td>
+      <td><strong>SSRN-3781646</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3781646.pdf?abstractid=3781646&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-3781646.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3781646" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7270041" data-status="downloaded">
+      <td>17</td>
+      <td><strong>SSRN-7270041</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7270041.pdf?abstractid=7270041&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/D3_Perpetual_2026_Who_Loses_and_Why_Market_Microstructure_of_ssrn-7270041.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7270041" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4844202" data-status="downloaded">
+      <td>18</td>
+      <td><strong>SSRN-4844202</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4844202.pdf?abstractid=4844202&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-4844202.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4844202" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4713126" data-status="downloaded">
+      <td>19</td>
+      <td><strong>SSRN-4713126</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4713126.pdf?abstractid=4713126&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-4713126.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4713126" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7298358" data-status="downloaded">
+      <td>20</td>
+      <td><strong>SSRN-7298358</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7298358.pdf?abstractid=7298358&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-7298358.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7298358" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7011358" data-status="downloaded">
+      <td>21</td>
+      <td><strong>SSRN-7011358</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7011358.pdf?abstractid=7011358&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-7011358.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7011358" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6749859" data-status="pending">
+      <td>22</td>
+      <td><strong>SSRN-6749859</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6749859.pdf?abstractid=6749859&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6749859.pdf?abstractid=6749859&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6749859" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6669018" data-status="downloaded">
+      <td>23</td>
+      <td><strong>SSRN-6669018</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6669018.pdf?abstractid=6669018&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-6669018.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6669018" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6888620" data-status="pending">
+      <td>24</td>
+      <td><strong>SSRN-6888620</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6888620.pdf?abstractid=6888620&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6888620.pdf?abstractid=6888620&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6888620" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6668879" data-status="downloaded">
+      <td>25</td>
+      <td><strong>SSRN-6668879</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6668879.pdf?abstractid=6668879&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-6668879.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6668879" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4581048" data-status="pending">
+      <td>26</td>
+      <td><strong>SSRN-4581048</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4581048.pdf?abstractid=4581048&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/4581048.pdf?abstractid=4581048&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4581048" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7291478" data-status="downloaded">
+      <td>27</td>
+      <td><strong>SSRN-7291478</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7291478.pdf?abstractid=7291478&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-7291478.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7291478" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="1625480" data-status="pending">
+      <td>28</td>
+      <td><strong>SSRN-1625480</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/1625480.pdf?abstractid=1625480&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/1625480.pdf?abstractid=1625480&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1625480" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6185958" data-status="pending">
+      <td>29</td>
+      <td><strong>SSRN-6185958</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6185958.pdf?abstractid=6185958&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6185958.pdf?abstractid=6185958&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6185958" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="944308" data-status="downloaded">
+      <td>30</td>
+      <td><strong>SSRN-944308</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/944308.pdf?abstractid=944308&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-944308.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=944308" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="5305617" data-status="pending">
+      <td>31</td>
+      <td><strong>SSRN-5305617</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/5305617.pdf?abstractid=5305617&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/5305617.pdf?abstractid=5305617&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5305617" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7085378" data-status="downloaded">
+      <td>32</td>
+      <td><strong>SSRN-7085378</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7085378.pdf?abstractid=7085378&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/D4_Adversarially_2018_Anatomy_of_a_Null_Result_A_Pre-Registered_ssrn-7085378.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7085378" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7225798" data-status="pending">
+      <td>33</td>
+      <td><strong>SSRN-7225798</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7225798.pdf?abstractid=7225798&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/7225798.pdf?abstractid=7225798&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7225798" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6993978" data-status="downloaded">
+      <td>34</td>
+      <td><strong>SSRN-6993978</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6993978.pdf?abstractid=6993978&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-6993978.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6993978" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6959060" data-status="downloaded">
+      <td>35</td>
+      <td><strong>SSRN-6959060</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6959060.pdf?abstractid=6959060&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-6959060.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6959060" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4268371" data-status="downloaded">
+      <td>36</td>
+      <td><strong>SSRN-4268371</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4268371.pdf?abstractid=4268371&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-4268371.pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4268371" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2023942" data-status="pending">
+      <td>37</td>
+      <td><strong>SSRN-2023942</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2023942.pdf?abstractid=2023942&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2023942.pdf?abstractid=2023942&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2023942" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3855181" data-status="pending">
+      <td>38</td>
+      <td><strong>SSRN-3855181</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3855181.pdf?abstractid=3855181&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3855181.pdf?abstractid=3855181&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3855181" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6748278" data-status="pending">
+      <td>39</td>
+      <td><strong>SSRN-6748278</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6748278.pdf?abstractid=6748278&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6748278.pdf?abstractid=6748278&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6748278" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="5052740" data-status="pending">
+      <td>40</td>
+      <td><strong>SSRN-5052740</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/5052740.pdf?abstractid=5052740&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/5052740.pdf?abstractid=5052740&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5052740" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6771163" data-status="pending">
+      <td>41</td>
+      <td><strong>SSRN-6771163</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6771163.pdf?abstractid=6771163&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6771163.pdf?abstractid=6771163&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6771163" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6850881" data-status="pending">
+      <td>42</td>
+      <td><strong>SSRN-6850881</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6850881.pdf?abstractid=6850881&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6850881.pdf?abstractid=6850881&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6850881" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6216978" data-status="pending">
+      <td>43</td>
+      <td><strong>SSRN-6216978</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6216978.pdf?abstractid=6216978&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6216978.pdf?abstractid=6216978&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6216978" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7363482" data-status="downloaded">
+      <td>44</td>
+      <td><strong>SSRN-7363482</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7363482.pdf?abstractid=7363482&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/ssrn-7363482 (1).pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7363482" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2282027" data-status="pending">
+      <td>45</td>
+      <td><strong>SSRN-2282027</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2282027.pdf?abstractid=2282027&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2282027.pdf?abstractid=2282027&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2282027" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="1493490" data-status="pending">
+      <td>46</td>
+      <td><strong>SSRN-1493490</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/1493490.pdf?abstractid=1493490&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/1493490.pdf?abstractid=1493490&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1493490" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4207825" data-status="pending">
+      <td>47</td>
+      <td><strong>SSRN-4207825</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4207825.pdf?abstractid=4207825&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/4207825.pdf?abstractid=4207825&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4207825" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4178929" data-status="pending">
+      <td>48</td>
+      <td><strong>SSRN-4178929</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4178929.pdf?abstractid=4178929&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/4178929.pdf?abstractid=4178929&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4178929" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3176251" data-status="pending">
+      <td>49</td>
+      <td><strong>SSRN-3176251</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3176251.pdf?abstractid=3176251&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3176251.pdf?abstractid=3176251&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3176251" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7226353" data-status="pending">
+      <td>50</td>
+      <td><strong>SSRN-7226353</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7226353.pdf?abstractid=7226353&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/7226353.pdf?abstractid=7226353&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7226353" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4400519" data-status="pending">
+      <td>51</td>
+      <td><strong>SSRN-4400519</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4400519.pdf?abstractid=4400519&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/4400519.pdf?abstractid=4400519&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4400519" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="894877" data-status="pending">
+      <td>52</td>
+      <td><strong>SSRN-894877</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/894877.pdf?abstractid=894877&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/894877.pdf?abstractid=894877&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=894877" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3277218" data-status="pending">
+      <td>53</td>
+      <td><strong>SSRN-3277218</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3277218.pdf?abstractid=3277218&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3277218.pdf?abstractid=3277218&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3277218" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="846326" data-status="pending">
+      <td>54</td>
+      <td><strong>SSRN-846326</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/846326.pdf?abstractid=846326&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/846326.pdf?abstractid=846326&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=846326" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="996082" data-status="pending">
+      <td>55</td>
+      <td><strong>SSRN-996082</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/996082.pdf?abstractid=996082&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/996082.pdf?abstractid=996082&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=996082" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="1470514" data-status="pending">
+      <td>56</td>
+      <td><strong>SSRN-1470514</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/1470514.pdf?abstractid=1470514&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/1470514.pdf?abstractid=1470514&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1470514" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3600695" data-status="pending">
+      <td>57</td>
+      <td><strong>SSRN-3600695</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3600695.pdf?abstractid=3600695&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3600695.pdf?abstractid=3600695&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3600695" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3429999" data-status="pending">
+      <td>58</td>
+      <td><strong>SSRN-3429999</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3429999.pdf?abstractid=3429999&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3429999.pdf?abstractid=3429999&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3429999" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4568171" data-status="pending">
+      <td>59</td>
+      <td><strong>SSRN-4568171</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4568171.pdf?abstractid=4568171&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/4568171.pdf?abstractid=4568171&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4568171" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3040061" data-status="pending">
+      <td>60</td>
+      <td><strong>SSRN-3040061</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3040061.pdf?abstractid=3040061&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3040061.pdf?abstractid=3040061&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3040061" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2762219" data-status="pending">
+      <td>61</td>
+      <td><strong>SSRN-2762219</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2762219.pdf?abstractid=2762219&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2762219.pdf?abstractid=2762219&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2762219" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3779896" data-status="pending">
+      <td>62</td>
+      <td><strong>SSRN-3779896</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3779896.pdf?abstractid=3779896&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3779896.pdf?abstractid=3779896&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3779896" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="1550035" data-status="pending">
+      <td>63</td>
+      <td><strong>SSRN-1550035</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/1550035.pdf?abstractid=1550035&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/1550035.pdf?abstractid=1550035&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1550035" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6648078" data-status="pending">
+      <td>64</td>
+      <td><strong>SSRN-6648078</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6648078.pdf?abstractid=6648078&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6648078.pdf?abstractid=6648078&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6648078" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2934048" data-status="pending">
+      <td>65</td>
+      <td><strong>SSRN-2934048</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2934048.pdf?abstractid=2934048&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2934048.pdf?abstractid=2934048&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2934048" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3822208" data-status="pending">
+      <td>66</td>
+      <td><strong>SSRN-3822208</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3822208.pdf?abstractid=3822208&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3822208.pdf?abstractid=3822208&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3822208" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="5109409" data-status="pending">
+      <td>67</td>
+      <td><strong>SSRN-5109409</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/5109409.pdf?abstractid=5109409&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/5109409.pdf?abstractid=5109409&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5109409" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3394866" data-status="pending">
+      <td>68</td>
+      <td><strong>SSRN-3394866</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3394866.pdf?abstractid=3394866&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3394866.pdf?abstractid=3394866&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3394866" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4345640" data-status="pending">
+      <td>69</td>
+      <td><strong>SSRN-4345640</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4345640.pdf?abstractid=4345640&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/4345640.pdf?abstractid=4345640&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4345640" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="5132961" data-status="pending">
+      <td>70</td>
+      <td><strong>SSRN-5132961</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/5132961.pdf?abstractid=5132961&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/5132961.pdf?abstractid=5132961&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5132961" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3509341" data-status="pending">
+      <td>71</td>
+      <td><strong>SSRN-3509341</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3509341.pdf?abstractid=3509341&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3509341.pdf?abstractid=3509341&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3509341" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3351873" data-status="pending">
+      <td>72</td>
+      <td><strong>SSRN-3351873</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3351873.pdf?abstractid=3351873&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3351873.pdf?abstractid=3351873&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3351873" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4748367" data-status="pending">
+      <td>73</td>
+      <td><strong>SSRN-4748367</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4748367.pdf?abstractid=4748367&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/4748367.pdf?abstractid=4748367&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4748367" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="5014" data-status="pending">
+      <td>74</td>
+      <td><strong>SSRN-5014</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/5014.pdf?abstractid=5014&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/5014.pdf?abstractid=5014&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5014" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3748321" data-status="pending">
+      <td>75</td>
+      <td><strong>SSRN-3748321</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3748321.pdf?abstractid=3748321&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3748321.pdf?abstractid=3748321&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3748321" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="1262623" data-status="pending">
+      <td>76</td>
+      <td><strong>SSRN-1262623</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/1262623.pdf?abstractid=1262623&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/1262623.pdf?abstractid=1262623&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1262623" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4569993" data-status="pending">
+      <td>77</td>
+      <td><strong>SSRN-4569993</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4569993.pdf?abstractid=4569993&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/4569993.pdf?abstractid=4569993&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4569993" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="1156202" data-status="pending">
+      <td>78</td>
+      <td><strong>SSRN-1156202</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/1156202.pdf?abstractid=1156202&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/1156202.pdf?abstractid=1156202&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1156202" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4742138" data-status="pending">
+      <td>79</td>
+      <td><strong>SSRN-4742138</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4742138.pdf?abstractid=4742138&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/4742138.pdf?abstractid=4742138&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4742138" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="401580" data-status="pending">
+      <td>80</td>
+      <td><strong>SSRN-401580</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/401580.pdf?abstractid=401580&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/401580.pdf?abstractid=401580&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=401580" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="5596975" data-status="pending">
+      <td>81</td>
+      <td><strong>SSRN-5596975</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/5596975.pdf?abstractid=5596975&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/5596975.pdf?abstractid=5596975&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5596975" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4468032" data-status="pending">
+      <td>82</td>
+      <td><strong>SSRN-4468032</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4468032.pdf?abstractid=4468032&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/4468032.pdf?abstractid=4468032&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4468032" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3596659" data-status="pending">
+      <td>83</td>
+      <td><strong>SSRN-3596659</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3596659.pdf?abstractid=3596659&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3596659.pdf?abstractid=3596659&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3596659" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="1972730" data-status="pending">
+      <td>84</td>
+      <td><strong>SSRN-1972730</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/1972730.pdf?abstractid=1972730&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/1972730.pdf?abstractid=1972730&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1972730" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6696318" data-status="pending">
+      <td>85</td>
+      <td><strong>SSRN-6696318</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6696318.pdf?abstractid=6696318&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6696318.pdf?abstractid=6696318&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6696318" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7351019" data-status="pending">
+      <td>86</td>
+      <td><strong>SSRN-7351019</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7351019.pdf?abstractid=7351019&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/7351019.pdf?abstractid=7351019&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7351019" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6765778" data-status="pending">
+      <td>87</td>
+      <td><strong>SSRN-6765778</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6765778.pdf?abstractid=6765778&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6765778.pdf?abstractid=6765778&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6765778" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6921178" data-status="pending">
+      <td>88</td>
+      <td><strong>SSRN-6921178</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6921178.pdf?abstractid=6921178&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6921178.pdf?abstractid=6921178&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6921178" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2409078" data-status="pending">
+      <td>89</td>
+      <td><strong>SSRN-2409078</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2409078.pdf?abstractid=2409078&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2409078.pdf?abstractid=2409078&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2409078" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6407379" data-status="pending">
+      <td>90</td>
+      <td><strong>SSRN-6407379</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6407379.pdf?abstractid=6407379&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6407379.pdf?abstractid=6407379&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6407379" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2034814" data-status="pending">
+      <td>91</td>
+      <td><strong>SSRN-2034814</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2034814.pdf?abstractid=2034814&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2034814.pdf?abstractid=2034814&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2034814" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4003012" data-status="pending">
+      <td>92</td>
+      <td><strong>SSRN-4003012</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4003012.pdf?abstractid=4003012&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/4003012.pdf?abstractid=4003012&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4003012" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2323906" data-status="pending">
+      <td>93</td>
+      <td><strong>SSRN-2323906</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2323906.pdf?abstractid=2323906&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2323906.pdf?abstractid=2323906&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2323906" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3566980" data-status="pending">
+      <td>94</td>
+      <td><strong>SSRN-3566980</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3566980.pdf?abstractid=3566980&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3566980.pdf?abstractid=3566980&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3566980" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6592831" data-status="pending">
+      <td>95</td>
+      <td><strong>SSRN-6592831</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6592831.pdf?abstractid=6592831&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6592831.pdf?abstractid=6592831&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6592831" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6732758" data-status="pending">
+      <td>96</td>
+      <td><strong>SSRN-6732758</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6732758.pdf?abstractid=6732758&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6732758.pdf?abstractid=6732758&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6732758" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6071846" data-status="pending">
+      <td>97</td>
+      <td><strong>SSRN-6071846</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6071846.pdf?abstractid=6071846&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6071846.pdf?abstractid=6071846&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6071846" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6932998" data-status="pending">
+      <td>98</td>
+      <td><strong>SSRN-6932998</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6932998.pdf?abstractid=6932998&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6932998.pdf?abstractid=6932998&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6932998" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4923443" data-status="pending">
+      <td>99</td>
+      <td><strong>SSRN-4923443</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4923443.pdf?abstractid=4923443&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/4923443.pdf?abstractid=4923443&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4923443" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7143718" data-status="pending">
+      <td>100</td>
+      <td><strong>SSRN-7143718</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7143718.pdf?abstractid=7143718&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/7143718.pdf?abstractid=7143718&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7143718" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="5611392" data-status="pending">
+      <td>101</td>
+      <td><strong>SSRN-5611392</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/5611392.pdf?abstractid=5611392&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/5611392.pdf?abstractid=5611392&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5611392" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6387397" data-status="pending">
+      <td>102</td>
+      <td><strong>SSRN-6387397</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6387397.pdf?abstractid=6387397&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6387397.pdf?abstractid=6387397&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6387397" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6609698" data-status="pending">
+      <td>103</td>
+      <td><strong>SSRN-6609698</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6609698.pdf?abstractid=6609698&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6609698.pdf?abstractid=6609698&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6609698" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7059779" data-status="pending">
+      <td>104</td>
+      <td><strong>SSRN-7059779</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7059779.pdf?abstractid=7059779&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/7059779.pdf?abstractid=7059779&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7059779" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7231679" data-status="pending">
+      <td>105</td>
+      <td><strong>SSRN-7231679</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7231679.pdf?abstractid=7231679&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/7231679.pdf?abstractid=7231679&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7231679" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7370018" data-status="pending">
+      <td>106</td>
+      <td><strong>SSRN-7370018</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7370018.pdf?abstractid=7370018&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/7370018.pdf?abstractid=7370018&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7370018" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2021556" data-status="pending">
+      <td>107</td>
+      <td><strong>SSRN-2021556</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2021556.pdf?abstractid=2021556&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2021556.pdf?abstractid=2021556&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2021556" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6159346" data-status="downloaded">
+      <td>108</td>
+      <td><strong>SSRN-6159346</strong></td>
+      <td><span class="badge-downloaded">ON DISK</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6159346.pdf?abstractid=6159346&mirid=1</code></td>
+      <td><a href="file:///C:/Users/SIGMA/Downloads/D4_Microstructure_2026_Explainable_Patterns_in_Cryptocurrency_ssrn-6159346 (1).pdf" target="_blank" class="btn-open-local">Open Local PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6159346" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6479878" data-status="pending">
+      <td>109</td>
+      <td><strong>SSRN-6479878</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6479878.pdf?abstractid=6479878&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6479878.pdf?abstractid=6479878&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6479878" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2672061" data-status="pending">
+      <td>110</td>
+      <td><strong>SSRN-2672061</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2672061.pdf?abstractid=2672061&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2672061.pdf?abstractid=2672061&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2672061" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6693260" data-status="pending">
+      <td>111</td>
+      <td><strong>SSRN-6693260</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6693260.pdf?abstractid=6693260&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6693260.pdf?abstractid=6693260&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6693260" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6450559" data-status="pending">
+      <td>112</td>
+      <td><strong>SSRN-6450559</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6450559.pdf?abstractid=6450559&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6450559.pdf?abstractid=6450559&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6450559" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6323618" data-status="pending">
+      <td>113</td>
+      <td><strong>SSRN-6323618</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6323618.pdf?abstractid=6323618&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6323618.pdf?abstractid=6323618&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6323618" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7344178" data-status="pending">
+      <td>114</td>
+      <td><strong>SSRN-7344178</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7344178.pdf?abstractid=7344178&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/7344178.pdf?abstractid=7344178&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7344178" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6483118" data-status="pending">
+      <td>115</td>
+      <td><strong>SSRN-6483118</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6483118.pdf?abstractid=6483118&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6483118.pdf?abstractid=6483118&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6483118" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2954342" data-status="pending">
+      <td>116</td>
+      <td><strong>SSRN-2954342</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2954342.pdf?abstractid=2954342&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2954342.pdf?abstractid=2954342&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2954342" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2968374" data-status="pending">
+      <td>117</td>
+      <td><strong>SSRN-2968374</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2968374.pdf?abstractid=2968374&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2968374.pdf?abstractid=2968374&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2968374" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6223420" data-status="pending">
+      <td>118</td>
+      <td><strong>SSRN-6223420</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6223420.pdf?abstractid=6223420&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6223420.pdf?abstractid=6223420&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6223420" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7364898" data-status="pending">
+      <td>119</td>
+      <td><strong>SSRN-7364898</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7364898.pdf?abstractid=7364898&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/7364898.pdf?abstractid=7364898&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7364898" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3378586" data-status="pending">
+      <td>120</td>
+      <td><strong>SSRN-3378586</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3378586.pdf?abstractid=3378586&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3378586.pdf?abstractid=3378586&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3378586" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2244511" data-status="pending">
+      <td>121</td>
+      <td><strong>SSRN-2244511</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2244511.pdf?abstractid=2244511&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2244511.pdf?abstractid=2244511&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2244511" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2338887" data-status="pending">
+      <td>122</td>
+      <td><strong>SSRN-2338887</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2338887.pdf?abstractid=2338887&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2338887.pdf?abstractid=2338887&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2338887" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6377318" data-status="pending">
+      <td>123</td>
+      <td><strong>SSRN-6377318</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6377318.pdf?abstractid=6377318&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6377318.pdf?abstractid=6377318&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6377318" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3760048" data-status="pending">
+      <td>124</td>
+      <td><strong>SSRN-3760048</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3760048.pdf?abstractid=3760048&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3760048.pdf?abstractid=3760048&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3760048" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3799449" data-status="pending">
+      <td>125</td>
+      <td><strong>SSRN-3799449</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3799449.pdf?abstractid=3799449&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3799449.pdf?abstractid=3799449&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3799449" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3801873" data-status="pending">
+      <td>126</td>
+      <td><strong>SSRN-3801873</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3801873.pdf?abstractid=3801873&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3801873.pdf?abstractid=3801873&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3801873" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2024669" data-status="pending">
+      <td>127</td>
+      <td><strong>SSRN-2024669</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2024669.pdf?abstractid=2024669&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2024669.pdf?abstractid=2024669&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2024669" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2955646" data-status="pending">
+      <td>128</td>
+      <td><strong>SSRN-2955646</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2955646.pdf?abstractid=2955646&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2955646.pdf?abstractid=2955646&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2955646" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6325338" data-status="pending">
+      <td>129</td>
+      <td><strong>SSRN-6325338</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6325338.pdf?abstractid=6325338&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6325338.pdf?abstractid=6325338&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6325338" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7446978" data-status="pending">
+      <td>130</td>
+      <td><strong>SSRN-7446978</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7446978.pdf?abstractid=7446978&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/7446978.pdf?abstractid=7446978&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7446978" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7305922" data-status="pending">
+      <td>131</td>
+      <td><strong>SSRN-7305922</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7305922.pdf?abstractid=7305922&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/7305922.pdf?abstractid=7305922&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7305922" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6542019" data-status="pending">
+      <td>132</td>
+      <td><strong>SSRN-6542019</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6542019.pdf?abstractid=6542019&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6542019.pdf?abstractid=6542019&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6542019" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7324102" data-status="pending">
+      <td>133</td>
+      <td><strong>SSRN-7324102</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7324102.pdf?abstractid=7324102&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/7324102.pdf?abstractid=7324102&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7324102" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="5090097" data-status="pending">
+      <td>134</td>
+      <td><strong>SSRN-5090097</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/5090097.pdf?abstractid=5090097&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/5090097.pdf?abstractid=5090097&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5090097" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6943940" data-status="pending">
+      <td>135</td>
+      <td><strong>SSRN-6943940</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6943940.pdf?abstractid=6943940&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6943940.pdf?abstractid=6943940&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6943940" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="1328964" data-status="pending">
+      <td>136</td>
+      <td><strong>SSRN-1328964</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/1328964.pdf?abstractid=1328964&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/1328964.pdf?abstractid=1328964&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1328964" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2170882" data-status="pending">
+      <td>137</td>
+      <td><strong>SSRN-2170882</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2170882.pdf?abstractid=2170882&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2170882.pdf?abstractid=2170882&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2170882" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6769260" data-status="pending">
+      <td>138</td>
+      <td><strong>SSRN-6769260</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6769260.pdf?abstractid=6769260&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6769260.pdf?abstractid=6769260&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6769260" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="621121" data-status="pending">
+      <td>139</td>
+      <td><strong>SSRN-621121</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/621121.pdf?abstractid=621121&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/621121.pdf?abstractid=621121&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=621121" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="663363" data-status="pending">
+      <td>140</td>
+      <td><strong>SSRN-663363</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/663363.pdf?abstractid=663363&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/663363.pdf?abstractid=663363&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=663363" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="7317444" data-status="pending">
+      <td>141</td>
+      <td><strong>SSRN-7317444</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/7317444.pdf?abstractid=7317444&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/7317444.pdf?abstractid=7317444&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7317444" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2538795" data-status="pending">
+      <td>142</td>
+      <td><strong>SSRN-2538795</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2538795.pdf?abstractid=2538795&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2538795.pdf?abstractid=2538795&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2538795" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="2566830" data-status="pending">
+      <td>143</td>
+      <td><strong>SSRN-2566830</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/2566830.pdf?abstractid=2566830&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/2566830.pdf?abstractid=2566830&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2566830" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6607399" data-status="pending">
+      <td>144</td>
+      <td><strong>SSRN-6607399</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6607399.pdf?abstractid=6607399&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6607399.pdf?abstractid=6607399&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6607399" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6068228" data-status="pending">
+      <td>145</td>
+      <td><strong>SSRN-6068228</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6068228.pdf?abstractid=6068228&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6068228.pdf?abstractid=6068228&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6068228" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6122646" data-status="pending">
+      <td>146</td>
+      <td><strong>SSRN-6122646</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6122646.pdf?abstractid=6122646&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6122646.pdf?abstractid=6122646&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6122646" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="4437402" data-status="pending">
+      <td>147</td>
+      <td><strong>SSRN-4437402</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/4437402.pdf?abstractid=4437402&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/4437402.pdf?abstractid=4437402&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4437402" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6589947" data-status="pending">
+      <td>148</td>
+      <td><strong>SSRN-6589947</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6589947.pdf?abstractid=6589947&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6589947.pdf?abstractid=6589947&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6589947" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3236569" data-status="pending">
+      <td>149</td>
+      <td><strong>SSRN-3236569</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3236569.pdf?abstractid=3236569&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3236569.pdf?abstractid=3236569&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3236569" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="1439706" data-status="pending">
+      <td>150</td>
+      <td><strong>SSRN-1439706</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/1439706.pdf?abstractid=1439706&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/1439706.pdf?abstractid=1439706&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1439706" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6417060" data-status="pending">
+      <td>151</td>
+      <td><strong>SSRN-6417060</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6417060.pdf?abstractid=6417060&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6417060.pdf?abstractid=6417060&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6417060" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6170669" data-status="pending">
+      <td>152</td>
+      <td><strong>SSRN-6170669</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6170669.pdf?abstractid=6170669&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6170669.pdf?abstractid=6170669&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6170669" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="6086926" data-status="pending">
+      <td>153</td>
+      <td><strong>SSRN-6086926</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/6086926.pdf?abstractid=6086926&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/6086926.pdf?abstractid=6086926&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6086926" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="5360215" data-status="pending">
+      <td>154</td>
+      <td><strong>SSRN-5360215</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/5360215.pdf?abstractid=5360215&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/5360215.pdf?abstractid=5360215&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5360215" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="3298768" data-status="pending">
+      <td>155</td>
+      <td><strong>SSRN-3298768</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/3298768.pdf?abstractid=3298768&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/3298768.pdf?abstractid=3298768&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3298768" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+    <tr data-aid="320161" data-status="pending">
+      <td>156</td>
+      <td><strong>SSRN-320161</strong></td>
+      <td><span class="badge-pending">PENDING</span></td>
+      <td><code style="color: #38bdf8; font-size: 11px;">https://papers.ssrn.com/sol3/Delivery.cfm/320161.pdf?abstractid=320161&mirid=1</code></td>
+      <td><a href="https://papers.ssrn.com/sol3/Delivery.cfm/320161.pdf?abstractid=320161&mirid=1" target="_blank" class="btn-dl">📥 Download PDF</a> <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=320161" target="_blank" class="btn-abs">Abstract</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+const pendingUrls = ["https://papers.ssrn.com/sol3/Delivery.cfm/6920018.pdf?abstractid=6920018&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6932882.pdf?abstractid=6932882&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6749859.pdf?abstractid=6749859&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6888620.pdf?abstractid=6888620&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/4581048.pdf?abstractid=4581048&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/1625480.pdf?abstractid=1625480&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6185958.pdf?abstractid=6185958&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/5305617.pdf?abstractid=5305617&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/7225798.pdf?abstractid=7225798&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2023942.pdf?abstractid=2023942&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3855181.pdf?abstractid=3855181&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6748278.pdf?abstractid=6748278&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/5052740.pdf?abstractid=5052740&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6771163.pdf?abstractid=6771163&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6850881.pdf?abstractid=6850881&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6216978.pdf?abstractid=6216978&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2282027.pdf?abstractid=2282027&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/1493490.pdf?abstractid=1493490&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/4207825.pdf?abstractid=4207825&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/4178929.pdf?abstractid=4178929&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3176251.pdf?abstractid=3176251&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/7226353.pdf?abstractid=7226353&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/4400519.pdf?abstractid=4400519&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/894877.pdf?abstractid=894877&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3277218.pdf?abstractid=3277218&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/846326.pdf?abstractid=846326&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/996082.pdf?abstractid=996082&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/1470514.pdf?abstractid=1470514&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3600695.pdf?abstractid=3600695&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3429999.pdf?abstractid=3429999&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/4568171.pdf?abstractid=4568171&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3040061.pdf?abstractid=3040061&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2762219.pdf?abstractid=2762219&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3779896.pdf?abstractid=3779896&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/1550035.pdf?abstractid=1550035&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6648078.pdf?abstractid=6648078&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2934048.pdf?abstractid=2934048&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3822208.pdf?abstractid=3822208&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/5109409.pdf?abstractid=5109409&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3394866.pdf?abstractid=3394866&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/4345640.pdf?abstractid=4345640&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/5132961.pdf?abstractid=5132961&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3509341.pdf?abstractid=3509341&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3351873.pdf?abstractid=3351873&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/4748367.pdf?abstractid=4748367&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/5014.pdf?abstractid=5014&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3748321.pdf?abstractid=3748321&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/1262623.pdf?abstractid=1262623&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/4569993.pdf?abstractid=4569993&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/1156202.pdf?abstractid=1156202&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/4742138.pdf?abstractid=4742138&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/401580.pdf?abstractid=401580&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/5596975.pdf?abstractid=5596975&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/4468032.pdf?abstractid=4468032&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3596659.pdf?abstractid=3596659&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/1972730.pdf?abstractid=1972730&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6696318.pdf?abstractid=6696318&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/7351019.pdf?abstractid=7351019&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6765778.pdf?abstractid=6765778&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6921178.pdf?abstractid=6921178&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2409078.pdf?abstractid=2409078&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6407379.pdf?abstractid=6407379&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2034814.pdf?abstractid=2034814&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/4003012.pdf?abstractid=4003012&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2323906.pdf?abstractid=2323906&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3566980.pdf?abstractid=3566980&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6592831.pdf?abstractid=6592831&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6732758.pdf?abstractid=6732758&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6071846.pdf?abstractid=6071846&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6932998.pdf?abstractid=6932998&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/4923443.pdf?abstractid=4923443&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/7143718.pdf?abstractid=7143718&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/5611392.pdf?abstractid=5611392&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6387397.pdf?abstractid=6387397&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6609698.pdf?abstractid=6609698&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/7059779.pdf?abstractid=7059779&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/7231679.pdf?abstractid=7231679&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/7370018.pdf?abstractid=7370018&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2021556.pdf?abstractid=2021556&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6479878.pdf?abstractid=6479878&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2672061.pdf?abstractid=2672061&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6693260.pdf?abstractid=6693260&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6450559.pdf?abstractid=6450559&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6323618.pdf?abstractid=6323618&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/7344178.pdf?abstractid=7344178&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6483118.pdf?abstractid=6483118&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2954342.pdf?abstractid=2954342&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2968374.pdf?abstractid=2968374&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6223420.pdf?abstractid=6223420&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/7364898.pdf?abstractid=7364898&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3378586.pdf?abstractid=3378586&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2244511.pdf?abstractid=2244511&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2338887.pdf?abstractid=2338887&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6377318.pdf?abstractid=6377318&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3760048.pdf?abstractid=3760048&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3799449.pdf?abstractid=3799449&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3801873.pdf?abstractid=3801873&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2024669.pdf?abstractid=2024669&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2955646.pdf?abstractid=2955646&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6325338.pdf?abstractid=6325338&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/7446978.pdf?abstractid=7446978&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/7305922.pdf?abstractid=7305922&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6542019.pdf?abstractid=6542019&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/7324102.pdf?abstractid=7324102&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/5090097.pdf?abstractid=5090097&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6943940.pdf?abstractid=6943940&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/1328964.pdf?abstractid=1328964&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2170882.pdf?abstractid=2170882&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6769260.pdf?abstractid=6769260&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/621121.pdf?abstractid=621121&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/663363.pdf?abstractid=663363&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/7317444.pdf?abstractid=7317444&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2538795.pdf?abstractid=2538795&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/2566830.pdf?abstractid=2566830&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6607399.pdf?abstractid=6607399&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6068228.pdf?abstractid=6068228&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6122646.pdf?abstractid=6122646&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/4437402.pdf?abstractid=4437402&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6589947.pdf?abstractid=6589947&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3236569.pdf?abstractid=3236569&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/1439706.pdf?abstractid=1439706&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6417060.pdf?abstractid=6417060&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6170669.pdf?abstractid=6170669&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/6086926.pdf?abstractid=6086926&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/5360215.pdf?abstractid=5360215&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/3298768.pdf?abstractid=3298768&mirid=1", "https://papers.ssrn.com/sol3/Delivery.cfm/320161.pdf?abstractid=320161&mirid=1"];
+let batchIndex = 0;
+
+function openBatch(count) {
+  if (batchIndex >= pendingUrls.length) {
+    alert('All pending links have already been opened!');
+    return;
+  }
+  let end = Math.min(batchIndex + count, pendingUrls.length);
+  let opened = 0;
+  for (let i = batchIndex; i < end; i++) {
+    window.open(pendingUrls[i], '_blank');
+    opened++;
+  }
+  batchIndex = end;
+  alert('Opened ' + opened + ' direct download tabs! Check your browser downloads bar.');
+}
+
+function filterList() {
+  let q = document.getElementById('filterInput').value.toLowerCase();
+  let rows = document.querySelectorAll('#linksTable tbody tr');
+  rows.forEach(r => {
+    let text = r.innerText.toLowerCase();
+    r.style.display = (text.indexOf(q) !== -1) ? '' : 'none';
+  });
+}
+
+function copyConsoleScript() {
+  const code = "// ==============================================================================\n// SSRN HIGH-SPEED AUTO-DOWNLOADER (PASTE IN CHROME DEVTOOLS CONSOLE ON SSRN.COM)\n// ==============================================================================\n// 1. Open Chrome and go to: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6891658\n// 2. Press F12 to open Developer Tools, click the \"Console\" tab.\n// 3. Paste this snippet and press Enter.\n// 4. Click \"Allow\" when Chrome prompts to download multiple files.\n// 5. All 127 papers will automatically download into your Downloads folder!\n\n(function() {\n  const paperIds = [\"6920018\", \"6932882\", \"6749859\", \"6888620\", \"4581048\", \"1625480\", \"6185958\", \"5305617\", \"7225798\", \"2023942\", \"3855181\", \"6748278\", \"5052740\", \"6771163\", \"6850881\", \"6216978\", \"2282027\", \"1493490\", \"4207825\", \"4178929\", \"3176251\", \"7226353\", \"4400519\", \"894877\", \"3277218\", \"846326\", \"996082\", \"1470514\", \"3600695\", \"3429999\", \"4568171\", \"3040061\", \"2762219\", \"3779896\", \"1550035\", \"6648078\", \"2934048\", \"3822208\", \"5109409\", \"3394866\", \"4345640\", \"5132961\", \"3509341\", \"3351873\", \"4748367\", \"5014\", \"3748321\", \"1262623\", \"4569993\", \"1156202\", \"4742138\", \"401580\", \"5596975\", \"4468032\", \"3596659\", \"1972730\", \"6696318\", \"7351019\", \"6765778\", \"6921178\", \"2409078\", \"6407379\", \"2034814\", \"4003012\", \"2323906\", \"3566980\", \"6592831\", \"6732758\", \"6071846\", \"6932998\", \"4923443\", \"7143718\", \"5611392\", \"6387397\", \"6609698\", \"7059779\", \"7231679\", \"7370018\", \"2021556\", \"6479878\", \"2672061\", \"6693260\", \"6450559\", \"6323618\", \"7344178\", \"6483118\", \"2954342\", \"2968374\", \"6223420\", \"7364898\", \"3378586\", \"2244511\", \"2338887\", \"6377318\", \"3760048\", \"3799449\", \"3801873\", \"2024669\", \"2955646\", \"6325338\", \"7446978\", \"7305922\", \"6542019\", \"7324102\", \"5090097\", \"6943940\", \"1328964\", \"2170882\", \"6769260\", \"621121\", \"663363\", \"7317444\", \"2538795\", \"2566830\", \"6607399\", \"6068228\", \"6122646\", \"4437402\", \"6589947\", \"3236569\", \"1439706\", \"6417060\", \"6170669\", \"6086926\", \"5360215\", \"3298768\", \"320161\"];\n  let index = 0;\n  let successCount = 0;\n  \n  console.log(\"%c[SSRN Downloader] Starting batch download of \" + paperIds.length + \" papers...\", \"color: #38bdf8; font-size: 16px; font-weight: bold;\");\n  \n  function downloadNext() {\n    if (index >= paperIds.length) {\n      console.log(\"%c[SSRN Downloader] ALL COMPLETED! Successfully triggered \" + successCount + \" papers.\", \"color: #34d399; font-size: 18px; font-weight: bold;\");\n      alert(\"All \" + successCount + \" papers have been triggered for download!\");\n      return;\n    }\n    \n    const id = paperIds[index];\n    const url = \"https://papers.ssrn.com/sol3/Delivery.cfm/\" + id + \".pdf?abstractid=\" + id + \"&mirid=1\";\n    \n    const link = document.createElement(\"a\");\n    link.href = url;\n    link.target = \"_blank\";\n    link.download = \"ssrn-\" + id + \".pdf\";\n    document.body.appendChild(link);\n    link.click();\n    setTimeout(() => link.remove(), 1000);\n    \n    successCount++;\n    index++;\n    console.log(\"%c[\" + index + \"/\" + paperIds.length + \"] Download triggered: SSRN-\" + id, \"color: #fbbf24; font-size: 13px;\");\n    \n    // 2.5 second delay between downloads to prevent SSRN rate-limiting\n    setTimeout(downloadNext, 2500);\n  }\n  \n  downloadNext();\n})();\n";
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.innerText = '✅ Script Copied to Clipboard!';
+    btn.style.background = '#059669';
+    setTimeout(() => {
+      btn.innerText = '2. Copy Console Script (127 Papers)';
+      btn.style.background = '#4f46e5';
+    }, 3000);
+  }).catch(err => {
+    alert('Failed to copy. Please open C:\\Users\\SIGMA\\Downloads\\DOWNLOAD_ALL_IN_BROWSER_CONSOLE.js directly.');
+  });
+}
+
+</script>
+</body>
+</html>
