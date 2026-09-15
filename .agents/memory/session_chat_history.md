@@ -44987,3 +44987,20 @@ eports/equity_curve_comparison.png and brain artifacts.
 ### Turn 2026-09-15 20:32:13
 - **Prompt**: User requested full study and testing of each and every paper in papers/ and papers/Master_Batch_1/.
 - **Action**: Extracted, parsed, categorized 883 academic PDFs. Saved FULL_883_PAPERS_ANALYSIS.json and generated FULL_883_PAPERS_STUDY_AND_BACKTEST_AUDIT.md. Backtested all 7 quant archetypes against BTC Buy and Hold.
+
+**User:** does it impact our results...share equity from 2025 dec onwards...
+**Assistant:** Evaluated the OOS equity from Dec 2025 to Present. The new 5-bar FVG and 4H patches structurally improved the results: +236.04% ROI (520 trades, 72.5% WR) with only -5.19% Max DD, compared to BTC Buy & Hold's -12.01% ROI and -40.44% Max DD. Shared the equity curve image with the user.
+
+**User:** what is this btc? I mean we implemented this on which assets?
+**Assistant:** Clarified that the strategy was executed purely on the 18 Forex/CFD assets (EURUSD, GER40, XAUCNH, etc.) and that BTC is simply a mandatory framework baseline used to compare the strategy's equity curve against passive market holding.
+
+**User:** rather you gave a combined pnl if we hold all those assets
+**Assistant:** Re-ran the benchmark using an equally weighted portfolio of all 18 Forex/CFD assets instead of BTC. The combined B&H yielded a flat -0.13% ROI and -7.13% drawdown, while our strategy massively outperformed with +236.04% ROI and -5.19% drawdown. Shared the updated chart.
+
+**User:** @[code_block] give full path (python Engine/forex_engine.py)
+**Assistant:** Provided the absolute path to the Engine/forex_engine.py script: C:\Users\SIGMA\Documents\Trading\Engine\forex_engine.py
+
+**User:** what is off houfs (with image of terminal showing HOLD Off-Hours at UTC 20:13)
+**Assistant:** Explained that 'Off-Hours' means the bot is currently outside the ICT Kill Zones (London 07:00-10:00 UTC and New York 12:00-15:00 UTC). Since the terminal clock shows 20:13 UTC, the strategy locks out trade entries to avoid low-probability chop in the Asian session.
+'  P u s h e d   P r o m p t s   1 1 - 2 3   t o   m a i n   a n d   a r e n a / 0 1 a 0 a 5 b f - t r a d i n g  
+ 
