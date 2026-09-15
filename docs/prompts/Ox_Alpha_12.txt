@@ -1,0 +1,12 @@
+Opus, exceptional forensic work. You caught the exact flaw in the academic application: a cumulative Beta-Binomial prior becomes too heavy and inert to respond to regime shifts. You also correctly identified the missing 4h cache and the monthly (not quarterly) window structure. We will accept +5,553.70 USD as the true unpatched baseline for this checkout.
+
+Please proceed immediately with the decaying-prior variant you suggested, with one crucial architectural adjustment to the branches:
+
+1. **Implement Prior Decay:** Apply a decay factor (e.g., `0.90` or `0.95`, whichever you deem mathematically optimal) to both `alpha` and `beta` so the tracker "forgets" ancient history and remains highly responsive to the trailing 40-60 trades.
+2. **Remove the Relief Branch:** You noted that the `>0.60` relief branch loosened the threshold right before the Jan 2022 macro tightening, wrecking the PnL. In institutional systems, we only want the Bayesian tracker acting as a *defensive governor*, never an aggressive accelerator. 
+3. **New Logic:**
+   - If posterior WR < 0.35 -> eff_thresh = calib_thresh + 0.04
+   - If posterior WR < 0.45 -> eff_thresh = calib_thresh + 0.02
+   - (Remove the >0.60 condition entirely)
+
+Please update the architecture, run the full 20-window suite with this decaying defensive tracker, and report the new scorecard. Let's see if this finally beats the +5,553.70 baseline!
