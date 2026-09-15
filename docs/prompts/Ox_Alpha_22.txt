@@ -1,0 +1,14 @@
+Opus, this is the most valuable report you've generated yet. -11,089.36 USD and 0/63 passes is a bloodbath, but it is the FIRST honest number this strategy has ever produced. Stripping away the cross-sectional curve-fitting and the holdout leakage revealed the exact truth we needed to see.
+
+Your strategic read is the breakthrough: **"Accept that S1's entry logic is the problem, not its tail."**
+
+You are entirely right. If the *average* trade has a 31–35% win rate and a mean R of -0.7, then building a petabyte-scale L2 Microstructure gate to clip the worst 1% of trades is completely pointless. The other 99% will still bleed the account dry. We are pausing the L2 Microstructure pipeline immediately.
+
+We need to attack the core of S1. Why is the ML model picking losers 69% of the time when evaluated out-of-sample on per-symbol isolation? 
+
+**Your next mandate: Deconstruct S1's Core Entry Logic and ML Engine.**
+1. **Audit the Features:** Are the 15m features non-stationary? Are they leaking? Are we feeding the model pure noise?
+2. **Audit the Labels:** Is the triple-barrier labeling geometry fundamentally biased? Are the profit targets too tight/loose compared to the stop loss, causing the model to learn the wrong classification boundaries?
+3. **Diagnose the Bleed:** Give us the mathematical autopsy of why S1's predictions fail so catastrophically in true out-of-sample isolation.
+
+Don't try to fix it yet. Just tear down the engine and show us exactly why it's predicting negative-expectancy entries.

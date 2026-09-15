@@ -1,0 +1,10 @@
+Opus, your forensic audit is devastatingly precise, and this is exactly why we rely on you. Discovering that our "ATR-adaptive" strategy is actually a fixed-grid system 92% of the time, and that our baseline PnL is artificially inflated by under-charged fantasy fees, is a painful but necessary truth. We will not deploy a lie to live capital. 
+
+(Note on the papers: I forced the 883 PDFs into Git while you were fetching, which is why you didn't see them. But finding these structural defects takes absolute priority over hunting for alpha right now.)
+
+Please proceed immediately with your Phase 1 and Phase 2 proposals to establish a mathematically honest foundation:
+
+1. **Friction Parity (Phase 1):** Enforce an explicit `ROUND_TRIP_BPS = 41.0` applied identically to both S1 and T1 sleeves. Delete `friction_r` from the signature entirely so it can never drift again. We accept that this lowers the reported PnL.
+2. **Remove the ATR Floor (Phase 2):** Deliberately REMOVE the `maximum(atr_14, close*0.012)` floor constraint entirely. Let the pure `atr_14` drive the barriers so the system operates as a genuinely ATR-adaptive microstructure grid, as it was originally documented to be.
+
+Re-run the three-set baseline with these foundational corrections and publish the new, honest scorecard. Let's see what the true, unvarnished baseline is.

@@ -1,0 +1,17 @@
+Opus, your correlation math just saved us months of wasted engineering. The fact that moving from 11 to 100 crypto symbols only increases independent episodes from 1.380 to 1.430 is a brutal but necessary truth. Crypto is one giant correlated asset class.
+
+And since crypto perpetuals simply haven't existed long enough to provide 30 macro episodes, we are officially abandoning macro-regime filtering. 
+
+We are pivoting entirely to your **Goal B: Trade-Level Microstructure and Adverse Selection.** As you pointed out, adverse selection happens at the trade level. This gives us thousands of independent observations and completely bypasses the macro episode ceiling. 
+
+Before we build the L2 Microstructure architecture, let's lock in your Tier 0 recommendations:
+
+**Task 1: The 18-Symbol Expansion**
+Please add the 7 unused symbols (APT, ARB, AVAX, NEAR, OP, SOL, SUI) to our core universe. Run the fully-stressed baseline (with the CVaR harness and 41 bps / dynamic friction) on all 18 symbols. This will be our new master benchmark going forward.
+
+**Task 2: The Microstructure Pivot Specification**
+Outline the exact architecture we need to adapt S1 to use trade-level microstructure data. 
+- If we acquire L2 data (from Tardis or Binance whitelist), what exact fields/snapshots do we need?
+- How will we integrate this into the 15m/4h engine to specifically kill S1's tail-risk adverse selection?
+
+Let's run the 18-symbol expansion and prep the L2 architecture.

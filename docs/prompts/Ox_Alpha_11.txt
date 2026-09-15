@@ -1,0 +1,25 @@
+Opus, we are upgrading our Master Institutional Dual-Model Strategy runner.
+
+We have conducted a rigorous ablation study on academic enhancements and determined that a Bayesian Adaptive Probability Threshold (using a Beta-Binomial conjugate prior) significantly improves out-of-sample resilience. It does this by dynamically penalizing the required ML entry probability threshold when the posterior win rate drops below 45% during choppy regimes.
+
+Currently, the master runner (`run_20_oos_dual_model.py`) iterates over the 20 Out-Of-Sample (OOS) windows completely independently to enforce strict causal boundaries. However, this causes our Bayesian state tracking to wipe its memory at the start of every 3-month window. We need the tracker to maintain continuous memory across the entire 5.5-year walk-forward test.
+
+Your task is to:
+1. Update `InstitutionalDualModelEngine` to accept and maintain a continuous Bayesian state object (`bayes_alpha`, `bayes_beta`, `n_trades`).
+2. Update the master loop in `run_20_oos_dual_model.py` to instantiate this Bayesian state object ONCE before the loop starts, and pass it continuously through all 20 sequential windows, ensuring memory persists across regimes.
+3. The Bayesian logic should adjust the effective entry probability threshold:
+   - If posterior WR < 0.35 -> eff_thresh = base_thresh + 0.04
+   - If posterior WR < 0.45 -> eff_thresh = base_thresh + 0.02
+   - If posterior WR > 0.60 -> eff_thresh = base_thresh - 0.01
+4. Run the full 20-window walk-forward suite end-to-end.
+5. Verify that the cumulative PnL cleanly exceeds the current unpatched baseline of +6,454.66 USD. Provide the new 20-window scorecard.
+
+Codebase Context (Read via raw URLs to bypass context limits):
+- Strategy Engine: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/s1_dual_model_orderflow.py
+- Master Runner: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_20_oos_dual_model.py
+
+Dataset Provenance:
+- 11 Certified Institutional Binance USDT-M Perpetuals (BTC, ETH, XRP, BNB, DOGE, ADA, TRX, LINK, DOT, LTC, BCH)
+- 3.47M 15m footprint bars (2020-2026)
+
+Please fetch the files, write the updated architecture locally, execute the end-to-end 20-window OOS test, and report the final scorecard!

@@ -1,0 +1,13 @@
+Opus, this is exactly why we rely on you. Your ability to look past a "miraculous" +$3,000 PnL improvement and ruthlessly decompose it until you find the structural rot is unparalleled. 
+
+Uncovering the Cross-Sectional Training Coupling (where adding an altcoin retroactively changes a BTC trade) and the Holdout Leakage (76 double-counted trades in overlapping windows) means you just saved us from trading a completely contaminated system. Also, massive respect for calling out your own missed test run on `test_friction_parity.py`. That level of rigor is exactly what we need.
+
+You are 100% correct: we are freezing the L2 data acquisition. We cannot build a high-frequency microstructure gate on top of a broken foundation.
+
+**Please execute the structural repairs immediately:**
+
+1. **Fix the Holdout Leakage:** Rewrite/regenerate the window sets (Primary, Holdout, Expanded) so they are 100% temporally disjoint. Zero overlap. True out-of-sample isolation.
+2. **Fix the Cross-Sectional Training Coupling:** Refactor the ML training loop (`run_20_oos_dual_model.py:161`) so that models are trained *per-symbol* (or however you deem architecturally sound to ensure that adding/removing a symbol does not contaminate the predictions of the others). We need clean attribution.
+3. **The Pristine Baseline:** Once the leaks are plugged and the training is decoupled, re-run the 18-symbol baseline through the fully stressed CVaR harness. 
+
+Let's clean the foundation so we can finally trust the numbers.

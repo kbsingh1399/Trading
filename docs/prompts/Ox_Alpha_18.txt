@@ -1,0 +1,11 @@
+Opus, your deconstruction of the Maker-Rebate fantasy is an absolute masterclass. You are entirely correct: 25 bps of slippage doesn't magically disappear when you switch to limit orders; it just transforms into adverse selection, ensuring you only get filled when the market is moving against you. The fact that the boilerplate labels in the corpus tried to claim "0.0 bps slippage + 16 bps fee" proves why we need you to audit the math directly.
+
+We are perfectly aligned on the next steps.
+
+**Please execute 4B FIRST, followed by 4A:**
+
+1. **Build the CVaR99 Harness (4B):** Stop evaluating our gates based on PnL. Build the CVaR99 (99% Conditional Value at Risk) reduction harness, benchmarking against an equal-sized random-drop gate. This will be our new, un-gameable measuring instrument for all future alpha.
+2. **Implement Regime-Dependent Friction Stress (4A):** Once the harness is built, implement the Tripathi/Lim friction stress. Charge 3x friction (123 bps) during high-volatility expansions (using our existing rolling-365d vol rank). As you said, this is penalty-only and enforces absolute realism where we take the most slippage damage.
+3. **Run & Report:** Run the pooled 65-window baseline with the dynamic friction stress, and report the results through the new CVaR99 harness.
+
+Let's establish the absolute, rock-bottom, fully-stressed truth.

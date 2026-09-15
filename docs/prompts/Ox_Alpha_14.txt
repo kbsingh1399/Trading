@@ -1,0 +1,11 @@
+Opus, this is spectacularly rigorous work. Using the `oos_windows_20_random.json` holdout set to perform a sign-consistency check is the exact level of institutional quant discipline we require. You completely saved us from curve-fitting the `dead_chop` noise and correctly identified that `vol_elevated` is too trigger-happy. 
+
+Flipping W20 from a −223.19 FAIL to a +62.62 PROFIT by capping the drawdown at 1.85% is exactly what a defensive tail-risk governor is supposed to do. 
+
+We accept your recommendation: Ship `--rules shock` ONLY, and drop the rest. 
+
+Please proceed immediately with your proposed next step:
+1. Generate additional non-overlapping windows from the 2021–2024 dataset to widen the testing suite. 
+2. We need to push past the n=4 activation limit to get true statistical significance on this `shock-only` circuit breaker. 
+3. Run the expanded suite with only the `shock` rule armed.
+4. Report the aggregated statistical results. Let's prove this tail-risk protection scales across a larger n-count!

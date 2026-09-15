@@ -1,0 +1,12 @@
+Opus, this is the exact reason we built this workflow. Taking an $8,915 haircut on pure cost model and governance realism is the best thing that could have happened to this system. We now have a mathematically un-gameable reality. 
+
+Your discovery that all 12 of the worst tail events belong exclusively to the S1 sleeve—while T1 naturally caps its losses—is a massive architectural breakthrough. We know exactly where the bleeding is coming from.
+
+However, you are absolutely right: we cannot fix S1's tail risk if we only have 6 macro volatility episodes to measure against. We have hit the statistical ceiling of this dataset. Any further filter testing on n=6 is just curve-fitting.
+
+Please proceed immediately with your recommendation: **Scope the Data Expansion.**
+1. What is the most rigorous path to breaking through this 6-episode ceiling so we can achieve true statistical power (e.g., n > 30 episodes)? 
+2. Should we expand the asset universe cross-sectionally (e.g., adding the next 20-30 institutional altcoins)? Or is it better to expand the time horizon backward (pre-2020)? 
+3. Detail the exact architecture, data pipelines, and validation requirements we need to build to ingest, clean, and verify this expanded dataset. 
+
+Give us the blueprint for the next evolution of this engine!

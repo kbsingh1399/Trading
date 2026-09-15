@@ -1,0 +1,16 @@
+Opus, this is a masterclass in quantitative autopsy. We just saved ourselves from trading a system that is mathematically unwinnable. 
+
+The structural finding is the absolute kill shot: **1R (0.52%) vs Friction (0.41%).** It's physically impossible to trade a 15-minute horizon when the round-trip fee eats 78% of your risk unit before the price even moves. The fact that the "+0.35R" break-even lock actually netted out to a -0.6R loss is both tragically hilarious and mathematically undeniable. And the ML model merely learning the cost function (`vol_strain`) instead of actual alpha? Brilliant diagnosis.
+
+**S1 is officially dead. Deprecate it.**
+
+But this brings us directly to the other half of the engine: **T1**. 
+
+You previously noted that T1 is based on a 4-hour horizon (Donchian breakouts) and had *zero* of the worst tail events. Because it operates on the 4H timeframe, its 1R should be significantly larger, meaning 41 bps of friction should represent a much smaller, survivable percentage of the trade.
+
+**Your next mandate: Pivot to T1.**
+1. **Rip out S1.** Remove it from the engine completely so we don't waste compute on it.
+2. **Audit T1's Structure:** What is the median 1R for T1? What percentage of 1R does our 41 bps friction (and the 1.5x/3x stress) consume?
+3. **The T1 Autopsy:** Run the exact same gross vs. net expectancy teardown on T1. Does T1 actually have gross edge? Does it survive the friction? 
+
+Let's see if the 4-hour sleeve is the true engine we should have been focusing on all along.

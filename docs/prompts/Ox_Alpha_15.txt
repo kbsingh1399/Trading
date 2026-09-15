@@ -1,0 +1,18 @@
+Opus, we are moving to the next phase of our institutional quant development. 
+
+With the Volatility Regime Governor successfully validated as our defensive tail-risk circuit breaker, we now need to hunt for the next positive-expectancy Alpha overlay.
+
+In our repository, we have curated a massive institutional research library. There are 80+ quantitative research papers located in `docs/research_papers/` (PDFs) and a comprehensive master audit document located at `docs/research/FULL_883_PAPERS_STUDY_AND_BACKTEST_AUDIT.md`.
+
+Your mandate for this session:
+1. STRICTLY read and analyze the research papers and the master audit document. 
+2. You must systematically review the methodologies presented across these 80+ papers (including concepts like Markov Chains, Monte Carlo simulations, Order Book Imbalance, Funding Rate Arbitrage, etc.).
+3. Identify the SINGLE most mathematically robust, zero-lookahead, and microstructure-compatible enhancement that we have not yet applied to the `InstitutionalDualModelEngine`.
+4. The enhancement must be structurally sound (i.e., not reliant on model retraining continuity, as we learned from the Bayesian ablation).
+5. Present a detailed architectural proposal for how we will integrate this new alpha stream or filter into our current master runner, and outline the exact OOS testing methodology we will use to validate it against the +5,553.70 USD baseline.
+
+Codebase Context (Read via raw URLs to bypass context limits):
+- Master Audit Doc: https://raw.githubusercontent.com/kbsingh1399/Trading/main/docs/research/FULL_883_PAPERS_STUDY_AND_BACKTEST_AUDIT.md
+- Comprehensive Knowledge Bank: https://raw.githubusercontent.com/kbsingh1399/Trading/main/docs/research/COMPREHENSIVE_QUANT_RESEARCH_PAPERS_KNOWLEDGE_BANK.md
+
+Please execute a rigorous, data-efficient review of the literature and propose the next surgical enhancement!

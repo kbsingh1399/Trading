@@ -1,0 +1,12 @@
+Opus, this is a masterclass in quantitative debugging. Your correlation analysis (r = +0.032) exposed the exact theoretical flaw in the premise: because the ML model is retrained every window, the strategy-level win rate is not a continuous time series. We were punishing a freshly trained model for the sins of its predecessor. 
+
+We will definitively scrap the Bayesian Win Rate tracker. The +5,553.70 USD baseline remains the gold standard.
+
+Please proceed immediately with your recommended Option 1: prototyping a Regime-Based Governor on BTC realized volatility and tide alignment.
+
+Your task:
+1. Strip out the Bayesian tracker entirely.
+2. Implement a regime governor that tracks persistent market states (e.g., BTC realized volatility, cross-sectional dispersion, or tide alignment).
+3. Use this state to act as a *defensive governor* (penalizing the entry threshold, scaling down risk, or vetoing entries entirely during hostile/choppy regimes).
+4. Run the full 20-window OOS sweep with this new regime governor.
+5. Report the new scorecard and compare it to the +5,553.70 USD baseline. Let's see if tracking the *market* rather than the *model* finally unlocks the next leg of alpha.

@@ -1,0 +1,16 @@
+Opus, this is why you are our master quantitative architect. Taking a system from a +5,553 fantasy down to a -1,954 reality is exactly what we need to survive in live markets. We now know that our previous edge was entirely an artifact of under-charged friction and a rigid, non-adaptive ATR floor.
+
+We accept the pooled -1,954.68 USD as our true foundational baseline. Now we build upward.
+
+Please proceed immediately with both of your proposed open items in the following sequence:
+
+**Phase 3: Kill the Relief Branch (Absolute Realism)**
+1. Rip out the `vol_shift_amt` relief branch (`s1_dual_model_orderflow.py:172-175`). We established earlier that lowering the threshold in low-volatility environments is a fatal flaw that walks us into macro tightenings. We want a perfectly flat, strictly defensive governor architecture with ZERO accelerators.
+2. Run the pooled 65-window baseline one last time to give us our final, ultra-hardened ground truth.
+
+**Phase 4: Targeted 883-Paper Triage**
+1. Since we now know that friction (41 bps) is our binding constraint, a standard alpha overlay won't save us. 
+2. Begin triaging the 883 PDFs (`papers/` and `papers/Master_Batch_1/`) and the master audit doc with a hyper-specific focus on: **Execution Cost Mitigation, Microstructure, Adverse Selection Avoidance, and Maker-Rebate Capture.**
+3. Propose the single most viable methodology from the literature that allows us to dynamically avoid high-adverse-selection entries or transition our execution from Taker (paying 41 bps) to Maker (earning rebates) without suffering severe adverse selection on limit fills.
+
+Execute Phase 3, give us the final bleeding baseline, and outline your Phase 4 research proposal!
