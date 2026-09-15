@@ -126,7 +126,9 @@ def pre_flight_data_sync(mt5_conn: MT5Connection):
 
                     df_combined = pd.concat([df_existing, new_rows], ignore_index=True)
                     df_combined = df_combined.drop_duplicates(subset=['time'], keep='first').sort_values('time').reset_index(drop=True)
-                    df_combined.to_parquet(m15_file, index=False)
+                    tmp_file = m15_file + ".tmp"
+                    df_combined.to_parquet(tmp_file, index=False)
+                    os.replace(tmp_file, m15_file)
                     print(f"  -> [{asset:<7}] Appended +{len(new_rows):>2} missing candles (Up to {df_combined['datetime'].iloc[-1].strftime('%Y-%m-%d %H:%M UTC')})")
                     total_appended += len(new_rows)
                 else:
