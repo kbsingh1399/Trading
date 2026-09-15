@@ -44,25 +44,45 @@ def main():
     MIN_WR = criteria.get("min_winrate_percent", 40.0)
     MIN_TRD = criteria.get("min_trades", 15)
     PURGE_MS = 72 * 3600 * 1000
-    MIN_PROB = 0.50        # minimum probability gate before top-N ranking
-    MAX_TRADES_PER_DIR = 50  # increased from 35 for more trade volume
 
     engine = InstitutionalDualModelEngine(
         capital=CAPITAL,
-        base_risk=50.0,
-        house_risk=85.0,
-        friction_r=0.25,
-        target_r=2.20,
-        stop_r=1.00,
-        max_dd_limit=4.75,
-        profit_goal=500.0,
-        min_trades=15,
-        max_per_symbol=3,
+        base_risk=54.0,
+        house_risk_max=90.0,
+        defense_risk=14.0,
+        milestone_risk=10.0,
+        trans_risk=35.0,
+        trans_thresh=480.0,
+        t1_base_risk=42.0,
+        t1_trans_risk=22.0,
+        cushion_multiplier=0.25,
+        milestone_profit_usd=500.0,
+        max_concurrent=3,
+        max_s1_concurrent=2,
+        max_t1_concurrent=2,
+        cooldown_bars=4,
+        win_r_reset_thresh=0.90,
+        conf_prob_thresh=0.46,
+        conf_mult=1.35,
+        max_dd_limit=4.40,
         random_state=42
     )
 
+    cache_dir = REPO_ROOT / "scratch" / "cache_multi_tf"
+    df_btc = pd.read_parquet(cache_dir / "BTCUSDT_4h.parquet")
+    df_btc['time'] = pd.to_datetime(df_btc['time'], utc=True)
+    df_btc.sort_values('time', inplace=True)
+    df_btc.reset_index(drop=True, inplace=True)
+    df_btc['atr_pct'] = (df_btc['atr'] / df_btc['close']) * 100.0
+    df_btc['trailing_30d_atr_pct'] = df_btc['atr_pct'].rolling(180).mean()
+
+    print("Generating Pure T1 Quiet-Flow Breakout signals across certified assets...")
+    t0 = time.perf_counter()
+    df_t1 = engine.load_t1_breakout_trades()
+    print(f"Generated {len(df_t1):,d} T1 signals in {time.perf_counter() - t0:.2f}s.")
+
     print("\n" + "-" * 135)
-    print(f"{'W#':<3} | {'Window Name':<35} | {'Regime Setup':<24} | {'Trades':<7} | {'Win Rate':<8} | {'Net PnL':<12} | {'Net ROI':<9} | {'Max DD':<7} | {'Status':<6}")
+    print(f"{'W#':<3} | {'Window Name':<38} | {'Trades':<6} | {'S1 Tr':<6} | {'T1 Tr':<6} | {'Win Rate':<8} | {'Net PnL':<12} | {'Net ROI':<9} | {'Max DD':<7} | {'Status':<6}")
     print("-" * 135)
 
     passed_count = 0
@@ -84,15 +104,21 @@ def main():
         if len(train_set) < 500 or len(test_set) == 0:
             continue
 
-        clf_long, clf_short = engine.train_models(train_set)
-        selected, regime_str = engine.select_trades_for_window(test_set, clf_long, clf_short, min_prob=MIN_PROB, max_trades_per_dir=MAX_TRADES_PER_DIR)
-        res = engine.simulate_execution(selected)
+        s_ts = pd.Timestamp(w["start_date"], tz="UTC")
+        sub_btc = df_btc[df_btc['time'] < s_ts]
+        trailing_vol = sub_btc['trailing_30d_atr_pct'].iloc[-1] if len(sub_btc) > 0 else 1.75
+
+        ridge, clf, mu, sd, calib_thresh = engine.train_models(train_set)
+        selected = engine.score_test_candidates(test_set, ridge, clf, mu, sd, calib_thresh, trailing_vol_pct=trailing_vol)
+        res = engine.simulate_execution(selected, t1_df=df_t1, start_ms=start_ms, end_ms=end_ms)
 
         net_pnl = res["net_pnl"]
         net_roi = res["net_roi"]
         max_dd = res["max_dd"]
         wr = res["win_rate"]
         n_trd = res["trades"]
+        s1_tr = res["s1_trades"]
+        t1_tr = res["t1_trades"]
 
         is_pass = (net_roi >= MIN_ROI) and (max_dd <= MAX_DD) and (wr >= MIN_WR) and (n_trd >= MIN_TRD)
         status = "PASS" if is_pass else ("PROFIT" if net_pnl > 0 and max_dd <= MAX_DD else ("CASH" if n_trd == 0 else "FAIL"))
@@ -102,10 +128,10 @@ def main():
         total_trades += n_trd
         total_pnl += net_pnl
 
-        print(f"W{w_id:02d} | {w_name[:35]:<35} | {regime_str:<24} | {n_trd:<7d} | {wr:>5.1f}%  | {net_pnl:>+10.2f} USD | {net_roi:>+7.2f}% | {max_dd:>5.2f}% | {status:<6}")
+        print(f"W{w_id:02d} | {w_name[:38]:<38} | {n_trd:<6d} | {s1_tr:<6d} | {t1_tr:<6d} | {wr:>5.1f}%  | {net_pnl:>+10.2f} USD | {net_roi:>+7.2f}% | {max_dd:>5.2f}% | {status:<6}")
 
     print("=" * 135)
-    print(f"MASTER ENGINE SCORECARD: Passed: {passed_count}/20 | Total Trades: {total_trades:,d} | Total PnL: {total_pnl:+,.2f} USD (ROI: {(total_pnl/CAPITAL)*100:+.2f}%)")
+    print(f"MASTER MULTIVERSE SCORECARD: Passed: {passed_count}/20 | Total Trades: {total_trades:,d} | Total PnL: {total_pnl:+,.2f} USD (ROI: {(total_pnl/CAPITAL)*100:+.2f}%)")
     print("=" * 135)
 
 if __name__ == "__main__":

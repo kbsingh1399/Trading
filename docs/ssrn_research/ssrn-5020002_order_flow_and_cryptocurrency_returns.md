@@ -1,13 +1,12 @@
 # Order Flow and Cryptocurrency Returns∗
 
-- **Source File**: `ssrn-5020002.pdf`
+- **Source File**: `ssrn-5020002 (1).pdf`
 - **Total Pages**: 71
 - **SSRN ID**: `ssrn-5020002`
 
 ---
 
-
-### Page 1
+## Page 1
 
 Order Flow and Cryptocurrency Returns∗
 Alexia Anastasopoulos
@@ -42,7 +41,7 @@ Department of Economics and Finance, Lang School of Business and Economics, Univ
 Guelph, Ontario N1G 2W1, Canada. Email: aanastas@uoguelph.ca.
 
 
-### Page 2
+## Page 2
 
 1
 Introduction
@@ -76,7 +75,7 @@ and transacting in over 50 fiat currencies.
 2
 
 
-### Page 3
+## Page 3
 
 the economic mechanisms driving order flow and price discovery in cryptocurrency markets.
 Although for traditional financial markets these questions have been addressed by a long
@@ -110,7 +109,7 @@ Menkveld (2014).
 3
 
 
-### Page 4
+## Page 4
 
 1988, 1991). According to this view, if trades convey information about future economic
 fundamentals that is not currently known by all market participants, then order flow acts
@@ -140,7 +139,7 @@ a transitory component that reverses in the short term and a permanent component
 4
 
 
-### Page 5
+## Page 5
 
 persists over the long term. Following Bianchi, Babiak and Dickerson (2022), we use lagged
 returns as a proxy for short-term reversal. In other words, the predictive regressions condition
@@ -170,7 +169,7 @@ In addition, we compute forecast combinations across the linear models (L-Mean),
 5
 
 
-### Page 6
+## Page 6
 
 non-linear models (NL-Mean).3
 In terms of the out-of-sample statistical analysis, we find that non-linear ML forecasts which
@@ -202,7 +201,7 @@ cryptocurrency market, we do not have enough data to perform weekly ML forecasti
 6
 
 
-### Page 7
+## Page 7
 
 annualized Sharpe ratio of 1.34.
 Importantly, portfolio performance improves substantially when the portfolio sorts are based
@@ -233,7 +232,7 @@ ized Sharpe ratio of 3.52 and a break-even transaction cost of 0.48% per day. We
 7
 
 
-### Page 8
+## Page 8
 
 therefore, that ML models that condition on order flow generate high economic value for
 long-only investors who pursue a realistic trading strategy investing in cryptocurrencies.
@@ -266,7 +265,7 @@ exclusively in-sample. Our portfolio sort analysis is related to Bianchi, Babiak
 8
 
 
-### Page 9
+## Page 9
 
 (2022), who study cryptocurrency portfolio sorts on lagged returns and trading volume shocks
 (denominated in US dollars), which differ from order flow. Our approach is distinct from
@@ -295,7 +294,7 @@ description of the CMC data, see, e.g., Liu and Tsyvinski, 2021 and Liu, Tsyvins
 9
 
 
-### Page 10
+## Page 10
 
 The CMC database contains data on thousands of coins, though most have low market
 capitalizations and/or limited historical data. To obtain the final cross-section of 82 coins,
@@ -331,7 +330,7 @@ from approximately 30 to 300.
 10
 
 
-### Page 11
+## Page 11
 
 information from over 300 exchanges and provides data on signed volume that is not available
 on CMC. Throughout our analysis, we use crypto data from CMC except for signed volume
@@ -372,7 +371,7 @@ i V ar(OFi)
 11
 
 
-### Page 12
+## Page 12
 
 where V CW
 i
@@ -405,7 +404,7 @@ The S&P 500 index returns (including dividends) are from the
 12
 
 
-### Page 13
+## Page 13
 
 CRSP database. The MSCI global index returns are taken from msci.com. The VIX index
 is obtained from CBOE.com.
@@ -429,7 +428,7 @@ returns.
 13
 
 
-### Page 14
+## Page 14
 
 3.1
 Panel Regressions with World Order Flow
@@ -461,7 +460,7 @@ In the Online Appendix, we also report detailed results for US order flow.
 14
 
 
-### Page 15
+## Page 15
 
 Aggregating order flow over one week mitigates the effect of market microstructure noise.
 Consequently, order flow may explain a greater variation of price movements at the weekly
@@ -493,7 +492,7 @@ example, Glosten and Milgrom (1985), Easley and O’Hara (1987) and Easley et al
 15
 
 
-### Page 16
+## Page 16
 
 a highly significant predictor of both one-day ahead and one-week ahead cryptocurrency
 returns. The daily predictive regressions exhibit an interesting pattern. Lagged order flow
@@ -524,7 +523,7 @@ Relevant to our analysis, Makarov and Schoar (2020) study the relation between o
 16
 
 
-### Page 17
+## Page 17
 
 and future returns specifically for Bitcoin.
 They find a significant negative relation be-
@@ -556,7 +555,7 @@ standardized world order flow on its 11 standardized components, the R2 is equal
 17
 
 
-### Page 18
+## Page 18
 
 the weekly horizon (t-stat=10.91). Other than world order flow, US and Korean order flows
 remain significant in all specifications. The full set of order flows together with the control
@@ -589,7 +588,7 @@ with international order flows. These coefficients are largely the same as with 
 18
 
 
-### Page 19
+## Page 19
 
 4
 Out-of-Sample Analysis
@@ -619,7 +618,7 @@ of the Online Appendix.
 19
 
 
-### Page 20
+## Page 20
 
 As previously discussed, cryptocurrency returns exhibit extremely heavy tails, characterized
 by high positive skewness and very high kurtosis. To mitigate the impact of heavy-tailed
@@ -649,7 +648,7 @@ of-sample performance of each model using an initial one-month test sample (Febr
 20
 
 
-### Page 21
+## Page 21
 
 2020 to March 13, 2020). We keep the model parameters fixed for one month and repeat this
 process by rolling forward the validation and test sets by one month, while expanding the
@@ -692,7 +691,7 @@ purposes, but they are available upon request.
 21
 
 
-### Page 22
+## Page 22
 
 4.3
 Out-of-Sample Performance
@@ -731,7 +730,7 @@ absolute error (MAE) and is, therefore, less sensitive to outliers. In unreporte
 22
 
 
-### Page 23
+## Page 23
 
 Next, comparing across linear OF models, the first column of Table 6 indicates that all
 linear models yield negative R2
@@ -779,7 +778,7 @@ and Goyal, 2008).
 23
 
 
-### Page 24
+## Page 24
 
 predict crypto returns using ML models conditioning on 40 characteristics, not including
 order flow. Their best-performing model (OLS) achieves an R2
@@ -814,7 +813,7 @@ is the historical mean rather than zero, making direct comparison with our resul
 24
 
 
-### Page 25
+## Page 25
 
 ranking, we allocate the 82 coins into five quintile portfolios. Allocating assets to quintile
 portfolios is a standard approach in the asset pricing literature and ensures that there is a
@@ -846,7 +845,7 @@ of information available in our data set.
 25
 
 
-### Page 26
+## Page 26
 
 5.2
 Portfolio Performance
@@ -883,7 +882,7 @@ For the results on portfolio sorts conditioning on just US order flow, please se
 26
 
 
-### Page 27
+## Page 27
 
 orthogonalizing OFW, which is essential in generating strong positive portfolio performance.
 Importantly, the positive relation between ortho-OFW and future coin returns suggests a
@@ -913,7 +912,7 @@ conditioning on OF achieve higher Sharpe ratios than those conditioning on EF or
 27
 
 
-### Page 28
+## Page 28
 
 across all non-linear models, except NN1. For example, the NL-Mean model generates an
 annualized Sharpe ratio of 3.45 for OF, compared to 1.88 for EF and 2.04 for OF+EF. This
@@ -947,7 +946,7 @@ the “virtue of complexity” (Kelly, Malamud and Zhou, 2024).
 28
 
 
-### Page 29
+## Page 29
 
 OF, yielding a weekly alpha of 5 × 0.79 = 3.95%.
 To illustrate these results, in Figure 1 we report the cumulative return of the long-short
@@ -976,7 +975,7 @@ illustrating the economic value of conditioning on order flow. In other words, i
 29
 
 
-### Page 30
+## Page 30
 
 good predictor, it should be able to identify which portfolio performs well and which one does
 not. Then, investors would benefit from a zero-cost trading strategy that goes long on the
@@ -1000,19 +999,19 @@ TOt = 1
 2
 X
 i∈L
-wi,t −
+wi,t −
 wi,t−1(1 + ri,t)
 P
 k∈L wk,t−1(1 + rk,t)
-+ 1
+ + 1
 2
 X
 j∈S
-wj,t −
+wj,t −
 wj,t−1(1 + rj,t)
 P
 n∈S wn,t−1(1 + rn,t)
-,
+ ,
 (5)
 where i ∈L (j ∈S) indicates that coin i (j) belongs to the long (short) portfolio, wi,t
 (wj,t) refers to the weight of coin i (j) at time t, and ri,t (rj,t) refers to the return of coin i
@@ -1021,7 +1020,7 @@ Accordingly, the turnover of the long-short portfolio defined above ranges betwe
 30
 
 
-### Page 31
+## Page 31
 
 Finally, we compute the break-even transaction cost (BE-TC) as the portfolio return divided
 by turnover (see, e.g., Avramov, Cheng and Metzker, 2023). The BE-TC is equal to the
@@ -1053,7 +1052,7 @@ a realistic trading strategy investing in cryptocurrencies.
 31
 
 
-### Page 32
+## Page 32
 
 6.2
 Limits to Arbitrage
@@ -1093,7 +1092,7 @@ over daily total volume, averaged over the past 21 days.
 32
 
 
-### Page 33
+## Page 33
 
 AI tercile. This is strong statistical evidence that the NL-Mean model performs best for the
 crypto portfolio that is the easiest to arbitrage.
@@ -1123,7 +1122,7 @@ Table A7 presents a bivariate sort analysis for L-Mean and NL-Mean conditioning 
 33
 
 
-### Page 34
+## Page 34
 
 economic fundamentals (EF). For both models, the Sharpe ratios are the lowest in the bottom
 AI tercile and increase monotonically as we move to the top AI tercile. This clearly indicates
@@ -1152,7 +1151,7 @@ above standard economic fundamentals.
 34
 
 
-### Page 35
+## Page 35
 
 We find that order flow matters both for explaining and for predicting the cross-section
 of cryptocurrency returns. World order flow has a strong contemporaneous and predictive
@@ -1169,7 +1168,7 @@ by order flow matters for cryptocurrency returns.
 35
 
 
-### Page 36
+## Page 36
 
 References
 Amihud, Y. (2002). Illiquidity and stock returns: cross-section and time-series effects. Jour-
@@ -1195,7 +1194,7 @@ impact of order flow and liquidity on the yield curve. Journal of Finance 59, 26
 36
 
 
-### Page 37
+## Page 37
 
 Cakici, N., S.J.H. Shahzad, B. Bedowska-Sojka, and A. Zaremba (2024). Machine learning
 and the cross-section of cryptocurrency returns. International Review of Financial Analysis,
@@ -1224,7 +1223,7 @@ Wiley.
 37
 
 
-### Page 38
+## Page 38
 
 Fieberg, C., G. Liedtke, T. Poddig, T. Walker, and A. Zaremba (2023). A trend factor for
 the cross-section of cryptocurrency returns. Journal of Financial and Quantitative Analysis
@@ -1251,7 +1250,7 @@ Kyle, A.S. (1985). Continuous auctions and insider trading. Econometrica 53, 133
 38
 
 
-### Page 39
+## Page 39
 
 Kelly, B., S. Malamud, and K. Zhou (2024). The virtue of complexity in return prediction.
 Journal of Finance 79, 459-503.
@@ -1279,7 +1278,7 @@ Shleifer, A., and R. W. Vishny (1997). The limits of arbitrage. Journal of Finan
 39
 
 
-### Page 40
+## Page 40
 
 Timmermann, A. (2006). Forecast combinations, in Elliott, G., C. W. J. Granger, and A.
 Timmermann (eds.), Handbook of Economic Forecasting, Volume 1, Amsterdam: North-
@@ -1289,7 +1288,7 @@ premium prediction. Review of Financial Studies 21, 1455-1508.
 40
 
 
-### Page 41
+## Page 41
 
 Table 1: Variance Decomposition of World Order Flow
 This table reports the variance decomposition of world order flow into its 11 country components. The
@@ -1336,7 +1335,7 @@ OF W
 41
 
 
-### Page 42
+## Page 42
 
 Table 2: Contemporaneous Panel Regressions with World Order Flow
 This table displays panel regression results of cryptocurrency returns on contemporaneous world order flow
@@ -1438,7 +1437,7 @@ Default Spreadt
 42
 
 
-### Page 43
+## Page 43
 
 Table 3: Predictive Panel Regressions with World Order Flow
 This table displays results of predictive panel regressions of cryptocurrency returns on lagged world order
@@ -1558,7 +1557,7 @@ Default Spreadt−1
 43
 
 
-### Page 44
+## Page 44
 
 Table 4: Contemporaneous Panel Regressions with All International Order Flows
 This table displays panel regression results of contemporaneous cryptocurrency returns on world order flow,
@@ -1711,7 +1710,7 @@ i,t
 44
 
 
-### Page 45
+## Page 45
 
 Table 5: Predictive Panel Regressions with All International Order Flows
 This table displays results of predictive panel regressions of cryptocurrency returns on lagged world order
@@ -1873,7 +1872,7 @@ ri,t−1
 45
 
 
-### Page 46
+## Page 46
 
 Table 6: Out-of-Sample Statistical Performance
 This table reports the out-sample statistical performance of the models using the R2
@@ -1942,7 +1941,7 @@ NL-Mean
 46
 
 
-### Page 47
+## Page 47
 
 Table 7: Portfolios Sorted on World Order Flow
 This table displays the performance of cryptocurrency portfolios sorted on world order flow (OFW ).
@@ -2046,7 +2045,7 @@ ortho-OFW
 47
 
 
-### Page 48
+## Page 48
 
 Table 8: Daily Portfolios Sorted on ML Forecasts
 This table displays the performance of cryptocurrency portfolios that are sorted on ML forecasts.
@@ -2297,7 +2296,7 @@ NL-Mean
 48
 
 
-### Page 49
+## Page 49
 
 Table 9: The Performance of Long vs Long-Short Portfolios
 This table compares the performance of the long to the long-short portfolio for daily returns. The portfolios
@@ -2559,7 +2558,7 @@ NL-Mean
 49
 
 
-### Page 50
+## Page 50
 
 Table 10: Double-Sorted Portfolios
 This table displays the performance of double-sorted cryptocurrency portfolios. We first sort on the arbitrage
@@ -2727,7 +2726,7 @@ Index
 50
 
 
-### Page 51
+## Page 51
 
 Figure 1: The Cumulative Return of Long-Short Portfolios
 The figure plots the cumulative return for the long-short portfolio of select machine learning models that
@@ -2737,7 +2736,7 @@ February 18, 2020 to June 30, 2022.
 51
 
 
-### Page 52
+## Page 52
 
 Order Flow and Cryptocurrency Returns
 Online Appendix
@@ -2748,7 +2747,7 @@ Table of Contents:
 • Additional tables report summary statistics and the robustness of the empirical results.
 
 
-### Page 53
+## Page 53
 
 A1
 Machine Learning Models
@@ -2787,7 +2786,7 @@ The OLS estimator is unbiased and efficient if the number of predictors P is rel
 1
 
 
-### Page 54
+## Page 54
 
 compared to observations T. However, when P approaches T, the OLS estimator becomes
 inefficient, and begins to overfit. To mitigate this problem, we apply a variety of ML models
@@ -2826,7 +2825,7 @@ regression and the lasso by performing both shrinkage and variable selection. We
 2
 
 
-### Page 55
+## Page 55
 
 the nonnegative tuning parameter, λ, using the validation sample (see Section A2 for more
 details).
@@ -2862,7 +2861,7 @@ components, while exhibiting high variance, may not necessarily have a significa
 3
 
 
-### Page 56
+## Page 56
 
 with ri,t+1. Consequently, the number of principal components used, K, is an important
 tuning parameter that is optimized using the validation sample as detailed in Section A2.
@@ -2895,7 +2894,7 @@ potential implications for future branches. The forecast error for each branch C
 4
 
 
-### Page 57
+## Page 57
 
 as the objective function:
 H(θ, C) = 1
@@ -2933,7 +2932,7 @@ reduction of the model beyond what is achieved with traditional bagging, improvi
 5
 
 
-### Page 58
+## Page 58
 
 model stability.
 The second type of ensemble model is gradient boosted regression trees (SGB), which grows
@@ -2962,7 +2961,7 @@ function (Hornik, Stinchcombe and White, 1989). We use feed-forward neural netwo
 6
 
 
-### Page 59
+## Page 59
 
 include an “input layer” of predictors, one or more “hidden layers” that facilitate interactions
 between predictors and non-linearly transform them, and an “output layer” that aggregates
@@ -3008,7 +3007,7 @@ linearly transformed signals into a single predictive output for the network.
 7
 
 
-### Page 60
+## Page 60
 
 We consider architectures with up to four hidden layers. Our shallowest neural network,
 denoted NN1, has a single hidden layer of 16 neurons. Next, NN2 has two hidden layers
@@ -3039,7 +3038,7 @@ ally intensive alternative to ℓ2 penalization while still providing shrinkage.
 8
 
 
-### Page 61
+## Page 61
 
 “batch normalization” to control predictor variability across different regions in the network,
 which stabilizes the network and accelerates the training process. Fourth, we adopt an en-
@@ -3077,7 +3076,7 @@ The ℓ2 objective function in Equation
 9
 
 
-### Page 62
+## Page 62
 
 function. To mitigate the impact of heavy-tailed data, we adopt the robust Huber objective
 function, as advocated by Gu, Kelly and Xiu (2020), defined as:
@@ -3125,7 +3124,7 @@ be included in the regression model. Lower values of K can reduce variance and m
 10
 
 
-### Page 63
+## Page 63
 
 overfitting. However, setting K too low risks omitting predictive information.
 For RF and SGB, the main hyperparameters include the number of trees and maximum
@@ -3156,7 +3155,7 @@ Equation (A.14), whereas XGBoost does not.
 11
 
 
-### Page 64
+## Page 64
 
 References
 Breiman, L. (2001). Random forests. Machine Learning 45, 5-32.
@@ -3177,7 +3176,7 @@ Holland.
 12
 
 
-### Page 65
+## Page 65
 
 Table A1: Hyperparameters
 This table describes the set of hyperparameters, which are tuned for each individual model implemented in
@@ -3216,7 +3215,7 @@ Patience = 5
 13
 
 
-### Page 66
+## Page 66
 
 Table A2: Summary Statistics
 This table presents summary statistics for the coin-specific variables used in our analysis: daily returns,
@@ -3392,7 +3391,7 @@ Volatility
 14
 
 
-### Page 67
+## Page 67
 
 Table A3: Mean Returns Across Time
 This table reports the mean daily (Panel A) and mean annualized (Panel B) returns across each year of
@@ -3521,7 +3520,7 @@ returns
 15
 
 
-### Page 68
+## Page 68
 
 Table A4: Contemporaneous Panel Regressions with US Order Flow
 This table displays panel regression results of cryptocurrency returns on contemporaneous US order flow and
@@ -3623,7 +3622,7 @@ Default Spreadt
 16
 
 
-### Page 69
+## Page 69
 
 Table A5: Predictive Panel Regressions with US Order Flow
 This table displays results of predictive panel regressions of cryptocurrency returns on lagged US order
@@ -3743,7 +3742,7 @@ Default Spreadt−1
 17
 
 
-### Page 70
+## Page 70
 
 Table A6: Portfolios Sorted on US Order Flow
 This table displays the performance of cryptocurrency portfolios sorted on US order flow (OFUSD).
@@ -3847,7 +3846,7 @@ ortho-OFUSD
 18
 
 
-### Page 71
+## Page 71
 
 Table A7: Double-Sorted Portfolios - Economic Fundamentals
 This table displays the performance of double-sorted cryptocurrency portfolios for models that condition on
@@ -3966,3 +3965,4 @@ Index
 (2.81)
 (3.54)
 19
+

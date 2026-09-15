@@ -1,0 +1,434 @@
+[
+  {
+    "filename": "ssrn-4149934.pdf",
+    "ssrn_id": "ssrn-4149934",
+    "title": "Illiquid Bitcoin Options\u2217",
+    "pages": 43,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4149934_illiquid_bitcoin_options.md",
+    "md_name": "ssrn-4149934_illiquid_bitcoin_options.md",
+    "abstract": "This paper conducts a first look into the regulated Bitcoin options market in the United States. Compared to stock options, bitcoin options tend to be ten times more illiquid as measured by bid-ask spreads. The illiquidity significantly affects bitcoin options pricing: Given that investors are on av"
+  },
+  {
+    "filename": "ssrn-4280098.pdf",
+    "ssrn_id": "ssrn-4280098",
+    "title": "Illiquid Bitcoin Options\u2217",
+    "pages": 43,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4280098_illiquid_bitcoin_options.md",
+    "md_name": "ssrn-4280098_illiquid_bitcoin_options.md",
+    "abstract": "This paper conducts a first look into the regulated Bitcoin options market in the United States. Compared to stock options, bitcoin options tend to be ten times more illiquid as measured by bid-ask spreads. The illiquidity significantly affects bitcoin options pricing: Given that investors are on av"
+  },
+  {
+    "filename": "ssrn-6344338 (1).pdf",
+    "ssrn_id": "ssrn-6344338",
+    "title": "Predicting Adverse Selection in High-Frequency",
+    "pages": 15,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-6344338_predicting_adverse_selection_in_high_frequency.md",
+    "md_name": "ssrn-6344338_predicting_adverse_selection_in_high_frequency.md",
+    "abstract": "We predict adverse selection in high-frequency cryptocurrency markets using gradient boosting (LightGBM) trained on 31,081,463 second-level observations of BTC/USDT perpetual futures on Bybit, spanning February 1, 2025 through February 16, 2026 (381 raw daily files). Our toxicity label (tox_A) ident"
+  },
+  {
+    "filename": "ssrn-4496644.pdf",
+    "ssrn_id": "ssrn-4496644",
+    "title": "Illiquid Bitcoin Options \u2217",
+    "pages": 50,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4496644_illiquid_bitcoin_options.md",
+    "md_name": "ssrn-4496644_illiquid_bitcoin_options.md",
+    "abstract": "This paper conducts a first look into the regulated Bitcoin options market in the United States. Compared to stock options, bitcoin options tend to be ten times more illiquid as measured by bid-ask spreads. The illiquidity significantly affects bitcoin options pricing: Given that investors are on av"
+  },
+  {
+    "filename": "ssrn-5262608.pdf",
+    "ssrn_id": "ssrn-5262608",
+    "title": "Learning the Spoofability of Limit Order Books With",
+    "pages": 22,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-5262608_learning_the_spoofability_of_limit_order_books_wit.md",
+    "md_name": "ssrn-5262608_learning_the_spoofability_of_limit_order_books_wit.md",
+    "abstract": "Preprint not peer reviewed"
+  },
+  {
+    "filename": "ssrn-4180768.pdf",
+    "ssrn_id": "ssrn-4180768",
+    "title": "# To whom correspondence should be addressed",
+    "pages": 20,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4180768_to_whom_correspondence_should_be_addressed.md",
+    "md_name": "ssrn-4180768_to_whom_correspondence_should_be_addressed.md",
+    "abstract": "Cryptocurrencies continue to captivate businesses and investors despite market fluctuations. The number of crypto users have risen rapidly in the last few years, and alarmingly, many appear to be unaware of the risks involved. These risks aren't confined to market hazards but include very sophistica"
+  },
+  {
+    "filename": "ssrn-4320775.pdf",
+    "ssrn_id": "ssrn-4320775",
+    "title": "Prediction-based limit order trading",
+    "pages": 9,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4320775_prediction_based_limit_order_trading.md",
+    "md_name": "ssrn-4320775_prediction_based_limit_order_trading.md",
+    "abstract": "among the most fundamental challenges for dealers in a securities market. We attempt to overcome this trade-off by incorporating predictions for buyer- and seller-initiated trades when submitting limit orders. Using the Avellaneda\u2013Stoikov model as an exam- ple, we show how dealers can adjust quotes "
+  },
+  {
+    "filename": "ssrn-5230047.pdf",
+    "ssrn_id": "ssrn-5230047",
+    "title": "Learning the Spoofability of Limit Order Books With",
+    "pages": 22,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-5230047_learning_the_spoofability_of_limit_order_books_wit.md",
+    "md_name": "ssrn-5230047_learning_the_spoofability_of_limit_order_books_wit.md",
+    "abstract": "This paper investigates real-time detection of spoofing activity in limit order books, focusing on cryptocurrency centralized exchanges. We first introduce novel order flow variables based on multi- scale Hawkes processes that account both for the size and placement distance from current best prices"
+  },
+  {
+    "filename": "ssrn-3707796.pdf",
+    "ssrn_id": "ssrn-3707796",
+    "title": "Machine Learning for Realised Volatility Forecasting",
+    "pages": 91,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-3707796_machine_learning_for_realised_volatility_forecasti.md",
+    "md_name": "ssrn-3707796_machine_learning_for_realised_volatility_forecasti.md",
+    "abstract": "We assess the predictive power of machine learning (ML) models for forecasting realised volatility using information from HAR model variables, limit order book (LOB) data, and news sentiment. Training and robustness checks on nearly seven million ML models show that high-dimensional ML models outper"
+  },
+  {
+    "filename": "ssrn-3704098.pdf",
+    "ssrn_id": "ssrn-3704098",
+    "title": "Deep Learning for Digital Asset Limit Order Books",
+    "pages": 9,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-3704098_deep_learning_for_digital_asset_limit_order_books.md",
+    "md_name": "ssrn-3704098_deep_learning_for_digital_asset_limit_order_books.md",
+    "abstract": "This paper shows that temporal CNNs accurately predict bitcoin spot price movements from limit order book data. On a 2 second prediction time horizon we achieve 71% walk-forward accuracy on the popular cryptocurrency exchange coinbase. Our model can be trained in less than a day on commodity GPUs wh"
+  },
+  {
+    "filename": "ssrn-6508779.pdf",
+    "ssrn_id": "ssrn-6508779",
+    "title": "Beyond Accuracy: A Validation Framework for Machine Learning",
+    "pages": 37,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-6508779_beyond_accuracy_a_validation_framework_for_machine.md",
+    "md_name": "ssrn-6508779_beyond_accuracy_a_validation_framework_for_machine.md",
+    "abstract": "No explicit abstract header."
+  },
+  {
+    "filename": "ssrn-4332126.pdf",
+    "ssrn_id": "ssrn-4332126",
+    "title": "Title: Augmented Bilinear Network for Incremental Multi-Stock Time-Series Classification",
+    "pages": 23,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4332126_title_augmented_bilinear_network_for_incremental_m.md",
+    "md_name": "ssrn-4332126_title_augmented_bilinear_network_for_incremental_m.md",
+    "abstract": "Preprint not peer reviewed"
+  },
+  {
+    "filename": "ssrn-2028677.pdf",
+    "ssrn_id": "ssrn-2028677",
+    "title": "Model Calibration and Automated Trading Agent for Euro",
+    "pages": 27,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-2028677_model_calibration_and_automated_trading_agent_for_.md",
+    "md_name": "ssrn-2028677_model_calibration_and_automated_trading_agent_for_.md",
+    "abstract": "Model Calibration and Automated Trading Agent for Euro Futures Germ\u00b4an Creamer Stevens Institute of Technology Castle Point on Hudson Hoboken, NJ 07302 email: gcreamer@stevens.edu We explored the application of a machine learning method, Logitboost, to automati- cally calibrate a trading model using"
+  },
+  {
+    "filename": "ssrn-3141294.pdf",
+    "ssrn_id": "ssrn-3141294",
+    "title": "Universal features of price formation in financial markets:",
+    "pages": 20,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-3141294_universal_features_of_price_formation_in_financial.md",
+    "md_name": "ssrn-3141294_universal_features_of_price_formation_in_financial.md",
+    "abstract": "Using a large-scale Deep Learning approach applied to a high-frequency database containing billions of electronic market quotes and transactions for US equities, we uncover nonparametric evidence for the existence of a universal and stationary price formation mechanism relating the dynamics of suppl"
+  },
+  {
+    "filename": "ssrn-4971656.pdf",
+    "ssrn_id": "ssrn-4971656",
+    "title": "Information Content of Book and Trade Order Flow at Different",
+    "pages": 36,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4971656_information_content_of_book_and_trade_order_flow_a.md",
+    "md_name": "ssrn-4971656_information_content_of_book_and_trade_order_flow_a.md",
+    "abstract": "This paper studies information spillovers from the NASDAQ Limit Order Book (LOB) and assesses their impact on price predictability. Using LOB data for 35 large cap US stocks from March 2019 to February 2023, we aggregate data at different trading volume time scales and train various machine learning"
+  },
+  {
+    "filename": "ssrn-4089510.pdf",
+    "ssrn_id": "ssrn-4089510",
+    "title": "Wind Estimation by Multirotor Drone State using",
+    "pages": 12,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4089510_wind_estimation_by_multirotor_drone_state_using.md",
+    "md_name": "ssrn-4089510_wind_estimation_by_multirotor_drone_state_using.md",
+    "abstract": "Preprint not peer reviewed"
+  },
+  {
+    "filename": "ssrn-3722391.pdf",
+    "ssrn_id": "ssrn-3722391",
+    "title": "A Machine Learning Attack on Illegal Trading\u2217",
+    "pages": 50,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-3722391_a_machine_learning_attack_on_illegal_trading.md",
+    "md_name": "ssrn-3722391_a_machine_learning_attack_on_illegal_trading.md",
+    "abstract": "We design an adaptive framework for the detection of illegal trading behavior. Its key component is an extension of a pattern recognition tool, originating from the field of signal processing and adapted to modern electronic systems of securities trading. The new method combines the flexibility of d"
+  },
+  {
+    "filename": "ssrn-2710331.pdf",
+    "ssrn_id": "ssrn-2710331",
+    "title": "Deep Learning for Limit Order Books",
+    "pages": 39,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-2710331_deep_learning_for_limit_order_books.md",
+    "md_name": "ssrn-2710331_deep_learning_for_limit_order_books.md",
+    "abstract": "This paper develops a new neural network architecture for modeling spatial distributions (i.e., dis- tributions on Rd) which is computationally ef\ufb01cient. The design of the architecture takes advantage of the speci\ufb01c structure of limit order books. The new architecture, which we refer to as a \u201cspatia"
+  },
+  {
+    "filename": "ssrn-7273201.pdf",
+    "ssrn_id": "ssrn-7273201",
+    "title": "Prequential Benchmark of",
+    "pages": 9,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-7273201_prequential_benchmark_of.md",
+    "md_name": "ssrn-7273201_prequential_benchmark_of.md",
+    "abstract": "Predicting the direction of mid-price movements in high- frequency Limit Order Book (LOB) tick streams, where each tick is an individual trade transaction event, is the most demand- ing predictive modeling problem in financial machine learning. The tick stream is characterized by near-zero autocorre"
+  },
+  {
+    "filename": "ssrn-5036269.pdf",
+    "ssrn_id": "ssrn-5036269",
+    "title": "Information Content of Book and Trade Order Flow at Different",
+    "pages": 36,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-5036269_information_content_of_book_and_trade_order_flow_a.md",
+    "md_name": "ssrn-5036269_information_content_of_book_and_trade_order_flow_a.md",
+    "abstract": "This paper studies information spillovers from the NASDAQ Limit Order Book and assesses their impact on price predictability. Using LOB data for 35 large cap US stocks from March 2019 to February 2023, we aggregate data at different trading volume time scales and train various machine learning algor"
+  },
+  {
+    "filename": "ssrn-7438262.pdf",
+    "ssrn_id": "ssrn-7438262",
+    "title": "A Snapshot-Conditioned CVAE Limit Order Book Simulator: Evidence from",
+    "pages": 20,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-7438262_a_snapshot_conditioned_cvae_limit_order_book_simul.md",
+    "md_name": "ssrn-7438262_a_snapshot_conditioned_cvae_limit_order_book_simul.md",
+    "abstract": "Testing algorithmic trading strategies in production carries substantial risk of market disruption, yet passive historical replay cannot capture the market\u2019s reaction to an agent\u2019s actions. We propose a reactive limit order book (LOB) simulator based on a Conditional Variational Autoencoder (CVAE) c"
+  },
+  {
+    "filename": "ssrn-3920827.pdf",
+    "ssrn_id": "ssrn-3920827",
+    "title": "How informative is the Order Book Beyond the Best",
+    "pages": 33,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-3920827_how_informative_is_the_order_book_beyond_the_best.md",
+    "md_name": "ssrn-3920827_how_informative_is_the_order_book_beyond_the_best.md",
+    "abstract": "Research on limit order book markets has been rapidly growing and nowa- days high-frequency full order book data is widely available for researcher and practitioners. However, it is common that research papers use the best level data only, which motivates us to ask is if the exclusion of the quotes "
+  },
+  {
+    "filename": "ssrn-5020002 (1).pdf",
+    "ssrn_id": "ssrn-5020002",
+    "title": "Order Flow and Cryptocurrency Returns\u2217",
+    "pages": 71,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-5020002_order_flow_and_cryptocurrency_returns.md",
+    "md_name": "ssrn-5020002_order_flow_and_cryptocurrency_returns.md",
+    "abstract": "We assess the information content of order flow for the cross-section of cryptocurrency re- turns. Our analysis is based on a set of international order flows denominated in 11 major currencies that reflect world order flow. We find that world order flow has strong explanatory and predictive power f"
+  },
+  {
+    "filename": "ssrn-6900821.pdf",
+    "ssrn_id": "ssrn-6900821",
+    "title": "Beyond Prediction : Execution-Aware Machine Learning",
+    "pages": 91,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-6900821_beyond_prediction_execution_aware_machine_learning.md",
+    "md_name": "ssrn-6900821_beyond_prediction_execution_aware_machine_learning.md",
+    "abstract": "Modern High-Frequency Trading (HFT) systems have evolved beyond isolated algorithmic prediction engines into tightly coupled distributed computational ecosystems where realized performance is determined not by predictive accuracy alone, but by the coordinated interaction among infrastructure determi"
+  },
+  {
+    "filename": "ssrn-3997109.pdf",
+    "ssrn_id": "ssrn-3997109",
+    "title": "Analysis and modeling of client order flow in limit order markets",
+    "pages": 32,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-3997109_analysis_and_modeling_of_client_order_flow_in_limi.md",
+    "md_name": "ssrn-3997109_analysis_and_modeling_of_client_order_flow_in_limi.md",
+    "abstract": "Orders in major electronic stock markets are executed through centralised limit order books (LOBs). The availability of historical data have led to extensive research modelling LOBs. Better understanding the dynamics of LOBs and building simulators as a framework for controlled experiments, when tes"
+  },
+  {
+    "filename": "ssrn-4770476.pdf",
+    "ssrn_id": "ssrn-4770476",
+    "title": "IMPROVING DEEP LEARNING OF ALPHA TERM",
+    "pages": 33,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4770476_improving_deep_learning_of_alpha_term.md",
+    "md_name": "ssrn-4770476_improving_deep_learning_of_alpha_term.md",
+    "abstract": "enced notable success in predicting high-frequency returns in equities by leveraging extensive order book data and directly extracting features from it. This marks a notable departure from current industry practice, where features are often manually crafted. In this article, we address several pract"
+  },
+  {
+    "filename": "ssrn-3258508.pdf",
+    "ssrn_id": "ssrn-3258508",
+    "title": "Price Discovery of a Speculative Asset:",
+    "pages": 50,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-3258508_price_discovery_of_a_speculative_asset.md",
+    "md_name": "ssrn-3258508_price_discovery_of_a_speculative_asset.md",
+    "abstract": "We examine price discovery and liquidity provision in the secondary market for bitcoin\u2014an asset with a high level of speculative trading. Based on BTC-e\u2019s full limit order book over the 2013\u20132014 period, we \ufb01nd that order informativeness increases with order aggressiveness within the \ufb01rst 10 tiers, "
+  },
+  {
+    "filename": "ssrn-6761438.pdf",
+    "ssrn_id": "ssrn-6761438",
+    "title": "An Early Warning System for Liquidity Stress in Cryptocurrency",
+    "pages": 7,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-6761438_an_early_warning_system_for_liquidity_stress_in_cr.md",
+    "md_name": "ssrn-6761438_an_early_warning_system_for_liquidity_stress_in_cr.md",
+    "abstract": "Most research on liquidity crises relies on expensive institutional data or coarse daily aggregates \u2014 reconstructing why crashes oc- curred rather than detecting them as they unfold. We present an early warning system for liquidity stress in Binance spot cryptocur- rency markets using freely availab"
+  },
+  {
+    "filename": "ssrn-5379395.pdf",
+    "ssrn_id": "ssrn-5379395",
+    "title": "ONLINE SUPPLEMENT",
+    "pages": 10,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-5379395_online_supplement.md",
+    "md_name": "ssrn-5379395_online_supplement.md",
+    "abstract": "No explicit abstract header."
+  },
+  {
+    "filename": "ssrn-5236285.pdf",
+    "ssrn_id": "ssrn-5236285",
+    "title": "ClusterLOB: Enhancing Trading Strategies by",
+    "pages": 34,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-5236285_clusterlob_enhancing_trading_strategies_by.md",
+    "md_name": "ssrn-5236285_clusterlob_enhancing_trading_strategies_by.md",
+    "abstract": "In the rapidly evolving world of financial markets, understanding the dynamics of limit or- der book (LOB) is crucial for unraveling market microstructure and participant behavior. We introduce ClusterLOB1 as a method to cluster individual market events in a stream of market- by-order (MBO) data int"
+  },
+  {
+    "filename": "ssrn-7055779 (1).pdf",
+    "ssrn_id": "ssrn-7055779",
+    "title": "Order Flow and Cryptocurrency Returns: A Machine Learning",
+    "pages": 27,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-7055779_order_flow_and_cryptocurrency_returns_a_machine_le.md",
+    "md_name": "ssrn-7055779_order_flow_and_cryptocurrency_returns_a_machine_le.md",
+    "abstract": "The results indicate that overall order flow plays a significant role in explaining variations in cryptocurrency returns. Using machine learning for out-of-sample predictions, we demonstrate that order flow is an effective predictor of daily cryptocurrency returns. Portfolio strategies that rely on "
+  },
+  {
+    "filename": "ssrn-5051180.pdf",
+    "ssrn_id": "ssrn-5051180",
+    "title": "A machine learning ensemble approach to predict financial markets",
+    "pages": 42,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-5051180_a_machine_learning_ensemble_approach_to_predict_fi.md",
+    "md_name": "ssrn-5051180_a_machine_learning_ensemble_approach_to_predict_fi.md",
+    "abstract": "Forecasting spoofing manipulation in financial markets is the cornerstone of regulators to im- prove trading surveillance systems. This paper presents a novel data-driven methodology for pre- dicting market conditions associated with episodes of spoofing manipulation. Our approach dimin- ishes the s"
+  },
+  {
+    "filename": "ssrn-5367043.pdf",
+    "ssrn_id": "ssrn-5367043",
+    "title": "Adversarial Attacks on Machine Learning-Driven",
+    "pages": 17,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-5367043_adversarial_attacks_on_machine_learning_driven.md",
+    "md_name": "ssrn-5367043_adversarial_attacks_on_machine_learning_driven.md",
+    "abstract": "Machine learning (ML) has become central to high-frequency trading (HFT), yet the vulnerability of these complex models to adversarial manipulation presents a significant, under-explored risk to market integrity. This paper examines how small, strategically crafted perturbations to limit order book "
+  },
+  {
+    "filename": "ssrn-6189791.pdf",
+    "ssrn_id": "ssrn-6189791",
+    "title": "(Re-)Imag(in)ing LOB in Jiangsu Province Electricity Market",
+    "pages": 17,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-6189791_re_imagining_lob_in_jiangsu_province_electricity_m.md",
+    "md_name": "ssrn-6189791_re_imagining_lob_in_jiangsu_province_electricity_m.md",
+    "abstract": "The scholars argue image of price trend (open-high-low-close) is useful for daily- level return prediction. In market microeconomic structure, both academic and industry hold consensus that limit order book (LOB) has strong impact on second- level return prediction, but no one provides a theoretical"
+  },
+  {
+    "filename": "ssrn-5331939.pdf",
+    "ssrn_id": "ssrn-5331939",
+    "title": "Exploring Microstructural Dynamics in Cryptocurrency Limit",
+    "pages": 12,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-5331939_exploring_microstructural_dynamics_in_cryptocurren.md",
+    "md_name": "ssrn-5331939_exploring_microstructural_dynamics_in_cryptocurren.md",
+    "abstract": "Cryptocurrency price dynamics are driven largely by microstructural supply\u2013demand imbalances in the limit order book (LOB), yet the highly noisy nature of LOB data complicates the signal extraction process. Prior research has demonstrated that deep-learning architectures can yield promising predicti"
+  },
+  {
+    "filename": "ssrn-3213389.pdf",
+    "ssrn_id": "ssrn-3213389",
+    "title": "Mid-price Prediction Based on Machine Learning Methods with",
+    "pages": 40,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-3213389_mid_price_prediction_based_on_machine_learning_met.md",
+    "md_name": "ssrn-3213389_mid_price_prediction_based_on_machine_learning_met.md",
+    "abstract": "Mid-price Prediction Based on Machine Learning Methods with Technical and Quantitative Indicators Adamantios Ntakarisa,\u2217, Juho Kanniainenb, Moncef Gabbouja, Alexandros Iosi\ufb01disc aLaboratory of Signal Processing, Tampere University of Technology, Korkeakoulunkatu 1, FI-33720, Tampere, Finland bLabora"
+  },
+  {
+    "filename": "ssrn-6159346 (1).pdf",
+    "ssrn_id": "ssrn-6159346",
+    "title": "Explainable Patterns in Cryptocurrency",
+    "pages": 28,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-6159346_explainable_patterns_in_cryptocurrency.md",
+    "md_name": "ssrn-6159346_explainable_patterns_in_cryptocurrency.md",
+    "abstract": "We document stable cross-asset patterns in cryptocurrency limit-order-book mi- crostructure: the same engineered order book and trade features exhibit remarkably similar predictive importance and SHAP dependence shapes across assets spanning an order of magnitude in market capitalization (BTC, LTC, "
+  },
+  {
+    "filename": "ssrn-4226309.pdf",
+    "ssrn_id": "ssrn-4226309",
+    "title": "The relevance of features to limit order book learning",
+    "pages": 21,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4226309_the_relevance_of_features_to_limit_order_book_lear.md",
+    "md_name": "ssrn-4226309_the_relevance_of_features_to_limit_order_book_lear.md",
+    "abstract": "The promising predictive power of machine learning (ML) models is encouraging a wide range of applications, but the weak interpretability of their black-box feature is a major obstacle to their application to finance. The large scale of limit order book (LOB) data provides fertile ground for ML impl"
+  },
+  {
+    "filename": "ssrn-4150979.pdf",
+    "ssrn_id": "ssrn-4150979",
+    "title": "Price Discovery in Bitcoin: The Role of Limit Orders",
+    "pages": 39,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4150979_price_discovery_in_bitcoin_the_role_of_limit_order.md",
+    "md_name": "ssrn-4150979_price_discovery_in_bitcoin_the_role_of_limit_order.md",
+    "abstract": "We analyse the price discovery process in bitcoin-dollar trading on Coinbase, the most established cryptocurrency spot exchange. Using a modi\ufb01ed reinforcement learning frame- work, we \ufb01nd that market orders individually carry more information than limit orders, but due to their abundance, limit orde"
+  },
+  {
+    "filename": "ssrn-5614902.pdf",
+    "ssrn_id": "ssrn-5614902",
+    "title": "An Empirical Analysis of Financial Markets: An Econophysics Approach",
+    "pages": 56,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-5614902_an_empirical_analysis_of_financial_markets_an_econ.md",
+    "md_name": "ssrn-5614902_an_empirical_analysis_of_financial_markets_an_econ.md",
+    "abstract": "Preprint not peer reviewed"
+  },
+  {
+    "filename": "ssrn-4867340 (1).pdf",
+    "ssrn_id": "ssrn-4867340",
+    "title": "WorldQuant University",
+    "pages": 28,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4867340_worldquant_university.md",
+    "md_name": "ssrn-4867340_worldquant_university.md",
+    "abstract": "No explicit abstract header."
+  },
+  {
+    "filename": "ssrn-3305277.pdf",
+    "ssrn_id": "ssrn-3305277",
+    "title": "Investigating Limit Order Book Characteristics",
+    "pages": 11,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-3305277_investigating_limit_order_book_characteristics.md",
+    "md_name": "ssrn-3305277_investigating_limit_order_book_characteristics.md",
+    "abstract": "With the proliferation of algorithmic high-frequency trading in \ufb01nancial markets, the Limit Order Book has generated increased research interest. Research is still at an early stage and there is much we do not understand about the dynamics of Limit Order Books. In this paper, we employ a machine lea"
+  },
+  {
+    "filename": "ssrn-6839368.pdf",
+    "ssrn_id": "ssrn-6839368",
+    "title": "Linear Recurrent versus Convolutional Neural Networks for",
+    "pages": 11,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-6839368_linear_recurrent_versus_convolutional_neural_netwo.md",
+    "md_name": "ssrn-6839368_linear_recurrent_versus_convolutional_neural_netwo.md",
+    "abstract": "Preprint not peer reviewed"
+  },
+  {
+    "filename": "ssrn-5371015.pdf",
+    "ssrn_id": "ssrn-5371015",
+    "title": "Machine Learning-Based Prediction of Mini Flash",
+    "pages": 76,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-5371015_machine_learning_based_prediction_of_mini_flash.md",
+    "md_name": "ssrn-5371015_machine_learning_based_prediction_of_mini_flash.md",
+    "abstract": "Preprint not peer reviewed"
+  },
+  {
+    "filename": "ssrn-4992077.pdf",
+    "ssrn_id": "ssrn-4992077",
+    "title": "Machine Learning-Based Prediction of Mini Flash",
+    "pages": 75,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4992077_machine_learning_based_prediction_of_mini_flash.md",
+    "md_name": "ssrn-4992077_machine_learning_based_prediction_of_mini_flash.md",
+    "abstract": "Preprint not peer reviewed"
+  },
+  {
+    "filename": "ssrn-5106300.pdf",
+    "ssrn_id": "ssrn-5106300",
+    "title": "Modeling and Forecasting the Probability of Crypto-Exchange",
+    "pages": 26,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-5106300_modeling_and_forecasting_the_probability_of_crypto.md",
+    "md_name": "ssrn-5106300_modeling_and_forecasting_the_probability_of_crypto.md",
+    "abstract": "The popularity of cryptocurrency exchanges has surged in recent years, accompanied by the pro- liferation of new digital platforms and tokens. However, the issue of credit risk and the reliability of crypto exchanges remain critical, highlighting the need for indicators to assess the safety of inves"
+  },
+  {
+    "filename": "ssrn-4885729.pdf",
+    "ssrn_id": "ssrn-4885729",
+    "title": "TECHNOLOGY AND AUTOMATION IN FINANCIAL TRADING:",
+    "pages": 71,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4885729_technology_and_automation_in_financial_trading.md",
+    "md_name": "ssrn-4885729_technology_and_automation_in_financial_trading.md",
+    "abstract": "In this bibliometric study, the significant transformations in the financial sector brought about by automation and technological advancements from 1984 to 2022 are explored. A total of 863 articles is analyzed, and a consistent upward trajectory in research focused on fast trading technologies and "
+  },
+  {
+    "filename": "ssrn-4848471.pdf",
+    "ssrn_id": "ssrn-4848471",
+    "title": "Predict mini flash crashes from high-frequency data by",
+    "pages": 76,
+    "md_path": "C:\\Users\\SIGMA\\Documents\\Trading\\docs\\ssrn_research\\ssrn-4848471_predict_mini_flash_crashes_from_high_frequency_dat.md",
+    "md_name": "ssrn-4848471_predict_mini_flash_crashes_from_high_frequency_dat.md",
+    "abstract": "Preprint not peer reviewed"
+  }
+]

@@ -1,13 +1,12 @@
 # Explainable Patterns in Cryptocurrency
 
-- **Source File**: `ssrn-6159346.pdf`
+- **Source File**: `ssrn-6159346 (1).pdf`
 - **Total Pages**: 28
 - **SSRN ID**: `ssrn-6159346`
 
 ---
 
-
-### Page 1
+## Page 1
 
 Explainable Patterns in Cryptocurrency
 Microstructure
@@ -48,7 +47,7 @@ Across asset classes, a robust set of
 1
 
 
-### Page 2
+## Page 2
 
 features (order flow imbalance, bid–ask spreads, depth, and trade arrival patterns) has
 been shown to explain a substantial fraction of return variation at very short horizons.
@@ -101,7 +100,7 @@ taker backtest, and discuss robustness checks and implications before concluding
 2
 
 
-### Page 3
+## Page 3
 
 2
 Literature Review
@@ -154,7 +153,7 @@ shocks are predictive of near-term returns and execution costs [15]. Chen et al.
 3
 
 
-### Page 4
+## Page 4
 
 strate the utility of machine learning in predicting Bitcoin exchange rates using a broad
 set of economic and technical determinants. What remains less explored is the extent
@@ -207,7 +206,7 @@ rt→t+3 s = log(midt+3 s/midt) where midt = ask0 + bid0
 4
 
 
-### Page 5
+## Page 5
 
 Log returns are preferred in financial modeling because they are symmetric in terms
 of impact on equity returns for positive and negative moves, additive over time, and
@@ -257,7 +256,7 @@ on subsequent, unseen periods, with a deliberate temporal gap between the traini
 5
 
 
-### Page 6
+## Page 6
 
 (a) ENJ
 (b) ETC
@@ -295,7 +294,7 @@ a, b > 0
 6
 
 
-### Page 7
+## Page 7
 
 with the full objective being the mean over all samples. The GMADL explicitly empha-
 sizes directional correctness, rewarding predictions that correctly match the sign of the
@@ -355,7 +354,7 @@ where:
 7
 
 
-### Page 8
+## Page 8
 
 Rt - the simple return during period t
 nyear - number of observations in a year
@@ -404,7 +403,7 @@ ensemble, allowing the model to flexibly capture nonlinear relationships, hierar
 8
 
 
-### Page 9
+## Page 9
 
 effects, and complex interactions among features—patterns that are typical in market
 microstructure data. CatBoost is particularly well-suited for exploratory model fitting
@@ -454,7 +453,7 @@ as a robustness check.
 9
 
 
-### Page 10
+## Page 10
 
 6
 SHAP Explanations
@@ -490,7 +489,7 @@ scale-free structure once expressed in relative prices and flows.
 10
 
 
-### Page 11
+## Page 11
 
 6.1
 Note on the relation between imbalance effect magnitude
@@ -512,7 +511,7 @@ inventory absorption limits that bind more readily under coarse price grids.
 11
 
 
-### Page 12
+## Page 12
 
 Figure 6: Microprice versus ticked mid in a depth-replenishment simulation. Imbalance-
 induced shifts in microprice anticipate discrete mid changes, with stronger effects under
@@ -535,7 +534,7 @@ for the latent continuous price location within the spread.
 12
 
 
-### Page 13
+## Page 13
 
 Figure 7: Scatter plot of the smaller-tick futures mid-price position within the larger-
 tick spot spread (2 ∗(midfut −bidspot)/(askspot −bidspot) −1) versus the spot order book
@@ -546,7 +545,7 @@ orderbook imbalance (bottom) for asset W.
 13
 
 
-### Page 14
+## Page 14
 
 Figure 9: Spearman rank correlation of feature importances (mean absolute SHAP) across
 assets. High correlation indicates that the most important predictive features are consis-
@@ -578,7 +577,7 @@ trades on high-magnitude forecasts with improved precision but reduced activity.
 14
 
 
-### Page 15
+## Page 15
 
 Figure 10: Equity curve for the taker backtest.
 asset
@@ -680,7 +679,7 @@ cution and 50% to the maker execution. While the strategies exhibit negative cor
 15
 
 
-### Page 16
+## Page 16
 
 Figure 11: Equity curve for the maker backtest.
 asset
@@ -851,7 +850,7 @@ performance of the maker component tends to drag down the aggregate results comp
 16
 
 
-### Page 17
+## Page 17
 
 Figure 12: Equity curve for the averaged backtest.
 to the pure taker approach. This reinforces the finding that, for these specific predictive
@@ -918,7 +917,7 @@ test. Thus, only the taker strategies on ETC, ENJ, and ROSE demonstrate statisti
 17
 
 
-### Page 18
+## Page 18
 
 significant outperformance at the 5% level.
 This disparity during the flash crash can be understood in microstructure terms.
@@ -969,7 +968,7 @@ tle, mean-reverting patterns in the order book imbalance. However, it is crucial
 18
 
 
-### Page 19
+## Page 19
 
 knowledge the limitations of a backtesting environment. Real-world execution is subject
 to latency, network jitter, and queue position dynamics, which are notoriously difficult
@@ -1003,7 +1002,7 @@ imbalance, leading to more selling. This self-reinforcing cascade can transform 
 19
 
 
-### Page 20
+## Page 20
 
 Figure 14: Taker strategy performance during the October 10, 2025 flash crash. The
 model correctly enters a short position, capturing a significant profit from the price
@@ -1037,7 +1036,7 @@ ders to discourage fleeting, predatory liquidity. Ultimately, while our model de
 20
 
 
-### Page 21
+## Page 21
 
 Figure 15: A detailed view of the flash crash, showing the model’s reaction to a large,
 shallow bid order amidst the downturn.
@@ -1072,7 +1071,7 @@ A market maker who fails to widen their spread in response is essentially offeri
 21
 
 
-### Page 22
+## Page 22
 
 Figure 16: Market-maker strategy performance during the October 10, 2025 flash crash.
 The strategy repeatedly gets filled on the bid side, accumulating a losing long position
@@ -1101,7 +1100,7 @@ Interpretability gains from SHAP are substantive. Importance hierarchies validat
 22
 
 
-### Page 23
+## Page 23
 
 Figure 17: A detailed view of the market-maker’s activity, showing the persistent fills on
 the bid side against a backdrop of extreme model predictions.
@@ -1132,7 +1131,7 @@ liquidity and flow.
 23
 
 
-### Page 24
+## Page 24
 
 We demonstrate that a compact set of order book and trade features yields similar
 predictive importance and SHAP dependence shapes across cryptocurrencies spanning
@@ -1146,7 +1145,7 @@ cross-asset short-horizon modeling in crypto markets.
 24
 
 
-### Page 25
+## Page 25
 
 Appendix A: Supplementary Charts
 (a) BTC - L1 Im-
@@ -1199,7 +1198,7 @@ Figure 19: LTC SHAP dependence plots (features 1–10).
 25
 
 
-### Page 26
+## Page 26
 
 (a) ETC - L1 Im-
 balance
@@ -1285,7 +1284,7 @@ Figure 22: ROSE SHAP dependence plots (features 1–10).
 26
 
 
-### Page 27
+## Page 27
 
 References
 [1] Takuya Akiba, Sota Sano, Toshihiko Yanase, Takeru Ohta, and Masanori Koyama.
@@ -1334,7 +1333,7 @@ kets. Journal of Financial Economics, 135(2):293–319, 2020.
 27
 
 
-### Page 28
+## Page 28
 
 [16] Jakub Micha´nk´ow, Pawe l Sakowski, and Robert ´Slepaczuk. Mean absolute direc-
 tional loss as a new loss function for machine learning problems in algorithmic in-
@@ -1364,3 +1363,4 @@ titative Finance, 18(12):1959–1966, 2018.
 neural networks for limit order books. IEEE Transactions on Signal Processing, 67
 (11):3001–3012, 2019.
 28
+

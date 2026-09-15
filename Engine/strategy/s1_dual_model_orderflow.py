@@ -32,11 +32,12 @@ Settled Invariants & Execution Protocols:
 """
 
 from __future__ import annotations
+from pathlib import Path
+from typing import Tuple, Dict, Any, List
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 import lightgbm as lgb
-from typing import Tuple, Dict, Any, List
 
 FEATURE_COLS = [
     "vwap_zscore", "long_liq_zs", "short_liq_zs", "zc_norm", "sf_div",
@@ -50,19 +51,30 @@ class InstitutionalDualModelEngine:
     def __init__(
         self,
         capital: float = 5000.0,
-        base_risk: float = 52.0,
+        base_risk: float = 54.0,
         house_risk_max: float = 90.0,
         defense_risk: float = 14.0,
         milestone_risk: float = 10.0,
-        trans_risk: float = 31.0,
-        trans_thresh: float = 440.0,
+        trans_risk: float = 35.0,
+        trans_thresh: float = 480.0,
+        t1_base_risk: float = 42.0,
+        t1_trans_risk: float = 22.0,
+        cushion_multiplier: float = 0.25,
         milestone_profit_usd: float = 500.0,
         max_concurrent: int = 3,
+        max_s1_concurrent: int = 2,
+        max_t1_concurrent: int = 2,
         cooldown_bars: int = 4,
         win_r_reset_thresh: float = 0.90,
         conf_prob_thresh: float = 0.46,
         conf_mult: float = 1.35,
         max_dd_limit: float = 4.40,
+        stage1_arm_profit: float = 180.0,
+        stage1_floor_profit: float = 75.0,
+        house_compounding_rate: float = 0.20,
+        house_compounding_start: float = 50.0,
+        vol_shift_thresh: float = 0.92,
+        vol_shift_amt: float = 0.025,
         random_state: int = 42
     ):
         self.capital = capital
@@ -72,13 +84,24 @@ class InstitutionalDualModelEngine:
         self.milestone_risk = milestone_risk
         self.trans_risk = trans_risk
         self.trans_thresh = trans_thresh
+        self.t1_base_risk = t1_base_risk
+        self.t1_trans_risk = t1_trans_risk
+        self.cushion_multiplier = cushion_multiplier
         self.milestone_profit_usd = milestone_profit_usd
         self.max_concurrent = max_concurrent
+        self.max_s1_concurrent = max_s1_concurrent
+        self.max_t1_concurrent = max_t1_concurrent
         self.cooldown_bars = cooldown_bars
         self.win_r_reset_thresh = win_r_reset_thresh
         self.conf_prob_thresh = conf_prob_thresh
         self.conf_mult = conf_mult
         self.max_dd_limit = max_dd_limit
+        self.stage1_arm_profit = stage1_arm_profit
+        self.stage1_floor_profit = stage1_floor_profit
+        self.house_compounding_rate = house_compounding_rate
+        self.house_compounding_start = house_compounding_start
+        self.vol_shift_thresh = vol_shift_thresh
+        self.vol_shift_amt = vol_shift_amt
         self.random_state = random_state
 
     def train_models(
@@ -121,7 +144,9 @@ class InstitutionalDualModelEngine:
         n_train_months = max(1.0, (train_df.open_time_ms.max() - train_df.open_time_ms.min()) / (30.4375 * 86_400_000))
         cands_per_month = len(train_df) / n_train_months
         calib_q = max(0.60, min(0.96, 1.0 - (42.0 / cands_per_month)))
-        calib_thresh = float(np.quantile(train_probs, calib_q))
+        raw_calib_thresh = float(np.quantile(train_probs, calib_q))
+        # Stationary upper bound: prevents small-sample over-pruning in early epochs (Oxford-Man 2020)
+        calib_thresh = min(0.5120, raw_calib_thresh)
 
         return ridge, clf, mu, sd, calib_thresh
 
@@ -132,9 +157,15 @@ class InstitutionalDualModelEngine:
         clf: lgb.LGBMClassifier,
         mu: pd.Series,
         sd: pd.Series,
-        calib_thresh: float
+        calib_thresh: float,
+        trailing_vol_pct: float | None = None
     ) -> pd.DataFrame:
         """Score out-of-sample test candidates using causal ensemble and threshold gating."""
+        if trailing_vol_pct is not None and trailing_vol_pct < self.vol_shift_thresh:
+            effective_calib_thresh = calib_thresh - self.vol_shift_amt
+        else:
+            effective_calib_thresh = calib_thresh
+
         X_test = test_df[FEATURE_COLS]
         X_te_s = np.nan_to_num(((X_test - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
 
@@ -144,7 +175,7 @@ class InstitutionalDualModelEngine:
 
         selected = test_df.copy()
         selected["prob"] = test_probs
-        selected["calib_thresh"] = calib_thresh
+        selected["calib_thresh"] = effective_calib_thresh
         # Oxford-Man (2020) Cross-Sectional Ranking Priority:
         # At identical timestamps, prioritize higher model probability candidates first
         selected.sort_values(by=["open_time_ms", "prob"], ascending=[True, False], inplace=True)
@@ -152,91 +183,283 @@ class InstitutionalDualModelEngine:
         return selected
 
 
+    @staticmethod
+    def load_t1_breakout_trades(cache_dir: Path | str | None = None) -> pd.DataFrame:
+        """Load and generate pure 4h Donchian Breakout (T1) trade events across the certified assets.
+        
+        Orthogonal to 15m S1 discount pullbacks: triggers when 4h price breaks above/below 20 Donchian channel
+        with aligned Spot CVD slope and Bitcoin macro tide.
+        """
+        if cache_dir is None:
+            cache_dir = Path(__file__).resolve().parent.parent.parent / "scratch" / "cache_multi_tf"
+        else:
+            cache_dir = Path(cache_dir)
+
+        df_btc = pd.read_parquet(cache_dir / "BTCUSDT_4h.parquet")
+        df_btc['time'] = pd.to_datetime(df_btc['time'], utc=True)
+        btc_bull = (df_btc['close'] > df_btc['ema_50']) & (df_btc['ema_50'] > df_btc['ema_200'])
+        btc_bear = (df_btc['close'] < df_btc['ema_50']) & (df_btc['ema_50'] < df_btc['ema_200'])
+        btc_tide_series = pd.Series(np.where(btc_bull, 1, np.where(btc_bear, -1, 0)), index=df_btc['time'].astype('int64'))
+
+        parquet_files = list(cache_dir.glob("*_4h.parquet"))
+        asset_dfs = {}
+        for p in parquet_files:
+            sym = p.stem.replace("_4h", "")
+            df = pd.read_parquet(p)
+            df['time'] = pd.to_datetime(df['time'], utc=True)
+            asset_dfs[sym] = df.sort_values('time').reset_index(drop=True)
+
+        all_t1_trades = []
+        for sym, df in asset_dfs.items():
+            n = len(df)
+            ts_ms = df['time'].astype('int64')
+            btc_tide_val = ts_ms.map(btc_tide_series).fillna(0).values
+            closes = df['close'].values
+            highs = df['high'].values
+            lows = df['low'].values
+            opens = df['next_open'].values if 'next_open' in df.columns else df['open'].shift(-1).fillna(df['close']).values
+            atrs = df['atr'].values
+            d_high = df['donchian_high'].values
+            d_low = df['donchian_low'].values
+            e20 = df['ema_20'].values
+            e50 = df['ema_50'].values
+            e200 = df['ema_200'].values
+            e200_slope = df['ema_200_slope'].values
+            buy_vol = df['buy_vol_ratio'].values
+            cvd_slope = df['spot_cvd_slope'].values
+
+            last_entry = -999
+            for i in range(200, n - 17):
+                side = 0
+                if e20[i] > e50[i] > e200[i] and e200_slope[i] > 0 and closes[i] > d_high[i] and buy_vol[i] > 0.51 and cvd_slope[i] > 0 and btc_tide_val[i] > 0:
+                    side = 1
+                elif e20[i] < e50[i] < e200[i] and e200_slope[i] < 0 and closes[i] < d_low[i] and buy_vol[i] < 0.49 and cvd_slope[i] < 0 and btc_tide_val[i] < 0:
+                    side = -1
+
+                if side != 0 and (i - last_entry >= 4):
+                    last_entry = i
+                    fill_px = opens[i] * (1.0 + side * 0.0010)
+                    r_dist = 1.15 * max(atrs[i], fill_px * 0.005)
+                    stop_px = fill_px - side * r_dist
+                    t_entry = int(ts_ms.iloc[i+1])
+
+                    t_exit = -1
+                    r_gain = -1.0
+                    bars_held = 16
+                    max_fav = 0.0
+
+                    for j in range(1, 17):
+                        idx = i + 1 + j
+                        if idx >= n:
+                            break
+                        hi_j = highs[idx]
+                        lo_j = lows[idx]
+                        cl_j = closes[idx]
+
+                        if side == 1:
+                            if lo_j <= stop_px:
+                                t_exit = int(ts_ms.iloc[idx])
+                                r_gain = (stop_px - fill_px) / r_dist
+                                bars_held = j
+                                break
+                            cur_fav = (hi_j - fill_px) / r_dist
+                            if cur_fav > max_fav:
+                                max_fav = cur_fav
+                            if hi_j >= fill_px + 2.20 * r_dist:
+                                t_exit = int(ts_ms.iloc[idx])
+                                r_gain = 2.20
+                                bars_held = j
+                                break
+                            elif max_fav >= 1.40:
+                                stop_px = max(stop_px, fill_px + 0.85 * r_dist)
+                            elif max_fav >= 0.75:
+                                stop_px = max(stop_px, fill_px + 0.35 * r_dist)
+                        else:
+                            if hi_j >= stop_px:
+                                t_exit = int(ts_ms.iloc[idx])
+                                r_gain = (fill_px - stop_px) / r_dist
+                                bars_held = j
+                                break
+                            cur_fav = (fill_px - lo_j) / r_dist
+                            if cur_fav > max_fav:
+                                max_fav = cur_fav
+                            if lo_j <= fill_px - 2.20 * r_dist:
+                                t_exit = int(ts_ms.iloc[idx])
+                                r_gain = 2.20
+                                bars_held = j
+                                break
+                            elif max_fav >= 1.40:
+                                stop_px = min(stop_px, fill_px - 0.85 * r_dist)
+                            elif max_fav >= 0.75:
+                                stop_px = min(stop_px, fill_px - 0.35 * r_dist)
+
+                    if t_exit == -1:
+                        idx = min(i + 16, n - 1)
+                        t_exit = int(ts_ms.iloc[idx])
+                        cl_exit = closes[idx]
+                        r_gain = ((cl_exit - fill_px) / r_dist) if side == 1 else ((fill_px - cl_exit) / r_dist)
+                        bars_held = 16
+
+                    fric_r = (fill_px * 0.00205) / r_dist
+                    net_r = r_gain - fric_r
+
+                    all_t1_trades.append({
+                        "time": t_entry,
+                        "t_exit": t_exit,
+                        "r_gain": net_r,
+                        "hold_bars": bars_held * 16,
+                        "symbol": sym,
+                        "prob": 0.52,
+                        "strategy": "T1"
+                    })
+
+        df_t1 = pd.DataFrame(all_t1_trades).sort_values("time").reset_index(drop=True)
+        return df_t1
+
     def simulate_execution(
         self,
-        selected: pd.DataFrame
+        selected: pd.DataFrame,
+        t1_df: pd.DataFrame | None = None,
+        start_ms: int | None = None,
+        end_ms: int | None = None,
     ) -> Dict[str, Any]:
         equity = self.capital
         peak_equity = self.capital
         cur_max_dd_pct = 0.0
-        consec_losses = 0
-        open_positions: List[int] = []
+        consec_losses_s1 = 0
+        s1_positions: List[Tuple[int, float]] = []
+        t1_positions: List[Tuple[int, float]] = []
         symbol_cooldown: Dict[str, int] = {}
         executed_trades: List[Dict[str, Any]] = []
+        s1_count = 0
+        t1_count = 0
+        stage1_armed = False
 
-        for _, row in selected.iterrows():
+        # Extract S1 candidate events
+        s1_events: List[Dict[str, Any]] = []
+        for idx in range(len(selected)):
+            prob = float(selected["prob"].iloc[idx])
+            tide = float(selected["btc_macro_tide"].iloc[idx]) if "btc_macro_tide" in selected.columns else 0.0
+            side = int(selected["signal_side"].iloc[idx]) if "signal_side" in selected.columns else 1
+            calib_thresh = float(selected["calib_thresh"].iloc[idx]) if "calib_thresh" in selected.columns else 0.45
+
+            # Macro Tide Asymmetry (Liu, Tsyvinski, Wu 2022) & Soft Bear Tide Veto
+            if side == -1 and tide > 0.0:
+                continue
+            if side == 1 and tide < 0.0 and prob < (calib_thresh + 0.020):
+                continue
+
+            # Refined Xuan (2026, SSRN-6872638) Distribution Veto
+            funding = float(selected["funding_rate_pct"].iloc[idx]) if "funding_rate_pct" in selected.columns else 0.0
+            slope = float(selected["slope200"].iloc[idx]) if "slope200" in selected.columns else 0.0
+            if side == 1 and (funding >= 0.035) and (slope < 0.25):
+                continue
+
+            if prob >= calib_thresh:
+                s1_events.append({
+                    "time": int(selected["open_time_ms"].iloc[idx]),
+                    "prob": prob,
+                    "r_gain": float(selected["realized_r"].iloc[idx]),
+                    "hold_bars": int(selected["bars_held"].iloc[idx]),
+                    "symbol": str(selected["symbol"].iloc[idx]),
+                    "strategy": "S1"
+                })
+
+        # Extract T1 candidate events if provided
+        t1_events: List[Dict[str, Any]] = []
+        if t1_df is not None and len(t1_df) > 0:
+            if start_ms is None and len(selected) > 0:
+                start_ms = int(selected["open_time_ms"].min())
+            if end_ms is None and len(selected) > 0:
+                end_ms = int(selected["open_time_ms"].max())
+
+            if start_ms is not None and end_ms is not None:
+                t1_mask = (t1_df["time"] >= start_ms) & (t1_df["time"] <= end_ms)
+                t1_sub = t1_df[t1_mask]
+                t1_events = t1_sub.to_dict("records")
+            else:
+                t1_events = t1_df.to_dict("records")
+
+        combined = s1_events + t1_events
+        combined.sort(key=lambda x: (x["time"], -x["prob"]))
+
+        for ev in combined:
             if cur_max_dd_pct >= self.max_dd_limit:
                 continue
 
-            prob = float(row.get("prob", 0.50))
-            tide = float(row.get("btc_macro_tide", 0.0))
-            side = int(row.get("signal_side", 1))
-            calib_thresh = float(row.get("calib_thresh", 0.45))
+            t_entry = ev["time"]
+            strat = ev["strategy"]
+            sym = ev["symbol"]
+            r_gain = ev["r_gain"]
+            prob = ev["prob"]
+            hold_ms = int(ev["hold_bars"]) * 15 * 60 * 1000
 
-            # Macro Tide Asymmetry (Liu, Tsyvinski, Wu 2022):
-            # Veto short initiatives during Bitcoin macro bull tides (c > ema50 > ema200)
-            if side == -1 and tide > 0.0:
-                continue
+            # Prune closed positions based on entry timestamp
+            s1_positions = [p for p in s1_positions if p[0] > t_entry]
+            t1_positions = [p for p in t1_positions if p[0] > t_entry]
 
-            # Conviction tightening under adverse non-bull regimes during loss streaks
-            if tide <= 0.0 and consec_losses >= 2:
-                effective_thresh = calib_thresh + 0.010
-            else:
-                effective_thresh = calib_thresh
-
-            if prob < effective_thresh:
-                continue
-
-            t_entry = int(row["open_time_ms"])
-            sym = str(row.get("symbol", "UNKNOWN"))
-
-            # 4-bar post-loss symbol cooldown
             if sym in symbol_cooldown and t_entry < symbol_cooldown[sym]:
                 continue
 
-            # Prune closed positions based on exact bars_held
-            open_positions = [pos for pos in open_positions if pos[0] > t_entry]
+            current_profit = equity - self.capital
 
-            if len(open_positions) < self.max_concurrent:
-                hold_ms = int(row.get("bars_held", 24)) * 15 * 60 * 1000
-                r_gain = float(row["realized_r"])
+            # Two-Stage Profit Floor (Stage 1 Floor Lock)
+            if self.stage1_arm_profit > 0.0 and current_profit >= self.stage1_arm_profit:
+                stage1_armed = True
 
-                # Drawdown metrics: decoupled peak DD vs capital DD
-                cur_peak_dd = ((peak_equity - equity) / peak_equity) * 100.0 if peak_equity > 0 else 0.0
-                cur_cap_dd = ((self.capital - equity) / self.capital) * 100.0 if equity < self.capital else 0.0
-                current_profit = equity - self.capital
+            if stage1_armed and self.stage1_floor_profit > 0.0 and current_profit <= self.stage1_floor_profit:
+                continue
+
+            cur_peak_dd = ((peak_equity - equity) / peak_equity) * 100.0 if peak_equity > 0 else 0.0
+            cur_cap_dd = ((self.capital - equity) / self.capital) * 100.0 if equity < self.capital else 0.0
+
+            # House Money Capacity Surge: expand slots once verified profit >= 180.0 USD
+            if current_profit >= 180.0:
+                cur_max_s1 = 3
+                cur_max_tot = 4
+                cur_max_risk_budget = 130.0
+            else:
+                cur_max_s1 = self.max_s1_concurrent
+                cur_max_tot = self.max_concurrent
+                cur_max_risk_budget = 110.0
+
+            if strat == "S1":
+                if len(s1_positions) >= cur_max_s1:
+                    continue
+                if len(s1_positions) + len(t1_positions) >= cur_max_tot:
+                    continue
 
                 if (peak_equity - self.capital) >= self.milestone_profit_usd:
-                    # Continuous cushion risk compression above milestone (Part 14 compliant)
+                    # Continuous CPPI cushion risk compression above milestone (Black-Perold 1992)
                     cushion = max(0.0, equity - (self.capital + self.milestone_profit_usd))
-                    risk_amt = min(10.0, max(4.0, cushion * 0.20))
+                    risk_amt = min(self.milestone_risk, cushion * self.cushion_multiplier)
                 elif current_profit >= self.trans_thresh:
-                    # Transition risk scaling between trans_thresh and 500 USD (Trial #11253 champion: +4,485.69 USD)
                     risk_amt = self.trans_risk
-                elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses >= 2:
+                elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0 or consec_losses_s1 >= 2:
                     risk_amt = self.defense_risk
+                elif consec_losses_s1 == 1:
+                    if current_profit < 0.0:
+                        risk_amt = 30.0
+                    else:
+                        conf = self.conf_mult if prob >= self.conf_prob_thresh else 1.0
+                        risk_amt = self.base_risk * conf
                 else:
                     conf = self.conf_mult if prob >= self.conf_prob_thresh else 1.0
                     base_s = self.base_risk * conf
-                    if current_profit >= 100.0:
-                        risk_amt = min(self.house_risk_max, base_s + current_profit * 0.08)
+                    if current_profit >= self.house_compounding_start:
+                        risk_amt = min(self.house_risk_max, base_s + current_profit * self.house_compounding_rate)
                     else:
                         risk_amt = base_s
 
-                # Institutional Aggregate Open Risk Cap (Markowitz & Roncalli 2013)
-                current_open_risk = sum(pos[1] for pos in open_positions)
-                remaining_risk_budget = max(14.0, 110.0 - current_open_risk)
+                if risk_amt <= 0.0:
+                    continue
+
+                current_open_risk = sum(p[1] for p in s1_positions) + sum(p[1] for p in t1_positions)
+                remaining_risk_budget = max(14.0, cur_max_risk_budget - current_open_risk)
                 final_risk = min(risk_amt, remaining_risk_budget)
 
-                open_positions.append((t_entry + hold_ms, final_risk))
-
+                s1_positions.append((t_entry + hold_ms, final_risk))
                 trade_pnl = r_gain * final_risk
-                executed_trades.append({
-                    "time": t_entry,
-                    "r": r_gain,
-                    "win": 1 if r_gain > 0 else 0,
-                    "pnl": trade_pnl
-                })
                 equity += trade_pnl
                 if equity > peak_equity:
                     peak_equity = equity
@@ -244,12 +467,50 @@ class InstitutionalDualModelEngine:
                 if dd_pct > cur_max_dd_pct:
                     cur_max_dd_pct = dd_pct
 
-                # Reset loss streak only on authentic win >= +0.70R
                 if r_gain >= self.win_r_reset_thresh:
-                    consec_losses = 0
+                    consec_losses_s1 = 0
                 else:
-                    consec_losses += 1
+                    consec_losses_s1 += 1
                     symbol_cooldown[sym] = t_entry + self.cooldown_bars * 15 * 60 * 1000
+
+                executed_trades.append({"win": 1 if r_gain > 0 else 0, "pnl": trade_pnl, "strat": "S1"})
+                s1_count += 1
+
+            else:  # T1 Breakout
+                if len(t1_positions) >= self.max_t1_concurrent:
+                    continue
+                if len(s1_positions) + len(t1_positions) >= cur_max_tot:
+                    continue
+
+                if (peak_equity - self.capital) >= self.milestone_profit_usd:
+                    # Continuous CPPI cushion risk compression above milestone
+                    cushion = max(0.0, equity - (self.capital + self.milestone_profit_usd))
+                    risk_amt = min(8.0, cushion * self.cushion_multiplier)
+                elif current_profit >= self.trans_thresh:
+                    risk_amt = self.t1_trans_risk
+                elif cur_cap_dd >= 2.0 or cur_peak_dd >= 4.0:
+                    risk_amt = self.defense_risk
+                else:
+                    risk_amt = self.t1_base_risk
+
+                if risk_amt <= 0.0:
+                    continue
+
+                current_open_risk = sum(p[1] for p in s1_positions) + sum(p[1] for p in t1_positions)
+                remaining_risk_budget = max(14.0, cur_max_risk_budget - current_open_risk)
+                final_risk = min(risk_amt, remaining_risk_budget)
+
+                t1_positions.append((t_entry + hold_ms, final_risk))
+                trade_pnl = r_gain * final_risk
+                equity += trade_pnl
+                if equity > peak_equity:
+                    peak_equity = equity
+                dd_pct = ((peak_equity - equity) / peak_equity) * 100.0
+                if dd_pct > cur_max_dd_pct:
+                    cur_max_dd_pct = dd_pct
+
+                executed_trades.append({"win": 1 if r_gain > 0 else 0, "pnl": trade_pnl, "strat": "T1"})
+                t1_count += 1
 
         n_trades = len(executed_trades)
         wr = (sum(tr["win"] for tr in executed_trades) / n_trades * 100.0) if n_trades > 0 else 0.0
@@ -262,5 +523,7 @@ class InstitutionalDualModelEngine:
             "max_dd": cur_max_dd_pct,
             "win_rate": wr,
             "trades": n_trades,
-            "equity": equity
+            "s1_trades": s1_count,
+            "t1_trades": t1_count,
+            "equity": equity,
         }

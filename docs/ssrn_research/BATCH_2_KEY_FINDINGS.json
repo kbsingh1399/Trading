@@ -1,0 +1,78 @@
+[
+  {
+    "id": "ssrn-4848471",
+    "desc": "Predict Mini Flash Crashes from High-Frequency Data",
+    "file": "ssrn-4848471_predict_mini_flash_crashes_from_high_frequency_dat.md",
+    "pages": 76,
+    "equations_sample": [
+      "Pt = P b",
+      "Lt = argmaxs {s : s < t",
+      "Rt = 2",
+      "Rt = 2",
+      "Nt = 1",
+      "Zi = Zi \u2212\u00afZ and standardized predictors as f"
+    ],
+    "metrics_sample": [
+      "AUC of 0.86.",
+      "accuracy.",
+      "accuracy\n5.4",
+      "AUC of 0.96.",
+      "return."
+    ]
+  },
+  {
+    "id": "ssrn-3920827",
+    "desc": "How Informative is the Order Book Beyond the Best Bid and Offer?",
+    "file": "ssrn-3920827_how_informative_is_the_order_book_beyond_the_best.md",
+    "pages": 33,
+    "equations_sample": [
+      "Xt =\n\uf8ee"
+    ],
+    "metrics_sample": []
+  },
+  {
+    "id": "ssrn-6900821",
+    "desc": "Beyond Prediction: Execution-Aware Machine Learning for Trading",
+    "file": "ssrn-6900821_beyond_prediction_execution_aware_machine_learning.md",
+    "pages": 91,
+    "equations_sample": [],
+    "metrics_sample": [
+      "PnL  \n \n13.2",
+      "accuracy."
+    ]
+  },
+  {
+    "id": "ssrn-5236285",
+    "desc": "ClusterLOB: Enhancing Trading Strategies by Clustering LOB States",
+    "file": "ssrn-5236285_clusterlob_enhancing_trading_strategies_by.md",
+    "pages": 34,
+    "equations_sample": [],
+    "metrics_sample": [
+      "return 0.232",
+      "return 0.201"
+    ]
+  },
+  {
+    "id": "ssrn-6761438",
+    "desc": "An Early Warning System for Liquidity Stress in Crypto Markets",
+    "file": "ssrn-6761438_an_early_warning_system_for_liquidity_stress_in_cr.md",
+    "pages": 7,
+    "equations_sample": [
+      "Lift = XGBoost \u2212Persistence"
+    ],
+    "metrics_sample": [
+      "F1 of 0.9706",
+      "F1-"
+    ]
+  },
+  {
+    "id": "ssrn-5262608",
+    "desc": "Learning the Spoofability of Limit Order Books",
+    "file": "ssrn-5262608_learning_the_spoofability_of_limit_order_books_wit.md",
+    "pages": 22,
+    "equations_sample": [
+      "Nt = 1 |Ft) \u2243\u03bbt dt \u2243\u00b5dt +"
+    ],
+    "metrics_sample": []
+  }
+]

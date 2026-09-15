@@ -1,0 +1,2042 @@
+{
+  "Hawkes Process": [
+    {
+      "ssrn_id": "5065526",
+      "title": "Improving Stock Price Prediction with Enhanced Sentiment Integrated with Generative Adversarial Network",
+      "matched": [
+        "hawkes"
+      ]
+    }
+  ],
+  "OFI & Price Impact": [
+    {
+      "ssrn_id": "2954342",
+      "title": "Corporate Leverage and Employees\u2019 Rights in Bankruptcy Andrew Ellul",
+      "matched": [
+        "ofi",
+        "amihud"
+      ]
+    },
+    {
+      "ssrn_id": "2968374",
+      "title": "DISCUSSION PAPER SERIES DP12033",
+      "matched": [
+        "ofi",
+        "amihud"
+      ]
+    },
+    {
+      "ssrn_id": "6232459",
+      "title": "Regime Detection and Contagion in High-Frequency Limit Order Books: A Temporal Wasserstein Approach",
+      "matched": [
+        "order flow imbalance",
+        "ofi"
+      ]
+    },
+    {
+      "ssrn_id": "6320138",
+      "title": "Beyond the Hype: A Multi-Layer Machine Learning Framework for Cryptocurrency",
+      "matched": [
+        "ofi",
+        "amihud"
+      ]
+    },
+    {
+      "ssrn_id": "6566940",
+      "title": "The Prediction Paradox: Why Machine Learning Models Fail to Predict",
+      "matched": [
+        "order flow imbalance",
+        "ofi"
+      ]
+    },
+    {
+      "ssrn_id": "7053198",
+      "title": "ORCID: 0009-0007-9020-7273",
+      "matched": [
+        "order flow imbalance",
+        "ofi",
+        "kyle\\'?s lambda",
+        "amihud"
+      ]
+    }
+  ],
+  "VPIN & Order Toxicity": [
+    {
+      "ssrn_id": "3671416",
+      "title": "Neoadjuvant Chemoimmunotherapy in Resectable Non-small Cell Lung Cancer Yulong Chen1#, Bo Yan2#, Zhenzhen Hui3#, Gang Zhao4,Jie Liu5, Huan Zhang6, Ziqing Zeng3, Ran Zhang7,",
+      "matched": [
+        "toxicity"
+      ]
+    },
+    {
+      "ssrn_id": "4191581",
+      "title": "Sentiment Analysis Methods: Survey and Evaluation",
+      "matched": [
+        "toxicity"
+      ]
+    },
+    {
+      "ssrn_id": "4709101",
+      "title": "Prognostic Role of Physical Function in Older Adults with Acute Myeloid",
+      "matched": [
+        "toxicity"
+      ]
+    },
+    {
+      "ssrn_id": "5186527",
+      "title": "Beyond Conventional Sentiment Indicators: Bitcoin\u2019s Hidden Potential in VIX Forecasting",
+      "matched": [
+        "easley"
+      ]
+    },
+    {
+      "ssrn_id": "5517602",
+      "title": "High-Frequency Trading in Cryptocurrency Exchanges: Benefits and",
+      "matched": [
+        "easley"
+      ]
+    },
+    {
+      "ssrn_id": "5517725",
+      "title": "Price Discovery Mechanisms in Spot vs. Futures Crypto Markets",
+      "matched": [
+        "easley"
+      ]
+    },
+    {
+      "ssrn_id": "5613270",
+      "title": "Quantum Machine Learning for Near-Term Feasibility: A Survey of Emerging Directions and Challenges",
+      "matched": [
+        "toxicity"
+      ]
+    },
+    {
+      "ssrn_id": "5616128",
+      "title": "Echoes of Information Flow: Tracing Volatility and Heavy-tailed Distribution in Cryptocurrency",
+      "matched": [
+        "easley"
+      ]
+    },
+    {
+      "ssrn_id": "5799762",
+      "title": "Adversarial-Robust Deep Reinforcement Learning for High-Frequency Cryptocurrency Trading with",
+      "matched": [
+        "toxicity"
+      ]
+    },
+    {
+      "ssrn_id": "6280958",
+      "title": "Delta-Neutral Grid Market Making with Adaptive Hedging",
+      "matched": [
+        "adverse selection",
+        "toxicity",
+        "easley"
+      ]
+    },
+    {
+      "ssrn_id": "6401099",
+      "title": "When Markets Never Sleep: Intraday Liquidity Patterns and Volatility Effects in Cryptocurrency Trading",
+      "matched": [
+        "adverse selection",
+        "easley"
+      ]
+    },
+    {
+      "ssrn_id": "6506163",
+      "title": "Filtering Microstructural Toxicity: A Spence-Harsanyi Signaling Approach to Regime-Routed Portfolios",
+      "matched": [
+        "vpin",
+        "volume-synchronized",
+        "adverse selection",
+        "toxicity",
+        "easley"
+      ]
+    },
+    {
+      "ssrn_id": "6693260",
+      "title": "Do Order-Book States Predict Passive-Buy Toxicity? Evidence from BTC Perpetual Futures",
+      "matched": [
+        "adverse selection",
+        "toxicity"
+      ]
+    },
+    {
+      "ssrn_id": "6856798",
+      "title": "A Multi-Factor AI-Driven Trading System: Integrating Pattern Recognition, Sentiment Analysis,",
+      "matched": [
+        "adverse selection"
+      ]
+    },
+    {
+      "ssrn_id": "6885378",
+      "title": "Does Generative AI Enhance Liquidity of Cryptocurrency Markets? Theory and Evidence from ChatGPT Outages",
+      "matched": [
+        "adverse selection"
+      ]
+    },
+    {
+      "ssrn_id": "7012398",
+      "title": "The Architecture of Compliance: Optimal Regulation of Tokenized Securities",
+      "matched": [
+        "adverse selection"
+      ]
+    },
+    {
+      "ssrn_id": "7053198",
+      "title": "ORCID: 0009-0007-9020-7273",
+      "matched": [
+        "vpin",
+        "toxicity",
+        "easley"
+      ]
+    },
+    {
+      "ssrn_id": "7308022",
+      "title": "D1 \u2014 Technical Methodology Paper Audit-Grade Pre-Validation of Trading Strategies: Five Contributions to",
+      "matched": [
+        "adverse selection"
+      ]
+    },
+    {
+      "ssrn_id": "7376359",
+      "title": "Grid Trading in Cryptocurrency Markets: A Critical Evaluation of Classical, Dynamic, and Delta-Neutral",
+      "matched": [
+        "adverse selection"
+      ]
+    }
+  ],
+  "Perpetual Funding & Carry": [
+    {
+      "ssrn_id": "227397",
+      "title": "NBER WORKING PAPER SERIES DEFINED BENEFIT VERSUS",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "2522425",
+      "title": "Log-normal Stochastic Volatility Model with Quadratic Drift Artur Sepp*",
+      "matched": [
+        "convenience yield"
+      ]
+    },
+    {
+      "ssrn_id": "2633752",
+      "title": "Carry and Trend Following Returns in the Foreign Exchange Market",
+      "matched": [
+        "covered interest"
+      ]
+    },
+    {
+      "ssrn_id": "3457167",
+      "title": "Bitcoin Futures and Option Markets: Searching for Completeness Helyette Geman  and Henry C. W. Price",
+      "matched": [
+        "convenience yield"
+      ]
+    },
+    {
+      "ssrn_id": "3737947",
+      "title": "Regulatory Responses to Cryptoderivatives in the UK and the EU: The Future of Cryptoderivatives in the US",
+      "matched": [
+        "perpetual swap"
+      ]
+    },
+    {
+      "ssrn_id": "3760048",
+      "title": "Hedging with Automatic Liquidation and Leverage Selection on Bitcoin Futures\u2217",
+      "matched": [
+        "perpetual swap"
+      ]
+    },
+    {
+      "ssrn_id": "3872160",
+      "title": "Original paper:  January 20, 2022 Updated version: December 10, 2024",
+      "matched": [
+        "convenience yield"
+      ]
+    },
+    {
+      "ssrn_id": "4322637",
+      "title": "Cross-sectional Momentum in Cryptocurrency Markets",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "4956413",
+      "title": "The Crypto Cycle and Institutional Investors\u2217 Alexander Copestake a",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "5243770",
+      "title": "High accuracy without utility? The paradox of Bitcoin AI forecasts",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "5290137",
+      "title": "Stochastic Modeling of Funding Rate Dynamics with Jumps\u2217",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "5517725",
+      "title": "Price Discovery Mechanisms in Spot vs. Futures Crypto Markets",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "5551719",
+      "title": "Graphical Abstract Digital Asset Funding Rates as a Distinct Risk Factor: Evidence from a Systematic Harvesting Approach",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "5555522",
+      "title": "Finance and Economics Discussion Series Federal Reserve Board, Washington, D.C.",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "5576424",
+      "title": "Predictability of Funding Rates Emre Inan",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "5821842",
+      "title": "Quantitative evaluation of volatility-adaptive trend-following models in cryptocurrency markets",
+      "matched": [
+        "funding rate",
+        "perpetual swap"
+      ]
+    },
+    {
+      "ssrn_id": "5895159",
+      "title": "Micro-Martingale and Integral Take-Profit: A Dynamic Multi-Pair Framework for Volatility-Adaptive Trading in Cryptocurrency Markets",
+      "matched": [
+        "perpetual swap"
+      ]
+    },
+    {
+      "ssrn_id": "6071928",
+      "title": "Automated Strategy Discovery in Crypto Perpetuals via Dynamic Factor Ensembles and Auditable Evaluation",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "6185958",
+      "title": "A Shared Template Without Shared Feedback: Funding Rates in Cryptocurrency Perpetual Futures",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "6199098",
+      "title": "From Network Fundamentals to Macro-Financial Integration: The Evolving Predictability of Bitcoin Returns",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "6280958",
+      "title": "Delta-Neutral Grid Market Making with Adaptive Hedging",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "6365329",
+      "title": "Anatomy of Cryptocurrency Perpetual Futures Returns Yi Caoa, Pengfei Luob, Yuhan Chengc,d,\u2217, Yizhe Dongb",
+      "matched": [
+        "convenience yield"
+      ]
+    },
+    {
+      "ssrn_id": "6377318",
+      "title": "Hedging as a Liquidity Risk Management Strategy for Optimal Liquidation",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "6479878",
+      "title": "Architecture Over Asset Class: Market Microstructure Across Centralised and Decentralised Trading Venues",
+      "matched": [
+        "funding rate",
+        "perpetual swap"
+      ]
+    },
+    {
+      "ssrn_id": "6609698",
+      "title": "Path Signatures for Regime Detection in Cryptocurrency Markets:",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "6701738",
+      "title": "Failure of Cross-Sectional Alpha Screening on Cryptocurrency Perpetual Futures  \u2014  Azka Fayez Junior Page 1",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "6725492",
+      "title": "From Network Fundamentals to Macro-Financial Integration: The Evolving",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "6727738",
+      "title": "A Filtered-Label Calibrated XGBoost Framework with Walk-Forward Validation for Robust Bitcoin Direction Prediction",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "6739250",
+      "title": "Half a Century of Risk Premia in a Generalized Multi-Currency Carry Strategy: An Empirical Investigation",
+      "matched": [
+        "covered interest"
+      ]
+    },
+    {
+      "ssrn_id": "6749859",
+      "title": "Optimal Control of the Ethena Yield-Bearing Stablecoin Matthew Lorig \u2217",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "6751742",
+      "title": "The misplaced anchor: interest rate components in perpetual futures funding mechanisms",
+      "matched": [
+        "funding rate",
+        "perpetual swap",
+        "covered interest"
+      ]
+    },
+    {
+      "ssrn_id": "6795783",
+      "title": "Anatomy of Cryptocurrency Perpetual Futures Returns Yi Caoa, Pengfei Luob, Yuhan Chengc,d,\u2217, Yizhe Dongb",
+      "matched": [
+        "convenience yield"
+      ]
+    },
+    {
+      "ssrn_id": "6818558",
+      "title": "Crypto Has Fundamentals: A Seven-Factor Model for Digital Asset Returns",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "6840938",
+      "title": "Event-Linked Perpetual Futures and Options: A Risk-Theoretic Framework Bridging Prediction Markets and",
+      "matched": [
+        "perpetual swap"
+      ]
+    },
+    {
+      "ssrn_id": "6845098",
+      "title": "The \u03ba-Framework: A Riba-Free Foundation",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "6880081",
+      "title": "Regime-Dependent Basis Attribution in Gold Futures: Why Sign-Flipping is Not Noise\u2217",
+      "matched": [
+        "convenience yield"
+      ]
+    },
+    {
+      "ssrn_id": "7059779",
+      "title": "Perpetual Futures: Mechanics, History and Purpose Victor Haghani & James White1",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "7098201",
+      "title": "The Perpetual That Rarely Pays: Funding Deadbands and Basis Discipline in the First CFTC-Regulated Perpetual Futures",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "7103839",
+      "title": "Low-Latency Execution Infrastructure for Funding-Rate Arbitrage: Architecture and a Reproducible Single-Host Benchmark",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "7205749",
+      "title": "Inaction Regions in Perpetual Futures: Deadband Funding and Price Convergence",
+      "matched": [
+        "funding rate"
+      ]
+    },
+    {
+      "ssrn_id": "7226353",
+      "title": "Crypto Futures Risk Mitigation: Dynamic Rebalancing, Carry and ARP Strategies Ifigenia Georgiou*",
+      "matched": [
+        "convenience yield",
+        "covered interest"
+      ]
+    },
+    {
+      "ssrn_id": "7321823",
+      "title": "Funding Discontinuities and Arbitrage-Free Pricing of Perpetual Futures",
+      "matched": [
+        "funding rate",
+        "covered interest"
+      ]
+    },
+    {
+      "ssrn_id": "7376359",
+      "title": "Grid Trading in Cryptocurrency Markets: A Critical Evaluation of Classical, Dynamic, and Delta-Neutral",
+      "matched": [
+        "funding rate"
+      ]
+    }
+  ],
+  "Volatility Regimes & Clustering": [
+    {
+      "ssrn_id": "1283178",
+      "title": "Hierarchical Hidden Markov Structure for Dynamic Correlations: the Hierarchical RSDC Model.",
+      "matched": [
+        "garch",
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "1343726",
+      "title": "A Duration Hidden Markov Model for the Identi\ufb01cation of Regimes in Stock Market Returns",
+      "matched": [
+        "garch",
+        "regime switching",
+        "markov switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "1939398",
+      "title": "Skip to main content Not Available for Download",
+      "matched": [
+        "garch",
+        "realized volatility"
+      ]
+    },
+    {
+      "ssrn_id": "2620423",
+      "title": "Forthcoming in the Journal of Operational Risk Hidden Markov Regimes in Operational Loss Data:",
+      "matched": [
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "3388642",
+      "title": "Regime switches and commonalities of the cryptocurrencies asset-class",
+      "matched": [
+        "garch",
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "3391292",
+      "title": "Macroeconomic regime identi\ufb01cation using a two-step approach with independent component",
+      "matched": [
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "3406068",
+      "title": "Market Regime Identification Using Hidden Markov Model Yuan YUAN",
+      "matched": [
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "4330421",
+      "title": "WHAT DRIVES CRYPTOCURRENCY RETURNS? A SPARSE STATISTICAL JUMP MODEL APPROACH",
+      "matched": [
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "4389763",
+      "title": "Contact: andreas@tradeflags.com A Gaussian Mixture Hidden Markov",
+      "matched": [
+        "garch",
+        "realized volatility",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "4556901",
+      "title": "Information-Geometrical Perspectives of Regime Switching in Stock Markets",
+      "matched": [
+        "regime switching",
+        "markov switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "4751078",
+      "title": "Study About the Binary Option Pricing Formula With Hidden Markov Model Ping Tiana,b   Hang Zhouc     Shijia Zhaob*",
+      "matched": [
+        "garch",
+        "regime switching",
+        "markov switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "5048674",
+      "title": "Cryptocurrency Volatility Forecasting with Applications in Trading",
+      "matched": [
+        "garch",
+        "realized volatility"
+      ]
+    },
+    {
+      "ssrn_id": "5194867",
+      "title": "Multifractal Cryptocurrencies\u22c6 Veronika Czellara",
+      "matched": [
+        "garch",
+        "realized volatility"
+      ]
+    },
+    {
+      "ssrn_id": "5225671",
+      "title": "Group Assignment EBC4097 Quantitative Techniques for Financial",
+      "matched": [
+        "garch",
+        "realized volatility"
+      ]
+    },
+    {
+      "ssrn_id": "5366835",
+      "title": "Hybrid Regime Detection and Risk Management in Semiconductor Equities: A",
+      "matched": [
+        "garch",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "5668751",
+      "title": "Statistical Modeling of Volatility and Regime Switching in Financial Markets",
+      "matched": [
+        "garch",
+        "realized volatility",
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "5785443",
+      "title": "Regime-Based Portfolio Allocation Using Hidden Markov Models and Reinforcement Learning",
+      "matched": [
+        "markov switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "5821842",
+      "title": "Quantitative evaluation of volatility-adaptive trend-following models in cryptocurrency markets",
+      "matched": [
+        "rough volatility",
+        "realized volatility"
+      ]
+    },
+    {
+      "ssrn_id": "5875004",
+      "title": "State-Dependent Pricing in FinTech Credit: Evidence from P2P Lending",
+      "matched": [
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "5943491",
+      "title": "Forecasting Asset Returns with Sentiment-Enhanced FIGARCH Models",
+      "matched": [
+        "garch",
+        "regime switching"
+      ]
+    },
+    {
+      "ssrn_id": "6057454",
+      "title": "Risk Timing and Regime Awareness in Hybrid Machine Learning-Based Investment Strategies",
+      "matched": [
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "6130426",
+      "title": "Regime\u2013Switching Polynomial Diffusions via Topological Hidden Markov Model Inference using Onsager\u2013Machlup",
+      "matched": [
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "6301119",
+      "title": "Explainable Deep Learning for Financial Volatility Forecasting",
+      "matched": [
+        "garch",
+        "har-rv",
+        "realized volatility"
+      ]
+    },
+    {
+      "ssrn_id": "6460808",
+      "title": "Ethereum Risk States as a Tail-Risk Switch for Art NFTs: Evidence from SuperRare",
+      "matched": [
+        "realized volatility",
+        "regime switching"
+      ]
+    },
+    {
+      "ssrn_id": "6493762",
+      "title": "What Are Market Regimes? Definitional Chaos, Validation Failure, and a Path Toward",
+      "matched": [
+        "garch",
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "6539358",
+      "title": "v0.1 (March 01, 2026): Initial draft \u2014 Introduction, Literature Review, Data & Methodology, framework.",
+      "matched": [
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "6609698",
+      "title": "Path Signatures for Regime Detection in Cryptocurrency Markets:",
+      "matched": [
+        "garch",
+        "realized volatility",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "6627619",
+      "title": "Research Project A Comparative Study of Gaussian HMMs and DTW Hierarchical",
+      "matched": [
+        "garch",
+        "realized volatility",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "6823998",
+      "title": "Harvesting Factor Premia Across Regimes: An Anchor-Stabilized Hidden Markov Framework for Multifactor Portfolios",
+      "matched": [
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "6880081",
+      "title": "Regime-Dependent Basis Attribution in Gold Futures: Why Sign-Flipping is Not Noise\u2217",
+      "matched": [
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "6920498",
+      "title": "Regime-Conditional Factor Premia and Institutional Flow Dynamics in Indian Equities",
+      "matched": [
+        "garch",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "7031478",
+      "title": "Regime-Aware LLM Agents for Cryptocurrency Markets",
+      "matched": [
+        "garch",
+        "regime switching"
+      ]
+    },
+    {
+      "ssrn_id": "7200998",
+      "title": "Do Market Regimes Improve Machine-Learning Stock Ranking?",
+      "matched": [
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "7210379",
+      "title": "Does the It\u00f4 Correction Contain Independent Predictive Informa- tion? Evidence from Regime-Weighted Volatility Dynamics",
+      "matched": [
+        "garch",
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "7305922",
+      "title": "The Clock of Regimes: An Operator-Theoretic Early-Warning System for Financial Fragility",
+      "matched": [
+        "realized volatility",
+        "regime switching"
+      ]
+    },
+    {
+      "ssrn_id": "7324102",
+      "title": "The Clock of Regimes: An Operator-Theoretic Early-Warning System for Financial Fragility",
+      "matched": [
+        "realized volatility",
+        "regime switching"
+      ]
+    },
+    {
+      "ssrn_id": "7355387",
+      "title": "Do Market Regimes Improve Machine-Learning Stock Ranking?",
+      "matched": [
+        "regime switching",
+        "hidden markov"
+      ]
+    },
+    {
+      "ssrn_id": "7379779",
+      "title": "Realised Geopolitical Acts and Commodity Stress-Regime Persistence",
+      "matched": [
+        "regime switching",
+        "hidden markov"
+      ]
+    }
+  ],
+  "Liquidation Cascades": [
+    {
+      "ssrn_id": "2338887",
+      "title": "NBER WORKING PAPER SERIES PREDATORY SHORT SELLING",
+      "matched": [
+        "liquidation",
+        "fire sale"
+      ]
+    },
+    {
+      "ssrn_id": "2955646",
+      "title": "Fire sales, indirect contagion and systemic stress testing",
+      "matched": [
+        "liquidation",
+        "deleveraging",
+        "fire sale"
+      ]
+    },
+    {
+      "ssrn_id": "3378586",
+      "title": "Taking regulation seriously: fire sales under solvency and liquidity constraints",
+      "matched": [
+        "liquidation",
+        "deleveraging",
+        "fire sale"
+      ]
+    },
+    {
+      "ssrn_id": "3760048",
+      "title": "Hedging with Automatic Liquidation and Leverage Selection on Bitcoin Futures\u2217",
+      "matched": [
+        "liquidation",
+        "margin call"
+      ]
+    },
+    {
+      "ssrn_id": "3799449",
+      "title": "Margin Trading and Leverage Management\u2217 Jiangze Bian, Zhi Da, Zhiguo He, Dong Lou, Kelly Shue, Hao Zhou",
+      "matched": [
+        "liquidation",
+        "deleveraging",
+        "fire sale"
+      ]
+    },
+    {
+      "ssrn_id": "3801873",
+      "title": "5757 S. University Ave. Chicago, IL 60637",
+      "matched": [
+        "liquidation",
+        "deleveraging",
+        "fire sale"
+      ]
+    },
+    {
+      "ssrn_id": "4675565",
+      "title": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions",
+      "matched": [
+        "liquidation",
+        "margin call"
+      ]
+    },
+    {
+      "ssrn_id": "5895159",
+      "title": "Micro-Martingale and Integral Take-Profit: A Dynamic Multi-Pair Framework for Volatility-Adaptive Trading in Cryptocurrency Markets",
+      "matched": [
+        "liquidation",
+        "deleveraging"
+      ]
+    },
+    {
+      "ssrn_id": "6223420",
+      "title": "Wrapped Stablecoins and the DeFi Systemic Risk Pairie Koh1, Kuntara Pukthuanthong2,",
+      "matched": [
+        "liquidation",
+        "margin call",
+        "deleveraging",
+        "cascade"
+      ]
+    },
+    {
+      "ssrn_id": "6325338",
+      "title": "Diagnosing Financial Fragility in a Complex Economy Jorge A. Arroyo\u2217",
+      "matched": [
+        "liquidation",
+        "margin call",
+        "deleveraging"
+      ]
+    },
+    {
+      "ssrn_id": "6542019",
+      "title": "Dynamic De-Risking under Drawdown Constraints: Structural Properties and Heuristic Rules for Kelly",
+      "matched": [
+        "liquidation",
+        "margin call"
+      ]
+    },
+    {
+      "ssrn_id": "6592831",
+      "title": "Same Shock, Same Assets, Different Microstructure: A Comparative Analysis of CeFi and DeFi Venue Performance",
+      "matched": [
+        "liquidation",
+        "deleveraging",
+        "cascade"
+      ]
+    },
+    {
+      "ssrn_id": "6609698",
+      "title": "Path Signatures for Regime Detection in Cryptocurrency Markets:",
+      "matched": [
+        "liquidation",
+        "cascade"
+      ]
+    },
+    {
+      "ssrn_id": "6749859",
+      "title": "Optimal Control of the Ethena Yield-Bearing Stablecoin Matthew Lorig \u2217",
+      "matched": [
+        "liquidation",
+        "cascade"
+      ]
+    },
+    {
+      "ssrn_id": "6924600",
+      "title": "The \ud835\udf05-Chain: A Sovereign Islamic Financial Infrastructure Layer",
+      "matched": [
+        "liquidation",
+        "cascade"
+      ]
+    },
+    {
+      "ssrn_id": "6943940",
+      "title": "Risk-Sensitive Portfolio Optimization under Regime Shifts: A Hierarchical Deep",
+      "matched": [
+        "liquidation",
+        "margin call"
+      ]
+    },
+    {
+      "ssrn_id": "7059779",
+      "title": "Perpetual Futures: Mechanics, History and Purpose Victor Haghani & James White1",
+      "matched": [
+        "liquidation",
+        "deleveraging"
+      ]
+    },
+    {
+      "ssrn_id": "7305922",
+      "title": "The Clock of Regimes: An Operator-Theoretic Early-Warning System for Financial Fragility",
+      "matched": [
+        "liquidation",
+        "deleveraging",
+        "fire sale"
+      ]
+    },
+    {
+      "ssrn_id": "7324102",
+      "title": "The Clock of Regimes: An Operator-Theoretic Early-Warning System for Financial Fragility",
+      "matched": [
+        "liquidation",
+        "deleveraging",
+        "fire sale"
+      ]
+    },
+    {
+      "ssrn_id": "7364898",
+      "title": "Event-History Monitoring of Cryptocurrency Derivatives Instability",
+      "matched": [
+        "liquidation",
+        "deleveraging"
+      ]
+    }
+  ],
+  "Trend & Momentum": [
+    {
+      "ssrn_id": "2126478",
+      "title": "The Trend is Our Friend: Risk Parity, Momentum and Trend Following in Global Asset Allocation",
+      "matched": [
+        "breakout",
+        "trend following"
+      ]
+    },
+    {
+      "ssrn_id": "2265693",
+      "title": "|  T H E  A U S T R A L I A N  N A T I O N A L  U N I V E R S I T Y Crawford School of Public Policy",
+      "matched": [
+        "breakout",
+        "trend following"
+      ]
+    },
+    {
+      "ssrn_id": "2275745",
+      "title": "|  T H E  A U S T R A L I A N  N A T I O N A L  U N I V E R S I T Y Crawford School of Public Policy",
+      "matched": [
+        "breakout",
+        "trend following"
+      ]
+    },
+    {
+      "ssrn_id": "2436825",
+      "title": "Growth beats Value: Smart Beta, Factor Timing and Momentum in Global Equity Strategies",
+      "matched": [
+        "breakout",
+        "trend following"
+      ]
+    },
+    {
+      "ssrn_id": "2633752",
+      "title": "Carry and Trend Following Returns in the Foreign Exchange Market",
+      "matched": [
+        "breakout",
+        "trend following"
+      ]
+    },
+    {
+      "ssrn_id": "4666899",
+      "title": "A Tactical Strategy using ETFs: Harvesting Volatility Risk Premia & Crisis Alpha",
+      "matched": [
+        "breakout",
+        "trend following"
+      ]
+    },
+    {
+      "ssrn_id": "4825389",
+      "title": "Cryptocurrency Volume-Weighted Time Series Momentum Zih-Chun Huanga, Ivan Sangiorgib, Andrew Urquhartc",
+      "matched": [
+        "time series momentum",
+        "tsmom"
+      ]
+    },
+    {
+      "ssrn_id": "6722841",
+      "title": "Experimental Evaluation of an Algorithmic Trading Strategy Against the S&P 500",
+      "matched": [
+        "donchian",
+        "breakout"
+      ]
+    },
+    {
+      "ssrn_id": "7405060",
+      "title": "Time-Series Momentum in Cryptocurrency: A Published Edge That Has Aged \u2014 Regime-Dependence and Retail Feasibility (2016\u2013",
+      "matched": [
+        "time series momentum",
+        "tsmom"
+      ]
+    },
+    {
+      "ssrn_id": "7418978",
+      "title": "A Symmetric Trend Veto Is Two Different Objects: 5.7 Years of Barrier Outcomes on Twenty Cryptocurrency Perpetuals",
+      "matched": [
+        "time series momentum",
+        "trend following"
+      ]
+    }
+  ],
+  "Mean Reversion & Pairs": [
+    {
+      "ssrn_id": "3436041",
+      "title": "Cryptocurrency as money: A trading strategy solution Marko Ogorevc",
+      "matched": [
+        "cointegration",
+        "pairs trading",
+        "mean reversion"
+      ]
+    },
+    {
+      "ssrn_id": "599926",
+      "title": "Efficiency tests in the Iberian stock markets Testes de efici\u00eancia aos mercados de ac\u00e7\u00f5es ib\u00e9ricos",
+      "matched": [
+        "cointegration",
+        "mean reversion"
+      ]
+    },
+    {
+      "ssrn_id": "6090687",
+      "title": "Machine Learning-Driven Long/Short Pair Trading Strategies in Cryptocurrencies Gabriel Odero",
+      "matched": [
+        "cointegration",
+        "pairs trading",
+        "mean reversion"
+      ]
+    },
+    {
+      "ssrn_id": "7143718",
+      "title": "Separating Event Intensity from Fixed Funding Carry: Evidence from Perpetual Futures and Credit Markets",
+      "matched": [
+        "mean reversion",
+        "half-life"
+      ]
+    }
+  ],
+  "Market Making & Optimal Execution": [
+    {
+      "ssrn_id": "6280958",
+      "title": "Delta-Neutral Grid Market Making with Adaptive Hedging",
+      "matched": [
+        "avellaneda",
+        "stoikov"
+      ]
+    }
+  ],
+  "ML & Factor Models": [
+    {
+      "ssrn_id": "1328964",
+      "title": "Business at Dartmouth Tuck School of Business Working Paper No. 2007-36",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "2244511",
+      "title": "Predatory Short Selling Markus K. Brunnermeier1 and Martin Oehmke2",
+      "matched": [
+        "cross-sectional",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "2308659",
+      "title": "Pseudo-Mathematics and Financial Charlatanism: The E\ufb00ects of",
+      "matched": [
+        "factor model",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "2368208",
+      "title": "European Equity Investing through the Financial Crisis: Can Risk Parity, Momentum or Trend Following help to reduce tail",
+      "matched": [
+        "cross-sectional",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "2382973",
+      "title": "Crawford School of Public Policy",
+      "matched": [
+        "cross-sectional",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "3031796",
+      "title": "Machine learning at central banks Chiranjit Chakraborty and Andreas Joseph",
+      "matched": [
+        "random forest",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "3100165",
+      "title": "What Goes Up Must Not Come down - Time Series Momentum in Factor Risk Premiums",
+      "matched": [
+        "cross-sectional",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "3245641",
+      "title": "Cryptoasset Factor Models Zura Kakushadze\u00a7\u20201",
+      "matched": [
+        "cross-sectional",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "3358631",
+      "title": "Turning Points and Classi\ufb01cation Jeremy Piger",
+      "matched": [
+        "random forest",
+        "cross-sectional",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "3382654",
+      "title": "Information Systems &eBusiness Network (ISN) International Conference on Advances in Engineering Science Management & Technology 2019",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "3453564",
+      "title": "The Four Horsemen of Machine Learning in Finance Matthew Dixon",
+      "matched": [
+        "factor model",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "3527511",
+      "title": "Algorithms in Future Capital Markets Adriano Koshiyama, Nick Firoozye and Philip Treleaven",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "3588261",
+      "title": "Persistence in factor-based supervised learning models Monday 1st November, 2021",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "3624931",
+      "title": "Finance and Economics Discussion Series Divisions of Research & Statistics and Monetary A\ufb00airs",
+      "matched": [
+        "lightgbm",
+        "random forest",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "3842556",
+      "title": "Leveraging Machine Learning Techniques in Enhancing Recognition of Emotion in Speech",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "3904097",
+      "title": "International Journal of xxxxxx Vol. x, No. x, (2019), pp. xx-xx",
+      "matched": [
+        "meta-label",
+        "triple barrier",
+        "random forest",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "3914414",
+      "title": "Cryptocurrency Return Predictability: A Machine-Learning Analysis",
+      "matched": [
+        "random forest",
+        "factor model",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "4033250",
+      "title": "Predicting Stock Splits Using Ensemble Machine Learning and SMOTE Oversampling",
+      "matched": [
+        "random forest",
+        "factor model",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "4108758",
+      "title": "Detection of Breast Cancer using Machine Learning Algorithms",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "4139385",
+      "title": "CHILD WELFARE SYSTEM CONTACT IN THE GLOBAL NORTH: TRENDS FROM 44 COUNTRIES",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "4322637",
+      "title": "Cross-sectional Momentum in Cryptocurrency Markets",
+      "matched": [
+        "cross-sectional",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "4402365",
+      "title": "Fundamental Sentiment and Cryptocurrency Risk Premia",
+      "matched": [
+        "cross-sectional",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "4433523",
+      "title": "Sumerianz Journal of Economics and Finance, 2023, Vol. 6, No. 2, pp. 26-36 ISSN(e): 2617-6947, ISSN(p): 2617-7641",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "4463236",
+      "title": "Habitat models of stream invertebrate community improve with predictors",
+      "matched": [
+        "lightgbm",
+        "random forest"
+      ]
+    },
+    {
+      "ssrn_id": "4471119",
+      "title": "A profitable trading algorithm for cryptocurrencies using a Neural Network model",
+      "matched": [
+        "random forest",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "4682552",
+      "title": "Optimization of reliability and speed of the end-of-line quality inspection of electric motors",
+      "matched": [
+        "random forest",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "4703167",
+      "title": "Cryptocurrency return prediction: A machine learning analysis Xingyi Li a, b, Yujun Liu a, Zhuang Liu a, Shushang Zhu a,*",
+      "matched": [
+        "random forest",
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "4775572",
+      "title": "How important are climate change risks for predicting clean energy stock prices? Evidence from machine learning predictive modeling and interpretation",
+      "matched": [
+        "lightgbm",
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "4825389",
+      "title": "Cryptocurrency Volume-Weighted Time Series Momentum Zih-Chun Huanga, Ivan Sangiorgib, Andrew Urquhartc",
+      "matched": [
+        "cross-sectional",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "4869272",
+      "title": "Volatility Surfaces and Expected Option Returns\u2217 Philipp H\u00a8ofler",
+      "matched": [
+        "cross-sectional",
+        "factor model",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "4983766",
+      "title": "Franklin et al. 2024 Title: \u201cKnowledge, Attitudes, and Beliefs Towards Coronavirus (COVID-19) Vaccine and Trusted",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "5022604",
+      "title": "Can central bankers\u2019 talk predict bank stock returns? A machine learning approach",
+      "matched": [
+        "random forest",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "5124841",
+      "title": "Published as a conference paper at ICLR 2025 ALPHAQUANT: LLM-DRIVEN AUTOMATED ROBUST",
+      "matched": [
+        "lightgbm",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "5173621",
+      "title": "Can central bankers\u2019 talk predict bank stock returns? A machine learning approach",
+      "matched": [
+        "random forest",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "5195507",
+      "title": "An Explainable AI Approach for Interpreting Regionally Optimized Deep Neural",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "5201523",
+      "title": "Stacking-Driven Explainable Machine Learning Method: Uncovering Anxiety Risk in Elderly Women under Home-based Care from CLHLS",
+      "matched": [
+        "random forest",
+        "cross-sectional",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "5203049",
+      "title": "Early Warning Systems for Cryptocurrency Markets: Predicting \u2019Zombie\u2019 Assets Using Machine Learning",
+      "matched": [
+        "random forest",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "5243770",
+      "title": "High accuracy without utility? The paradox of Bitcoin AI forecasts",
+      "matched": [
+        "random forest",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "5246044",
+      "title": "Corporate ESG Rating Prediction Based on XGBoost-SHAP Interpretable Machine Learning",
+      "matched": [
+        "random forest",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "5256418",
+      "title": "Built Environment Impacts on Zonal E-Scooter Expenses: A Bayesian Machine Learning Approach",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "5372884",
+      "title": "Sentiment Analysis and Stock Price Prediction Using Social Media and News Data 1. Executive Summary",
+      "matched": [
+        "triple barrier",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "5378591",
+      "title": "Title: Prediction of Halitosis Using Neural Network and Machine Learning Models from Oral and Systemic Health Data",
+      "matched": [
+        "random forest",
+        "cross-sectional",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "5379358",
+      "title": "DeepFrailty and machine learning modelling for predicting under-five survival in southern Africa",
+      "matched": [
+        "random forest",
+        "cross-sectional"
+      ]
+    },
+    {
+      "ssrn_id": "5551719",
+      "title": "Graphical Abstract Digital Asset Funding Rates as a Distinct Risk Factor: Evidence from a Systematic Harvesting Approach",
+      "matched": [
+        "factor model",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "5611243",
+      "title": "Talanta Open \u2026. (202..) \u2026\u2026.. Enhancing geographical origin classification of Vietnamese oranges",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "5680122",
+      "title": "Skip to main content Not Available for Download",
+      "matched": [
+        "lightgbm",
+        "catboost"
+      ]
+    },
+    {
+      "ssrn_id": "5717350",
+      "title": "Deep Convolutional Factor Prediction with Explainable AI for Enhanced Investment Strategy",
+      "matched": [
+        "random forest",
+        "factor model",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "5749286",
+      "title": "The Mathematics of Motion: Automated Discovery of Biomechanical",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "5768624",
+      "title": "A divide-and-conquer machine learning transition model for airfoil \ufb02ows: from steady linear- lift to unsteady stall stage",
+      "matched": [
+        "random forest",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "5795082",
+      "title": "Prediction Of Churn and Credit Decisions Using Artificial Intelligence Advanced Classifier",
+      "matched": [
+        "random forest",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "5799762",
+      "title": "Adversarial-Robust Deep Reinforcement Learning for High-Frequency Cryptocurrency Trading with",
+      "matched": [
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "5888383",
+      "title": "Machine Learning Integrated Tail Risk Detection",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "5922065",
+      "title": "A Decomposition of Cryptocurrencies' Time Varying Systematic Risk Beta Masud Alam, PhD,",
+      "matched": [
+        "lightgbm",
+        "factor model",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "5943491",
+      "title": "Forecasting Asset Returns with Sentiment-Enhanced FIGARCH Models",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "5957236",
+      "title": "On the Anatomy of Trend Christian Kjaer \u2217\u2020",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6060959",
+      "title": "Corporate Bond Issuance as a State-Dependent Process: Structural Regimes",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6078570",
+      "title": "A Statistical Assessment of the Impact of Machine Learning Inputs on the Performance of Integer-Valued Markowitz-Type Portfolios",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6145964",
+      "title": "From Predictability to Tradability: A Comparative Study of Image- and Sequence-based Deep Learning in",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6232459",
+      "title": "Regime Detection and Contagion in High-Frequency Limit Order Books: A Temporal Wasserstein Approach",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6245658",
+      "title": "Epistemic Failure and Methodological Reform in Financial Machine Learning: A Systematic Review of the Generalization Crisis",
+      "matched": [
+        "random forest",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "6280940",
+      "title": "PROPHET: Multi-Modal Ensemble for Prediction Market Forecasting KDD 2025",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6293281",
+      "title": "ESG Rating Disagreement Dynamics and Stock Returns\u0131",
+      "matched": [
+        "cross-sectional",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "6300843",
+      "title": "A Forecast Model For Crypto Currencies Jaslyn Chen",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6301119",
+      "title": "Explainable Deep Learning for Financial Volatility Forecasting",
+      "matched": [
+        "random forest",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "6320138",
+      "title": "Beyond the Hype: A Multi-Layer Machine Learning Framework for Cryptocurrency",
+      "matched": [
+        "random forest",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "6340362",
+      "title": "Stablecoins and monetary policy transmission",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6397218",
+      "title": "Causal Momentum: Information Channel Alignment in Network-Based Cross-Sectional Stock Prediction",
+      "matched": [
+        "cross-sectional",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "6397278",
+      "title": "Causal Momentum: Information Channel Alignment in Network-Based Cross-Sectional Stock Prediction",
+      "matched": [
+        "cross-sectional",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "6401099",
+      "title": "When Markets Never Sleep: Intraday Liquidity Patterns and Volatility Effects in Cryptocurrency Trading",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6493762",
+      "title": "What Are Market Regimes? Definitional Chaos, Validation Failure, and a Path Toward",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6506163",
+      "title": "Filtering Microstructural Toxicity: A Spence-Harsanyi Signaling Approach to Regime-Routed Portfolios",
+      "matched": [
+        "cross-sectional",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "6510120",
+      "title": "Decoding Customer Behavior: A Machine Learning Framework for Churn Prediction",
+      "matched": [
+        "random forest",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "6532398",
+      "title": "Directional Disagreement Between Prior Returns and Opening",
+      "matched": [
+        "cross-sectional",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "6551587",
+      "title": "Leakage-Free Multi-Site EV Charging Demand Forecasting: Cross- Site Generalization, Transfer Learning, and Grid-Aware Scheduling",
+      "matched": [
+        "lightgbm",
+        "catboost",
+        "random forest"
+      ]
+    },
+    {
+      "ssrn_id": "6556811",
+      "title": "Explainable artificial intelligence framework for cycle time prediction and an empirical study for smart semiconductor",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6575820",
+      "title": "Monir Hasan Anik (2026). ML for Money Laundering Detection. Weekend MSc Thesis, Jahangirnagar University. Page 1",
+      "matched": [
+        "random forest",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "6609698",
+      "title": "Path Signatures for Regime Detection in Cryptocurrency Markets:",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6625120",
+      "title": "Greeks-Aware Profitability Labeling for Intraday Nifty 50 Options Trading Using Hybrid Machine",
+      "matched": [
+        "lightgbm",
+        "random forest"
+      ]
+    },
+    {
+      "ssrn_id": "6675380",
+      "title": "Cross-Sectional Return Prediction Using Machine Learning: A Practitioner Pipeline",
+      "matched": [
+        "lightgbm",
+        "cross-sectional",
+        "factor model",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "6681409",
+      "title": "Meta-Labeling with Provable Precision Guarantees for Safety-Critical Transportation Systems",
+      "matched": [
+        "meta-label",
+        "random forest"
+      ]
+    },
+    {
+      "ssrn_id": "6681412",
+      "title": "Meta-Labeling with Provable Precision Guarantees for Safety-Critical Transportation Systems",
+      "matched": [
+        "meta-label",
+        "random forest"
+      ]
+    },
+    {
+      "ssrn_id": "6737128",
+      "title": "Manuscript submitted to the Journal of Financial Stability This Time Is Not So Different:",
+      "matched": [
+        "cross-sectional",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "6740278",
+      "title": "Machine Learning for Italian Non-Performing Loan Valuation: A Methodology Framework with Purged Cross-Validation",
+      "matched": [
+        "lightgbm",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6744178",
+      "title": "# Can AI Actually Trade? A Comparative Study of LSTM and Transformer Models Across Stocks, Crypto, and Forex",
+      "matched": [
+        "random forest",
+        "factor model",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6778485",
+      "title": "Fiat Currency and Cryptocurrency: Two Sides of the Same Coin?",
+      "matched": [
+        "cross-sectional",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "6786101",
+      "title": "ARE NATURAL CATASTROPHES AND SOCIAL SHOCKS USABLE TRIGGERS FOR ECONOMIC CAT BONDS? A MACHINE",
+      "matched": [
+        "random forest",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "6876396",
+      "title": "In-season cotton yield forecasting using high resolution satellite imagery",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6884959",
+      "title": "ARE NATURAL CATASTROPHES AND SOCIAL SHOCKS USABLE TRIGGERS FOR ECONOMIC CAT BONDS? A MACHINE",
+      "matched": [
+        "random forest",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "6957438",
+      "title": "CLOUD COMPUTING RESOURCE OPTIMIZER",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "6970146",
+      "title": "Skip to main content Not Available for Download",
+      "matched": [
+        "lightgbm",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "7031478",
+      "title": "Regime-Aware LLM Agents for Cryptocurrency Markets",
+      "matched": [
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "7044738",
+      "title": "Machine Learning-Based Stock Return Prediction for NEPSE: Do Global Feature Sets Outperform Traditional Technical Indicators in an",
+      "matched": [
+        "lightgbm",
+        "random forest",
+        "cross-sectional",
+        "factor model",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "7052109",
+      "title": "LIBS determination of major and minor elements in airborne rock particles using a",
+      "matched": [
+        "random forest",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "7111198",
+      "title": "Artificial Intelligence in Asset Pricing: A Critical Literature Review of Market Efficiency, Risk Premia, and Alpha Generation",
+      "matched": [
+        "random forest",
+        "cross-sectional",
+        "factor model",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "7115459",
+      "title": "Risk-Managed Time-Series Momentum in Crypto Majors: Crash-State De- Risking and Drawdown Control",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "7147019",
+      "title": "Regime Shift and the Limits of Supervised Meta-Labelling:",
+      "matched": [
+        "meta-label",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "7163598",
+      "title": "The Impact of AI on Predicting Surge Pricing in Ride-Hailing Apps",
+      "matched": [
+        "random forest",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "7191338",
+      "title": "Federated Computing and Data Infrastructure for Quantitative Research:",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "7200998",
+      "title": "Do Market Regimes Improve Machine-Learning Stock Ranking?",
+      "matched": [
+        "lightgbm",
+        "random forest",
+        "cross-sectional"
+      ]
+    },
+    {
+      "ssrn_id": "7271767",
+      "title": "A shield attitude prediction method considering downtime-excavation",
+      "matched": [
+        "random forest",
+        "shap",
+        "feature importance"
+      ]
+    },
+    {
+      "ssrn_id": "7301919",
+      "title": "Every Asset Its Own Benchmark: Market-Neutral Alpha in Perpetual Futures",
+      "matched": [
+        "cross-sectional",
+        "factor model",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "7327510",
+      "title": "On the Anatomy of Trend Submission to the International Review of Financial Analysis",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "7345542",
+      "title": "Risk Control as the Durable Edge: Loss Filtering, Profit-Armed Ratchets, and Market-Neutral Carry When Direction Fails",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "7355387",
+      "title": "Do Market Regimes Improve Machine-Learning Stock Ranking?",
+      "matched": [
+        "lightgbm",
+        "random forest",
+        "cross-sectional"
+      ]
+    },
+    {
+      "ssrn_id": "7361219",
+      "title": "Does Regional Economic Policy Uncertainty Matter to Cryptocurrency Returns? Evidence from China and Japan",
+      "matched": [
+        "lightgbm",
+        "shap"
+      ]
+    },
+    {
+      "ssrn_id": "7412002",
+      "title": "Fiat Currency and Cryptocurrency: Two Sides of the Same Coin?",
+      "matched": [
+        "cross-sectional",
+        "factor model"
+      ]
+    },
+    {
+      "ssrn_id": "7447230",
+      "title": "Prospect Theory and Time-Varying Regime Transitions in the Cryptocurrency Market: A Two-State Markov Switching Approach",
+      "matched": [
+        "cross-sectional",
+        "shap"
+      ]
+    }
+  ]
+}

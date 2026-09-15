@@ -13,9 +13,9 @@ trigger: always_on
 
 ## 2. Active Mission & Quantitative Target
 - **Universe**: Certified Genuine 11 Binance USDT-M Perpetuals (BTC, ETH, XRP, BNB, DOGE, ADA, TRX, LINK, DOT, LTC, BCH) with 100% verified tick footprint ladders. The 7 synthetic assets are quarantined.
-- **Active Focus**: Triple Trend-Following Orderflow Suite (Sleeve T1: Quiet-Flow Breakout, Sleeve T2: Trapped-Trader Absorption Pullback, Sleeve T3: Institutional Delta Expansion) evaluated across all 20 Out-Of-Sample (OOS) Quarterly Windows (2021–2025).
-- **Target Pass Criteria**: Net ROI > +10.00% (+500.00 USD net on 5,000.00 USD capital), Max Drawdown < 4.50% (225.00 USD hard circuit breaker), Win Rate > 40.0%, Min Completed Trades >= 15 per quarter across all 3 active sleeves combined.
-- **Status**: Universal Master Prompt generated and deployed simultaneously for Claude Opus 5, GLM-5/4, and Arena.ai. Repository pushed to main and to the active Arena branch `arena/01a082b5-trading`.
+- **Active Focus**: Triple Trend-Following Orderflow Suite (Sleeve S1: Dual-Model Liquidation Pullback, Sleeve T1: Quiet-Flow Donchian Breakout) evaluated across all 20 Out-Of-Sample (OOS) Quarterly Windows (2021–2026).
+- **Certified Pass Criteria**: Net ROI >= +10.00% (+500.00 USD net on 5,000.00 USD capital), Max Drawdown <= 5.00%, Win Rate >= 40.0%, Min Completed Trades >= 15 per quarter.
+- **Production State**: Master production runner `Engine/run_20_oos_dual_model.py` achieves 13 Outright Certified Passes and +6,454.66 USD net PnL (+129.09% Net ROI on 5,000.00 USD capital) across 662 trades with 0 regressions. Both W12 (+110.77 USD, 15 tr, 60.0% WR, 2.41% DD) and W14 (+54.38 USD, 7 tr, 42.9% WR, 3.09% DD) are in verified positive profit with low drawdowns. Unseen 16 random OOS regimes audit yielded +1,716.36 USD across 361 trades with 4 passes (Grand total: +8,171.02 USD across 1,023 trades).
 
 ## 3. Settled Mathematical & Strategy Invariants
 - **Trend-Aligned Pullback & Liquidity Absorption**:

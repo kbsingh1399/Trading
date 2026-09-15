@@ -25,6 +25,12 @@ CRITERIA_PATH = Path(r"C:\Users\SIGMA\Documents\Trading\Engine\target_oos_criter
 OUTPUT_DIR = Path(r"C:\Users\SIGMA\Documents\Trading\scratch\ml_reversal_results")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
+CAPITAL = 5000.0
+MIN_ROI = 10.0
+MAX_DD = 5.0
+MIN_WR = 40.0
+MIN_TRADES = 15
+
 # Certified genuine 11 institutional Binance USDT-M perpetuals
 CORE_SYMBOLS = [
     "BTCUSDT", "ETHUSDT", "XRPUSDT", "BNBUSDT", "DOGEUSDT",
@@ -257,7 +263,7 @@ def load_btc_macro_tide() -> pd.Series:
     return pd.Series(tide, index=df["open_time_ms"])
 
 
-def compile_dataset_with_numba():
+def compile_dataset_with_numba(friction_r: float = 0.18):
     t_start = time.perf_counter()
     warmup_numba()
 
@@ -329,7 +335,7 @@ def compile_dataset_with_numba():
         # Execute JIT Ratchet Labeler with Convex Asymmetric Payoff Geometry
         t_numba_0 = time.perf_counter()
         is_cand, side, label_y, real_r, b_held = label_triple_barriers_numba(
-            c, h, lo, atr, long_cond, short_cond, 32, 3.0, 1.2, 1.6, 0.35, 2.2, 1.4, 0.18
+            c, h, lo, atr, long_cond, short_cond, 32, 3.0, 1.2, 1.6, 0.35, 2.2, 1.4, friction_r
         )
         t_numba_ms = (time.perf_counter() - t_numba_0) * 1000
 
@@ -374,7 +380,7 @@ def compile_dataset_with_numba():
     return total_pool
 
 
-def run_fast_numba_walkforward(all_data: pd.DataFrame):
+def run_fast_numba_walkforward(all_data: pd.DataFrame, return_trades: bool = False):
     t_wf_start = time.perf_counter()
     with open(CRITERIA_PATH, "r", encoding="utf-8") as f:
         criteria = json.load(f)["target_criteria"]
@@ -399,6 +405,7 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
     print("-" * 125)
 
     results = []
+    all_trades = []
     total_trades = 0
     total_pnl = 0.0
     pass_count = 0
@@ -595,6 +602,7 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
 
         total_trades += n_trades
         total_pnl += pnl
+        all_trades.extend(executed_trades)
 
         print(f"W{w_id:02d} | {w_name[:38]:<38} | {len(test_set):<10d} | {n_trades:<6d} | {wr:>6.1f}%  | {pnl:>+9.2f} USD | {roi:>+7.2f}% | {cur_max_dd_pct:>5.2f}% | {status:<6}")
 
@@ -618,6 +626,8 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame):
     print(f"  Total Cumulative PnL             : {total_pnl:+,.2f} USD (Net ROI: {overall_roi:+.2f}%)")
     print(f"  Criteria Compliant Windows Passed: {pass_count} / {len(results)}")
     print("=" * 125)
+    if return_trades:
+        return pd.DataFrame(results), all_trades
     return pd.DataFrame(results)
 
 

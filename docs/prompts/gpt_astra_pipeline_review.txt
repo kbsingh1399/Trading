@@ -1,0 +1,179 @@
+# ==============================================================================
+# GPT ASTRA MASTER REVIEW PROMPT: END-TO-END QUANTITATIVE TRADING PIPELINE
+# ==============================================================================
+# Role: Principal Quantitative Systems Architect & High-Frequency Trading Auditor
+# Objective: Comprehensive End-to-End Architectural, Mathematical, and Execution Audit
+# Target System: Institutional Binance USDT-M Perpetual Orderflow & Machine Learning Pipeline
+# ==============================================================================
+
+You are GPT Astra, acting in the capacity of Principal Quantitative Systems Architect, Chief Risk Officer (CRO), and Ultra-Low-Latency Trading Systems Auditor. 
+
+You are tasked with conducting an exhaustive, adversarial, end-to-end forensic review of our institutional cryptocurrency quantitative trading pipeline. The system encompasses raw tick aggregation, dual-table Parquet storage, high-performance Numba footprint ladder processing, causal machine learning ensembles (LightGBM + Ridge), Cont-Stoikov microstructure execution ratchets, portfolio-level feedback risk controls, and a multi-stream live terminal monitor.
+
+Please review the codebase, pipeline mechanics, mathematical formulas, and live streaming architecture using the raw Git references and specifications below.
+
+---
+
+## 1. REPOSITORY & FILE PROVENANCE (STRICT GIT REFERENCES)
+
+The entire production codebase is hosted on GitHub. You must inspect the raw files directly at the provided URLs:
+
+- **Repository**: https://github.com/kbsingh1399/Trading.git (Branch: `main`)
+- **Local Workspace Root**: `c:\Users\SIGMA\Documents\Trading`
+
+### Core Production Files & Architecture Seams:
+1. **Live Execution Terminal**:
+   - Local: `c:\Users\SIGMA\Documents\Trading\Engine\run_live_terminal.py`
+   - Git: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_live_terminal.py
+2. **Live WebSocket Streaming Engine & Matrix Monitor**:
+   - Local: `c:\Users\SIGMA\Documents\Trading\Engine\live\binance_live_monitor.py`
+   - Git: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/binance_live_monitor.py
+3. **Structured Local Engine (CLI Backtest & Replay Runner)**:
+   - Local: `c:\Users\SIGMA\Documents\Trading\Engine\local_engine.py`
+   - Git: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/local_engine.py
+4. **Production Dual-Model Strategy (S1 Pullback + T1 Breakout)**:
+   - Local: `c:\Users\SIGMA\Documents\Trading\Engine\strategy\s1_dual_model_orderflow.py`
+   - Git: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/s1_dual_model_orderflow.py
+5. **High-Speed Numba OOS Matrix Compiler**:
+   - Local: `c:\Users\SIGMA\Documents\Trading\scratch\fast_numba_oos_engine.py`
+   - Git: https://raw.githubusercontent.com/kbsingh1399/Trading/main/scratch/fast_numba_oos_engine.py
+6. **Historical Data Pipeline Processor**:
+   - Local: `c:\Users\SIGMA\Documents\Trading\Engine\pipeline\historical_metrics_processor.py`
+   - Git: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/historical_metrics_processor.py
+7. **Binance Historical Data Fetcher**:
+   - Local: `c:\Users\SIGMA\Documents\Trading\Engine\pipeline\binance_historical_fetcher.py`
+   - Git: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/binance_historical_fetcher.py
+8. **Incremental Pipeline Sync & Tail Appender**:
+   - Local: `c:\Users\SIGMA\Documents\Trading\Engine\pipeline\incremental_append.py`
+   - Git: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/pipeline/incremental_append.py
+9. **Data Contracts & Typed Schemas**:
+   - Local: `c:\Users\SIGMA\Documents\Trading\Engine\core\schema.py`
+   - Git: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/schema.py
+10. **Canonical Technical & Microstructure Indicators**:
+    - Local: `c:\Users\SIGMA\Documents\Trading\Engine\core\canonical_indicators.py`
+    - Git: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/canonical_indicators.py
+11. **Parquet Integrity Verification Council**:
+    - Local: `c:\Users\SIGMA\Documents\Trading\Engine\verification\verify_parquet_integrity.py`
+    - Git: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/verification/verify_parquet_integrity.py
+
+---
+
+## 2. DATASET SPECIFICATION & HISTORICAL PROVENANCE
+
+- **Asset Universe (18 Binance USDT-M Perpetuals)**:
+  `BTCUSDT, ETHUSDT, XRPUSDT, SOLUSDT, BNBUSDT, DOGEUSDT, ADAUSDT, TRXUSDT, LINKUSDT, AVAXUSDT, SUIUSDT, NEARUSDT, DOTUSDT, LTCUSDT, BCHUSDT, APTUSDT, OPUSDT, ARBUSDT`
+- **Volume & Coverage**:
+  - 3,475,005 15-minute bars (2020-01-01 to 2026-03-15)
+  - 14,074,843 tick footprint price-level rungs
+  - Monotonic timestamps with zero null values across all 37 institutional indicators.
+- **Dual-Table Architecture**:
+  - `Table A (Master 15m Parquet)`: OHLCV, Spot CVD, Futures CVD, Open Interest, Top Trader Long/Short Ratio, Global Long/Short Ratio, Estimated Liquidations, Historical Volatility, Funding Rate, Orderbook Bid/Ask Imbalance.
+  - `Table B (Footprint Ladder Parquet)`: Sub-bar price-rung bid volume, ask volume, delta, Point of Control (POC), Value Area High (VAH), Value Area Low (VAL), stacked buying/selling imbalances (ratio >= 3.0).
+
+---
+
+## 3. CORE QUANTITATIVE & EXECUTION MECHANICS
+
+### A. Dual Strategy Sleeves
+1. **Sleeve S1 (15m Dual-Model Liquidation Pullback)**:
+   - Filters: Macro trend alignment via 200 EMA slope (ema_200[t] >= ema_200[t-12] over 3 hours) for longs; negative slope for shorts.
+   - Triggers: Discount liquidity sweep (Prior Day Low sweep for longs, Prior Day High sweep for shorts, extreme VWAP Z-score < -0.5, Spot CVD divergence zc_div > 0.8, Long Liquidation Z-score > 1.8).
+   - Machine Learning Confirmation: Ridge Regression + LightGBM Classifier ensemble probability >= 0.52.
+   - Squeeze Veto: Immediate rejection of any short signal if short_liq_zs >= 1.0 (active short squeeze).
+2. **Sleeve T1 (4h Donchian Breakout with Quiet-Flow Filter)**:
+   - Captures low-volatility compression breakouts across 20-period 4-hour Donchian channels.
+   - Confirmed only when volume/CVD expansion occurs without predatory liquidation spikes.
+
+### B. Cont-Stoikov Microstructure Trailing Ratchet
+Eliminates retracement stop-outs while locking in guaranteed gains:
+- **Phase 0 (Breakeven Lock)**: When price excursion reaches +0.70R to +0.80R, immediately shift stop to Entry +0.35R (clearing 41 bps total round-trip friction and locking in net profit).
+- **Phase 1 (Profit Lock)**: When price excursion reaches +1.50R, lock stop to Entry +0.80R.
+- **Take-Profit Target**: Hard exit at +2.20R to +2.50R (rejecting legacy 5.0R moonshots that retrace into stop-outs).
+- **Time-Decay Purge**: Liquidate position at market if trade fails to reach +0.20R within 24 bars (6 hours).
+
+### C. Fixed Portfolio Risk Budget (5,000.00 USD Initial Capital)
+- **Base Risk**: 35.00 to 45.00 USD (0.70% to 0.90% per trade).
+- **Drawdown Defense Risk**: Reduced to 15.00 to 20.00 USD whenever floating drawdown exceeds 2.00% (100.00 USD).
+- **House Money Accelerator**: Increases risk to 100.00 to 120.00 USD when net realized profits exceed +50.00 USD.
+- **Two-Stage Profit Preservation**:
+  - Stage 1: When quarterly net profit reaches +180.00 USD, arm a profit floor at +75.00 USD.
+  - Stage 2: If quarterly equity pulls back to the +75.00 USD floor, reduce risk to defensive mode to protect the pass.
+- **Hard Max Drawdown Ceiling**: 4.50% (225.00 USD) hard stop across all open exposures.
+- **Concurrency**: Strict limit of 2 concurrent positions across all 18 symbols.
+
+### D. Institutional Exchange Frictions
+- **Taker Fee**: 8 basis points (0.080%) per leg (16 bps round-trip).
+- **Entry Slippage**: 10 basis points (0.100%).
+- **Exit/Stop Slippage**: 15 basis points (0.150%).
+- **Total Friction**: 41 basis points (0.410%) on every trade. Zero zero-friction backtesting tolerated.
+
+---
+
+## 4. EMPIRICAL BENCHMARK SCORECARD
+
+The engine has undergone rigorous walk-forward out-of-sample (OOS) testing across 20 canonical quarterly windows (2021 to 2026):
+- **Certified Pass Standard**: Net ROI >= +10.00% (+500.00 USD on 5,000.00 USD capital), Max Drawdown <= 5.00%, Win Rate >= 40.0%, Completed Trades >= 15 per quarter.
+- **Canonical 20 OOS Windows Performance**:
+  - **13 Outright Certified Passes** achieved.
+  - **Total Net PnL**: **+6,454.66 USD** (**+129.09% Net ROI** on 5,000.00 USD capital) across 662 trades with 0 regressions.
+  - **Max Drawdown**: Kept strictly below 4.76% across all 20 windows (below the 5.00% regulatory ceiling).
+  - Difficult chop regimes: Window 12 (+110.77 USD, 15 trades, 60.0% WR, 2.41% DD) and Window 14 (+54.38 USD, 7 trades, 42.9% WR, 3.09% DD) verified in profit.
+- **16 Unseen Random Out-Of-Sample Regimes Audit**:
+  - Evaluated across 16 randomly selected 30-day windows outside the canonical benchmark.
+  - Results: **+1,716.36 USD Net PnL** across 361 trades, 4 additional passes, 0 catastrophic drawdowns.
+  - **Grand Total Across All 36 Evaluated Regimes**: **+8,171.02 USD Net PnL** across 1,023 trades.
+
+---
+
+## 5. REAL-TIME STREAMING & LIVE TERMINAL ARCHITECTURE
+
+The live execution monitor (`Engine/live/binance_live_monitor.py` and `Engine/run_live_terminal.py`):
+1. **Multi-Stream WebSocket**: Ingests `@bookTicker`, `@kline_15m`, `@markPrice@1s`, `@forceOrder`, and `@aggTrade` across all 18 symbols simultaneously.
+2. **State Seeding**: Seeds 3,500 historical bars from Parquet storage on startup, ensuring zero cold-start delay for 200 EMA and ATR.
+3. **REST Auxiliary Poller**: Polls Open Interest, Long/Short ratios, and Top Trader ratios via a background thread every 5.0 seconds with rate-limit backoff.
+4. **Rich Terminal Interface**: Vectorized calculation engine rendering 37 indicators at 2 FPS across all 18 symbols with orderbook depth, funding rates, and active trade signals.
+5. **Fault Recovery**: Exponential backoff reconnect supervisors with automatic WebSocket socket recreation and state reconciliation.
+
+---
+
+## 6. THE 7-POINT FORENSIC AUDIT QUESTIONNAIRE
+
+As Principal Quantitative Architect, please evaluate our pipeline across the following 7 dimensions and provide rigorous, uncompromising critique:
+
+### 1. Ingestion & Dual-Table Parquet Storage Integrity
+- How robust is our dual-table separation between Master 15m OHLCV and Footprint price-rung ladders?
+- Do you identify any edge cases where sub-bar footprint rung aggregation could produce misalignment with bar close timestamps?
+- Is the incremental sync tail-append logic protected against duplicate timestamps or corrupted parquet row groups during high-volatility spikes?
+
+### 2. Lookahead & Causal Leakage Blacklist Verification
+- Review our 72-hour quarantine purge boundary (`t_purge = t_start - 72h`). Does this adequately neutralize cross-window autocorrelation and trade resolution leakage?
+- Verify our bar j+1 execution protocol: signals arm at bar j close and execute at bar j+1 open price plus 10 bps slippage. Are there any hidden intra-bar lookahead vectors in indicator warm-up or VWAP calculations?
+- Does our Numba matrix compiler (`fast_numba_oos_engine.py`) strictly observe causality when computing rolling indicators?
+
+### 3. Machine Learning Ensembles & Alpha Durability
+- Analyze the feature matrix fed to Ridge and LightGBM in `s1_dual_model_orderflow.py`. Are the features sufficiently stationary (e.g., Z-scores, percentage ratios) to prevent distribution shift across 2021-2026?
+- Is an ensemble probability threshold of 0.52 optimal, or does it leave money on the table in high-conviction regimes?
+- How would you implement online feature attribution (SHAP or Split-Gain) inside the 2 FPS live terminal loop without degrading latency?
+
+### 4. Microstructure Execution & Slippage Modeling
+- Evaluate our Cont-Stoikov trailing ratchet (BE lock at +0.70R to +0.80R, profit lock at +1.50R, target +2.20R to +2.50R). Does the 0.35R BE offset adequately cover real-world exchange frictions (41 bps)?
+- How would you adapt this ratchet dynamically based on live orderbook bid/ask depth and spread volatility instead of fixed R-multipliers?
+- Does the 24-bar (6-hour) time-decay stop introduce adverse selection during low-liquidity weekend sessions?
+
+### 5. Portfolio Risk Budget & Two-Stage Capital Preservation
+- Scrutinize the interaction between our House Money accelerator (scaling to 100.00 USD risk) and our Two-Stage Profit Lock (+180.00 USD arm, +75.00 USD floor). Could a cluster of correlated losses immediately after unlocking House Money cause an unrecoverable drawdown?
+- Is a 2-position concurrency ceiling optimal across an 18-asset universe, or does it cause opportunity cost during market-wide momentum events?
+- How should cross-asset correlation (e.g., BTC/ETH beta) be incorporated dynamically into position sizing?
+
+### 6. Real-Time Streaming & Low-Latency Execution Reliability
+- Review `binance_live_monitor.py` for concurrency bottlenecks, memory leaks, and GIL contention during extreme WebSocket burst traffic (~1,000+ ticks/sec).
+- Are there failure modes in the async WebSocket reconnect logic where stale orderbook or mark price data could trigger false signals?
+- How would you architect a zero-downtime failover between Binance WebSocket endpoints (e.g., stream.binance.com vs fstream.binance.com)?
+
+### 7. Concrete Architectural & Alpha Enhancements
+- Provide 3 concrete, high-impact architectural upgrades that would deepen module seams, reduce technical debt, and increase the Sharpe ratio of this pipeline.
+- Detail the exact code modifications or mathematical refinements required to convert the remaining 7 marginal OOS windows into Certified Passes.
+
+---
+
+**Please produce your review with maximum technical depth, exact mathematical formulas, and specific file/line references based on the GitHub repository.**

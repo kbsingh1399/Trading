@@ -1,0 +1,2927 @@
+[
+  {
+    "filename": "1011.6402v3.pdf",
+    "title": "The price impact of order book events",
+    "pages": 26,
+    "size_kb": 724.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\1011.6402v3.pdf"
+  },
+  {
+    "filename": "2506.22055v1.pdf",
+    "title": "arXiv:2506.22055v1  [cs.LG]  27 Jun 2025",
+    "pages": 9,
+    "size_kb": 4236.0,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\2506.22055v1.pdf"
+  },
+  {
+    "filename": "Algorithmic Trading Systems_ Capitalizing on Microstructure Liquidation Cascades and Order Flow Dynamics.pdf",
+    "title": "Algorithmic Trading Systems:",
+    "pages": 8,
+    "size_kb": 162.9,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\Algorithmic Trading Systems_ Capitalizing on Microstructure Liquidation Cascades and Order Flow Dynamics.pdf"
+  },
+  {
+    "filename": "conquest_final_report.pdf",
+    "title": "Q U A N T I T A T I V E  R E S E A R C H    F I N A L  C E R T I F I C A T I O N  R E P O R T",
+    "pages": 11,
+    "size_kb": 602.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\conquest_final_report.pdf"
+  },
+  {
+    "filename": "Crypto Dynamic Hedging Strategy.pdf",
+    "title": "Dynamic Hedging Strategies for",
+    "pages": 16,
+    "size_kb": 330.6,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\Crypto Dynamic Hedging Strategy.pdf"
+  },
+  {
+    "filename": "D1_4JP_2021_Analysis_and_modeling_of_client_order_ow_in_l_ssrn-3997109.pdf",
+    "title": "Analysis and modeling of client order ow in limit order markets",
+    "pages": 32,
+    "size_kb": 1440.0,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_4JP_2021_Analysis_and_modeling_of_client_order_ow_in_l_ssrn-3997109.pdf"
+  },
+  {
+    "filename": "D1_And_2016_The_Role_of_HFTs_in_Order_Flow_Toxicity_and_S_ssrn-2737457.pdf",
+    "title": "The Role of HFTs in Order Flow Toxicity and Stock Price Variance,",
+    "pages": 38,
+    "size_kb": 1666.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_And_2016_The_Role_of_HFTs_in_Order_Flow_Toxicity_and_S_ssrn-2737457.pdf"
+  },
+  {
+    "filename": "D1_and_2023_Beyond_Prediction_Execution-Aware_Machine_Lea_ssrn-6900821.pdf",
+    "title": "Beyond Prediction : Execution-Aware Machine Learning",
+    "pages": 91,
+    "size_kb": 2817.9,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_and_2023_Beyond_Prediction_Execution-Aware_Machine_Lea_ssrn-6900821.pdf"
+  },
+  {
+    "filename": "D1_Anticipating_2024_Kyle_Meets_Friedman_Informed_Trading_When_ssrn-4737312.pdf",
+    "title": "Kyle Meets Friedman: Informed Trading When",
+    "pages": 51,
+    "size_kb": 410.4,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Anticipating_2024_Kyle_Meets_Friedman_Informed_Trading_When_ssrn-4737312.pdf"
+  },
+  {
+    "filename": "D1_applications_2023_An_Open_Book_Level_4_Order_Book_Data_from_the_ssrn-6465720.pdf",
+    "title": "An Open Book: Level 4 Order Book Data from the Hyperliquid Exchange",
+    "pages": 13,
+    "size_kb": 774.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_applications_2023_An_Open_Book_Level_4_Order_Book_Data_from_the_ssrn-6465720.pdf"
+  },
+  {
+    "filename": "D1_Canadian_2023_A_Snapshot-Conditioned_CVAE_Limit_Order_Book__ssrn-7438262.pdf",
+    "title": "A Snapshot-Conditioned CVAE Limit Order Book Simulator: Evidence from",
+    "pages": 20,
+    "size_kb": 1792.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Canadian_2023_A_Snapshot-Conditioned_CVAE_Limit_Order_Book__ssrn-7438262.pdf"
+  },
+  {
+    "filename": "D1_Carol_2022_Price_Discovery_in_Bitcoin_The_Role_of_Limit__ssrn-4150979.pdf",
+    "title": "Price Discovery in Bitcoin: The Role of Limit Orders",
+    "pages": 39,
+    "size_kb": 1819.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Carol_2022_Price_Discovery_in_Bitcoin_The_Role_of_Limit__ssrn-4150979.pdf"
+  },
+  {
+    "filename": "D1_Chenjie_2024_151_Trading_strategies_implemented_on_python_ssrn-4894363.pdf",
+    "title": "151 Trading strategies implemented on python",
+    "pages": 49,
+    "size_kb": 6682.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Chenjie_2024_151_Trading_strategies_implemented_on_python_ssrn-4894363.pdf"
+  },
+  {
+    "filename": "D1_Christopher_2023_Prediction-based_limit_order_trading_ssrn-4320775.pdf",
+    "title": "Prediction-based limit order trading",
+    "pages": 9,
+    "size_kb": 1991.9,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Christopher_2023_Prediction-based_limit_order_trading_ssrn-4320775.pdf"
+  },
+  {
+    "filename": "D1_Control_2025_Optimal_VWAP_Execution_A_Synthesis_of_Stochas_ssrn-6091906.pdf",
+    "title": "Optimal VWAP Execution: A Synthesis of Stochastic",
+    "pages": 75,
+    "size_kb": 2848.2,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Control_2025_Optimal_VWAP_Execution_A_Synthesis_of_Stochas_ssrn-6091906.pdf"
+  },
+  {
+    "filename": "D1_Copyright_2024_WorldQuant_University_ssrn-4867340 (1).pdf",
+    "title": "WorldQuant University",
+    "pages": 28,
+    "size_kb": 2344.4,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Copyright_2024_WorldQuant_University_ssrn-4867340 (1).pdf"
+  },
+  {
+    "filename": "D1_Cryptocurrency_2020_Macroeconomic_Fundamentals_and_ssrn-4275078.pdf",
+    "title": "Macroeconomic Fundamentals and",
+    "pages": 32,
+    "size_kb": 402.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Cryptocurrency_2020_Macroeconomic_Fundamentals_and_ssrn-4275078.pdf"
+  },
+  {
+    "filename": "D1_DISCUSSION_2023_BANK_OF_FINLAND_ssrn-217268.pdf",
+    "title": "BANK OF FINLAND",
+    "pages": 32,
+    "size_kb": 288.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_DISCUSSION_2023_BANK_OF_FINLAND_ssrn-217268.pdf"
+  },
+  {
+    "filename": "D1_Early_2014_Assessing_Measures_of_Order_Flow_Toxicity_and_ssrn-2292602.pdf",
+    "title": "Assessing Measures of Order Flow Toxicity and",
+    "pages": 43,
+    "size_kb": 818.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Early_2014_Assessing_Measures_of_Order_Flow_Toxicity_and_ssrn-2292602.pdf"
+  },
+  {
+    "filename": "D1_Evidence_2019_Price_Discovery_of_a_Speculative_Asset_ssrn-3258508.pdf",
+    "title": "Price Discovery of a Speculative Asset:",
+    "pages": 50,
+    "size_kb": 562.4,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Evidence_2019_Price_Discovery_of_a_Speculative_Asset_ssrn-3258508.pdf"
+  },
+  {
+    "filename": "D1_for_2016_Investigating_Limit_Order_Book_Characteristic_ssrn-3305277.pdf",
+    "title": "Investigating Limit Order Book Characteristics",
+    "pages": 11,
+    "size_kb": 428.8,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_for_2016_Investigating_Limit_Order_Book_Characteristic_ssrn-3305277.pdf"
+  },
+  {
+    "filename": "D1_Haochen_2023_An_Empirical_Analysis_of_Financial_Markets_An_ssrn-5614902.pdf",
+    "title": "An Empirical Analysis of Financial Markets: An Econophysics Approach",
+    "pages": 56,
+    "size_kb": 2817.2,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Haochen_2023_An_Empirical_Analysis_of_Financial_Markets_An_ssrn-5614902.pdf"
+  },
+  {
+    "filename": "D1_Heterogeneity_2023_Is_frequent_trading_profitable_or_hazardous_ssrn-4348703.pdf",
+    "title": "Is frequent trading profitable or hazardous?",
+    "pages": 45,
+    "size_kb": 371.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Heterogeneity_2023_Is_frequent_trading_profitable_or_hazardous_ssrn-4348703.pdf"
+  },
+  {
+    "filename": "D1_Informed_2026_Binance_Leads_but_Some_Wallets_Anticipate_Wal_ssrn-6993378.pdf",
+    "title": "Binance Leads, but Some Wallets Anticipate: Wallet-Level Cross-Venue",
+    "pages": 11,
+    "size_kb": 584.5,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Informed_2026_Binance_Leads_but_Some_Wallets_Anticipate_Wal_ssrn-6993378.pdf"
+  },
+  {
+    "filename": "D1_international_2023_BV-VPIN_Measuring_the_impact_of_order_ow_toxi_ssrn-2791243.pdf",
+    "title": "BV-VPIN: Measuring the impact of order ow toxicity and liquidity on",
+    "pages": 27,
+    "size_kb": 2198.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_international_2023_BV-VPIN_Measuring_the_impact_of_order_ow_toxi_ssrn-2791243.pdf"
+  },
+  {
+    "filename": "D1_International_2023_Jotrrnal_of_Strategic_and_ssrn-4902478.pdf",
+    "title": "Jotrrnal of Strategic and",
+    "pages": 10,
+    "size_kb": 5978.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_International_2023_Jotrrnal_of_Strategic_and_ssrn-4902478.pdf"
+  },
+  {
+    "filename": "D1_Kairouz_2020_Advances_and_Open_Problems_in_Federated_Learn.pdf",
+    "title": "Advances and Open Problems in Federated Learning",
+    "pages": 121,
+    "size_kb": 1386.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Kairouz_2020_Advances_and_Open_Problems_in_Federated_Learn.pdf"
+  },
+  {
+    "filename": "D1_Levels_2023_How_informative_is_the_Order_Book_Beyond_the__ssrn-3920827.pdf",
+    "title": "How informative is the Order Book Beyond the Best",
+    "pages": 33,
+    "size_kb": 483.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Levels_2023_How_informative_is_the_Order_Book_Beyond_the__ssrn-3920827.pdf"
+  },
+  {
+    "filename": "D1_LIBOR_2013_Was_There_Informed_Trading_in_ssrn-2863644.pdf",
+    "title": "Was There Informed Trading in",
+    "pages": 49,
+    "size_kb": 1610.4,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_LIBOR_2013_Was_There_Informed_Trading_in_ssrn-2863644.pdf"
+  },
+  {
+    "filename": "D1_Limit_2023_Prequential_Benchmark_of_ssrn-7273201.pdf",
+    "title": "Prequential Benchmark of",
+    "pages": 9,
+    "size_kb": 1814.7,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Limit_2023_Prequential_Benchmark_of_ssrn-7273201.pdf"
+  },
+  {
+    "filename": "D1_Manipulation_2015_Order_Flow_Toxicity_and_Informed_Trading_Arou_ssrn-2807531.pdf",
+    "title": "Order Flow Toxicity and Informed Trading Around Known Market",
+    "pages": 63,
+    "size_kb": 4165.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Manipulation_2015_Order_Flow_Toxicity_and_Informed_Trading_Arou_ssrn-2807531.pdf"
+  },
+  {
+    "filename": "D1_Markets_2023_An_Early_Warning_System_for_Liquidity_Stress__ssrn-6761438.pdf",
+    "title": "An Early Warning System for Liquidity Stress in Cryptocurrency",
+    "pages": 7,
+    "size_kb": 1097.9,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Markets_2023_An_Early_Warning_System_for_Liquidity_Stress__ssrn-6761438.pdf"
+  },
+  {
+    "filename": "D1_Mar\u00edn_2022_A_reinforcement_learning_approach_to_improve_.pdf",
+    "title": "RESEARCH ARTICLE",
+    "pages": 32,
+    "size_kb": 1200.0,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Mar\u00edn_2022_A_reinforcement_learning_approach_to_improve_.pdf"
+  },
+  {
+    "filename": "D1_Matloob_2021_Software_Defect_Prediction_Using_Ensemble_Lea.pdf",
+    "title": "Digital Object Identifier 10.1109/ACCESS.2021.3095559",
+    "pages": 18,
+    "size_kb": 3367.4,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Matloob_2021_Software_Defect_Prediction_Using_Ensemble_Lea.pdf"
+  },
+  {
+    "filename": "D1_Murat_2022_Adverse_Selection_in_Cryptocurrency_Markets_ssrn-4175306.pdf",
+    "title": "Adverse Selection in Cryptocurrency Markets",
+    "pages": 49,
+    "size_kb": 933.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Murat_2022_Adverse_Selection_in_Cryptocurrency_Markets_ssrn-4175306.pdf"
+  },
+  {
+    "filename": "D1_Noise-Perturbed_2023_The_Privacy_Subsidy_Kyles_under_ssrn-6784438.pdf",
+    "title": "The Privacy Subsidy: Kyles  under",
+    "pages": 17,
+    "size_kb": 154.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Noise-Perturbed_2023_The_Privacy_Subsidy_Kyles_under_ssrn-6784438.pdf"
+  },
+  {
+    "filename": "D1_Olivier_2016_Informed_trading_in_oil-futures_market_ssrn-2874907.pdf",
+    "title": "Informed trading in oil-futures market",
+    "pages": 34,
+    "size_kb": 225.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Olivier_2016_Informed_trading_in_oil-futures_market_ssrn-2874907.pdf"
+  },
+  {
+    "filename": "D1_Payroll_2021_Informed_Trading_in_Foreign_Exchange_Futures_ssrn-3983210.pdf",
+    "title": "Informed Trading in Foreign Exchange Futures:",
+    "pages": 66,
+    "size_kb": 1225.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Payroll_2021_Informed_Trading_in_Foreign_Exchange_Futures_ssrn-3983210.pdf"
+  },
+  {
+    "filename": "D1_Speculation_2016_Commodity_Markets_Intervention_Consequences_o_ssrn-3222762.pdf",
+    "title": "Commodity Markets Intervention: Consequences of",
+    "pages": 22,
+    "size_kb": 433.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Speculation_2016_Commodity_Markets_Intervention_Consequences_o_ssrn-3222762.pdf"
+  },
+  {
+    "filename": "D1_SSRN_2026_Predicting_Adverse_Selection_in_High-Frequenc_ssrn-6344338 (1).pdf",
+    "title": "Predicting Adverse Selection in High-Frequency",
+    "pages": 15,
+    "size_kb": 1756.0,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_SSRN_2026_Predicting_Adverse_Selection_in_High-Frequenc_ssrn-6344338 (1).pdf"
+  },
+  {
+    "filename": "D1_theorems_2014_arXiv14101900v2_mathPR_8_Dec_2014_ssrn-2526053.pdf",
+    "title": "arXiv:1410.1900v2  [math.PR]  8 Dec 2014",
+    "pages": 20,
+    "size_kb": 435.0,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_theorems_2014_arXiv14101900v2_mathPR_8_Dec_2014_ssrn-2526053.pdf"
+  },
+  {
+    "filename": "D1_Title_2023_Re-Imagining_LOB_in_Jiangsu_Province_Electric_ssrn-6189791.pdf",
+    "title": "Title:",
+    "pages": 17,
+    "size_kb": 544.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Title_2023_Re-Imagining_LOB_in_Jiangsu_Province_Electric_ssrn-6189791.pdf"
+  },
+  {
+    "filename": "D1_Working_2025_Verma_Research_Capital_VRC_ssrn-6301779.pdf",
+    "title": "Verma Research Capital (VRC)",
+    "pages": 34,
+    "size_kb": 409.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Working_2025_Verma_Research_Capital_VRC_ssrn-6301779.pdf"
+  },
+  {
+    "filename": "D1_WORKING_2026_Detecting_Informed_Trading_Before_Unscheduled_ssrn-6652903.pdf",
+    "title": "Detecting Informed Trading Before Unscheduled",
+    "pages": 11,
+    "size_kb": 162.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_WORKING_2026_Detecting_Informed_Trading_Before_Unscheduled_ssrn-6652903.pdf"
+  },
+  {
+    "filename": "D1_Yang_2022_Illiquid_Bitcoin_Options_ssrn-4149934.pdf",
+    "title": "Illiquid Bitcoin Options",
+    "pages": 43,
+    "size_kb": 756.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D1_Yang_2022_Illiquid_Bitcoin_Options_ssrn-4149934.pdf"
+  },
+  {
+    "filename": "D2_Jiang_2021_The_Road_Towards_6G_A_Comprehensive_Survey.pdf",
+    "title": "Digital Object Identifier 10.1109/OJCOMS.2021.3057679",
+    "pages": 33,
+    "size_kb": 4006.1,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D2_Jiang_2021_The_Road_Towards_6G_A_Comprehensive_Survey.pdf"
+  },
+  {
+    "filename": "D2_PMC_Decoding_Market_Voices_Beyond_the_Charts.pdf",
+    "title": "RESEARCH ARTICLE",
+    "pages": 26,
+    "size_kb": 1268.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D2_PMC_Decoding_Market_Voices_Beyond_the_Charts.pdf"
+  },
+  {
+    "filename": "D2_PMC_Herding_and_feedback_trading_in_cryptocu.pdf",
+    "title": "Annals of Operations Research (2021) 300:7996",
+    "pages": 18,
+    "size_kb": 782.9,
+    "domain_id": 5,
+    "domain_name": "Macro Trend, Breakouts & Volatility Regime Gates",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D2_PMC_Herding_and_feedback_trading_in_cryptocu.pdf"
+  },
+  {
+    "filename": "D3_Evidence_2026_Funding_Rates_and_the_Conditional_Informative_ssrn-6872638.pdf",
+    "title": "Funding Rates and the Conditional Informativeness of Order",
+    "pages": 19,
+    "size_kb": 1120.4,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D3_Evidence_2026_Funding_Rates_and_the_Conditional_Informative_ssrn-6872638.pdf"
+  },
+  {
+    "filename": "D3_Executive_2023_Quantitative_Alpha_in_Crypto_Markets_A_System_ssrn-5225612.pdf",
+    "title": "Quantitative Alpha in Crypto Markets: A Systematic Review of Factor",
+    "pages": 26,
+    "size_kb": 1003.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D3_Executive_2023_Quantitative_Alpha_in_Crypto_Markets_A_System_ssrn-5225612.pdf"
+  },
+  {
+    "filename": "D3_Fuller_2020_Digital_Twin_Enabling_Technologies_Challenges.pdf",
+    "title": "Digital Object Identifier 10.1109/ACCESS.2020.2998358",
+    "pages": 20,
+    "size_kb": 5318.9,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D3_Fuller_2020_Digital_Twin_Enabling_Technologies_Challenges.pdf"
+  },
+  {
+    "filename": "D3_Gang_2026_Machine_Forecast_Disagreement_in_the_Cryptocu_ssrn-5230677.pdf",
+    "title": "Machine Forecast Disagreement in the Cryptocurrency Market",
+    "pages": 72,
+    "size_kb": 1412.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D3_Gang_2026_Machine_Forecast_Disagreement_in_the_Cryptocu_ssrn-5230677.pdf"
+  },
+  {
+    "filename": "D3_INSIDER_2016_COPYRIGHT_2016_VIRGINIA_LAW_REVIEW_ASSOCIATIO_ssrn-2568140.pdf",
+    "title": "COPYRIGHT  2016, VIRGINIA LAW REVIEW ASSOCIATION",
+    "pages": 54,
+    "size_kb": 431.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D3_INSIDER_2016_COPYRIGHT_2016_VIRGINIA_LAW_REVIEW_ASSOCIATIO_ssrn-2568140.pdf"
+  },
+  {
+    "filename": "D3_Mean_2014_Graphical_Abstract_ssrn-5032815.pdf",
+    "title": "Mean reversion trading on the naphtha crack",
+    "pages": 37,
+    "size_kb": 1086.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D3_Mean_2014_Graphical_Abstract_ssrn-5032815.pdf"
+  },
+  {
+    "filename": "D3_Perpetual_2026_Who_Loses_and_Why_Market_Microstructure_of_ssrn-7270041.pdf",
+    "title": "Who Loses and Why? Market Microstructure of",
+    "pages": 56,
+    "size_kb": 2054.6,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D3_Perpetual_2026_Who_Loses_and_Why_Market_Microstructure_of_ssrn-7270041.pdf"
+  },
+  {
+    "filename": "D3_PMC_The_Futures_of_Digital_Democracy_Four_Sc.pdf",
+    "title": "ESSAY",
+    "pages": 66,
+    "size_kb": 1223.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D3_PMC_The_Futures_of_Digital_Democracy_Four_Sc.pdf"
+  },
+  {
+    "filename": "D3_products_2023_Fundamentals_versus_Speculation_What_Really_D_ssrn-2276540.pdf",
+    "title": "Fundamentals versus Speculation: What Really Drives Spillovers and",
+    "pages": 37,
+    "size_kb": 1068.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D3_products_2023_Fundamentals_versus_Speculation_What_Really_D_ssrn-2276540.pdf"
+  },
+  {
+    "filename": "D3_Songrun_2022_Fundamentals_of_Perpetual_Futures_ssrn-4301150 (1).pdf",
+    "title": "Fundamentals of Perpetual Futures",
+    "pages": 73,
+    "size_kb": 5349.7,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D3_Songrun_2022_Fundamentals_of_Perpetual_Futures_ssrn-4301150 (1).pdf"
+  },
+  {
+    "filename": "D3_Working_2026_Patrick_Gruhn_Research_Institute_of_Entrepren_ssrn-6658879.pdf",
+    "title": "PGRI",
+    "pages": 47,
+    "size_kb": 1059.3,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D3_Working_2026_Patrick_Gruhn_Research_Institute_of_Entrepren_ssrn-6658879.pdf"
+  },
+  {
+    "filename": "D4_Adversarially_2018_Anatomy_of_a_Null_Result_A_Pre-Registered_ssrn-7085378.pdf",
+    "title": "Anatomy of a Null Result: A Pre-Registered,",
+    "pages": 10,
+    "size_kb": 272.9,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Adversarially_2018_Anatomy_of_a_Null_Result_A_Pre-Registered_ssrn-7085378.pdf"
+  },
+  {
+    "filename": "D4_Alexia_2024_Order_Flow_and_Cryptocurrency_Returns_ssrn-5020002 (1).pdf",
+    "title": "Order Flow and Cryptocurrency Returns",
+    "pages": 71,
+    "size_kb": 634.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Alexia_2024_Order_Flow_and_Cryptocurrency_Returns_ssrn-5020002 (1).pdf"
+  },
+  {
+    "filename": "D4_Approach_2018_Order_Flow_and_Cryptocurrency_Returns_A_Machi_ssrn-7055779 (1).pdf",
+    "title": "Order Flow and Cryptocurrency Returns: A Machine Learning",
+    "pages": 27,
+    "size_kb": 1694.3,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Approach_2018_Order_Flow_and_Cryptocurrency_Returns_A_Machi_ssrn-7055779 (1).pdf"
+  },
+  {
+    "filename": "D4_as_2026_Modelling_Crypto_Asset_Order-Flow_Imbalance_ssrn-6688399.pdf",
+    "title": "Modelling Crypto Asset Order-Flow Imbalance",
+    "pages": 46,
+    "size_kb": 4702.2,
+    "domain_id": 5,
+    "domain_name": "Macro Trend, Breakouts & Volatility Regime Gates",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_as_2026_Modelling_Crypto_Asset_Order-Flow_Imbalance_ssrn-6688399.pdf"
+  },
+  {
+    "filename": "D4_A_2023_Linear_Recurrent_versus_Convolutional_Neural__ssrn-6839368.pdf",
+    "title": "Linear Recurrent versus Convolutional Neural Networks for",
+    "pages": 11,
+    "size_kb": 1291.8,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_A_2023_Linear_Recurrent_versus_Convolutional_Neural__ssrn-6839368.pdf"
+  },
+  {
+    "filename": "D4_A_2024_TECHNOLOGY_AND_AUTOMATION_IN_FINANCIAL_TRADIN_ssrn-4885729.pdf",
+    "title": "TECHNOLOGY AND AUTOMATION IN FINANCIAL TRADING:",
+    "pages": 71,
+    "size_kb": 1241.5,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_A_2024_TECHNOLOGY_AND_AUTOMATION_IN_FINANCIAL_TRADIN_ssrn-4885729.pdf"
+  },
+  {
+    "filename": "D4_Beyond_2025_Deep_Learning_for_VWAP_Execution_in_Crypto_Ma_ssrn-5150912 (1).pdf",
+    "title": "Deep Learning for VWAP Execution in Crypto Markets:",
+    "pages": 44,
+    "size_kb": 17237.9,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Beyond_2025_Deep_Learning_for_VWAP_Execution_in_Crypto_Ma_ssrn-5150912 (1).pdf"
+  },
+  {
+    "filename": "D4_Brett_2025_Detecting_Crypto_Wash_Trades_via_Machine_Lear_ssrn-4649565.pdf",
+    "title": "Detecting Crypto Wash Trades via Machine Learning",
+    "pages": 52,
+    "size_kb": 794.1,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Brett_2025_Detecting_Crypto_Wash_Trades_via_Machine_Lear_ssrn-4649565.pdf"
+  },
+  {
+    "filename": "D4_Closures_2011_Modeling_and_Forecasting_the_Probability_of_C_ssrn-5106300.pdf",
+    "title": "Modeling and Forecasting the Probability of Crypto-Exchange",
+    "pages": 26,
+    "size_kb": 629.5,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Closures_2011_Modeling_and_Forecasting_the_Probability_of_C_ssrn-5106300.pdf"
+  },
+  {
+    "filename": "D4_Clustering_2023_ClusterLOB_Enhancing_Trading_Strategies_by_ssrn-5236285.pdf",
+    "title": "ClusterLOB: Enhancing Trading Strategies by",
+    "pages": 34,
+    "size_kb": 4293.0,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Clustering_2023_ClusterLOB_Enhancing_Trading_Strategies_by_ssrn-5236285.pdf"
+  },
+  {
+    "filename": "D4_Crashes_2024_Machine_Learning-Based_Prediction_of_Mini_Fla_ssrn-4992077.pdf",
+    "title": "Machine Learning-Based Prediction of Mini Flash",
+    "pages": 75,
+    "size_kb": 9855.8,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Crashes_2024_Machine_Learning-Based_Prediction_of_Mini_Fla_ssrn-4992077.pdf"
+  },
+  {
+    "filename": "D4_Cryptocurrency_2026_Order-Flow_Imbalance_and_Short-Horizon_Return_ssrn-6938742.pdf",
+    "title": "Order-Flow Imbalance and Short-Horizon Return Predictability in",
+    "pages": 7,
+    "size_kb": 128.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Cryptocurrency_2026_Order-Flow_Imbalance_and_Short-Horizon_Return_ssrn-6938742.pdf"
+  },
+  {
+    "filename": "D4_Eghbal_2020_Machine_Learning_for_Realised_Volatility_Fore_ssrn-3707796.pdf",
+    "title": "Machine Learning for Realised Volatility Forecasting",
+    "pages": 91,
+    "size_kb": 1706.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Eghbal_2020_Machine_Learning_for_Realised_Volatility_Fore_ssrn-3707796.pdf"
+  },
+  {
+    "filename": "D4_Futures_2023_Model_Calibration_and_Automated_Trading_Agent_ssrn-2028677.pdf",
+    "title": "Model Calibration and Automated Trading Agent for Euro",
+    "pages": 27,
+    "size_kb": 1204.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Futures_2023_Model_Calibration_and_Automated_Trading_Agent_ssrn-2028677.pdf"
+  },
+  {
+    "filename": "D4_Hidden_2025_Exploring_Microstructural_Dynamics_in_Cryptoc_ssrn-5331939.pdf",
+    "title": "Exploring Microstructural Dynamics in Cryptocurrency Limit",
+    "pages": 12,
+    "size_kb": 2463.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Hidden_2025_Exploring_Microstructural_Dynamics_in_Cryptoc_ssrn-5331939.pdf"
+  },
+  {
+    "filename": "D4_High-Frequency_2010_Adversarial_Attacks_on_Machine_Learning-Drive_ssrn-5367043.pdf",
+    "title": "Adversarial Attacks on Machine Learning-Driven",
+    "pages": 17,
+    "size_kb": 318.2,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_High-Frequency_2010_Adversarial_Attacks_on_Machine_Learning-Drive_ssrn-5367043.pdf"
+  },
+  {
+    "filename": "D4_Highlights_2023_Beyond_Accuracy_A_Validation_Framework_for_Ma_ssrn-6508779.pdf",
+    "title": "Highlights",
+    "pages": 37,
+    "size_kb": 830.3,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Highlights_2023_Beyond_Accuracy_A_Validation_Framework_for_Ma_ssrn-6508779.pdf"
+  },
+  {
+    "filename": "D4_Information_2021_Updated_November_2021_ssrn-5614913.pdf",
+    "title": "Information to appear on the first page of your article",
+    "pages": 53,
+    "size_kb": 1833.2,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Information_2021_Updated_November_2021_ssrn-5614913.pdf"
+  },
+  {
+    "filename": "D4_Insights_2025_ONLINE_SUPPLEMENT_ssrn-5379395.pdf",
+    "title": "ONLINE SUPPLEMENT",
+    "pages": 10,
+    "size_kb": 266.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Insights_2025_ONLINE_SUPPLEMENT_ssrn-5379395.pdf"
+  },
+  {
+    "filename": "D4_Interpretable_2025_Learning_the_Spoofability_of_Limit_Order_Book_ssrn-5230047.pdf",
+    "title": "Learning the Spoofability of Limit Order Books With",
+    "pages": 22,
+    "size_kb": 10516.1,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Interpretable_2025_Learning_the_Spoofability_of_Limit_Order_Book_ssrn-5230047.pdf"
+  },
+  {
+    "filename": "D4_Jie_2023_The_relevance_of_features_to_limit_order_book_ssrn-4226309.pdf",
+    "title": "The relevance of features to limit order book learning",
+    "pages": 21,
+    "size_kb": 906.3,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Jie_2023_The_relevance_of_features_to_limit_order_book_ssrn-4226309.pdf"
+  },
+  {
+    "filename": "D4_Jolley_2018_Open-access_bacterial_population_genomics_BIG.pdf",
+    "title": "SOFTWARE TOOL ARTICLE",
+    "pages": 20,
+    "size_kb": 4347.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Jolley_2018_Open-access_bacterial_population_genomics_BIG.pdf"
+  },
+  {
+    "filename": "D4_Justin_2016_Deep_Learning_for_Limit_Order_Books_ssrn-2710331.pdf",
+    "title": "Deep Learning for Limit Order Books",
+    "pages": 39,
+    "size_kb": 573.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Justin_2016_Deep_Learning_for_Limit_Order_Books_ssrn-2710331.pdf"
+  },
+  {
+    "filename": "D4_Lavina_2023_To_whom_correspondence_should_be_addressed_ssrn-4180768.pdf",
+    "title": "# To whom correspondence should be addressed",
+    "pages": 20,
+    "size_kb": 1030.0,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Lavina_2023_To_whom_correspondence_should_be_addressed_ssrn-4180768.pdf"
+  },
+  {
+    "filename": "D4_Lawrence_2023_Marcos_Lpez_de_Prado_ssrn-2150876.pdf",
+    "title": "Marcos Lpez de Prado",
+    "pages": 41,
+    "size_kb": 1791.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Lawrence_2023_Marcos_Lpez_de_Prado_ssrn-2150876.pdf"
+  },
+  {
+    "filename": "D4_Machine_2023_Wind_Estimation_by_Multirotor_Drone_State_usi_ssrn-4089510.pdf",
+    "title": "Wind Estimation by Multirotor Drone State using",
+    "pages": 12,
+    "size_kb": 4938.4,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Machine_2023_Wind_Estimation_by_Multirotor_Drone_State_usi_ssrn-4089510.pdf"
+  },
+  {
+    "filename": "D4_machine_2024_Predict_mini_flash_crashes_from_high-frequenc_ssrn-4848471.pdf",
+    "title": "Predict mini flash crashes from high-frequency data by",
+    "pages": 76,
+    "size_kb": 9860.9,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_machine_2024_Predict_mini_flash_crashes_from_high-frequenc_ssrn-4848471.pdf"
+  },
+  {
+    "filename": "D4_manipulation_2023_A_machine_learning_ensemble_approach_to_predi_ssrn-5051180.pdf",
+    "title": "A machine learning ensemble approach to predict financial markets",
+    "pages": 42,
+    "size_kb": 1453.2,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_manipulation_2023_A_machine_learning_ensemble_approach_to_predi_ssrn-5051180.pdf"
+  },
+  {
+    "filename": "D4_Microstructure_2026_Explainable_Patterns_in_Cryptocurrency_ssrn-6159346 (1).pdf",
+    "title": "Explainable Patterns in Cryptocurrency",
+    "pages": 28,
+    "size_kb": 4612.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Microstructure_2026_Explainable_Patterns_in_Cryptocurrency_ssrn-6159346 (1).pdf"
+  },
+  {
+    "filename": "D4_perspectives_2018_Universal_features_of_price_formation_in_nanc_ssrn-3141294.pdf",
+    "title": "Universal features of price formation in nancial markets:",
+    "pages": 20,
+    "size_kb": 1238.0,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_perspectives_2018_Universal_features_of_price_formation_in_nanc_ssrn-3141294.pdf"
+  },
+  {
+    "filename": "D4_Rakshit_2020_Deep_Learning_for_Digital_Asset_Limit_Order_B_ssrn-3704098.pdf",
+    "title": "Deep Learning for Digital Asset Limit Order Books",
+    "pages": 9,
+    "size_kb": 926.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Rakshit_2020_Deep_Learning_for_Digital_Asset_Limit_Order_B_ssrn-3704098.pdf"
+  },
+  {
+    "filename": "D4_Robert_2022_A_Machine_Learning_Attack_on_Illegal_Trading_ssrn-3722391.pdf",
+    "title": "A Machine Learning Attack on Illegal Trading",
+    "pages": 50,
+    "size_kb": 1289.1,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Robert_2022_A_Machine_Learning_Attack_on_Illegal_Trading_ssrn-3722391.pdf"
+  },
+  {
+    "filename": "D4_STRUCTURES_2024_IMPROVING_DEEP_LEARNING_OF_ALPHA_TERM_ssrn-4770476.pdf",
+    "title": "IMPROVING DEEP LEARNING OF ALPHA TERM",
+    "pages": 33,
+    "size_kb": 916.1,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_STRUCTURES_2024_IMPROVING_DEEP_LEARNING_OF_ALPHA_TERM_ssrn-4770476.pdf"
+  },
+  {
+    "filename": "D4_Technical_2023_Mid-price_Prediction_Based_on_Machine_Learnin_ssrn-3213389.pdf",
+    "title": "Mid-price Prediction Based on Machine Learning Methods with",
+    "pages": 40,
+    "size_kb": 1030.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Technical_2023_Mid-price_Prediction_Based_on_Machine_Learnin_ssrn-3213389.pdf"
+  },
+  {
+    "filename": "D4_TITLE_2023_Title_Augmented_Bilinear_Network_for_Incremen_ssrn-4332126.pdf",
+    "title": "TITLE PAGE",
+    "pages": 23,
+    "size_kb": 2555.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_TITLE_2023_Title_Augmented_Bilinear_Network_for_Incremen_ssrn-4332126.pdf"
+  },
+  {
+    "filename": "D4_Trading_2024_Information_Content_of_Book_and_Trade_Order_F_ssrn-4971656.pdf",
+    "title": "Information Content of Book and Trade Order Flow at Different",
+    "pages": 36,
+    "size_kb": 1048.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Trading_2024_Information_Content_of_Book_and_Trade_Order_F_ssrn-4971656.pdf"
+  },
+  {
+    "filename": "D4_Volatility_2023_Forecasting_Volatility_with_Machine_Learning__ssrn-4626835.pdf",
+    "title": "Forecasting Volatility with Machine Learning and Rough",
+    "pages": 25,
+    "size_kb": 747.3,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_Volatility_2023_Forecasting_Volatility_with_Machine_Learning__ssrn-4626835.pdf"
+  },
+  {
+    "filename": "D4_with_2023_Forecasting_Intraday_Volume_in_Equity_Markets_ssrn-5340629.pdf",
+    "title": "Forecasting Intraday Volume in Equity Markets",
+    "pages": 38,
+    "size_kb": 14864.3,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4_with_2023_Forecasting_Intraday_Volume_in_Equity_Markets_ssrn-5340629.pdf"
+  },
+  {
+    "filename": "D4__2025_______________________________________________ssrn-5138889.pdf",
+    "title": "____________________________________________________________________________________________________",
+    "pages": 23,
+    "size_kb": 1187.0,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D4__2025_______________________________________________ssrn-5138889.pdf"
+  },
+  {
+    "filename": "D5_Crypto_2024_Using_Machines_to_Advance_Better_Models_of_th_ssrn-4986862.pdf",
+    "title": "Using Machines to Advance Better Models of the",
+    "pages": 48,
+    "size_kb": 338.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D5_Crypto_2024_Using_Machines_to_Advance_Better_Models_of_th_ssrn-4986862.pdf"
+  },
+  {
+    "filename": "D5_Oleg_2020_Cross-Sectional_Momentum_in_Cryptocurrency_ssrn-7404139.pdf",
+    "title": "Cross-Sectional Momentum in Cryptocurrency:",
+    "pages": 8,
+    "size_kb": 413.7,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D5_Oleg_2020_Cross-Sectional_Momentum_in_Cryptocurrency_ssrn-7404139.pdf"
+  },
+  {
+    "filename": "D5_PMC_Geodesic_Execution_Slippage_A_Statistica.pdf",
+    "title": "Preparing to download ...",
+    "pages": 1,
+    "size_kb": 1.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D5_PMC_Geodesic_Execution_Slippage_A_Statistica.pdf"
+  },
+  {
+    "filename": "D5_PMC_Quantum_computing_in_finance_a_literatur.pdf",
+    "title": "Frontiers in Artificial Intelligence",
+    "pages": 15,
+    "size_kb": 426.8,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D5_PMC_Quantum_computing_in_finance_a_literatur.pdf"
+  },
+  {
+    "filename": "D5_Strategies_2018_Momentum_Market-Regime_and_Stocks_Options_Tra_ssrn-3306329.pdf",
+    "title": "Momentum, Market-Regime and Stocks & Options Trading",
+    "pages": 19,
+    "size_kb": 755.9,
+    "domain_id": 5,
+    "domain_name": "Macro Trend, Breakouts & Volatility Regime Gates",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D5_Strategies_2018_Momentum_Market-Regime_and_Stocks_Options_Tra_ssrn-3306329.pdf"
+  },
+  {
+    "filename": "D5_Universit_2025_Concretum_Research_ssrn-5209907.pdf",
+    "title": "Concretum Research",
+    "pages": 38,
+    "size_kb": 1218.8,
+    "domain_id": 5,
+    "domain_name": "Macro Trend, Breakouts & Volatility Regime Gates",
+    "path": "C:\\Users\\SIGMA\\Downloads\\D5_Universit_2025_Concretum_Research_ssrn-5209907.pdf"
+  },
+  {
+    "filename": "DashboardPET (42).pdf",
+    "title": "Plant",
+    "pages": 18,
+    "size_kb": 3145.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\DashboardPET (42).pdf"
+  },
+  {
+    "filename": "Forensic_Audit_Engine2_Institutional_Evaluation (1).pdf",
+    "title": "C O N F I D E N T I A L    I N V E S T M E N T  C O M M I T T E E  R E V I E W",
+    "pages": 23,
+    "size_kb": 539.5,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\Forensic_Audit_Engine2_Institutional_Evaluation (1).pdf"
+  },
+  {
+    "filename": "Forensic_Audit_Engine2_Institutional_Evaluation (2).pdf",
+    "title": "C O N F I D E N T I A L    I N V E S T M E N T  C O M M I T T E E  R E V I E W",
+    "pages": 23,
+    "size_kb": 539.5,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\Forensic_Audit_Engine2_Institutional_Evaluation (2).pdf"
+  },
+  {
+    "filename": "Forensic_Audit_Engine2_Institutional_Evaluation.pdf",
+    "title": "C O N F I D E N T I A L    I N V E S T M E N T  C O M M I T T E E  R E V I E W",
+    "pages": 23,
+    "size_kb": 539.5,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\Forensic_Audit_Engine2_Institutional_Evaluation.pdf"
+  },
+  {
+    "filename": "itmconf_atcids2026_02012.pdf",
+    "title": "Stock prediction by means of XGBoost, LSTM,",
+    "pages": 8,
+    "size_kb": 2248.0,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\itmconf_atcids2026_02012.pdf"
+  },
+  {
+    "filename": "Marci.pdf",
+    "title": "Marci Silfrain",
+    "pages": 12,
+    "size_kb": 4417.0,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\Marci.pdf"
+  },
+  {
+    "filename": "Marco Trades Playbook.pdf",
+    "title": "Maro Trades s Playbook",
+    "pages": 8,
+    "size_kb": 5029.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\Marco Trades Playbook.pdf"
+  },
+  {
+    "filename": "Module1_Number_Systems.pdf",
+    "title": "MODULE 1    FOUNDATION",
+    "pages": 13,
+    "size_kb": 30.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\Module1_Number_Systems.pdf"
+  },
+  {
+    "filename": "PDF FVG x Edgeful (1).pdf",
+    "title": "Usman Noah",
+    "pages": 14,
+    "size_kb": 6509.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\PDF FVG x Edgeful (1).pdf"
+  },
+  {
+    "filename": "S1_W8_W20_Forensic_Solve_Memo (1).pdf",
+    "title": "I N S T I T U T I O N A L  F O R E N S I C  M E M O    P A R T  8  W A L K-",
+    "pages": 11,
+    "size_kb": 189.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\S1_W8_W20_Forensic_Solve_Memo (1).pdf"
+  },
+  {
+    "filename": "S1_W8_W20_Forensic_Solve_Memo.pdf",
+    "title": "I N S T I T U T I O N A L  F O R E N S I C  M E M O    P A R T  8  W A L K-",
+    "pages": 11,
+    "size_kb": 189.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\S1_W8_W20_Forensic_Solve_Memo.pdf"
+  },
+  {
+    "filename": "s44163-026-01318-9.pdf",
+    "title": "RESEARCH",
+    "pages": 29,
+    "size_kb": 7912.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\s44163-026-01318-9.pdf"
+  },
+  {
+    "filename": "screencapture-app-notion-chat-2026-07-11-01_24_03.pdf",
+    "title": "screencapture-app-notion-chat-2026-07-11-01_24_03.pdf",
+    "pages": 18,
+    "size_kb": 9768.0,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-app-notion-chat-2026-07-11-01_24_03.pdf"
+  },
+  {
+    "filename": "screencapture-arena-ai-agent-019e823c-47e3-7b9c-adbf-5804c8757448-2026-06-01-13_55_45.pdf",
+    "title": "screencapture-arena-ai-agent-019e823c-47e3-7b9c-adbf-5804c8757448-2026-06-01-13_55_45.pdf",
+    "pages": 10,
+    "size_kb": 18942.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-arena-ai-agent-019e823c-47e3-7b9c-adbf-5804c8757448-2026-06-01-13_55_45.pdf"
+  },
+  {
+    "filename": "screencapture-arena-ai-agent-019e8d55-0764-79e2-82a4-84c84f9fdfb1-2026-06-03-18_04_28.pdf",
+    "title": "screencapture-arena-ai-agent-019e8d55-0764-79e2-82a4-84c84f9fdfb1-2026-06-03-18_04_28.pdf",
+    "pages": 7,
+    "size_kb": 8365.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-arena-ai-agent-019e8d55-0764-79e2-82a4-84c84f9fdfb1-2026-06-03-18_04_28.pdf"
+  },
+  {
+    "filename": "screencapture-arena-ai-agent-019effed-1c8f-78c3-b8c1-0fa23bbdd3f0-2026-06-26-22_29_09.pdf",
+    "title": "screencapture-arena-ai-agent-019effed-1c8f-78c3-b8c1-0fa23bbdd3f0-2026-06-26-22_29_09.pdf",
+    "pages": 28,
+    "size_kb": 28882.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-arena-ai-agent-019effed-1c8f-78c3-b8c1-0fa23bbdd3f0-2026-06-26-22_29_09.pdf"
+  },
+  {
+    "filename": "screencapture-arena-ai-agent-019f0e70-59cc-720c-b7c9-4a188185e615-2026-06-28-19_37_38.pdf",
+    "title": "screencapture-arena-ai-agent-019f0e70-59cc-720c-b7c9-4a188185e615-2026-06-28-19_37_38.pdf",
+    "pages": 5,
+    "size_kb": 7108.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-arena-ai-agent-019f0e70-59cc-720c-b7c9-4a188185e615-2026-06-28-19_37_38.pdf"
+  },
+  {
+    "filename": "screencapture-arena-ai-agent-019f6b3e-4f3f-73b8-961e-3c58a36e5947-2026-07-16-22_13_57.pdf",
+    "title": "screencapture-arena-ai-agent-019f6b3e-4f3f-73b8-961e-3c58a36e5947-2026-07-16-22_13_57.pdf",
+    "pages": 6,
+    "size_kb": 9724.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-arena-ai-agent-019f6b3e-4f3f-73b8-961e-3c58a36e5947-2026-07-16-22_13_57.pdf"
+  },
+  {
+    "filename": "screencapture-arena-ai-agent-019fba0e-7e9f-72dd-9e21-45b7087725a9-2026-08-01-03_22_03.pdf",
+    "title": "screencapture-arena-ai-agent-019fba0e-7e9f-72dd-9e21-45b7087725a9-2026-08-01-03_22_03.pdf",
+    "pages": 15,
+    "size_kb": 19552.4,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-arena-ai-agent-019fba0e-7e9f-72dd-9e21-45b7087725a9-2026-08-01-03_22_03.pdf"
+  },
+  {
+    "filename": "screencapture-chat-deepseek-a-chat-s-52f737b2-663e-4d87-a6af-483e41c9ca63-2026-06-11-23_01_06.pdf",
+    "title": "screencapture-chat-deepseek-a-chat-s-52f737b2-663e-4d87-a6af-483e41c9ca63-2026-06-11-23_01_06.pdf",
+    "pages": 9,
+    "size_kb": 15846.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-chat-deepseek-a-chat-s-52f737b2-663e-4d87-a6af-483e41c9ca63-2026-06-11-23_01_06.pdf"
+  },
+  {
+    "filename": "screencapture-chat-z-ai-space-j1du94y90n10-art-2026-06-08-14_10_37.pdf",
+    "title": "screencapture-chat-z-ai-space-j1du94y90n10-art-2026-06-08-14_10_37.pdf",
+    "pages": 3,
+    "size_kb": 4113.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-chat-z-ai-space-j1du94y90n10-art-2026-06-08-14_10_37.pdf"
+  },
+  {
+    "filename": "screencapture-claude-ai-chat-630bed60-a72e-4436-9269-e815614efb2c-2026-05-21-14_29_10.pdf",
+    "title": "screencapture-claude-ai-chat-630bed60-a72e-4436-9269-e815614efb2c-2026-05-21-14_29_10.pdf",
+    "pages": 4,
+    "size_kb": 3710.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-claude-ai-chat-630bed60-a72e-4436-9269-e815614efb2c-2026-05-21-14_29_10.pdf"
+  },
+  {
+    "filename": "screencapture-claude-ai-chat-630bed60-a72e-4436-9269-e815614efb2c-2026-05-21-14_29_58.pdf",
+    "title": "screencapture-claude-ai-chat-630bed60-a72e-4436-9269-e815614efb2c-2026-05-21-14_29_58.pdf",
+    "pages": 8,
+    "size_kb": 6673.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-claude-ai-chat-630bed60-a72e-4436-9269-e815614efb2c-2026-05-21-14_29_58.pdf"
+  },
+  {
+    "filename": "screencapture-claude-ai-chat-ec80832f-8f14-4404-926d-a9f074c64d10-2026-07-09-23_33_56.pdf",
+    "title": "screencapture-claude-ai-chat-ec80832f-8f14-4404-926d-a9f074c64d10-2026-07-09-23_33_56.pdf",
+    "pages": 7,
+    "size_kb": 6994.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-claude-ai-chat-ec80832f-8f14-4404-926d-a9f074c64d10-2026-07-09-23_33_56.pdf"
+  },
+  {
+    "filename": "screencapture-code-claude-docs-en-agent-sdk-agent-loop-2026-06-27-22_26_10.pdf",
+    "title": "screencapture-code-claude-docs-en-agent-sdk-agent-loop-2026-06-27-22_26_10.pdf",
+    "pages": 8,
+    "size_kb": 11546.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-code-claude-docs-en-agent-sdk-agent-loop-2026-06-27-22_26_10.pdf"
+  },
+  {
+    "filename": "screencapture-gemini-google-app-053b61919f60a871-2026-06-17-15_57_26.pdf",
+    "title": "screencapture-gemini-google-app-053b61919f60a871-2026-06-17-15_57_26.pdf",
+    "pages": 7,
+    "size_kb": 6228.0,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-gemini-google-app-053b61919f60a871-2026-06-17-15_57_26.pdf"
+  },
+  {
+    "filename": "screencapture-gemini-google-app-053b61919f60a871-2026-06-17-16_02_36.pdf",
+    "title": "screencapture-gemini-google-app-053b61919f60a871-2026-06-17-16_02_36.pdf",
+    "pages": 6,
+    "size_kb": 4850.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-gemini-google-app-053b61919f60a871-2026-06-17-16_02_36.pdf"
+  },
+  {
+    "filename": "screencapture-gemini-google-app-053b61919f60a871-2026-06-17-16_18_06.pdf",
+    "title": "screencapture-gemini-google-app-053b61919f60a871-2026-06-17-16_18_06.pdf",
+    "pages": 7,
+    "size_kb": 6223.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-gemini-google-app-053b61919f60a871-2026-06-17-16_18_06.pdf"
+  },
+  {
+    "filename": "screencapture-gemini-google-app-308263e45b9af1b2-2026-06-01-21_03_04.pdf",
+    "title": "screencapture-gemini-google-app-308263e45b9af1b2-2026-06-01-21_03_04.pdf",
+    "pages": 5,
+    "size_kb": 5408.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-gemini-google-app-308263e45b9af1b2-2026-06-01-21_03_04.pdf"
+  },
+  {
+    "filename": "screencapture-gemini-google-app-31618e647b47fbfd-2026-05-24-17_57_24.pdf",
+    "title": "screencapture-gemini-google-app-31618e647b47fbfd-2026-05-24-17_57_24.pdf",
+    "pages": 4,
+    "size_kb": 3260.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-gemini-google-app-31618e647b47fbfd-2026-05-24-17_57_24.pdf"
+  },
+  {
+    "filename": "screencapture-gemini-google-app-38e4e5ee3f2d43a6-2026-06-20-01_36_26.pdf",
+    "title": "screencapture-gemini-google-app-38e4e5ee3f2d43a6-2026-06-20-01_36_26.pdf",
+    "pages": 5,
+    "size_kb": 5444.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-gemini-google-app-38e4e5ee3f2d43a6-2026-06-20-01_36_26.pdf"
+  },
+  {
+    "filename": "screencapture-gemini-google-app-5b287f65ed6290e5-2026-06-18-16_47_55.pdf",
+    "title": "screencapture-gemini-google-app-5b287f65ed6290e5-2026-06-18-16_47_55.pdf",
+    "pages": 8,
+    "size_kb": 8895.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-gemini-google-app-5b287f65ed6290e5-2026-06-18-16_47_55.pdf"
+  },
+  {
+    "filename": "screencapture-gemini-google-app-698f91c84e97df63-2026-06-08-19_08_20.pdf",
+    "title": "screencapture-gemini-google-app-698f91c84e97df63-2026-06-08-19_08_20.pdf",
+    "pages": 9,
+    "size_kb": 7102.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-gemini-google-app-698f91c84e97df63-2026-06-08-19_08_20.pdf"
+  },
+  {
+    "filename": "screencapture-gemini-google-app-d6964c13674af489-2026-06-20-01_20_03.pdf",
+    "title": "screencapture-gemini-google-app-d6964c13674af489-2026-06-20-01_20_03.pdf",
+    "pages": 6,
+    "size_kb": 6422.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-gemini-google-app-d6964c13674af489-2026-06-20-01_20_03.pdf"
+  },
+  {
+    "filename": "screencapture-gemini-google-app-ec30fee9cffd1940-2026-06-01-10_08_52.pdf",
+    "title": "screencapture-gemini-google-app-ec30fee9cffd1940-2026-06-01-10_08_52.pdf",
+    "pages": 6,
+    "size_kb": 6474.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-gemini-google-app-ec30fee9cffd1940-2026-06-01-10_08_52.pdf"
+  },
+  {
+    "filename": "screencapture-gemini-google-share-a8039338c6be-2026-06-01-13_40_56.pdf",
+    "title": "screencapture-gemini-google-share-a8039338c6be-2026-06-01-13_40_56.pdf",
+    "pages": 6,
+    "size_kb": 4528.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-gemini-google-share-a8039338c6be-2026-06-01-13_40_56.pdf"
+  },
+  {
+    "filename": "screencapture-gemini-google-u-1-app-a431417dd6625fad-2026-06-09-18_35_32.pdf",
+    "title": "screencapture-gemini-google-u-1-app-a431417dd6625fad-2026-06-09-18_35_32.pdf",
+    "pages": 4,
+    "size_kb": 4228.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-gemini-google-u-1-app-a431417dd6625fad-2026-06-09-18_35_32.pdf"
+  },
+  {
+    "filename": "screencapture-gemini-google-u-5-app-11e78d0d9beaf06e-2026-05-28-22_54_07.pdf",
+    "title": "screencapture-gemini-google-u-5-app-11e78d0d9beaf06e-2026-05-28-22_54_07.pdf",
+    "pages": 4,
+    "size_kb": 4002.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-gemini-google-u-5-app-11e78d0d9beaf06e-2026-05-28-22_54_07.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-05-18-13_57_11.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-05-18-13_57_11.pdf",
+    "pages": 21,
+    "size_kb": 21189.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-05-18-13_57_11.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-05-24-13_29_32.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-05-24-13_29_32.pdf",
+    "pages": 15,
+    "size_kb": 16373.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-05-24-13_29_32.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-05-24-18_06_09.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-05-24-18_06_09.pdf",
+    "pages": 6,
+    "size_kb": 8382.4,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-05-24-18_06_09.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-06-01-22_00_02.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-06-01-22_00_02.pdf",
+    "pages": 4,
+    "size_kb": 5947.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-06-01-22_00_02.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-06-01-22_31_31.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-06-01-22_31_31.pdf",
+    "pages": 7,
+    "size_kb": 9154.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-06-01-22_31_31.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-06-02-13_09_48.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-06-02-13_09_48.pdf",
+    "pages": 5,
+    "size_kb": 6592.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-06-02-13_09_48.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-06-02-14_32_31.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-06-02-14_32_31.pdf",
+    "pages": 4,
+    "size_kb": 5551.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-06-02-14_32_31.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-06-02-14_53_25.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-06-02-14_53_25.pdf",
+    "pages": 4,
+    "size_kb": 5258.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-06-02-14_53_25.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-06-02-16_23_48.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-06-02-16_23_48.pdf",
+    "pages": 4,
+    "size_kb": 5337.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-06-02-16_23_48.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-06-03-12_49_31.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-06-03-12_49_31.pdf",
+    "pages": 4,
+    "size_kb": 5927.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-06-03-12_49_31.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-06-03-17_56_55.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-06-03-17_56_55.pdf",
+    "pages": 5,
+    "size_kb": 8421.4,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-06-03-17_56_55.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-06-21-17_23_07.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-06-21-17_23_07.pdf",
+    "pages": 5,
+    "size_kb": 8710.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-06-21-17_23_07.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-06-21-18_02_49.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-06-21-18_02_49.pdf",
+    "pages": 7,
+    "size_kb": 9657.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-06-21-18_02_49.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-06-21-18_15_47.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-06-21-18_15_47.pdf",
+    "pages": 11,
+    "size_kb": 14742.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-06-21-18_15_47.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-03-11_52_37.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-03-11_52_37.pdf",
+    "pages": 8,
+    "size_kb": 9735.0,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-03-11_52_37.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-03-13_33_30.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-03-13_33_30.pdf",
+    "pages": 11,
+    "size_kb": 14815.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-03-13_33_30.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-03-16_20_31.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-03-16_20_31.pdf",
+    "pages": 6,
+    "size_kb": 8297.0,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-03-16_20_31.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-03-16_23_44.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-03-16_23_44.pdf",
+    "pages": 5,
+    "size_kb": 8200.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-03-16_23_44.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-05-19_26_01.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-05-19_26_01.pdf",
+    "pages": 10,
+    "size_kb": 15045.4,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-05-19_26_01.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-06-15_00_01.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-06-15_00_01.pdf",
+    "pages": 6,
+    "size_kb": 7501.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-06-15_00_01.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-06-20_32_46.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-06-20_32_46.pdf",
+    "pages": 3,
+    "size_kb": 3243.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-06-20_32_46.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-06-22_34_43.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-06-22_34_43.pdf",
+    "pages": 6,
+    "size_kb": 6858.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-06-22_34_43.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-06-23_27_09.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-06-23_27_09.pdf",
+    "pages": 7,
+    "size_kb": 10064.0,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-06-23_27_09.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-07-23_19_53.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-07-23_19_53.pdf",
+    "pages": 8,
+    "size_kb": 10476.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-07-23_19_53.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-08-02_45_35.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-08-02_45_35.pdf",
+    "pages": 7,
+    "size_kb": 9271.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-08-02_45_35.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-11-01_30_48.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-11-01_30_48.pdf",
+    "pages": 27,
+    "size_kb": 33888.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-11-01_30_48.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-11-01_57_13.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-11-01_57_13.pdf",
+    "pages": 4,
+    "size_kb": 5509.4,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-11-01_57_13.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-11-12_27_09.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-11-12_27_09.pdf",
+    "pages": 6,
+    "size_kb": 5253.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-11-12_27_09.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-13-02_46_24.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-13-02_46_24.pdf",
+    "pages": 12,
+    "size_kb": 13338.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-13-02_46_24.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-13-02_59_55.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-13-02_59_55.pdf",
+    "pages": 6,
+    "size_kb": 9022.0,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-13-02_59_55.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-13-21_15_05.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-13-21_15_05.pdf",
+    "pages": 5,
+    "size_kb": 6909.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-13-21_15_05.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-14-16_36_11.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-14-16_36_11.pdf",
+    "pages": 11,
+    "size_kb": 10656.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-14-16_36_11.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-15-22_18_58.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-15-22_18_58.pdf",
+    "pages": 15,
+    "size_kb": 20622.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-15-22_18_58.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-29-23_13_04.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-29-23_13_04.pdf",
+    "pages": 9,
+    "size_kb": 11543.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-29-23_13_04.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-07-31-00_42_05.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-07-31-00_42_05.pdf",
+    "pages": 12,
+    "size_kb": 13163.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-07-31-00_42_05.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-08-14-00_28_39.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-08-14-00_28_39.pdf",
+    "pages": 8,
+    "size_kb": 7976.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-08-14-00_28_39.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-08-14-19_09_59.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-08-14-19_09_59.pdf",
+    "pages": 9,
+    "size_kb": 10662.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-08-14-19_09_59.pdf"
+  },
+  {
+    "filename": "screencapture-genspark-ai-agents-2026-08-19-21_34_40.pdf",
+    "title": "screencapture-genspark-ai-agents-2026-08-19-21_34_40.pdf",
+    "pages": 14,
+    "size_kb": 12605.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-genspark-ai-agents-2026-08-19-21_34_40.pdf"
+  },
+  {
+    "filename": "screencapture-github-12errh-antigravity-proxy-2026-06-17-01_28_45.pdf",
+    "title": "screencapture-github-12errh-antigravity-proxy-2026-06-17-01_28_45.pdf",
+    "pages": 4,
+    "size_kb": 3992.4,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-github-12errh-antigravity-proxy-2026-06-17-01_28_45.pdf"
+  },
+  {
+    "filename": "screencapture-github-iml1s-antigravity-for-loop-2026-06-27-00_28_53.pdf",
+    "title": "screencapture-github-iml1s-antigravity-for-loop-2026-06-27-00_28_53.pdf",
+    "pages": 4,
+    "size_kb": 3404.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-github-iml1s-antigravity-for-loop-2026-06-27-00_28_53.pdf"
+  },
+  {
+    "filename": "screencapture-github-rmyndharis-antigravity-skills-2026-06-14-12_09_14.pdf",
+    "title": "screencapture-github-rmyndharis-antigravity-skills-2026-06-14-12_09_14.pdf",
+    "pages": 4,
+    "size_kb": 4467.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-github-rmyndharis-antigravity-skills-2026-06-14-12_09_14.pdf"
+  },
+  {
+    "filename": "screencapture-github-rtk-ai-rtk-2026-06-19-00_16_41.pdf",
+    "title": "screencapture-github-rtk-ai-rtk-2026-06-19-00_16_41.pdf",
+    "pages": 6,
+    "size_kb": 7264.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-github-rtk-ai-rtk-2026-06-19-00_16_41.pdf"
+  },
+  {
+    "filename": "screencapture-github-safishamsi-graphify-2026-06-13-14_36_57.pdf",
+    "title": "screencapture-github-safishamsi-graphify-2026-06-13-14_36_57.pdf",
+    "pages": 10,
+    "size_kb": 16091.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-github-safishamsi-graphify-2026-06-13-14_36_57.pdf"
+  },
+  {
+    "filename": "screencapture-github-shiyu-coder-Kronos-2026-06-02-00_50_12.pdf",
+    "title": "screencapture-github-shiyu-coder-Kronos-2026-06-02-00_50_12.pdf",
+    "pages": 5,
+    "size_kb": 7223.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-github-shiyu-coder-Kronos-2026-06-02-00_50_12.pdf"
+  },
+  {
+    "filename": "screencapture-github-sickn33-antigravity-awesome-skills-2026-06-01-14_52_38.pdf",
+    "title": "screencapture-github-sickn33-antigravity-awesome-skills-2026-06-01-14_52_38.pdf",
+    "pages": 12,
+    "size_kb": 19506.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-github-sickn33-antigravity-awesome-skills-2026-06-01-14_52_38.pdf"
+  },
+  {
+    "filename": "screencapture-github-sickn33-antigravity-awesome-skills-2026-06-13-14_39_55.pdf",
+    "title": "screencapture-github-sickn33-antigravity-awesome-skills-2026-06-13-14_39_55.pdf",
+    "pages": 8,
+    "size_kb": 13423.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-github-sickn33-antigravity-awesome-skills-2026-06-13-14_39_55.pdf"
+  },
+  {
+    "filename": "screencapture-mail-google-mail-u-0-2026-05-24-17_51_14.pdf",
+    "title": "screencapture-mail-google-mail-u-0-2026-05-24-17_51_14.pdf",
+    "pages": 3,
+    "size_kb": 2196.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\screencapture-mail-google-mail-u-0-2026-05-24-17_51_14.pdf"
+  },
+  {
+    "filename": "ssrn-1712822.pdf",
+    "title": "The price impact of order book events",
+    "pages": 32,
+    "size_kb": 784.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-1712822.pdf"
+  },
+  {
+    "filename": "ssrn-2028677.pdf",
+    "title": "Model Calibration and Automated Trading Agent for Euro",
+    "pages": 27,
+    "size_kb": 1204.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-2028677.pdf"
+  },
+  {
+    "filename": "ssrn-2150876.pdf",
+    "title": "Marcos Lpez de Prado",
+    "pages": 41,
+    "size_kb": 1791.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-2150876.pdf"
+  },
+  {
+    "filename": "ssrn-217268.pdf",
+    "title": "BANK OF FINLAND",
+    "pages": 32,
+    "size_kb": 288.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-217268.pdf"
+  },
+  {
+    "filename": "ssrn-2276540.pdf",
+    "title": "Fundamentals versus Speculation: What Really Drives Spillovers and",
+    "pages": 37,
+    "size_kb": 1068.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-2276540.pdf"
+  },
+  {
+    "filename": "ssrn-2292602.pdf",
+    "title": "Assessing Measures of Order Flow Toxicity and",
+    "pages": 43,
+    "size_kb": 818.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-2292602.pdf"
+  },
+  {
+    "filename": "ssrn-2526053.pdf",
+    "title": "arXiv:1410.1900v2  [math.PR]  8 Dec 2014",
+    "pages": 20,
+    "size_kb": 435.0,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-2526053.pdf"
+  },
+  {
+    "filename": "ssrn-2568140.pdf",
+    "title": "COPYRIGHT  2016, VIRGINIA LAW REVIEW ASSOCIATION",
+    "pages": 54,
+    "size_kb": 431.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-2568140.pdf"
+  },
+  {
+    "filename": "ssrn-2710331.pdf",
+    "title": "Deep Learning for Limit Order Books",
+    "pages": 39,
+    "size_kb": 573.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-2710331.pdf"
+  },
+  {
+    "filename": "ssrn-2737457.pdf",
+    "title": "The Role of HFTs in Order Flow Toxicity and Stock Price Variance,",
+    "pages": 38,
+    "size_kb": 1666.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-2737457.pdf"
+  },
+  {
+    "filename": "ssrn-2791243.pdf",
+    "title": "BV-VPIN: Measuring the impact of order ow toxicity and liquidity on",
+    "pages": 27,
+    "size_kb": 2198.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-2791243.pdf"
+  },
+  {
+    "filename": "ssrn-2807531.pdf",
+    "title": "Order Flow Toxicity and Informed Trading Around Known Market",
+    "pages": 63,
+    "size_kb": 4165.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-2807531.pdf"
+  },
+  {
+    "filename": "ssrn-2863644.pdf",
+    "title": "Was There Informed Trading in",
+    "pages": 49,
+    "size_kb": 1610.4,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-2863644.pdf"
+  },
+  {
+    "filename": "ssrn-2874907.pdf",
+    "title": "Informed trading in oil-futures market",
+    "pages": 34,
+    "size_kb": 225.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-2874907.pdf"
+  },
+  {
+    "filename": "ssrn-3016730.pdf",
+    "title": "BANK OF FINLAND",
+    "pages": 32,
+    "size_kb": 288.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3016730.pdf"
+  },
+  {
+    "filename": "ssrn-3141294.pdf",
+    "title": "Universal features of price formation in nancial markets:",
+    "pages": 20,
+    "size_kb": 1238.0,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3141294.pdf"
+  },
+  {
+    "filename": "ssrn-3213389.pdf",
+    "title": "Mid-price Prediction Based on Machine Learning Methods with",
+    "pages": 40,
+    "size_kb": 1030.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3213389.pdf"
+  },
+  {
+    "filename": "ssrn-3222762.pdf",
+    "title": "Commodity Markets Intervention: Consequences of",
+    "pages": 22,
+    "size_kb": 433.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3222762.pdf"
+  },
+  {
+    "filename": "ssrn-3258508.pdf",
+    "title": "Price Discovery of a Speculative Asset:",
+    "pages": 50,
+    "size_kb": 562.4,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3258508.pdf"
+  },
+  {
+    "filename": "ssrn-3305277.pdf",
+    "title": "Investigating Limit Order Book Characteristics",
+    "pages": 11,
+    "size_kb": 428.8,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3305277.pdf"
+  },
+  {
+    "filename": "ssrn-3306329.pdf",
+    "title": "Momentum, Market-Regime and Stocks & Options Trading",
+    "pages": 19,
+    "size_kb": 755.9,
+    "domain_id": 5,
+    "domain_name": "Macro Trend, Breakouts & Volatility Regime Gates",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3306329.pdf"
+  },
+  {
+    "filename": "ssrn-3704098.pdf",
+    "title": "Deep Learning for Digital Asset Limit Order Books",
+    "pages": 9,
+    "size_kb": 926.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3704098.pdf"
+  },
+  {
+    "filename": "ssrn-3707796.pdf",
+    "title": "Machine Learning for Realised Volatility Forecasting",
+    "pages": 91,
+    "size_kb": 1706.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3707796.pdf"
+  },
+  {
+    "filename": "ssrn-3722391.pdf",
+    "title": "A Machine Learning Attack on Illegal Trading",
+    "pages": 50,
+    "size_kb": 1289.1,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3722391.pdf"
+  },
+  {
+    "filename": "ssrn-3781646.pdf",
+    "title": "Liquidation, Leverage and Optimal Margin in Bitcoin Futures",
+    "pages": 21,
+    "size_kb": 974.2,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3781646.pdf"
+  },
+  {
+    "filename": "ssrn-3920827.pdf",
+    "title": "How informative is the Order Book Beyond the Best",
+    "pages": 33,
+    "size_kb": 483.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3920827.pdf"
+  },
+  {
+    "filename": "ssrn-3983210.pdf",
+    "title": "Informed Trading in Foreign Exchange Futures:",
+    "pages": 66,
+    "size_kb": 1225.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3983210.pdf"
+  },
+  {
+    "filename": "ssrn-3997109.pdf",
+    "title": "Analysis and modeling of client order ow in limit order markets",
+    "pages": 32,
+    "size_kb": 1440.0,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-3997109.pdf"
+  },
+  {
+    "filename": "ssrn-4089510.pdf",
+    "title": "Wind Estimation by Multirotor Drone State using",
+    "pages": 12,
+    "size_kb": 4938.4,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4089510.pdf"
+  },
+  {
+    "filename": "ssrn-4149934.pdf",
+    "title": "Illiquid Bitcoin Options",
+    "pages": 43,
+    "size_kb": 756.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4149934.pdf"
+  },
+  {
+    "filename": "ssrn-4150979.pdf",
+    "title": "Price Discovery in Bitcoin: The Role of Limit Orders",
+    "pages": 39,
+    "size_kb": 1819.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4150979.pdf"
+  },
+  {
+    "filename": "ssrn-4175306.pdf",
+    "title": "Adverse Selection in Cryptocurrency Markets",
+    "pages": 49,
+    "size_kb": 933.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4175306.pdf"
+  },
+  {
+    "filename": "ssrn-4180768.pdf",
+    "title": "# To whom correspondence should be addressed",
+    "pages": 20,
+    "size_kb": 1030.0,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4180768.pdf"
+  },
+  {
+    "filename": "ssrn-4226309.pdf",
+    "title": "The relevance of features to limit order book learning",
+    "pages": 21,
+    "size_kb": 906.3,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4226309.pdf"
+  },
+  {
+    "filename": "ssrn-4268371.pdf",
+    "title": "Crypto Carry",
+    "pages": 48,
+    "size_kb": 573.6,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4268371.pdf"
+  },
+  {
+    "filename": "ssrn-4275078.pdf",
+    "title": "Macroeconomic Fundamentals and",
+    "pages": 32,
+    "size_kb": 402.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4275078.pdf"
+  },
+  {
+    "filename": "ssrn-4280098.pdf",
+    "title": "Illiquid Bitcoin Options",
+    "pages": 43,
+    "size_kb": 756.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4280098.pdf"
+  },
+  {
+    "filename": "ssrn-4301150 (1).pdf",
+    "title": "Fundamentals of Perpetual Futures",
+    "pages": 73,
+    "size_kb": 5349.7,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4301150 (1).pdf"
+  },
+  {
+    "filename": "ssrn-4301150 (2).pdf",
+    "title": "Fundamentals of Perpetual Futures",
+    "pages": 73,
+    "size_kb": 5349.7,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4301150 (2).pdf"
+  },
+  {
+    "filename": "ssrn-4301150.pdf",
+    "title": "Fundamentals of Perpetual Futures",
+    "pages": 73,
+    "size_kb": 5349.7,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4301150.pdf"
+  },
+  {
+    "filename": "ssrn-4320775.pdf",
+    "title": "Prediction-based limit order trading",
+    "pages": 9,
+    "size_kb": 1991.9,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4320775.pdf"
+  },
+  {
+    "filename": "ssrn-4332126.pdf",
+    "title": "TITLE PAGE",
+    "pages": 23,
+    "size_kb": 2555.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4332126.pdf"
+  },
+  {
+    "filename": "ssrn-4348703.pdf",
+    "title": "Is frequent trading profitable or hazardous?",
+    "pages": 45,
+    "size_kb": 371.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4348703.pdf"
+  },
+  {
+    "filename": "ssrn-4496644.pdf",
+    "title": "Illiquid Bitcoin Options",
+    "pages": 50,
+    "size_kb": 892.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4496644.pdf"
+  },
+  {
+    "filename": "ssrn-4626835.pdf",
+    "title": "Forecasting Volatility with Machine Learning and Rough",
+    "pages": 25,
+    "size_kb": 747.3,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4626835.pdf"
+  },
+  {
+    "filename": "ssrn-4649565.pdf",
+    "title": "Detecting Crypto Wash Trades via Machine Learning",
+    "pages": 52,
+    "size_kb": 794.1,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4649565.pdf"
+  },
+  {
+    "filename": "ssrn-4713126.pdf",
+    "title": "LEVERAGED TRADING VIA LENDING PLATFORMS",
+    "pages": 18,
+    "size_kb": 1606.7,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4713126.pdf"
+  },
+  {
+    "filename": "ssrn-4737312.pdf",
+    "title": "Kyle Meets Friedman: Informed Trading When",
+    "pages": 51,
+    "size_kb": 410.4,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4737312.pdf"
+  },
+  {
+    "filename": "ssrn-4770476.pdf",
+    "title": "IMPROVING DEEP LEARNING OF ALPHA TERM",
+    "pages": 33,
+    "size_kb": 916.1,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4770476.pdf"
+  },
+  {
+    "filename": "ssrn-4844202.pdf",
+    "title": "SquaredLabs",
+    "pages": 20,
+    "size_kb": 464.3,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4844202.pdf"
+  },
+  {
+    "filename": "ssrn-4848471.pdf",
+    "title": "Predict mini flash crashes from high-frequency data by",
+    "pages": 76,
+    "size_kb": 9860.9,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4848471.pdf"
+  },
+  {
+    "filename": "ssrn-4867340 (1).pdf",
+    "title": "WorldQuant University",
+    "pages": 28,
+    "size_kb": 2344.4,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4867340 (1).pdf"
+  },
+  {
+    "filename": "ssrn-4867340.pdf",
+    "title": "WorldQuant University",
+    "pages": 28,
+    "size_kb": 2344.4,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4867340.pdf"
+  },
+  {
+    "filename": "ssrn-4885729.pdf",
+    "title": "TECHNOLOGY AND AUTOMATION IN FINANCIAL TRADING:",
+    "pages": 71,
+    "size_kb": 1241.5,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4885729.pdf"
+  },
+  {
+    "filename": "ssrn-4894363.pdf",
+    "title": "151 Trading strategies implemented on python",
+    "pages": 49,
+    "size_kb": 6682.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4894363.pdf"
+  },
+  {
+    "filename": "ssrn-4902478.pdf",
+    "title": "Jotrrnal of Strategic and",
+    "pages": 10,
+    "size_kb": 5978.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4902478.pdf"
+  },
+  {
+    "filename": "ssrn-4971656.pdf",
+    "title": "Information Content of Book and Trade Order Flow at Different",
+    "pages": 36,
+    "size_kb": 1048.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4971656.pdf"
+  },
+  {
+    "filename": "ssrn-4986862.pdf",
+    "title": "Using Machines to Advance Better Models of the",
+    "pages": 48,
+    "size_kb": 338.2,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4986862.pdf"
+  },
+  {
+    "filename": "ssrn-4992077.pdf",
+    "title": "Machine Learning-Based Prediction of Mini Flash",
+    "pages": 75,
+    "size_kb": 9855.8,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-4992077.pdf"
+  },
+  {
+    "filename": "ssrn-5020002 (1).pdf",
+    "title": "Order Flow and Cryptocurrency Returns",
+    "pages": 71,
+    "size_kb": 634.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5020002 (1).pdf"
+  },
+  {
+    "filename": "ssrn-5020002.pdf",
+    "title": "Order Flow and Cryptocurrency Returns",
+    "pages": 71,
+    "size_kb": 634.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5020002.pdf"
+  },
+  {
+    "filename": "ssrn-5032815.pdf",
+    "title": "Mean reversion trading on the naphtha crack",
+    "pages": 37,
+    "size_kb": 1086.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5032815.pdf"
+  },
+  {
+    "filename": "ssrn-5036269.pdf",
+    "title": "Information Content of Book and Trade Order Flow at Different",
+    "pages": 36,
+    "size_kb": 1050.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5036269.pdf"
+  },
+  {
+    "filename": "ssrn-5051180.pdf",
+    "title": "A machine learning ensemble approach to predict financial markets",
+    "pages": 42,
+    "size_kb": 1453.2,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5051180.pdf"
+  },
+  {
+    "filename": "ssrn-5106300.pdf",
+    "title": "Modeling and Forecasting the Probability of Crypto-Exchange",
+    "pages": 26,
+    "size_kb": 629.5,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5106300.pdf"
+  },
+  {
+    "filename": "ssrn-5138889.pdf",
+    "title": "____________________________________________________________________________________________________",
+    "pages": 23,
+    "size_kb": 1187.0,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5138889.pdf"
+  },
+  {
+    "filename": "ssrn-5150912 (1).pdf",
+    "title": "Deep Learning for VWAP Execution in Crypto Markets:",
+    "pages": 44,
+    "size_kb": 17237.9,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5150912 (1).pdf"
+  },
+  {
+    "filename": "ssrn-5150912.pdf",
+    "title": "Deep Learning for VWAP Execution in Crypto Markets:",
+    "pages": 44,
+    "size_kb": 17237.9,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5150912.pdf"
+  },
+  {
+    "filename": "ssrn-5209907.pdf",
+    "title": "Concretum Research",
+    "pages": 38,
+    "size_kb": 1218.8,
+    "domain_id": 5,
+    "domain_name": "Macro Trend, Breakouts & Volatility Regime Gates",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5209907.pdf"
+  },
+  {
+    "filename": "ssrn-5225612.pdf",
+    "title": "Quantitative Alpha in Crypto Markets: A Systematic Review of Factor",
+    "pages": 26,
+    "size_kb": 1003.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5225612.pdf"
+  },
+  {
+    "filename": "ssrn-5230047.pdf",
+    "title": "Learning the Spoofability of Limit Order Books With",
+    "pages": 22,
+    "size_kb": 10516.1,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5230047.pdf"
+  },
+  {
+    "filename": "ssrn-5230677.pdf",
+    "title": "Machine Forecast Disagreement in the Cryptocurrency Market",
+    "pages": 72,
+    "size_kb": 1412.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5230677.pdf"
+  },
+  {
+    "filename": "ssrn-5236285.pdf",
+    "title": "ClusterLOB: Enhancing Trading Strategies by",
+    "pages": 34,
+    "size_kb": 4293.0,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5236285.pdf"
+  },
+  {
+    "filename": "ssrn-5262608.pdf",
+    "title": "Learning the Spoofability of Limit Order Books With",
+    "pages": 22,
+    "size_kb": 6187.4,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5262608.pdf"
+  },
+  {
+    "filename": "ssrn-5331939.pdf",
+    "title": "Exploring Microstructural Dynamics in Cryptocurrency Limit",
+    "pages": 12,
+    "size_kb": 2463.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5331939.pdf"
+  },
+  {
+    "filename": "ssrn-5340629.pdf",
+    "title": "Forecasting Intraday Volume in Equity Markets",
+    "pages": 38,
+    "size_kb": 14864.3,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5340629.pdf"
+  },
+  {
+    "filename": "ssrn-5367043.pdf",
+    "title": "Adversarial Attacks on Machine Learning-Driven",
+    "pages": 17,
+    "size_kb": 318.2,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5367043.pdf"
+  },
+  {
+    "filename": "ssrn-5371015.pdf",
+    "title": "Machine Learning-Based Prediction of Mini Flash",
+    "pages": 76,
+    "size_kb": 9847.3,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5371015.pdf"
+  },
+  {
+    "filename": "ssrn-5379395.pdf",
+    "title": "ONLINE SUPPLEMENT",
+    "pages": 10,
+    "size_kb": 266.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5379395.pdf"
+  },
+  {
+    "filename": "ssrn-5614902.pdf",
+    "title": "An Empirical Analysis of Financial Markets: An Econophysics Approach",
+    "pages": 56,
+    "size_kb": 2817.2,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5614902.pdf"
+  },
+  {
+    "filename": "ssrn-5614913.pdf",
+    "title": "Information to appear on the first page of your article",
+    "pages": 53,
+    "size_kb": 1833.2,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-5614913.pdf"
+  },
+  {
+    "filename": "ssrn-6091906.pdf",
+    "title": "Optimal VWAP Execution: A Synthesis of Stochastic",
+    "pages": 75,
+    "size_kb": 2848.2,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6091906.pdf"
+  },
+  {
+    "filename": "ssrn-6159346 (1).pdf",
+    "title": "Explainable Patterns in Cryptocurrency",
+    "pages": 28,
+    "size_kb": 4612.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6159346 (1).pdf"
+  },
+  {
+    "filename": "ssrn-6159346.pdf",
+    "title": "Explainable Patterns in Cryptocurrency",
+    "pages": 28,
+    "size_kb": 4612.7,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6159346.pdf"
+  },
+  {
+    "filename": "ssrn-6189791.pdf",
+    "title": "Title:",
+    "pages": 17,
+    "size_kb": 544.5,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6189791.pdf"
+  },
+  {
+    "filename": "ssrn-6301779.pdf",
+    "title": "Verma Research Capital (VRC)",
+    "pages": 34,
+    "size_kb": 409.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6301779.pdf"
+  },
+  {
+    "filename": "ssrn-6344338 (1).pdf",
+    "title": "Predicting Adverse Selection in High-Frequency",
+    "pages": 15,
+    "size_kb": 1756.0,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6344338 (1).pdf"
+  },
+  {
+    "filename": "ssrn-6344338.pdf",
+    "title": "Predicting Adverse Selection in High-Frequency",
+    "pages": 15,
+    "size_kb": 1756.0,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6344338.pdf"
+  },
+  {
+    "filename": "ssrn-6465720.pdf",
+    "title": "An Open Book: Level 4 Order Book Data from the Hyperliquid Exchange",
+    "pages": 13,
+    "size_kb": 774.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6465720.pdf"
+  },
+  {
+    "filename": "ssrn-6508779.pdf",
+    "title": "Highlights",
+    "pages": 37,
+    "size_kb": 830.3,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6508779.pdf"
+  },
+  {
+    "filename": "ssrn-6558841.pdf",
+    "title": "PGRI",
+    "pages": 16,
+    "size_kb": 210.2,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6558841.pdf"
+  },
+  {
+    "filename": "ssrn-6579278.pdf",
+    "title": "Anatomy of a Crypto Cascade: Minute-Level Evidence from the",
+    "pages": 16,
+    "size_kb": 987.0,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6579278.pdf"
+  },
+  {
+    "filename": "ssrn-6636998.pdf",
+    "title": "Two-Regime Liquidity Recovery After a Perpetual Futures Liquidation",
+    "pages": 17,
+    "size_kb": 695.4,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6636998.pdf"
+  },
+  {
+    "filename": "ssrn-6639558.pdf",
+    "title": "PGRI",
+    "pages": 34,
+    "size_kb": 387.9,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6639558.pdf"
+  },
+  {
+    "filename": "ssrn-6652903.pdf",
+    "title": "Detecting Informed Trading Before Unscheduled",
+    "pages": 11,
+    "size_kb": 162.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6652903.pdf"
+  },
+  {
+    "filename": "ssrn-6658879 (1).pdf",
+    "title": "PGRI",
+    "pages": 47,
+    "size_kb": 1059.3,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6658879 (1).pdf"
+  },
+  {
+    "filename": "ssrn-6658879.pdf",
+    "title": "PGRI",
+    "pages": 47,
+    "size_kb": 1059.3,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6658879.pdf"
+  },
+  {
+    "filename": "ssrn-6660119.pdf",
+    "title": "Transparency vs. Liquidity Provision in Perpetual Futures Markets:",
+    "pages": 49,
+    "size_kb": 1263.1,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6660119.pdf"
+  },
+  {
+    "filename": "ssrn-6668879.pdf",
+    "title": "BALI: Solvency-Constrained Batch Liquidation as a",
+    "pages": 6,
+    "size_kb": 241.4,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6668879.pdf"
+  },
+  {
+    "filename": "ssrn-6669018.pdf",
+    "title": "Bootstrapping Risk-Bearing Capital: Solver Economics for Coordinated",
+    "pages": 9,
+    "size_kb": 1737.1,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6669018.pdf"
+  },
+  {
+    "filename": "ssrn-6688399.pdf",
+    "title": "Modelling Crypto Asset Order-Flow Imbalance",
+    "pages": 46,
+    "size_kb": 4702.2,
+    "domain_id": 5,
+    "domain_name": "Macro Trend, Breakouts & Volatility Regime Gates",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6688399.pdf"
+  },
+  {
+    "filename": "ssrn-6761438.pdf",
+    "title": "An Early Warning System for Liquidity Stress in Cryptocurrency",
+    "pages": 7,
+    "size_kb": 1097.9,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6761438.pdf"
+  },
+  {
+    "filename": "ssrn-6784438.pdf",
+    "title": "The Privacy Subsidy: Kyles  under",
+    "pages": 17,
+    "size_kb": 154.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6784438.pdf"
+  },
+  {
+    "filename": "ssrn-6839368.pdf",
+    "title": "Linear Recurrent versus Convolutional Neural Networks for",
+    "pages": 11,
+    "size_kb": 1291.8,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6839368.pdf"
+  },
+  {
+    "filename": "ssrn-6847019.pdf",
+    "title": "Liquidation-Aware Market Making in Perpetual Futures:",
+    "pages": 11,
+    "size_kb": 256.3,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6847019.pdf"
+  },
+  {
+    "filename": "ssrn-6872638.pdf",
+    "title": "Funding Rates and the Conditional Informativeness of Order",
+    "pages": 19,
+    "size_kb": 1120.4,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6872638.pdf"
+  },
+  {
+    "filename": "ssrn-6883362.pdf",
+    "title": "Cross-Coin Heterogeneity in Liquidation Cascade",
+    "pages": 16,
+    "size_kb": 1909.9,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6883362.pdf"
+  },
+  {
+    "filename": "ssrn-6891658 (1).pdf",
+    "title": "Hidden Liquidity, Displayed Depth, and Execution Risk During a Bitcoin",
+    "pages": 17,
+    "size_kb": 394.8,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6891658 (1).pdf"
+  },
+  {
+    "filename": "ssrn-6891658.pdf",
+    "title": "Hidden Liquidity, Displayed Depth, and Execution Risk During a Bitcoin",
+    "pages": 17,
+    "size_kb": 394.8,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6891658.pdf"
+  },
+  {
+    "filename": "ssrn-6900821.pdf",
+    "title": "Beyond Prediction : Execution-Aware Machine Learning",
+    "pages": 91,
+    "size_kb": 2817.9,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6900821.pdf"
+  },
+  {
+    "filename": "ssrn-6938742.pdf",
+    "title": "Order-Flow Imbalance and Short-Horizon Return Predictability in",
+    "pages": 7,
+    "size_kb": 128.7,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6938742.pdf"
+  },
+  {
+    "filename": "ssrn-6959060.pdf",
+    "title": "Morphogenic Tension Principle",
+    "pages": 20,
+    "size_kb": 224.1,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6959060.pdf"
+  },
+  {
+    "filename": "ssrn-6977818.pdf",
+    "title": "Manipulation-Robust Mark Design for Perpetual",
+    "pages": 81,
+    "size_kb": 3494.2,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6977818.pdf"
+  },
+  {
+    "filename": "ssrn-6993378.pdf",
+    "title": "Binance Leads, but Some Wallets Anticipate: Wallet-Level Cross-Venue",
+    "pages": 11,
+    "size_kb": 584.5,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6993378.pdf"
+  },
+  {
+    "filename": "ssrn-6993978.pdf",
+    "title": "THE FUNDING CARRY AND A CROSS-VENUE SPREAD",
+    "pages": 11,
+    "size_kb": 371.0,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-6993978.pdf"
+  },
+  {
+    "filename": "ssrn-7011358.pdf",
+    "title": "When the Underlying Goes Dark",
+    "pages": 21,
+    "size_kb": 746.3,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7011358.pdf"
+  },
+  {
+    "filename": "ssrn-7018520.pdf",
+    "title": "PGRI",
+    "pages": 21,
+    "size_kb": 273.9,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7018520.pdf"
+  },
+  {
+    "filename": "ssrn-7055779 (1).pdf",
+    "title": "Order Flow and Cryptocurrency Returns: A Machine Learning",
+    "pages": 27,
+    "size_kb": 1694.3,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7055779 (1).pdf"
+  },
+  {
+    "filename": "ssrn-7055779.pdf",
+    "title": "Order Flow and Cryptocurrency Returns: A Machine Learning",
+    "pages": 27,
+    "size_kb": 1694.3,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7055779.pdf"
+  },
+  {
+    "filename": "ssrn-7085378 (1).pdf",
+    "title": "Anatomy of a Null Result: A Pre-Registered,",
+    "pages": 10,
+    "size_kb": 272.9,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7085378 (1).pdf"
+  },
+  {
+    "filename": "ssrn-7085378.pdf",
+    "title": "Anatomy of a Null Result: A Pre-Registered,",
+    "pages": 10,
+    "size_kb": 272.9,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7085378.pdf"
+  },
+  {
+    "filename": "ssrn-7189219.pdf",
+    "title": "Counting lls misrepresents liquidations:",
+    "pages": 14,
+    "size_kb": 117.0,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7189219.pdf"
+  },
+  {
+    "filename": "ssrn-7228999.pdf",
+    "title": "Backed or Synthetic? Execution Mechanisms and",
+    "pages": 73,
+    "size_kb": 625.9,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7228999.pdf"
+  },
+  {
+    "filename": "ssrn-7270041 (1).pdf",
+    "title": "Who Loses and Why? Market Microstructure of",
+    "pages": 56,
+    "size_kb": 2054.6,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7270041 (1).pdf"
+  },
+  {
+    "filename": "ssrn-7270041.pdf",
+    "title": "Who Loses and Why? Market Microstructure of",
+    "pages": 56,
+    "size_kb": 2054.6,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7270041.pdf"
+  },
+  {
+    "filename": "ssrn-7273201.pdf",
+    "title": "Prequential Benchmark of",
+    "pages": 9,
+    "size_kb": 1814.7,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7273201.pdf"
+  },
+  {
+    "filename": "ssrn-7291478.pdf",
+    "title": "Linking Funding Mechanisms in Off-Chain Perpetual",
+    "pages": 29,
+    "size_kb": 863.0,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7291478.pdf"
+  },
+  {
+    "filename": "ssrn-7298358.pdf",
+    "title": "Hong Kong University Business School:",
+    "pages": 78,
+    "size_kb": 1063.6,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7298358.pdf"
+  },
+  {
+    "filename": "ssrn-7363482.pdf",
+    "title": "The Tail Is the Only Signal: Flush Reversion in Equity Indices and",
+    "pages": 22,
+    "size_kb": 489.3,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7363482.pdf"
+  },
+  {
+    "filename": "ssrn-7404139.pdf",
+    "title": "Cross-Sectional Momentum in Cryptocurrency:",
+    "pages": 8,
+    "size_kb": 413.7,
+    "domain_id": 3,
+    "domain_name": "Funding Rates, Basis & Cross-Sectional Carry",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7404139.pdf"
+  },
+  {
+    "filename": "ssrn-7438262.pdf",
+    "title": "A Snapshot-Conditioned CVAE Limit Order Book Simulator: Evidence from",
+    "pages": 20,
+    "size_kb": 1792.6,
+    "domain_id": 4,
+    "domain_name": "Machine Learning, Feature Engineering & Validation",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-7438262.pdf"
+  },
+  {
+    "filename": "ssrn-944308.pdf",
+    "title": "Follow the Leader:",
+    "pages": 56,
+    "size_kb": 411.3,
+    "domain_id": 2,
+    "domain_name": "Liquidation Cascades, Squeezes & Forced Deleveraging",
+    "path": "C:\\Users\\SIGMA\\Downloads\\ssrn-944308.pdf"
+  },
+  {
+    "filename": "SSRN-id3682487.pdf",
+    "title": "Mean reversion - A new approach",
+    "pages": 13,
+    "size_kb": 1202.8,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\SSRN-id3682487.pdf"
+  },
+  {
+    "filename": "Trader Kane Playbook.pdf",
+    "title": "Brand Kit",
+    "pages": 11,
+    "size_kb": 6643.4,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\Trader Kane Playbook.pdf"
+  },
+  {
+    "filename": "Trader Mayne Playbook.pdf",
+    "title": "Structure & OTE",
+    "pages": 10,
+    "size_kb": 5497.6,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\Trader Mayne Playbook.pdf"
+  },
+  {
+    "filename": "Usman Noah.pdf",
+    "title": "Usman Noah",
+    "pages": 11,
+    "size_kb": 4857.9,
+    "domain_id": 1,
+    "domain_name": "Orderflow Microstructure & Volume Toxicity",
+    "path": "C:\\Users\\SIGMA\\Downloads\\Usman Noah.pdf"
+  }
+]

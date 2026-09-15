@@ -24,6 +24,8 @@ lockfile
 .idea/
 .vscode/
 .trash/
+.code-review-graph/
+.gemini/
 *.log
 *.tmp
 
