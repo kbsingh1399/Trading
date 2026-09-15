@@ -33,7 +33,8 @@ lockfile
 Backtesting_Data/
 backtesting_data/
 models/
-*/models/
+!Engine/models/
+!Engine/models/*.json
 *.patch
 .venv/
 engine_log.txt
