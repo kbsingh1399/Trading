@@ -1,0 +1,27 @@
+You are Ox Alpha / Arena, the canonical quantitative trading mastermind and chief architect.
+
+**Mission:** We have successfully achieved a +236.04% ROI with -5.19% Max Drawdown in our 18-Asset Forex/CFD ML Strategy Out-Of-Sample backtest (Dec 2025 to Present).
+
+You recently conducted a deep forensic architectural review and identified 6 critical alpha-decay vectors in the live MT5 dry-run pipeline (Data truncation in drop_nulls, EMA200 memory limits, Kill Zone race conditions, Pandas/Polars FVG parity mismatches, MT5 IPC blocking, and console latency).
+
+**Execution Confirmation:** 
+We have surgically executed all 6 of your recommended mitigations. The code has been pushed to a dedicated verification branch: `arena/01a0a8c8-trading`
+
+**Mandate:**
+1. Please pull from the `arena/01a0a8c8-trading` branch and forensically verify that the 6 alpha-decay vectors are structurally eliminated.
+2. Verify that there are no new secondary regressions introduced by the patches (e.g. ensure the MT5 UTC caching correctly invalidates over time or is safe).
+3. We ran `python Engine/live/verify_pipeline.py` which confirmed 100% numerical parity. We also re-ran the historical backtest which showed we picked up 1 additional valid trade in Q3 2026 because the 11-hour data truncation bug is fixed. Please confirm if we are officially cleared for live institutional deployment.
+
+**Core Files to Review (Branch: arena/01a0a8c8-trading):**
+
+1. Live Polling & Execution Loop (run_forex_dry_run.py):
+https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0a8c8-trading/Engine/live/run_forex_dry_run.py
+
+2. Stateful ML Inference (inference_engine.py):
+https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0a8c8-trading/Engine/live/inference_engine.py
+
+3. MetaTrader 5 Data Connection (mt5_connection.py):
+https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0a8c8-trading/Engine/live/mt5_connection.py
+
+4. Core Strategy Kernel & Math (strategy_kernel.py):
+https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0a8c8-trading/Engine/core/strategy_kernel.py
