@@ -225,7 +225,7 @@ def main():
     last_candle_times = {}
     console.print("[bold cyan]Warm-starting rolling state buffers for 18 assets...[/bold cyan]")
     for asset in ASSETS:
-        engine = StatefulInferenceEngine(asset, max_bars=250)
+        engine = StatefulInferenceEngine(asset)
         if engine.warm_start(mt5_conn):
             engines[asset] = engine
             if not engine.buffer.empty:
