@@ -198,11 +198,31 @@ def load_production_model() -> xgb.Booster:
 # MAIN LIVE DRY-RUN TERMINAL (RICH UI)
 # ============================================================================
 def main():
-    parser = argparse.ArgumentParser(description="Production Live Dry-Run Telemetry Terminal (Rich UI).")
+    parser = argparse.ArgumentParser(description="Production Live Forex & CFD Telemetry Terminal (Rich UI).")
     parser.add_argument("--interval", type=float, default=1.5, help="Polling interval in seconds (default: 1.5)")
     parser.add_argument("--once", action="store_true", help="Run a single evaluation pass across all assets and exit.")
     parser.add_argument("--ignore-kz", action="store_true", help="Bypass the London/NY kill zone filter for 24/7 dry-run signal testing.")
+    parser.add_argument(
+        "--strategy",
+        choices=["fvg", "ml", "combined"],
+        default="combined",
+        help="Strategy logic to execute: 'fvg' (Rule-Based ICT FVG), 'ml' (Pure XGBoost Probability), 'combined' (Dual Confluence: FVG + ML)"
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        default=True,
+        help="Run in paper dry-run mode without sending real orders to broker (default: True)"
+    )
+    parser.add_argument(
+        "--live",
+        action="store_true",
+        help="Arm real live market execution mode in MetaTrader 5"
+    )
     args = parser.parse_args()
+    
+    is_dry_run = not args.live
+    strat_mode = args.strategy
 
     console.print(Panel("[bold cyan]INITIALIZING INSTITUTIONAL MT5 DRY-RUN TERMINAL[/bold cyan]\n[dim]Connecting to MetaTrader 5 broker feed...[/dim]", border_style="cyan"))
 
@@ -379,12 +399,30 @@ def main():
                 decision_cell = "[dim]HOLD[/dim]"
                 calc_lots = 0.01
 
+                # Determine long/short conditions based on selected strategy
+                is_long_sig = False
+                is_short_sig = False
+                strat_tag = "DUAL"
+
+                if strat_mode == "fvg":
+                    strat_tag = "FVG"
+                    is_long_sig = (trend_val > 0 and bull_fvg > 0)
+                    is_short_sig = (trend_val < 0 and bear_fvg > 0)
+                elif strat_mode == "ml":
+                    strat_tag = "ML"
+                    is_long_sig = (trend_val > 0 and prob >= 0.55)
+                    is_short_sig = (trend_val < 0 and prob >= 0.55)
+                else:  # combined (dual confluence)
+                    strat_tag = "DUAL"
+                    is_long_sig = (trend_val > 0 and bull_fvg > 0 and prob >= 0.55)
+                    is_short_sig = (trend_val < 0 and bear_fvg > 0 and prob >= 0.55)
+
                 # 1. GATING LOGIC FIRST
                 if not is_kz:
                     decision_cell = "[dim yellow]HOLD (Off-Hours)[/dim yellow]"
 
                 # 2. EVALUATE LONG SETUP
-                elif trend_val > 0 and bull_fvg > 0 and prob >= 0.55:
+                elif is_long_sig:
                     entry = ask
                     sl = local_low
                     r_dist = entry - sl
@@ -395,13 +433,16 @@ def main():
                     else:
                         tp = entry + (4.0 * r_dist)
                         calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
-                        decision_cell = f"[bold white on green] DRY-BUY ({calc_lots:.2f}L) [/bold white on green]"
+                        action_label = f"DRY-BUY ({strat_tag})" if is_dry_run else f"LIVE-BUY ({strat_tag})"
+                        decision_cell = f"[bold white on green] {action_label} ({calc_lots:.2f}L) [/bold white on green]"
                         signals_count += 1
-                        log_msg = f"[DRY-RUN SIGNAL: {asset} | BUY | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
+                        log_msg = f"[{'DRY-RUN' if is_dry_run else 'LIVE'} SIGNAL: {asset} | BUY ({strat_tag}) | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
                         logging.info(log_msg)
+                        if not is_dry_run:
+                            order_mgr.place_market_order(asset, mt5.ORDER_TYPE_BUY, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD)
 
                 # 3. EVALUATE SHORT SETUP
-                elif trend_val < 0 and bear_fvg > 0 and prob >= 0.55:
+                elif is_short_sig:
                     entry = bid
                     sl = local_high
                     r_dist = sl - entry
@@ -412,19 +453,39 @@ def main():
                     else:
                         tp = entry - (4.0 * r_dist)
                         calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
-                        decision_cell = f"[bold white on red] DRY-SELL ({calc_lots:.2f}L) [/bold white on red]"
+                        action_label = f"DRY-SELL ({strat_tag})" if is_dry_run else f"LIVE-SELL ({strat_tag})"
+                        decision_cell = f"[bold white on red] {action_label} ({calc_lots:.2f}L) [/bold white on red]"
                         signals_count += 1
-                        log_msg = f"[DRY-RUN SIGNAL: {asset} | SELL | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
+                        log_msg = f"[{'DRY-RUN' if is_dry_run else 'LIVE'} SIGNAL: {asset} | SELL ({strat_tag}) | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
                         logging.info(log_msg)
+                        if not is_dry_run:
+                            order_mgr.place_market_order(asset, mt5.ORDER_TYPE_SELL, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD)
 
                 # 4. DIAGNOSTIC REASON FOR NO SIGNAL
                 else:
-                    if bull_fvg == 0 and bear_fvg == 0:
-                        decision_cell = "[dim]HOLD (No FVG)[/dim]"
-                    elif prob < 0.55:
-                        decision_cell = f"[dim]HOLD (P*={prob:.2f}<0.55)[/dim]"
-                    elif (trend_val > 0 and bear_fvg > 0) or (trend_val < 0 and bull_fvg > 0):
-                        decision_cell = "[dim yellow]HOLD (Trend Opposed)[/dim yellow]"
+                    if strat_mode == "fvg":
+                        if bull_fvg == 0 and bear_fvg == 0:
+                            decision_cell = "[dim]HOLD (No FVG)[/dim]"
+                        elif (trend_val > 0 and bear_fvg > 0) or (trend_val < 0 and bull_fvg > 0):
+                            decision_cell = "[dim yellow]HOLD (Trend Opposed)[/dim yellow]"
+                        else:
+                            decision_cell = "[dim]HOLD[/dim]"
+                    elif strat_mode == "ml":
+                        if prob < 0.55:
+                            decision_cell = f"[dim]HOLD (P*={prob:.2f}<0.55)[/dim]"
+                        elif trend_val == 0:
+                            decision_cell = "[dim yellow]HOLD (Flat Trend)[/dim yellow]"
+                        else:
+                            decision_cell = "[dim]HOLD[/dim]"
+                    else:
+                        if bull_fvg == 0 and bear_fvg == 0:
+                            decision_cell = "[dim]HOLD (No FVG)[/dim]"
+                        elif prob < 0.55:
+                            decision_cell = f"[dim]HOLD (P*={prob:.2f}<0.55)[/dim]"
+                        elif (trend_val > 0 and bear_fvg > 0) or (trend_val < 0 and bull_fvg > 0):
+                            decision_cell = "[dim yellow]HOLD (Trend Opposed)[/dim yellow]"
+                        else:
+                            decision_cell = "[dim]HOLD[/dim]"
 
                 table.add_row(
                     asset,
@@ -443,16 +504,18 @@ def main():
 
             # Header info panel
             uptime = str(datetime.now() - start_time).split('.')[0]
+            safety_label = "[bold green]DRY-RUN MODE (Zero Real Orders)[/bold green]" if is_dry_run else "[bold red]LIVE EXECUTION MODE (REAL ORDERS ARMED)[/bold red]"
+            strat_label = f"[bold cyan]{strat_mode.upper()}[/bold cyan] ({'Rule-Based ICT FVG' if strat_mode == 'fvg' else ('Pure XGBoost ML' if strat_mode == 'ml' else 'Dual Confluence: FVG + ML')})"
             header_text = (
                 f"[bold white]Account:[/bold white] #{acc_dict.get('login')} ({acc_dict.get('server')})  |  "
                 f"[bold white]Balance:[/bold white] ${acc_dict.get('balance'):,.2f} USD  |  "
                 f"[bold white]Equity:[/bold white] ${acc_dict.get('equity'):,.2f} USD\n"
+                f"[bold white]Strategy:[/bold white] {strat_label}  |  "
                 f"[bold white]Kill Zone:[/bold white] {kz_display}  |  "
-                f"[bold white]Uptime:[/bold white] {uptime}  |  "
                 f"[bold white]Signals Logged:[/bold white] {signals_count}  |  "
-                f"[bold white]Safety:[/bold white] [bold green]DRY_RUN = True (Orders Locked)[/bold green]"
+                f"[bold white]Mode:[/bold white] {safety_label}"
             )
-            header_panel = Panel(header_text, title="[bold bright_cyan]ENGINE 2: FOREX & CFD INSTITUTIONAL TERMINAL[/bold bright_cyan]", border_style="cyan")
+            header_panel = Panel(header_text, title="[bold bright_cyan]ENGINE: UNIFIED FOREX & CFD MASTER TERMINAL[/bold bright_cyan]", border_style="cyan")
 
             # Clear screen for live loop
             if not args.once:
