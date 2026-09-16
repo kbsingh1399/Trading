@@ -1,0 +1,64 @@
+# ====================================================================================================
+# ARENA.AI / CLAUDE OPUS FORENSIC QUANT REVIEW: S3 ORB/CRT MULTIVERSE STRATEGY
+# ====================================================================================================
+
+[ROLE & MISSION]
+You are a Lead Quantitative Research Auditor and Principal Quantitative Developer at a top-tier systematic hedge fund.
+You are tasked with conducting an uncompromising, adversarial code review and quantitative integrity audit of our newly implemented S3 Opening Range Breakout (ORB) + Candle Range Theory (CRT) machine learning strategy and its integration into the Master Quad-Sleeve Multiverse Trading Architecture.
+
+[CONTEXT & BENCHMARK RESULTS]
+Our quantitative research system just completed walk-forward evaluation across all 20 Out-Of-Sample (OOS) Non-Overlapping Quarterly Windows (2021 to 2026), covering 11 Institutional Binance USDT-M Perpetuals (3.47M 15m candles) and 6 Institutional Forex/Indices assets.
+Across all 20 OOS regimes, the combined Multiverse Strategy achieved:
+- Pass Rate: 20 / 20 Outright Certified Passes (100.0%)
+- Initial Capital: 5,000.00 USD
+- Total Net Profit: +15,936.51 USD (+318.73% Net ROI)
+- Completed Trades: 2,285 trades (S1: 481 | T1: 238 | ORB/CRT: 1,566)
+- Aggregate Win Rate: 70.2% (1,604 Wins / 681 Losses)
+- Maximum Monthly Peak Drawdown: 3.57% (Hard threshold limit: <= 5.00%)
+- Benchmark Alpha: Outperformed BTC Buy & Hold (+318.73% vs +187.00%) with 13.5x lower maximum drawdown (3.57% vs -48.40%).
+
+[PRIMARY GITHUB REFERENCES - FETCH AND READ DIRECTLY]
+You must fetch and inspect the raw production source code directly from our public GitHub repository (branch: main or arena/01a0a8c8-trading):
+1. S3 ORB/CRT Strategy Engine (Numba JIT Simulator):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/s3_orb_ml.py
+2. Master Multiverse 20 OOS Production Runner:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_20_oos_multiverse.py
+3. S1 Dual-Model Liquidation Pullback Strategy Engine:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/s1_dual_model_orderflow.py
+4. Fast Numba Backtesting Engine & Multi-Asset Compiler:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/scratch/fast_numba_oos_engine.py
+5. Canonical Schema & Core Definitions:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/schema.py
+
+[AUDIT MANDATES FOR ARENA.AI]
+Please conduct a rigorous forensic audit covering the following five domains:
+
+1. ANTI-LOOKAHEAD & CAUSAL INTEGRITY AUDIT:
+   - Inspect the 20 features computed in `Engine/strategy/s3_orb_ml.py` (specifically `body_ratio`, `close_outside`, `fvg_expansion`, `judas_sweep`, `pdl_dist`, `pdh_dist`, `or_range_atr`).
+   - Verify that all indicator computations, high/low boundaries, and opening range calculations rely exclusively on closed historical bars (bar j <= t) with zero forward indexing.
+   - Verify that trade entry execution in `simulate_orb_trades` strictly occurs at the open of bar j+1 following an opening range breakout trigger at bar j close.
+
+2. CANDLE RANGE THEORY (CRT) MATHEMATICAL RIGOR:
+   - Critically evaluate the mathematical formulations of the 4 CRT features:
+     * Body Ratio: Clamped ratio of candle body to total range.
+     * Close Outside: Binary indicator confirming candle close beyond opening range extremes.
+     * FVG Expansion: Fair Value Gap detection across bars [t-2, t-1, t].
+     * Judas Sweep: False breakout sweep of previous day high/low before true directional reversal.
+   - Are there any edge cases (e.g. zero-range Sunday bars, exchange maintenance gaps, zero division) that could introduce numerical instability?
+
+3. CONCURRENCY & PORTFOLIO RISK SIZING:
+   - In `Engine/run_20_oos_multiverse.py`, examine the multi-sleeve dynamic capital allocation:
+     * Base Risk: 54.00 USD (S1), 40.00 USD (T1), 20.00 USD (ORB)
+     * Profit Approach Protection: Throttling risk to 30.00 USD when monthly profit reaches +380.00 USD.
+     * Consecutive Loss Defense: Kelly half-sizing (25.00 USD on S1 loss, 12.00 USD on ORB loss).
+     * Drawdown Defense: 10.00 USD risk when capital drawdown >= 2.0% or peak drawdown >= 3.5%.
+     * Concurrent Slot Limits: Max 4 total positions (Max 2 S1, Max 2 T1, Max 2 ORB).
+   - Evaluate whether this risk geometry is mathematically optimal, prevents ruin, and avoids overfitting.
+
+4. ORTHOGONAL REGIME HEDGING EVALUATION:
+   - During severe macro liquidation crashes (W05 Terra-Luna May 2022, W08 FTX Nov 2022, W20 Late-cycle shock March 2026), S1 liquidation pullbacks faced elevated friction while S3 ORB/CRT generated +86R to +184R at a 78% to 86% win rate.
+   - Analyze whether this breakout momentum expansion is a genuine structural property of high-volatility liquidations or an artifact of cross-asset pooling.
+
+5. RECOMMENDED REFINEMENTS FOR LIVE PRODUCTION:
+   - Identify any performance bottlenecks, slippage vulnerabilities, or execution risks for live MT5/Binance deployment.
+   - Provide concrete, surgical code recommendations.
