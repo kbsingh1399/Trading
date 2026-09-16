@@ -45164,3 +45164,16 @@ ame: quant-coding-skills), only 2 --- delimiters in entire file.
 ### Turn 2026-09-16 (Clarification of run_forex_dry_run.py Architecture & Lineage)
 - User Prompt: c:\Users\SIGMA\Documents\Trading\Engine\live\run_forex_dry_run.py is strategy 1...right?
 - Clarification: Delineated the two production tracks: (1) Forex/CFD MT5 live dry-run engine (run_forex_dry_run.py / forex_engine.py using 13-feature ICT XGBoost) vs (2) Crypto & Cross-Asset Multiverse suite (run_20_oos_multiverse.py / s1_dual_model_orderflow.py / s3_orb_ml.py certified 10/10 by Arena).
+
+## Turn Date: 2026-09-16 16:28 UTC
+### User Prompt:
+make a strucuted C:\Users\SIGMA\Documents\Trading and especially C:\Users\SIGMA\Documents\Trading\Engine. delete any sctch file and create a single forex standalone engine in C:\Users\SIGMA\Documents\Trading\Engine
+
+### Response Summary:
+- Consolidated all Forex & CFD trading capabilities into a single self-contained standalone engine in \Engine/forex_engine.py\.
+- Implemented both Strategy 1 (Rule-Based ICT FVG) and Strategy 2 (Pure XGBoost ML), plus default Dual Confluence (FVG + ML) selectable via \--strategy {fvg, ml, combined}\.
+- Added \--dry-run\ (default True, safe virtual execution) and \--live\ modes.
+- Verified 100% causal feature mathematical parity (< 1e-9 max difference).
+- Pruned 487 scratch files from \scratch/\ and purged loose scratch check scripts from repo root.
+- Relocated specification markdown files to \docs/specs/\ in compliance with markdown isolation rules.
+- Synchronized AST knowledge graph (112k nodes) and committed/pushed to \rena/01a0a8c8-trading\ and \main\.
