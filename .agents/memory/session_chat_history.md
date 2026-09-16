@@ -45187,3 +45187,10 @@ make a strucuted C:\Users\SIGMA\Documents\Trading and especially C:\Users\SIGMA\
   4. Fully integrated Candle Range Theory (CRT) & Opening Range Breakout (ORB) as --strategy crt directly inside Engine/forex_engine.py for the 18 institutional Forex/CFD pairs (Forex_Backtesting_Data and live MT5).
   5. Verified live MT5 snapshot execution: 18/18 assets loaded and computed with zero errors, logging 10 valid CRT setups under dry-run paper trading mode.
   6. Committed (c421aeb) and pushed to both origin/arena/01a0a8c8-trading and origin/main.
+
+## Turn: 2026-09-16 17:21:41
+- **User Directive**: Delete them if not required: Engine/__init__.py, Engine/local_engine.py, Engine/run_20_oos_dual_model.py, Engine/run_20_oos_multiverse.py. And how many strategies does forex_engine.py contain?
+- **Action & Result**:
+  1. Kept Engine/__init__.py: Required Python package identifier and Engine_2 backwards-compatibility aliaser.
+  2. Permanently deleted the 3 obsolete and broken runners via git rm: Engine/local_engine.py, Engine/run_20_oos_dual_model.py, Engine/run_20_oos_multiverse.py (all broke on missing imports from the purged scratch directory). Committed (d86bcc8) and pushed to remote branches.
+  3. Audited and documented the 3 core strategies + 1 multi-confluence mode in Engine/forex_engine.py (ICT FVG, CRT & ORB, XGBoost ML, and Combined Multi-Confluence).
