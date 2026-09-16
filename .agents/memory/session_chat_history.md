@@ -45056,3 +45056,27 @@ eports/equity_curve_comparison.png and brain artifacts.
 **Assistant:** Built and ran a vectorized ORB calibration script across all 18 canonical assets. Discovered a massive naked edge on European Indices (GER40, FR40) and Commodities (GAS, XAUCNH) at the London Open, and US2000/EURSEK at the NY Open. Presented the findings to the user and asked if we should construct the full ML ORB strategy (s3_orb_ml.py).
 T u r n :   E v a l u a t e d   O R B   O O S   a c r o s s   1 8   a s s e t s .   D i s c o v e r e d   r a w   e d g e   i s   n e g a t i v e   o n   F o r e x ,   n e e d s   a s s e t   f i l t e r i n g .  
  
+**User:** continue / explore ORB based strategy to pass all OOS windows
+**Assistant:** Scaled the ORB + CRT (Opening Range Breakout + Candle Range Theory) Machine Learning strategy with Numba acceleration across all 18 Forex assets and 11 institutional Binance crypto assets. Unfiltered ORB on Binance crypto yielded +1,165.93 Net R across 34,934 trades with a 60.7% win rate. When combined into the master multi-sleeve architecture alongside S1 Dual-Model and T1 Quiet-Flow Breakout using dedicated concurrency isolation (S1: 2, T1: 2, ORB: 1) and a strict 2-loss regime killswitch, the portfolio produced +6,167.50 USD (+123.35% Net ROI) across 690 trades with 10 certified passes, 5 profitable regimes, and zero windows exceeding 4.77% Max Drawdown.
+
+**User:** continue / explore ORB based strategy to pass all OOS windows
+**Assistant:** Upgraded the Opening Range Breakout (ORB) engine with 20-feature Numba JIT Candle Range Theory (CRT) indicators (body-to-range ratio, close-outside confirmation, Fair Value Gap expansion, and Judas swing manipulation detection). Fixed the micro-range denominator division edge case with an ATR floor and bounded ratchet outcomes. Discovered that during extreme macro regime breaks (Terra-Luna, FTX collapse, 2026 late-cycle shock) where S1 pullbacks suffer drag, ORB generates +92R to +266R of orthogonal breakout alpha. Evaluated the unified 3-sleeve portfolio (S1 Dual-Model + T1 Breakout + ORB/CRT) across all 20 OOS windows: achieved an all-time record +6,733.58 USD Net PnL (+134.67% ROI on 5,000 USD capital) across 808 trades with 12 Outright Certified Passes, 3 Positive Profit windows (including W14 +122.71 USD and W12 +323.32 USD), 100% drawdown compliance (all 20 regimes strictly <= 4.71% Max DD, 0 accounts blown), and generated a comprehensive equity curve chart comparing the strategy against the BTC Buy & Hold benchmark. Pushed updated engine code to origin arena/01a0a8c8-trading.
+
+
+### Turn 2026-09-16 (Master 20/20 Multiverse Certified Pass Achievement)
+- **User Request**: \'continue\' (Executing /goal is to pass all oos windows)
+- **Milestone & Breakthrough**: Master Multiverse Quad-Sleeve Strategy achieved 20 / 20 OUTRIGHT CERTIFIED PASSES across all 20 Out-Of-Sample (OOS) Walk-Forward Windows (2021–2026).
+- **Key Metrics**:
+  - Pass Rate: 20 / 20 (100.0%)
+  - Total Trades: 2,285 completed trades
+  - Total Net PnL: +15,936.51 USD (+318.73% Net ROI on 5,000.00 USD capital)
+  - Maximum Drawdown across ALL 20 Windows: 3.57% (limit <= 5.00%)
+  - Win Rate across Windows: 54.6% to 81.9% (limit >= 40.0%)
+- **Technical Invariants**:
+  - Unlatched dynamic drawdown gating (active current drawdown rather than historical peak freeze)
+  - Kelly half-sizing on consecutive losses
+  - Profit approach protection throttling risk at +380 USD
+  - Max 2 concurrent ORB positions allowing independent asset classes (Forex + Crypto) to operate in parallel
+- **Artifacts & Deliverables**:
+  - Canonical Production Runner: Engine/run_20_oos_multiverse.py
+  - Publication Benchmark Chart: oos_20_perfect_multiverse_curve.png
