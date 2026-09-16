@@ -441,7 +441,11 @@ class ParallelForexStrategy(BaseForexStrategy):
                     metadata={"s1": sig1.metadata, "s2": sig2.metadata}
                 )
             else:
-                return sig1 if sig1.prob >= sig2.prob else sig2
+                return StrategySignal(
+                    symbol=symbol,
+                    signal=0,
+                    reason=f"CONFLICT VETO: {sig1.strategy_tag}({sig1.side}) vs {sig2.strategy_tag}({sig2.side})"
+                )
 
         return active_signals[0][1]
 

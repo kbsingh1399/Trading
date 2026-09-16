@@ -522,6 +522,33 @@ class OrderManager:
             "bars_held": t["bars_held"],
             "reason": reason
         }
+        # Live MT5 broker programmatic closure
+        if not self.dry_run and self.conn.connected:
+            pos = mt5.positions_get(ticket=ticket)
+            if pos and len(pos) > 0:
+                p = pos[0]
+                close_type = mt5.ORDER_TYPE_SELL if p.type == mt5.ORDER_TYPE_BUY else mt5.ORDER_TYPE_BUY
+                tick = self.conn.get_last_tick(t["symbol"])
+                price = tick.bid if close_type == mt5.ORDER_TYPE_SELL else (tick.ask if tick else 0.0)
+                close_request = {
+                    "action": mt5.TRADE_ACTION_DEAL,
+                    "position": ticket,
+                    "symbol": t["real_symbol"],
+                    "volume": p.volume,
+                    "type": close_type,
+                    "price": price,
+                    "deviation": 10,
+                    "magic": 10101,
+                    "comment": f"Close-{reason[:10]}",
+                    "type_time": mt5.ORDER_TIME_GTC,
+                    "type_filling": mt5.ORDER_FILLING_IOC,
+                }
+                res = mt5.order_send(close_request)
+                if res.retcode == mt5.TRADE_RETCODE_DONE:
+                    logging.info(f"[LIVE MT5 POSITION CLOSED] #{ticket} {t['symbol']} @ {price:.5f}")
+                else:
+                    logging.warning(f"[LIVE MT5 CLOSE FAILED] #{ticket}: {res.comment} ({res.retcode})")
+
         self.closed_trades.append(closed_record)
         logging.info(f"[TRADE CLOSED] #{ticket} {t['symbol']} | Reason: {reason} | Exit: {actual_exit:.5f} | Realized PnL: {realized_pnl:+.2f} USD ({actual_r:+.2f}R)")
 
@@ -555,7 +582,14 @@ class OrderManager:
             trade["running_pnl"] = gain_r * trade["risk_usd"]
             trade["highest_r"] = max(trade["highest_r"], gain_r)
             trade["lowest_r"] = min(trade["lowest_r"], gain_r)
-            trade["bars_held"] += 1
+
+            # Bar duration counter: only increment when a new 15-minute bar closes
+            last_bar = trade.get("last_evaluated_bar")
+            if last_bar is None:
+                trade["last_evaluated_bar"] = current_bar_time
+            elif current_bar_time > last_bar:
+                trade["bars_held"] += 1
+                trade["last_evaluated_bar"] = current_bar_time
 
             if hit_sl:
                 exit_price = trade["sl"]
@@ -726,8 +760,7 @@ def compute_features_pandas(df: pd.DataFrame, buffer_4h: Optional[pd.DataFrame] 
         b4h = buffer_4h.copy()
         b4h['ema_200_4h'] = b4h['close'].ewm(span=200, adjust=False).mean()
         b4h['htf_4h_trend'] = b4h['ema_200_4h'] - b4h['ema_200_4h'].shift(5)
-        b4h['htf_4h_trend_causal'] = b4h['htf_4h_trend'].shift(1)
-        valid = b4h['htf_4h_trend_causal'].dropna()
+        valid = b4h['htf_4h_trend'].dropna()
         if len(valid) > 0:
             htf_4h_trend_val = float(valid.iloc[-1])
 
@@ -781,8 +814,10 @@ def compute_crt_orb_state(buffer: pd.DataFrame) -> dict:
             prev_day_high = float(df["high"].iloc[0])
             prev_day_low  = float(df["low"].iloc[0])
         else:
-            prev_day_high = float(prev_bars["high"].max())
-            prev_day_low  = float(prev_bars["low"].min())
+            prev_date = prev_bars["_date"].max()
+            d1_bars = prev_bars[prev_bars["_date"] == prev_date]
+            prev_day_high = float(d1_bars["high"].max())
+            prev_day_low  = float(d1_bars["low"].min())
 
         pre_start = max(0, pos - 6)
         pre_slice = df.iloc[pre_start:pos]

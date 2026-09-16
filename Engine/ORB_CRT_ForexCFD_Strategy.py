@@ -378,6 +378,7 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
             return StrategySignal(
                 symbol=symbol,
                 signal=1,
+                prob=float(crt["body_ratio"]),
                 entry_price=entry,
                 sl_price=sl,
                 tp_price=tp,
@@ -397,6 +398,7 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
             return StrategySignal(
                 symbol=symbol,
                 signal=-1,
+                prob=float(crt["body_ratio"]),
                 entry_price=entry,
                 sl_price=sl,
                 tp_price=tp,
