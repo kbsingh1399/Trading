@@ -45177,3 +45177,13 @@ make a strucuted C:\Users\SIGMA\Documents\Trading and especially C:\Users\SIGMA\
 - Pruned 487 scratch files from \scratch/\ and purged loose scratch check scripts from repo root.
 - Relocated specification markdown files to \docs/specs/\ in compliance with markdown isolation rules.
 - Synchronized AST knowledge graph (112k nodes) and committed/pushed to \rena/01a0a8c8-trading\ and \main\.
+
+## Turn: 2026-09-16 17:01:20
+- **User Directive**: this crt should also be for forex market only C:\Users\SIGMA\Documents\Trading\Forex_Backtesting_Data and move C:\Users\SIGMA\Documents\Trading\Engine\Crypto_backtesting_data to Trading
+- **Action & Result**:
+  1. Relocated all 55 institutional crypto backtesting parquets from Engine/Crypto_backtesting_data to Trading/binance_backtesting_data at repo root with 100% rename parity in Git.
+  2. Updated all data path references in Engine/run_20_oos_multiverse.py, Engine/verification/*.py, and Engine/strategy/*.py to point to binance_backtesting_data.
+  3. Purged obsolete crypto experimental runners (Engine/run_20_oos_orb_ml.py, Engine/run_20_oos_triple_model.py, Engine/run_20_oos_vwap_ml.py) to keep Engine/ clean and structured.
+  4. Fully integrated Candle Range Theory (CRT) & Opening Range Breakout (ORB) as --strategy crt directly inside Engine/forex_engine.py for the 18 institutional Forex/CFD pairs (Forex_Backtesting_Data and live MT5).
+  5. Verified live MT5 snapshot execution: 18/18 assets loaded and computed with zero errors, logging 10 valid CRT setups under dry-run paper trading mode.
+  6. Committed (c421aeb) and pushed to both origin/arena/01a0a8c8-trading and origin/main.
