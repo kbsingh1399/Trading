@@ -68,6 +68,7 @@ from Engine.core.base_strategy import (
     BacktestResult,
     TargetCriteria,
     OOSWindow,
+    ParallelForexStrategy,
 )
 from Engine.core.strategy_kernel import (
     CANONICAL_FEATURES,
@@ -1208,6 +1209,13 @@ class ForexEngine:
         strat_key = strategy_target.lower()
         if strat_key in StrategyRegistry.list_strategies():
             strat_cls = StrategyRegistry.get(strat_key)
+        elif "," in strat_key:
+            sleeves = [s.strip() for s in strat_key.split(",") if s.strip()]
+            strat_instance = ParallelForexStrategy(config=self.config, strategy_names=sleeves)
+            strat_instance.initialize(self.config)
+            self.active_strategy = strat_instance
+            logging.info(f"Loaded and initialized parallel sleeves: {sleeves}")
+            return strat_instance
         else:
             path = Path(strategy_target)
             if path.exists() and path.suffix == ".py":
@@ -1224,7 +1232,7 @@ class ForexEngine:
 
     def run_telemetry(
         self,
-        strategy_target: str = "fvg_ml",
+        strategy_target: str = "parallel",
         once: bool = False,
         ignore_kz: bool = False,
         dry_run: bool = True,
@@ -1235,10 +1243,11 @@ class ForexEngine:
         strat = self.load_strategy(strategy_target)
         self.order_mgr.dry_run = (not live)
 
+        mode_label = "[bold green]LIVE BROKER ORDERS[/bold green]" if live else "[bold yellow]PAPER DRY-RUN[/bold yellow]"
         console.print(Panel(
             f"[bold cyan]LAUNCHING FOREX MASTER ORCHESTRATION ENGINE[/bold cyan]\n"
             f"[dim]Active Strategy: [bold bright_white]{strat.name.upper()}[/bold bright_white] ({strat.description})\n"
-            f"Execution Mode: [{'bold green]LIVE BROKER ORDERS' if live else 'bold yellow]PAPER DRY-RUN'}[/bold][/dim]",
+            f"Execution Mode: {mode_label}[/dim]",
             border_style="cyan"
         ))
 
@@ -1546,26 +1555,31 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Standard Execution Examples:
-  # 1. Run Live/Dry-Run Streaming Telemetry with FVG_ML strategy
+  # 1. Run Live/Dry-Run Parallel Dual-Sleeve Telemetry (FVG_ML + ORB_CRT in parallel)
+  python Engine/forex_engine.py
+  python Engine/forex_engine.py --strategy parallel
+
+  # 2. Run Single Strategy Mode (FVG_ML or ORB_CRT individually)
   python Engine/forex_engine.py --strategy fvg_ml
+  python Engine/forex_engine.py --strategy orb_crt
 
-  # 2. Run Single-Pass Snapshot of all 18 assets
-  python Engine/forex_engine.py --mode snapshot --strategy fvg_ml
+  # 3. Run Single-Pass Snapshot of all 18 assets across both strategies
+  python Engine/forex_engine.py --mode snapshot --strategy parallel
 
-  # 3. Run Forward-Test Backtest from Dec 2025 onwards (Validating against Target Criteria)
-  python Engine/forex_engine.py --mode forward-test --strategy fvg_ml --start-date 2025-12-01
+  # 4. Run Forward-Test Backtest from Dec 2025 onwards (Validating against Target Criteria)
+  python Engine/forex_engine.py --mode forward-test --strategy parallel --start-date 2025-12-01
 
-  # 4. Run Specific Out-Of-Sample Regime Window (Window 20: March 2026 Microstructure Shock)
-  python Engine/forex_engine.py --mode oos-window --strategy fvg_ml --window 20
+  # 5. Run Specific Out-Of-Sample Regime Window (Window 20: March 2026 Microstructure Shock)
+  python Engine/forex_engine.py --mode oos-window --strategy parallel --window 20
 
-  # 5. Run Full 20 OOS Window Walk-Forward with Institutional Fail-Fast Gate
-  python Engine/forex_engine.py --mode walkforward --strategy fvg_ml
+  # 6. Run Full 20 OOS Window Walk-Forward with Institutional Fail-Fast Gate
+  python Engine/forex_engine.py --mode walkforward --strategy parallel
 
-  # 6. Run System Diagnostics & Storage Inspection
+  # 7. Run System Diagnostics & Storage Inspection
   python Engine/forex_engine.py --mode info
 
-  # 7. Arm Real Live Broker Orders to MetaTrader 5
-  python Engine/forex_engine.py --strategy fvg_ml --live
+  # 8. Arm Real Live Broker Orders to MetaTrader 5
+  python Engine/forex_engine.py --strategy parallel --live
         """
     )
     parser.add_argument(
@@ -1576,8 +1590,8 @@ Standard Execution Examples:
     )
     parser.add_argument(
         "--strategy",
-        default="fvg_ml",
-        help="Trading strategy: 'fvg_ml' (Canonical FVG + XGBoost), 'combined', 'fvg', 'crt', 'ml', or path to .py file (default: fvg_ml)"
+        default="parallel",
+        help="Trading strategy: 'parallel' (Dual-Sleeve FVG_ML + ORB_CRT, default), 'fvg_ml', 'orb_crt', 'combined', or comma-separated sleeves (default: parallel)"
     )
     parser.add_argument(
         "--start-date",

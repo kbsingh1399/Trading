@@ -360,3 +360,203 @@ class StrategyRegistry:
             raise ValueError(f"No BaseForexStrategy subclass found in {path}")
 
         return candidates[0]
+
+
+# -------------------------------------------------------------------------
+# 5. PARALLEL MULTI-SLEEVE STRATEGY
+# -------------------------------------------------------------------------
+@StrategyRegistry.register("parallel")
+@StrategyRegistry.register("dual")
+@StrategyRegistry.register("all")
+class ParallelForexStrategy(BaseForexStrategy):
+    """
+    Parallel Multi-Sleeve Execution Strategy.
+    Simultaneously executes multiple registered strategies (e.g. FVG_ML + ORB_CRT)
+    across all assets in parallel, evaluating independent sleeve signals and confluence.
+    """
+    name: str = "parallel"
+    description: str = "Dual-Sleeve Parallel Strategy (FVG_ML + ORB_CRT)"
+
+    def __init__(self, config: Optional[EngineConfig] = None, strategy_names: Optional[List[str]] = None):
+        super().__init__(config=config)
+        self.strategy_names = strategy_names or ["fvg_ml", "orb_crt"]
+        self.sleeves: Dict[str, BaseForexStrategy] = {}
+        self.initialize(self.config)
+
+    def initialize(self, config: Optional[EngineConfig] = None) -> None:
+        if config is not None:
+            self.config = config
+        self.sleeves = {}
+        for s_name in self.strategy_names:
+            try:
+                s_cls = StrategyRegistry.get(s_name)
+                s_inst = s_cls(config=self.config)
+                s_inst.initialize(self.config)
+                self.sleeves[s_name] = s_inst
+                logging.info(f"Parallel sleeve '{s_name}' loaded successfully.")
+            except Exception as e:
+                logging.warning(f"Could not load parallel sleeve '{s_name}': {e}")
+        self.initialized = True
+
+    def generate_signal(
+        self,
+        symbol: str,
+        buffer_15m: pd.DataFrame,
+        buffer_4h: Optional[pd.DataFrame] = None,
+        current_tick: Optional[Any] = None
+    ) -> StrategySignal:
+        active_signals: List[Tuple[str, StrategySignal]] = []
+        hold_reasons: List[str] = []
+
+        for name, strat in self.sleeves.items():
+            try:
+                sig = strat.generate_signal(symbol, buffer_15m, buffer_4h, current_tick=current_tick)
+                if sig.is_active:
+                    active_signals.append((name, sig))
+                else:
+                    hold_reasons.append(f"{strat.name.upper()}:{sig.reason}")
+            except Exception as e:
+                hold_reasons.append(f"{name.upper()}:Error({e})")
+
+        if not active_signals:
+            summary_reason = " | ".join(hold_reasons) if hold_reasons else "HOLD"
+            return StrategySignal(symbol=symbol, signal=0, reason=summary_reason)
+
+        if len(active_signals) >= 2:
+            s1_name, sig1 = active_signals[0]
+            s2_name, sig2 = active_signals[1]
+            if sig1.signal == sig2.signal:
+                return StrategySignal(
+                    symbol=symbol,
+                    signal=sig1.signal,
+                    prob=max(sig1.prob, sig2.prob),
+                    entry_price=sig1.entry_price,
+                    sl_price=sig1.sl_price,
+                    tp_price=sig1.tp_price,
+                    risk_usd=sig1.risk_usd,
+                    strategy_tag="DUAL(FVG+ORB)",
+                    reason=f"CONFLUENCE: {sig1.strategy_tag} + {sig2.strategy_tag}",
+                    metadata={"s1": sig1.metadata, "s2": sig2.metadata}
+                )
+            else:
+                return sig1 if sig1.prob >= sig2.prob else sig2
+
+        return active_signals[0][1]
+
+    def run_backtest(
+        self,
+        start_date: str = "2025-12-01",
+        end_date: Optional[str] = None,
+        symbols: Optional[List[str]] = None,
+        save_plot: bool = True
+    ) -> BacktestResult:
+        all_trades = []
+        criteria = self.config.criteria
+        initial_capital = criteria.initial_capital_usd
+
+        for name, strat in self.sleeves.items():
+            res = strat.run_backtest(start_date=start_date, end_date=end_date, symbols=symbols, save_plot=False)
+            if res.trades_df is not None and not res.trades_df.empty:
+                tdf = res.trades_df.copy()
+                if "strategy" not in tdf.columns:
+                    tdf["strategy"] = strat.name.upper()
+                all_trades.append(tdf)
+
+        if not all_trades:
+            return BacktestResult(
+                strategy_name="parallel_dual_sleeve",
+                start_date=start_date,
+                end_date=end_date,
+                window_id=None,
+                total_trades=0,
+                win_rate=0.0,
+                profit_factor=0.0,
+                net_r=0.0,
+                net_pnl_usd=0.0,
+                net_roi_pct=0.0,
+                max_dd_pct=0.0,
+                buy_hold_return_pct=0.0,
+                passed_criteria=False,
+                failure_reasons=["No trades generated by any sleeve"]
+            )
+
+        comb_trades = pd.concat(all_trades, ignore_index=True)
+        if "exit_time" in comb_trades.columns:
+            comb_trades = comb_trades.sort_values("exit_time").reset_index(drop=True)
+
+        comb_trades["cum_pnl"] = comb_trades["pnl_usd"].cumsum()
+        comb_trades["equity"] = initial_capital + comb_trades["cum_pnl"]
+        comb_trades["peak"] = comb_trades["equity"].cummax()
+        comb_trades["dd"] = (comb_trades["peak"] - comb_trades["equity"]) / comb_trades["peak"]
+        max_dd = float(comb_trades["dd"].max() * 100.0) if not comb_trades.empty else 0.0
+
+        total_trades = len(comb_trades)
+        wins = comb_trades[comb_trades["pnl_usd"] > 0]
+        losses = comb_trades[comb_trades["pnl_usd"] < 0]
+        win_rate = (len(wins) / total_trades * 100.0) if total_trades > 0 else 0.0
+
+        gross_profit = wins["pnl_usd"].sum() if not wins.empty else 0.0
+        gross_loss = abs(losses["pnl_usd"].sum()) if not losses.empty else 0.0
+        profit_factor = (gross_profit / gross_loss) if gross_loss > 0 else 99.9
+
+        net_pnl = float(comb_trades["pnl_usd"].sum())
+        net_r = float(comb_trades["outcome_r"].sum()) if "outcome_r" in comb_trades.columns else (net_pnl / criteria.base_risk_usd)
+        net_roi = (net_pnl / initial_capital) * 100.0
+
+        passed_crit, checks, failures = self.config.evaluate_pass_criteria({
+            "net_roi_pct": net_roi,
+            "max_dd_pct": max_dd,
+            "win_rate": win_rate,
+            "total_trades": total_trades,
+            "net_r": net_r
+        })
+
+        if save_plot:
+            try:
+                import matplotlib
+                matplotlib.use('Agg')
+                import matplotlib.pyplot as plt
+                plot_dir = Path("Engine/artifacts")
+                plot_dir.mkdir(parents=True, exist_ok=True)
+                fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), sharex=True, gridspec_kw={'height_ratios': [3, 1]})
+
+                ax1.plot(comb_trades.index, comb_trades["equity"], label="Parallel Dual-Sleeve Portfolio Equity", color="#00ffcc", lw=1.8)
+                ax1.axhline(initial_capital, color="gray", linestyle="--", alpha=0.5, label="Initial Capital (5,000 USD)")
+                ax1.set_title("Parallel Dual-Sleeve (FVG_ML + ORB_CRT) Forward-Test Equity Curve", fontsize=13, fontweight="bold", pad=10)
+                ax1.set_ylabel("Account Equity (USD)", fontsize=10)
+                ax1.grid(True, alpha=0.25)
+                ax1.legend(loc="upper left")
+
+                ax2.fill_between(comb_trades.index, -comb_trades["dd"] * 100.0, 0, color="#ff3366", alpha=0.4, label="Underwater Drawdown (%)")
+                ax2.axhline(-self.config.criteria.max_dd_percent, color="red", linestyle=":", label=f"Max Allowed DD (-{self.config.criteria.max_dd_percent}%)")
+                ax2.set_ylabel("Drawdown %", fontsize=10)
+                ax2.set_xlabel("Completed Trade Index", fontsize=10)
+                ax2.grid(True, alpha=0.25)
+                ax2.legend(loc="lower left")
+
+                plt.tight_layout()
+                plot_path = plot_dir / "parallel_forex_equity_curve.png"
+                fig.savefig(plot_path, dpi=300)
+                plt.close(fig)
+            except Exception as e:
+                logging.warning(f"Could not generate plot: {e}")
+
+        return BacktestResult(
+            strategy_name="parallel_dual_sleeve",
+            start_date=start_date,
+            end_date=end_date,
+            window_id=None,
+            total_trades=total_trades,
+            win_rate=win_rate,
+            profit_factor=profit_factor,
+            net_r=net_r,
+            net_pnl_usd=net_pnl,
+            net_roi_pct=net_roi,
+            max_dd_pct=max_dd,
+            buy_hold_return_pct=0.0,
+            passed_criteria=passed_crit,
+            criteria_checks=checks,
+            failure_reasons=failures,
+            trades_df=comb_trades
+        )
+
