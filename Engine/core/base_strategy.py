@@ -119,7 +119,9 @@ class EngineConfig:
     ) -> EngineConfig:
         engine_dir = Path(__file__).resolve().parent.parent
         c_path = Path(criteria_path) if criteria_path else engine_dir / "target_oos_criteria.json"
-        w_path = Path(windows_path) if windows_path else engine_dir / "oos_windows_20.json"
+        forex_w = engine_dir / "oos_windows_forex_20.json"
+        default_w = forex_w if forex_w.exists() else (engine_dir / "oos_windows_20.json")
+        w_path = Path(windows_path) if windows_path else default_w
 
         target_crit = TargetCriteria()
         exec_mode = ExecutionMode()
@@ -481,8 +483,19 @@ class ParallelForexStrategy(BaseForexStrategy):
             )
 
         comb_trades = pd.concat(all_trades, ignore_index=True)
-        if "exit_time" in comb_trades.columns:
-            comb_trades = comb_trades.sort_values("exit_time").reset_index(drop=True)
+        if "datetime" in comb_trades.columns:
+            comb_trades["datetime"] = pd.to_datetime(comb_trades["datetime"], utc=True)
+            comb_trades = comb_trades.sort_values("datetime").reset_index(drop=True)
+
+        if "pnl" in comb_trades.columns and "pnl_usd" not in comb_trades.columns:
+            comb_trades["pnl_usd"] = comb_trades["pnl"]
+        elif "pnl_usd" in comb_trades.columns and "pnl" not in comb_trades.columns:
+            comb_trades["pnl"] = comb_trades["pnl_usd"]
+
+        if "r_realized" in comb_trades.columns and "outcome_r" not in comb_trades.columns:
+            comb_trades["outcome_r"] = comb_trades["r_realized"]
+        elif "outcome_r" in comb_trades.columns and "r_realized" not in comb_trades.columns:
+            comb_trades["r_realized"] = comb_trades["outcome_r"]
 
         comb_trades["cum_pnl"] = comb_trades["pnl_usd"].cumsum()
         comb_trades["equity"] = initial_capital + comb_trades["cum_pnl"]
@@ -502,6 +515,21 @@ class ParallelForexStrategy(BaseForexStrategy):
         net_pnl = float(comb_trades["pnl_usd"].sum())
         net_r = float(comb_trades["outcome_r"].sum()) if "outcome_r" in comb_trades.columns else (net_pnl / criteria.base_risk_usd)
         net_roi = (net_pnl / initial_capital) * 100.0
+
+        # Build per-asset summary
+        per_asset = {}
+        all_syms = symbols or (list(comb_trades['asset'].unique()) if 'asset' in comb_trades.columns else [])
+        for sym in all_syms:
+            sym_trades = comb_trades[comb_trades['asset'] == sym] if 'asset' in comb_trades.columns else pd.DataFrame()
+            n_t = len(sym_trades)
+            if n_t > 0:
+                w_t = (sym_trades['pnl_usd'] > 0).sum()
+                wr_t = (w_t / n_t * 100.0)
+                tot_r_t = float(sym_trades['outcome_r'].sum())
+                pnl_t = float(sym_trades['pnl_usd'].sum())
+                per_asset[sym] = {'trades': n_t, 'win_rate': wr_t, 'net_r': tot_r_t, 'pnl': pnl_t}
+            else:
+                per_asset[sym] = {'trades': 0, 'win_rate': 0.0, 'net_r': 0.0, 'pnl': 0.0}
 
         passed_crit, checks, failures = self.config.evaluate_pass_criteria({
             "net_roi_pct": net_roi,
@@ -557,6 +585,7 @@ class ParallelForexStrategy(BaseForexStrategy):
             passed_criteria=passed_crit,
             criteria_checks=checks,
             failure_reasons=failures,
+            per_asset_summary=per_asset,
             trades_df=comb_trades
         )
 

@@ -99,7 +99,8 @@ DATA_DIR = PROJECT_ROOT / "Forex_Backtesting_Data"
 MODELS_DIR = ENGINE_DIR / "models"
 PRODUCTION_MODEL_PATH = MODELS_DIR / "xgboost_forex.json"
 CRITERIA_PATH = ENGINE_DIR / "target_oos_criteria.json"
-WINDOWS_PATH = ENGINE_DIR / "oos_windows_20.json"
+FOREX_WINDOWS_PATH = ENGINE_DIR / "oos_windows_forex_20.json"
+WINDOWS_PATH = FOREX_WINDOWS_PATH if FOREX_WINDOWS_PATH.exists() else (ENGINE_DIR / "oos_windows_20.json")
 LOG_DIR = ENGINE_DIR / "live"
 LOG_FILE = LOG_DIR / "dry_run.log"
 
@@ -670,7 +671,7 @@ class StatefulInferenceEngine:
     def compute_features(self) -> pd.DataFrame:
         return compute_features_pandas(self.buffer, self.buffer_4h)
 
-    def predict(self, xgb_model: xgb.Booster) -> float:
+    def predict(self, xgb_model: Optional[xgb.Booster] = None) -> float:
         if self.buffer.empty:
             return 0.50
         features_df = self.compute_features()
@@ -678,6 +679,11 @@ class StatefulInferenceEngine:
         for col in latest.columns:
             latest[col] = pd.to_numeric(latest[col], errors="coerce").astype(float)
         dmat = xgb.DMatrix(latest)
+        if xgb_model is None:
+            if not PRODUCTION_MODEL_PATH.exists():
+                return 0.50
+            xgb_model = xgb.Booster()
+            xgb_model.load_model(str(PRODUCTION_MODEL_PATH))
         prob = float(xgb_model.predict(dmat)[0])
         del dmat
         return prob
