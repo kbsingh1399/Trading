@@ -41,9 +41,10 @@ import polars as pl
 import xgboost as xgb
 import MetaTrader5 as mt5
 
-from rich.console import Console
+from rich.console import Console, Group
 from rich.table import Table
 from rich.panel import Panel
+from rich.live import Live
 from rich import box
 
 # -------------------------------------------------------------------------
@@ -115,8 +116,16 @@ logging.basicConfig(
         logging.StreamHandler(sys.stdout)
     ]
 )
+import shutil
 
-console = Console(force_terminal=True, width=150)
+def get_terminal_width() -> int:
+    try:
+        cols = shutil.get_terminal_size().columns
+        return max(130, cols)
+    except Exception:
+        return 130
+
+console = Console(force_terminal=True, width=get_terminal_width())
 
 # -------------------------------------------------------------------------
 # CANONICAL STRATEGY CONSTANTS
@@ -1216,11 +1225,12 @@ def verify_all_components(mt5_conn: MT5Connection, booster: xgb.Booster, order_m
     audit_table = Table(
         title="SYSTEM INTEGRITY PRE-FLIGHT SCORECARD",
         box=box.ROUNDED,
-        header_style="bold bright_white on dark_green"
+        header_style="bold bright_white on dark_green",
+        expand=True
     )
-    audit_table.add_column("Component", justify="left", style="bold white", width=26)
-    audit_table.add_column("Status", justify="center", width=12)
-    audit_table.add_column("Diagnostics / Metrics", justify="left", style="cyan", width=55)
+    audit_table.add_column("Component", justify="left", style="bold white", no_wrap=True)
+    audit_table.add_column("Status", justify="center", no_wrap=True)
+    audit_table.add_column("Diagnostics / Metrics", justify="left", style="cyan", ratio=1, overflow="ellipsis")
 
     all_passed = True
 
@@ -1817,232 +1827,262 @@ class ForexEngine:
         console.print(f"[bold green]Warm-start complete ({len(engines)}/{len(CANONICAL_18_ASSETS)} assets). Entering live terminal stream...[/bold green]\n")
         time.sleep(0.8)
 
-        try:
-            while True:
-                utc_now = datetime.now(timezone.utc)
-                last_closed_hour = utc_now.hour
-                if last_candle_times:
-                    first_k = list(last_candle_times.keys())[0]
-                    if last_candle_times[first_k] is not None:
-                        last_closed_hour = last_candle_times[first_k].hour
+        last_triggered_candles: Dict[str, Optional[datetime]] = {}
 
-                is_london = (7 <= last_closed_hour <= 10)
-                is_ny = (12 <= last_closed_hour <= 15)
-                is_natural_kz = is_london or is_ny
-                is_kz = True if ignore_kz else is_natural_kz
+        def build_dashboard_frame() -> Group:
+            term_w = get_terminal_width()
+            if term_w:
+                console.width = term_w
 
-                if ignore_kz:
-                    kz_badge = "[bold magenta]BYPASSED (24/7 MODE)[/bold magenta]"
-                elif is_london:
-                    kz_badge = "[bold green]ACTIVE (London Open 07-10 UTC)[/bold green]"
-                elif is_ny:
-                    kz_badge = "[bold green]ACTIVE (New York Open 12-15 UTC)[/bold green]"
-                else:
-                    kz_badge = "[dim red]OFF-HOURS (Outside 07-10 / 12-15 UTC)[/dim red]"
+            utc_now = datetime.now(timezone.utc)
+            last_closed_hour = utc_now.hour
+            if last_candle_times:
+                first_k = list(last_candle_times.keys())[0]
+                if last_candle_times[first_k] is not None:
+                    last_closed_hour = last_candle_times[first_k].hour
 
-                # Manage Open Trades & 7-Stage Microstructure Ratchets
-                latest_closed_ts = max([t for t in last_candle_times.values() if t is not None], default=utc_now)
-                self.order_mgr.manage_open_trades(current_bar_time=latest_closed_ts)
+            is_london = (7 <= last_closed_hour <= 10)
+            is_ny = (12 <= last_closed_hour <= 15)
+            is_natural_kz = is_london or is_ny
+            is_kz = True if ignore_kz else is_natural_kz
 
-                # Fetch updated account metrics
-                metrics = self.order_mgr.get_account_metrics()
+            if ignore_kz:
+                kz_badge = "[bold magenta]BYPASSED (24/7 MODE)[/bold magenta]"
+            elif is_london:
+                kz_badge = "[bold green]ACTIVE (London Open 07-10 UTC)[/bold green]"
+            elif is_ny:
+                kz_badge = "[bold green]ACTIVE (New York Open 12-15 UTC)[/bold green]"
+            else:
+                kz_badge = "[dim red]OFF-HOURS (Outside 07-10 / 12-15 UTC)[/dim red]"
 
-                # Build 18-Asset Market Telemetry Table
-                table = Table(
-                    title=f"18-ASSET ORDERFLOW & ML TELEMETRY | KILL ZONE: {kz_badge}",
+            # Manage Open Trades & 7-Stage Microstructure Ratchets on every tick
+            latest_closed_ts = max([t for t in last_candle_times.values() if t is not None], default=utc_now)
+            self.order_mgr.manage_open_trades(current_bar_time=latest_closed_ts)
+
+            # Build 18-Asset Market Telemetry Table (Autofit in width)
+            table = Table(
+                title=f"18-ASSET ORDERFLOW & ML TELEMETRY | KILL ZONE: {kz_badge}",
+                box=box.ROUNDED,
+                header_style="bold bright_white on dark_blue",
+                border_style="blue",
+                show_lines=False,
+                expand=True
+            )
+            table.add_column("Asset", justify="left", style="bold white", no_wrap=True)
+            table.add_column("Bid", justify="right", style="cyan", no_wrap=True)
+            table.add_column("Ask", justify="right", style="cyan", no_wrap=True)
+            table.add_column("Spread", justify="right", style="dim", no_wrap=True)
+            table.add_column("RSI", justify="right", no_wrap=True)
+            table.add_column("4H Trend", justify="center", no_wrap=True)
+            table.add_column("FVG", justify="center", no_wrap=True)
+            table.add_column("CRT/ORB", justify="center", no_wrap=True)
+            table.add_column("P*", justify="right", no_wrap=True)
+            table.add_column("Decision / Trigger Reason", justify="left", ratio=1, overflow="ellipsis")
+
+            for asset, eng in engines.items():
+                tick = self.mt5_conn.get_last_tick(asset)
+                if tick is None:
+                    continue
+
+                # Refresh on newly closed 15m bar
+                is_new_candle = False
+                recent_bars = self.mt5_conn.get_15m_bars(asset, count=3)
+                if not recent_bars.empty and len(recent_bars) >= 2:
+                    closed_bar = recent_bars.iloc[-2]
+                    closed_bar_time = closed_bar['datetime']
+                    if last_candle_times.get(asset) is None or closed_bar_time > last_candle_times[asset]:
+                        eng.update_bar({
+                            'datetime': closed_bar_time,
+                            'open': closed_bar['open'],
+                            'high': closed_bar['high'],
+                            'low': closed_bar['low'],
+                            'close': closed_bar['close'],
+                            'volume': closed_bar['tick_volume']
+                        })
+                        eng.refresh_4h_buffer()
+                        last_candle_times[asset] = closed_bar_time
+                        pre_flight_data_sync(self.mt5_conn, single_asset=asset)
+                        is_new_candle = True
+
+                # Dynamic strategy signal evaluation
+                sig = strat.generate_signal(asset, eng.buffer, eng.buffer_4h, current_tick=tick)
+
+                # Indicators for telemetry display
+                features = eng.compute_features().iloc[-1]
+                rsi = features.get('rsi_14', 50.0)
+                trend_val = features.get('htf_4h_trend', 0.0)
+                bull_fvg = features.get('bullish_fvg', 0.0)
+                bear_fvg = features.get('bearish_fvg', 0.0)
+                crt = eng.compute_crt_orb()
+
+                trend_cell = "[bold green]BULL[/bold green]" if trend_val > 0 else ("[bold red]BEAR[/bold red]" if trend_val < 0 else "[dim]FLAT[/dim]")
+                fvg_cell = "[bold green]BULL[/bold green]" if bull_fvg > 0 else ("[bold red]BEAR[/bold red]" if bear_fvg > 0 else "[dim]NONE[/dim]")
+                crt_cell = "[bold green]LONG[/bold green]" if crt["is_long_crt"] else ("[bold red]SHORT[/bold red]" if crt["is_short_crt"] else "[dim]NONE[/dim]")
+                rsi_cell = f"[bold red]{rsi:.1f}[/bold red]" if rsi >= 70 else (f"[bold green]{rsi:.1f}[/bold green]" if rsi <= 30 else f"{rsi:.1f}")
+                prob_cell = f"[bold green]{sig.prob:.3f}[/bold green]" if sig.prob >= PROBABILITY_THRESHOLD else f"[dim]{sig.prob:.3f}[/dim]"
+
+                decision_cell = f"[dim]{sig.reason}[/dim]"
+
+                # Causal execution: Trigger trade entry strictly at the start of the next candle
+                current_candle_ts = last_candle_times.get(asset)
+                should_trigger = (is_new_candle or once) and sig.is_active
+                already_triggered = (last_triggered_candles.get(asset) == current_candle_ts)
+
+                if should_trigger and not already_triggered:
+                    r_dist = abs(sig.entry_price - sig.sl_price)
+                    calc_lots = self.order_mgr.calculate_lot_size(asset, risk_usd=sig.risk_usd, sl_dist=r_dist)
+                    action_lbl = f"{'LIVE' if live else 'DRY'}-{'BUY' if sig.is_buy else 'SELL'} ({sig.strategy_tag})"
+                    color_style = "bold white on green" if sig.is_buy else "bold white on red"
+                    decision_cell = f"[{color_style}] {action_lbl} ({calc_lots:.2f}L) [/{color_style}]"
+
+                    order_type = mt5.ORDER_TYPE_BUY if sig.is_buy else mt5.ORDER_TYPE_SELL
+                    self.order_mgr.place_market_order(
+                        asset, order_type, volume=calc_lots, sl_price=sig.sl_price,
+                        tp_price=sig.tp_price, risk_usd=sig.risk_usd, strategy_tag=sig.strategy_tag
+                    )
+                    last_triggered_candles[asset] = current_candle_ts
+                elif sig.is_active:
+                    action_lbl = f"{'BUY' if sig.is_buy else 'SELL'} ({sig.strategy_tag})"
+                    decision_cell = f"[bold cyan]ARMED {action_lbl}[/bold cyan]"
+
+                table.add_row(
+                    asset, f"{tick.bid:.5f}", f"{tick.ask:.5f}", f"{(tick.ask - tick.bid):.5f}",
+                    rsi_cell, trend_cell, fvg_cell, crt_cell, prob_cell, decision_cell
+                )
+
+            # 1. Render Account & Risk Header Panel (Autofit in width)
+            metrics = self.order_mgr.get_account_metrics()
+            mode_tag = "[bold red]LIVE BROKER[/bold red]" if live else "[bold yellow]PAPER DRY-RUN[/bold yellow]"
+            pnl_color = "bold green" if metrics['running_pnl'] >= 0 else "bold red"
+            real_pnl_color = "bold green" if metrics['realized_pnl'] >= 0 else "bold red"
+            tot_pnl_color = "bold green" if metrics['total_pnl'] >= 0 else "bold red"
+
+            account_text = (
+                f"Account: [bold cyan]#{metrics['login']}[/bold cyan] ({metrics['server']}) | "
+                f"Mode: {mode_tag} | Strategy: [bold bright_white]{strat.name.upper()}[/bold bright_white] | "
+                f"Time: [bold white]{utc_now.strftime('%Y-%m-%d %H:%M:%S UTC')}[/bold white]\n"
+                f"Equity: [bold bright_white]${metrics['equity']:,.2f} {metrics['currency']}[/bold bright_white] | "
+                f"Balance: [bold]${metrics['balance']:,.2f}[/bold] | "
+                f"Running PnL: [{pnl_color}]{metrics['running_pnl']:+,.2f} USD[/{pnl_color}] | "
+                f"Realized PnL: [{real_pnl_color}]{metrics['realized_pnl']:+,.2f} USD[/{real_pnl_color}] | "
+                f"Total Session PnL: [{tot_pnl_color}]{metrics['total_pnl']:+,.2f} USD[/{tot_pnl_color}]\n"
+                f"Margin: ${metrics['margin']:,.2f} | Free Margin: ${metrics['margin_free']:,.2f} | "
+                f"Margin Level: {metrics['margin_level']:.1f}% | DD: {metrics['drawdown_pct']:.2f}% | "
+                f"Open Positions: [bold yellow]{metrics['open_count']}/2[/bold yellow] | "
+                f"Closed: {metrics['closed_count']} (WR: {metrics['win_rate']:.1f}%)"
+            )
+            hdr_panel = Panel(account_text, title="[bold bright_cyan]FOREX MASTER ENGINE: LIVE RISK & PNL TELEMETRY[/bold bright_cyan]", border_style="cyan", expand=True)
+
+            elements = [hdr_panel]
+
+            # 2. Render Active Open Trades Table (Autofit in width)
+            if self.order_mgr.open_trades:
+                ot_table = Table(
+                    title=f"ACTIVE OPEN POSITIONS ({len(self.order_mgr.open_trades)}/2)",
                     box=box.ROUNDED,
-                    header_style="bold bright_white on dark_blue",
+                    header_style="bold bright_white on dark_green",
+                    border_style="green",
+                    show_lines=False,
+                    expand=True
+                )
+                ot_table.add_column("Ticket", justify="center", style="bold white", no_wrap=True)
+                ot_table.add_column("Asset", justify="left", style="bold cyan", no_wrap=True)
+                ot_table.add_column("Sleeve", justify="center", no_wrap=True)
+                ot_table.add_column("Side", justify="center", no_wrap=True)
+                ot_table.add_column("Lots", justify="right", no_wrap=True)
+                ot_table.add_column("Entry", justify="right", no_wrap=True)
+                ot_table.add_column("Current", justify="right", no_wrap=True)
+                ot_table.add_column("SL", justify="right", no_wrap=True)
+                ot_table.add_column("TP", justify="right", no_wrap=True)
+                ot_table.add_column("R", justify="right", no_wrap=True)
+                ot_table.add_column("PnL", justify="right", no_wrap=True)
+                ot_table.add_column("Ratchet", justify="left", ratio=1, overflow="ellipsis")
+                ot_table.add_column("Bars", justify="right", no_wrap=True)
+
+                def _fmt(val: float) -> str:
+                    if abs(val) >= 1000.0:
+                        return f"{val:.2f}"
+                    elif abs(val) >= 10.0:
+                        return f"{val:.4f}"
+                    return f"{val:.5f}"
+
+                for ticket, tr in self.order_mgr.open_trades.items():
+                    side_style = "bold green" if tr["action"] == "BUY" else "bold red"
+                    r_style = "bold green" if tr["current_r"] >= 0 else "bold red"
+                    pnl_style = "bold green" if tr["running_pnl"] >= 0 else "bold red"
+                    ot_table.add_row(
+                        str(ticket),
+                        tr["symbol"],
+                        tr["strategy"],
+                        f"[{side_style}]{tr['action']}[/{side_style}]",
+                        f"{tr['volume']:.2f}L",
+                        _fmt(tr["entry"]),
+                        _fmt(tr["cur_price"]),
+                        _fmt(tr["sl"]),
+                        _fmt(tr["tp"]),
+                        f"[{r_style}]{tr['current_r']:+.2f}R[/{r_style}]",
+                        f"[{pnl_style}]{tr['running_pnl']:+,.2f} USD[/{pnl_style}]",
+                        tr.get("ratchet_desc", "Base SL"),
+                        f"{tr['bars_held']}/24"
+                    )
+                elements.append(ot_table)
+            else:
+                elements.append(Panel("[dim italic]Active Positions: None (Scanning 18 assets for high-probability confluence setups...)[/dim italic]", border_style="dim", expand=True))
+
+            # 3. Render Session Closed Trades Table (Autofit in width)
+            if self.order_mgr.closed_trades:
+                ct_table = Table(
+                    title=f"SESSION CLOSED TRADES HISTORY (Last 5 of {len(self.order_mgr.closed_trades)})",
+                    box=box.ROUNDED,
+                    header_style="bold bright_white on blue",
                     border_style="blue",
                     show_lines=False,
                     expand=True
                 )
-                table.add_column("Asset", justify="left", style="bold white", width=8)
-                table.add_column("Bid", justify="right", style="cyan", width=10)
-                table.add_column("Ask", justify="right", style="cyan", width=10)
-                table.add_column("Spread", justify="right", style="dim", width=8)
-                table.add_column("RSI", justify="right", width=6)
-                table.add_column("4H Trend", justify="center", width=8)
-                table.add_column("FVG", justify="center", width=6)
-                table.add_column("CRT/ORB", justify="center", width=8)
-                table.add_column("P*", justify="right", width=7)
-                table.add_column("Decision / Trigger Reason", justify="left", width=25)
+                ct_table.add_column("Ticket", justify="center", style="dim", no_wrap=True)
+                ct_table.add_column("Asset", justify="left", style="bold white", no_wrap=True)
+                ct_table.add_column("Sleeve", justify="center", no_wrap=True)
+                ct_table.add_column("Side", justify="center", no_wrap=True)
+                ct_table.add_column("Entry", justify="right", no_wrap=True)
+                ct_table.add_column("Exit", justify="right", no_wrap=True)
+                ct_table.add_column("Exit Reason", justify="left", ratio=1, overflow="ellipsis")
+                ct_table.add_column("Realized R", justify="right", no_wrap=True)
+                ct_table.add_column("Realized PnL", justify="right", no_wrap=True)
+                ct_table.add_column("Bars", justify="right", no_wrap=True)
 
-                for asset, eng in engines.items():
-                    tick = self.mt5_conn.get_last_tick(asset)
-                    if tick is None:
-                        continue
-
-                    # Refresh on newly closed 15m bar
-                    recent_bars = self.mt5_conn.get_15m_bars(asset, count=3)
-                    if not recent_bars.empty and len(recent_bars) >= 2:
-                        closed_bar = recent_bars.iloc[-2]
-                        closed_bar_time = closed_bar['datetime']
-                        if last_candle_times.get(asset) is None or closed_bar_time > last_candle_times[asset]:
-                            eng.update_bar({
-                                'datetime': closed_bar_time,
-                                'open': closed_bar['open'],
-                                'high': closed_bar['high'],
-                                'low': closed_bar['low'],
-                                'close': closed_bar['close'],
-                                'volume': closed_bar['tick_volume']
-                            })
-                            eng.refresh_4h_buffer()
-                            last_candle_times[asset] = closed_bar_time
-                            pre_flight_data_sync(self.mt5_conn, single_asset=asset)
-
-                    # Dynamic strategy signal evaluation
-                    sig = strat.generate_signal(asset, eng.buffer, eng.buffer_4h, current_tick=tick)
-
-                    # Indicators for telemetry display
-                    features = eng.compute_features().iloc[-1]
-                    rsi = features.get('rsi_14', 50.0)
-                    trend_val = features.get('htf_4h_trend', 0.0)
-                    bull_fvg = features.get('bullish_fvg', 0.0)
-                    bear_fvg = features.get('bearish_fvg', 0.0)
-                    crt = eng.compute_crt_orb()
-
-                    trend_cell = "[bold green]BULL[/bold green]" if trend_val > 0 else ("[bold red]BEAR[/bold red]" if trend_val < 0 else "[dim]FLAT[/dim]")
-                    fvg_cell = "[bold green]BULL[/bold green]" if bull_fvg > 0 else ("[bold red]BEAR[/bold red]" if bear_fvg > 0 else "[dim]NONE[/dim]")
-                    crt_cell = "[bold green]LONG[/bold green]" if crt["is_long_crt"] else ("[bold red]SHORT[/bold red]" if crt["is_short_crt"] else "[dim]NONE[/dim]")
-                    rsi_cell = f"[bold red]{rsi:.1f}[/bold red]" if rsi >= 70 else (f"[bold green]{rsi:.1f}[/bold green]" if rsi <= 30 else f"{rsi:.1f}")
-                    prob_cell = f"[bold green]{sig.prob:.3f}[/bold green]" if sig.prob >= PROBABILITY_THRESHOLD else f"[dim]{sig.prob:.3f}[/dim]"
-
-                    decision_cell = f"[dim]{sig.reason}[/dim]"
-                    if sig.is_active:
-                        r_dist = abs(sig.entry_price - sig.sl_price)
-                        calc_lots = self.order_mgr.calculate_lot_size(asset, risk_usd=sig.risk_usd, sl_dist=r_dist)
-                        action_lbl = f"{'LIVE' if live else 'DRY'}-{'BUY' if sig.is_buy else 'SELL'} ({sig.strategy_tag})"
-                        color_style = "bold white on green" if sig.is_buy else "bold white on red"
-                        decision_cell = f"[{color_style}] {action_lbl} ({calc_lots:.2f}L) [/{color_style}]"
-
-                        order_type = mt5.ORDER_TYPE_BUY if sig.is_buy else mt5.ORDER_TYPE_SELL
-                        self.order_mgr.place_market_order(
-                            asset, order_type, volume=calc_lots, sl_price=sig.sl_price,
-                            tp_price=sig.tp_price, risk_usd=sig.risk_usd, strategy_tag=sig.strategy_tag
-                        )
-
-                    table.add_row(
-                        asset, f"{tick.bid:.5f}", f"{tick.ask:.5f}", f"{(tick.ask - tick.bid):.5f}",
-                        rsi_cell, trend_cell, fvg_cell, crt_cell, prob_cell, decision_cell
+                for ct in self.order_mgr.closed_trades[-5:]:
+                    side_style = "green" if ct["action"] == "BUY" else "red"
+                    pnl_style = "bold green" if ct["realized_pnl"] >= 0 else "bold red"
+                    r_style = "bold green" if ct["realized_r"] >= 0 else "bold red"
+                    ct_table.add_row(
+                        str(ct["ticket"]),
+                        ct["symbol"],
+                        ct["strategy"],
+                        f"[{side_style}]{ct['action']}[/{side_style}]",
+                        f"{ct['entry']:.5f}",
+                        f"{ct['exit']:.5f}",
+                        ct["reason"],
+                        f"[{r_style}]{ct['realized_r']:+.2f}R[/{r_style}]",
+                        f"[{pnl_style}]{ct['realized_pnl']:+,.2f} USD[/{pnl_style}]",
+                        f"{ct['bars_held']}"
                     )
+                elements.append(ct_table)
 
-                # Clear console for flicker-free streaming UI
-                console.clear()
+            # 4. Telemetry Table
+            elements.append(table)
+            return Group(*elements)
 
-                # 1. Render Account & Risk Header Panel
-                mode_tag = "[bold red]LIVE BROKER[/bold red]" if live else "[bold yellow]PAPER DRY-RUN[/bold yellow]"
-                pnl_color = "bold green" if metrics['running_pnl'] >= 0 else "bold red"
-                real_pnl_color = "bold green" if metrics['realized_pnl'] >= 0 else "bold red"
-                tot_pnl_color = "bold green" if metrics['total_pnl'] >= 0 else "bold red"
+        try:
+            if once:
+                frame = build_dashboard_frame()
+                console.print(frame)
+                return
 
-                account_text = (
-                    f"Account: [bold cyan]#{metrics['login']}[/bold cyan] ({metrics['server']}) | "
-                    f"Mode: {mode_tag} | Strategy: [bold bright_white]{strat.name.upper()}[/bold bright_white] | "
-                    f"Time: [bold white]{utc_now.strftime('%Y-%m-%d %H:%M:%S UTC')}[/bold white]\n"
-                    f"Equity: [bold bright_white]${metrics['equity']:,.2f} {metrics['currency']}[/bold bright_white] | "
-                    f"Balance: [bold]${metrics['balance']:,.2f}[/bold] | "
-                    f"Running PnL: [{pnl_color}]{metrics['running_pnl']:+,.2f} USD[/{pnl_color}] | "
-                    f"Realized PnL: [{real_pnl_color}]{metrics['realized_pnl']:+,.2f} USD[/{real_pnl_color}] | "
-                    f"Total Session PnL: [{tot_pnl_color}]{metrics['total_pnl']:+,.2f} USD[/{tot_pnl_color}]\n"
-                    f"Margin: ${metrics['margin']:,.2f} | Free Margin: ${metrics['margin_free']:,.2f} | "
-                    f"Margin Level: {metrics['margin_level']:.1f}% | DD: {metrics['drawdown_pct']:.2f}% | "
-                    f"Open Positions: [bold yellow]{metrics['open_count']}/2[/bold yellow] | "
-                    f"Closed: {metrics['closed_count']} (WR: {metrics['win_rate']:.1f}%)"
-                )
-                console.print(Panel(account_text, title="[bold bright_cyan]FOREX MASTER ENGINE: LIVE RISK & PNL TELEMETRY[/bold bright_cyan]", border_style="cyan"))
-
-                # 2. Render Active Open Trades Table
-                if self.order_mgr.open_trades:
-                    ot_table = Table(
-                        title=f"ACTIVE OPEN POSITIONS ({len(self.order_mgr.open_trades)}/2)",
-                        box=box.ROUNDED,
-                        header_style="bold bright_white on dark_green",
-                        border_style="green",
-                        show_lines=False,
-                        expand=True
-                    )
-                    ot_table.add_column("Ticket", justify="center", style="bold white", width=9)
-                    ot_table.add_column("Asset", justify="left", style="bold cyan", width=8)
-                    ot_table.add_column("Sleeve", justify="center", width=8)
-                    ot_table.add_column("Side", justify="center", width=6)
-                    ot_table.add_column("Lots", justify="right", width=6)
-                    ot_table.add_column("Entry Price", justify="right", width=10)
-                    ot_table.add_column("Current Price", justify="right", width=10)
-                    ot_table.add_column("Stop Loss", justify="right", width=10)
-                    ot_table.add_column("Take Profit", justify="right", width=10)
-                    ot_table.add_column("Current R", justify="right", width=9)
-                    ot_table.add_column("Running PnL", justify="right", width=12)
-                    ot_table.add_column("Ratchet State", justify="left", width=16)
-                    ot_table.add_column("Bars", justify="right", width=7)
-
-                    for ticket, tr in self.order_mgr.open_trades.items():
-                        side_style = "bold green" if tr["action"] == "BUY" else "bold red"
-                        r_style = "bold green" if tr["current_r"] >= 0 else "bold red"
-                        pnl_style = "bold green" if tr["running_pnl"] >= 0 else "bold red"
-                        ot_table.add_row(
-                            str(ticket),
-                            tr["symbol"],
-                            tr["strategy"],
-                            f"[{side_style}]{tr['action']}[/{side_style}]",
-                            f"{tr['volume']:.2f}L",
-                            f"{tr['entry']:.5f}",
-                            f"{tr['cur_price']:.5f}",
-                            f"{tr['sl']:.5f}",
-                            f"{tr['tp']:.5f}",
-                            f"[{r_style}]{tr['current_r']:+.2f}R[/{r_style}]",
-                            f"[{pnl_style}]${tr['running_pnl']:+,.2f}[/{pnl_style}]",
-                            tr.get("ratchet_desc", "Base SL"),
-                            f"{tr['bars_held']}/24"
-                        )
-                    console.print(ot_table)
-                else:
-                    console.print("[dim italic]Active Positions: None (Scanning 18 assets for high-probability confluence setups...)[/dim italic]")
-
-                # 3. Render Session Closed Trades Table (Last 5)
-                if self.order_mgr.closed_trades:
-                    ct_table = Table(
-                        title=f"SESSION CLOSED TRADES HISTORY (Last 5 of {len(self.order_mgr.closed_trades)})",
-                        box=box.ROUNDED,
-                        header_style="bold bright_white on blue",
-                        border_style="blue",
-                        show_lines=False,
-                        expand=True
-                    )
-                    ct_table.add_column("Ticket", justify="center", style="dim", width=9)
-                    ct_table.add_column("Asset", justify="left", style="bold white", width=8)
-                    ct_table.add_column("Sleeve", justify="center", width=8)
-                    ct_table.add_column("Side", justify="center", width=6)
-                    ct_table.add_column("Entry", justify="right", width=10)
-                    ct_table.add_column("Exit", justify="right", width=10)
-                    ct_table.add_column("Exit Reason", justify="left", width=22)
-                    ct_table.add_column("Realized R", justify="right", width=10)
-                    ct_table.add_column("Realized PnL", justify="right", width=14)
-                    ct_table.add_column("Bars", justify="right", width=6)
-
-                    for ct in self.order_mgr.closed_trades[-5:]:
-                        side_style = "green" if ct["action"] == "BUY" else "red"
-                        pnl_style = "bold green" if ct["realized_pnl"] >= 0 else "bold red"
-                        r_style = "bold green" if ct["realized_r"] >= 0 else "bold red"
-                        ct_table.add_row(
-                            str(ct["ticket"]),
-                            ct["symbol"],
-                            ct["strategy"],
-                            f"[{side_style}]{ct['action']}[/{side_style}]",
-                            f"{ct['entry']:.5f}",
-                            f"{ct['exit']:.5f}",
-                            ct["reason"],
-                            f"[{r_style}]{ct['realized_r']:+.2f}R[/{r_style}]",
-                            f"[{pnl_style}]${ct['realized_pnl']:+,.2f} USD[/{pnl_style}]",
-                            f"{ct['bars_held']}"
-                        )
-                    console.print(ct_table)
-
-                # 4. Render 18-Asset Market Telemetry Table
-                console.print(table)
-
-                if once:
-                    break
-                time.sleep(interval)
+            with Live(console=console, screen=False, auto_refresh=False) as live_ui:
+                while True:
+                    frame = build_dashboard_frame()
+                    live_ui.update(frame, refresh=True)
+                    time.sleep(interval)
 
         except KeyboardInterrupt:
             console.print("[yellow]Telemetry stopped by user.[/yellow]")
