@@ -45374,3 +45374,8 @@ study sessin chat for FVG based strategy which was giving postive alpha...
      - EURHUF: Bid/Ask 364.825 / 365.009 (RSI 68.1, Bullish 4H Trend).
      - GER40: Bid/Ask 25497.45 / 25498.25 (RSI 54.2, Bearish 4H Trend).
   3. Terminal Layout: Rendered with 100% width autofit, zero text wrapping, and compact numerical precision.
+
+---
+## Turn: 2026-09-16T20:35 UTC
+**User:** Are you sure forex_engine.py will work perfectly fine as in backtesting? Check its branches too.
+**Agent (Antigravity):** Full forensic parity audit performed. Read compute_features_pandas() vs engineer_features_polars(), OrderManager.manage_open_trades() ratchets, FVGMLForexCFDStrategy.generate_signal(), ORBCRTForexCFDStrategy.generate_signal(), and create_labels_ratchet(). Verdict: 13 features math-identical, entry causality PASS, CRT day-boundary PASS, kill zones PASS. Found 2 discrepancies: (1) create_labels_ratchet phase-0 trigger was 1.0R vs live's 0.8R — FIXED in strategy_kernel.py; (2) manage_open_trades TP close hardcoded realized_r=2.50 regardless of strategy — FIXED to compute from actual entry/TP geometry. Committed as f3219a0 on arena/01a0a8c8-trading.
