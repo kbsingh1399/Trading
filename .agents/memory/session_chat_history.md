@@ -45194,3 +45194,13 @@ make a strucuted C:\Users\SIGMA\Documents\Trading and especially C:\Users\SIGMA\
   1. Kept Engine/__init__.py: Required Python package identifier and Engine_2 backwards-compatibility aliaser.
   2. Permanently deleted the 3 obsolete and broken runners via git rm: Engine/local_engine.py, Engine/run_20_oos_dual_model.py, Engine/run_20_oos_multiverse.py (all broke on missing imports from the purged scratch directory). Committed (d86bcc8) and pushed to remote branches.
   3. Audited and documented the 3 core strategies + 1 multi-confluence mode in Engine/forex_engine.py (ICT FVG, CRT & ORB, XGBoost ML, and Combined Multi-Confluence).
+
+## Turn: 2026-09-16 17:32:43
+- **User Directive**: Can we do forward testing of forex_engine.py and check how does it perform... I am aware about fvg and crt tbs strategy... Not the 3rd one.
+- **Action & Result**:
+  1. Explained Strategy 3 (XGBoost Machine Learning Probability Model): 13 stationary features, causal 4H EMA slope, 7-stage microstructure ratchet training target, and P* >= 0.55 classification threshold.
+  2. Implemented --mode forward-test in Engine/forex_engine.py with strictly causal walk-forward training (zero lookahead).
+  3. Ran empirical forward tests on 2025-2026 out-of-sample data across all 18 institutional Forex assets:
+     - Pure CRT: 18,479 trades, 52.2% WR, but heavy negative drag from friction (-3,314R).
+     - Combined Multi-Confluence (Price Action + ML): Pruned 98.6% of noise (only 261 trades), boosted Win Rate to 60.5%, with strong profit on USDSEK (77.8% WR, PF 4.39), AUDCHF (72.2% WR, PF 2.59), NZDUSD (78.9% WR, PF 1.78), and NZDCNH (61.5% WR, PF 1.70).
+  4. Committed (00485a7) and pushed to remote branches.
