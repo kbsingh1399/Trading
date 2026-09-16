@@ -203,8 +203,8 @@ def main():
             probs = orb_model.predict_proba(orb_test[FEATURES])[:, 1]
             orb_cand = orb_test.copy()
             orb_cand['prob'] = probs
-            thresh = np.percentile(probs, 75) if len(probs) > 10 else 0.65
-            orb_passed = orb_cand[orb_cand['prob'] >= max(0.66, thresh)].copy()
+            thresh = np.percentile(probs, 70) if len(probs) > 10 else 0.55
+            orb_passed = orb_cand[orb_cand['prob'] >= max(0.55, thresh)].copy()
 
             orb_formatted = pd.DataFrame({
                 'time': orb_passed['time'],
@@ -270,11 +270,15 @@ def main():
         for ev in combined:
             cur_peak_dd = ((peak_equity - equity) / peak_equity) * 100.0 if peak_equity > 0 else 0.0
             cur_cap_dd = ((CAPITAL - equity) / CAPITAL) * 100.0 if equity < CAPITAL else 0.0
+            strat = ev["strategy"]
             if cur_cap_dd >= 4.40 or cur_peak_dd >= 4.70:
                 continue
 
+            # S1 specific circuit breaker during systemic crypto cascades
+            if strat == "S1" and (cur_cap_dd >= 2.5 or consec_losses_s1 >= 2):
+                continue
+
             t_entry = ev["time"]
-            strat = ev["strategy"]
             sym = ev["symbol"]
             r_gain = ev["r_gain"]
             prob = ev["prob"]
@@ -311,10 +315,10 @@ def main():
                 elif consec_losses_s1 == 1:
                     risk_amt = 25.0
                 else:
-                    conf = 1.35 if prob >= 0.46 else 1.0
-                    base_s = 54.0 * conf
+                    conf = 1.20 if prob >= 0.48 else 1.0
+                    base_s = 38.0 * conf
                     if side_val == 1 and tide_val < 0.0: base_s *= 0.60
-                    risk_amt = min(70.0, base_s + current_profit * 0.04) if current_profit >= 50.0 else base_s
+                    risk_amt = min(70.0, base_s + current_profit * 0.05) if current_profit >= 50.0 else base_s
 
                 current_open_risk = sum(p[1] for p in s1_positions) + sum(p[1] for p in t1_positions) + sum(p[1] for p in orb_positions)
                 final_risk = min(risk_amt, max(s1_defense_risk, cur_max_risk_budget - current_open_risk))

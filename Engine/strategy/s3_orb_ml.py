@@ -53,8 +53,13 @@ def simulate_orb_trades(
         emas_50[i] = emas_50[i-1] + alpha_50 * (closes[i] - emas_50[i-1])
         emas_200[i] = emas_200[i-1] + alpha_200 * (closes[i] - emas_200[i-1])
         
-        cum_vol += volumes[i]
-        cum_vol_price += closes[i] * volumes[i]
+        if dates[i] != dates[i-1]:
+            cum_vol = volumes[i]
+            cum_vol_price = closes[i] * volumes[i]
+        else:
+            cum_vol += volumes[i]
+            cum_vol_price += closes[i] * volumes[i]
+            
         if cum_vol > 0:
             vwaps[i] = cum_vol_price / cum_vol
         else:
@@ -128,22 +133,35 @@ def simulate_orb_trades(
                 trade_start = i + range_duration_bars
                 trade_end = min(n, trade_start + trade_duration_bars)
                 
-                min_prior_low = lows[i]
-                max_prior_high = highs[i]
-                for p in range(i, trade_start):
-                    if lows[p] < min_prior_low: min_prior_low = lows[p]
-                    if highs[p] > max_prior_high: max_prior_high = highs[p]
+                # Track pre-market (up to 6 bars = 1.5h prior to OR) for true Judas sweep detection
+                pre_start = i - 6
+                if pre_start < 0:
+                    pre_start = 0
+                pre_or_low = lows[pre_start]
+                pre_or_high = highs[pre_start]
+                for p in range(pre_start, i):
+                    if lows[p] < pre_or_low: pre_or_low = lows[p]
+                    if highs[p] > pre_or_high: pre_or_high = highs[p]
+                
+                # True Judas sweep: pre-market swept previous day's extreme, then reclaimed before OR
+                judas_sweep_long = 1.0 if (pre_or_low < prev_day_low and or_low >= prev_day_low) else 0.0
+                judas_sweep_short = 1.0 if (pre_or_high > prev_day_high and or_high <= prev_day_high) else 0.0
                 
                 for j in range(trade_start, trade_end):
                     if highs[j] > or_high:
-                        # LONG FILTER
-                        if swept_pdl == 1.0 or closes[j-1] > emas_200[j-1]:
+                        # LONG FILTER: macro trend alignment or liquidity sweep
+                        if swept_pdl == 1.0 or closes[j] > emas_200[j]:
+                            entry_bar = j + 1
+                            if entry_bar >= trade_end or entry_bar >= n:
+                                continue
+                                
                             direction = 1.0
-                            entry = or_high
+                            entry = opens[entry_bar]  # Strictly causal fill at open of next bar
                             sl = or_low
                             
-                            prev_idx = j - 1
-                            r_val = max(or_range, 0.50 * atrs[prev_idx])
+                            # Completed breakout bar j features are 100% strictly causal
+                            prev_idx = j
+                            r_val = max(entry - sl, 0.50 * atrs[prev_idx])
                             tp = entry + 2.5 * r_val
                             current_sl = sl
                             
@@ -156,14 +174,14 @@ def simulate_orb_trades(
                                 e200_slope = (emas_200[prev_idx] - emas_200[prev_idx-10]) / (emas_200[prev_idx-10] + 1e-9)
                                 
                             atr_pct = atrs[prev_idx] / (closes[prev_idx] + 1e-9)
-                            vol_spike = volumes[j] / (vol_sma_20[prev_idx] + 1e-9)
+                            vol_spike = volumes[prev_idx] / (vol_sma_20[prev_idx-1 if prev_idx > 0 else 0] + 1e-9)
                             range_atr = or_range / (atrs[prev_idx] + 1e-9)
                             
-                            # CRT Features
-                            body_ratio = abs(closes[j] - opens[j]) / (highs[j] - lows[j] + 1e-9)
-                            close_outside = 1.0 if closes[j] > or_high else 0.0
-                            fvg_expansion = 1.0 if (j >= 2 and lows[j] > highs[j-2]) else 0.0
-                            judas_sweep = 1.0 if min_prior_low < or_low else 0.0
+                            # CRT Features (Clamped, confirmed on bar j close)
+                            body_ratio = min(1.0, max(0.0, abs(closes[prev_idx] - opens[prev_idx]) / (highs[prev_idx] - lows[prev_idx] + 1e-9)))
+                            close_outside = 1.0 if closes[prev_idx] > or_high else 0.0
+                            fvg_expansion = 1.0 if (prev_idx >= 2 and lows[prev_idx] > highs[prev_idx-2] and (lows[prev_idx] - highs[prev_idx-2]) < 2.0 * atrs[prev_idx]) else 0.0
+                            judas_sweep = judas_sweep_long
                             
                             features[trade_idx, 0] = direction
                             features[trade_idx, 1] = or_range / (or_low + 1e-9)
@@ -190,9 +208,9 @@ def simulate_orb_trades(
                             phase_0_locked = False
                             phase_1_locked = False
                             
-                            for k in range(j, trade_end):
-                                # Time decay check: 24 bars
-                                if k - j >= 24:
+                            for k in range(entry_bar, trade_end):
+                                # Time decay check: 24 bars from entry
+                                if k - entry_bar >= 24:
                                     current_r = (closes[k] - entry) / r_val
                                     if current_r < 0.2:
                                         outcome_r = current_r
@@ -218,21 +236,29 @@ def simulate_orb_trades(
                             if outcome_r == -1.0:
                                 outcome_r = (closes[trade_end-1] - entry) / r_val
                                 
+                            # Deduct 8 bps execution friction (slippage + taker fees)
+                            outcome_r -= 0.08
+                                
                             outcomes[trade_idx] = max(-1.15, min(2.5, outcome_r))
-                            timestamps_out[trade_idx] = timestamps[j]
+                            timestamps_out[trade_idx] = timestamps[entry_bar]
                             trade_idx += 1
-                        i = trade_end
-                        break
+                            i = trade_end
+                            break
                         
                     elif lows[j] < or_low:
-                        # SHORT FILTER
-                        if swept_pdh == 1.0 or closes[j-1] < emas_200[j-1]:
+                        # SHORT FILTER: macro trend alignment or liquidity sweep
+                        if swept_pdh == 1.0 or closes[j] < emas_200[j]:
+                            entry_bar = j + 1
+                            if entry_bar >= trade_end or entry_bar >= n:
+                                continue
+                                
                             direction = -1.0
-                            entry = or_low
+                            entry = opens[entry_bar]  # Strictly causal fill at open of next bar
                             sl = or_high
                             
-                            prev_idx = j - 1
-                            r_val = max(or_range, 0.50 * atrs[prev_idx])
+                            # Completed breakout bar j features are 100% strictly causal
+                            prev_idx = j
+                            r_val = max(sl - entry, 0.50 * atrs[prev_idx])
                             tp = entry - 2.5 * r_val
                             current_sl = sl
                             
@@ -245,14 +271,14 @@ def simulate_orb_trades(
                                 e200_slope = (emas_200[prev_idx] - emas_200[prev_idx-10]) / (emas_200[prev_idx-10] + 1e-9)
                                 
                             atr_pct = atrs[prev_idx] / (closes[prev_idx] + 1e-9)
-                            vol_spike = volumes[j] / (vol_sma_20[prev_idx] + 1e-9)
+                            vol_spike = volumes[prev_idx] / (vol_sma_20[prev_idx-1 if prev_idx > 0 else 0] + 1e-9)
                             range_atr = or_range / (atrs[prev_idx] + 1e-9)
                             
-                            # CRT Features
-                            body_ratio = abs(closes[j] - opens[j]) / (highs[j] - lows[j] + 1e-9)
-                            close_outside = 1.0 if closes[j] < or_low else 0.0
-                            fvg_expansion = 1.0 if (j >= 2 and highs[j] < lows[j-2]) else 0.0
-                            judas_sweep = 1.0 if max_prior_high > or_high else 0.0
+                            # CRT Features (Clamped, confirmed on bar j close)
+                            body_ratio = min(1.0, max(0.0, abs(closes[prev_idx] - opens[prev_idx]) / (highs[prev_idx] - lows[prev_idx] + 1e-9)))
+                            close_outside = 1.0 if closes[prev_idx] < or_low else 0.0
+                            fvg_expansion = 1.0 if (prev_idx >= 2 and highs[prev_idx] < lows[prev_idx-2] and (lows[prev_idx-2] - highs[prev_idx]) < 2.0 * atrs[prev_idx]) else 0.0
+                            judas_sweep = judas_sweep_short
                             
                             features[trade_idx, 0] = direction
                             features[trade_idx, 1] = or_range / (or_low + 1e-9)
@@ -279,8 +305,8 @@ def simulate_orb_trades(
                             phase_0_locked = False
                             phase_1_locked = False
                             
-                            for k in range(j, trade_end):
-                                if k - j >= 24:
+                            for k in range(entry_bar, trade_end):
+                                if k - entry_bar >= 24:
                                     current_r = (entry - closes[k]) / r_val
                                     if current_r < 0.2:
                                         outcome_r = current_r
@@ -304,11 +330,14 @@ def simulate_orb_trades(
                             if outcome_r == -1.0:
                                 outcome_r = (entry - closes[trade_end-1]) / r_val
                             
+                            # Deduct 8 bps execution friction (slippage + taker fees)
+                            outcome_r -= 0.08
+                            
                             outcomes[trade_idx] = max(-1.15, min(2.5, outcome_r))
-                            timestamps_out[trade_idx] = timestamps[j]
+                            timestamps_out[trade_idx] = timestamps[entry_bar]
                             trade_idx += 1
-                        i = trade_end
-                        break
+                            i = trade_end
+                            break
         i += 1
         
     return features[:trade_idx], outcomes[:trade_idx], timestamps_out[:trade_idx]
