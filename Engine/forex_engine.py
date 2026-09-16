@@ -1007,7 +1007,11 @@ def _sync_aux_parquet(mt5_conn: MT5Connection, sym: str, real_symbol: str, tf_la
         if 'is_kill_zone' in df_existing.columns:
             new_dict['is_kill_zone'] = [_calc_kz(pd.to_datetime(t, unit='s', utc=True).hour) for t in df_new['time']]
 
-        new_pl = pl.DataFrame(new_dict, schema={col: df_existing.schema[col] for col in new_dict if col in df_existing.schema})
+        new_pl = pl.DataFrame(
+            new_dict,
+            schema={col: df_existing.schema[col] for col in new_dict if col in df_existing.schema},
+            strict=False
+        )
         combined = pl.concat([df_existing, new_pl]).unique(subset=['datetime']).sort('datetime')
         tmp_p = aux_path.with_suffix(".parquet.tmp")
         combined.write_parquet(tmp_p)
@@ -1108,7 +1112,11 @@ def pre_flight_data_sync(mt5_conn: MT5Connection, single_asset: Optional[str] = 
             if 'is_kill_zone' in df_existing.columns:
                 new_rows_dict['is_kill_zone'] = [_calc_kz(pd.to_datetime(t, unit='s', utc=True).hour) for t in df_new['time']]
 
-            new_pl = pl.DataFrame(new_rows_dict, schema={col: df_existing.schema[col] for col in new_rows_dict if col in df_existing.schema})
+            new_pl = pl.DataFrame(
+                new_rows_dict,
+                schema={col: df_existing.schema[col] for col in new_rows_dict if col in df_existing.schema},
+                strict=False
+            )
             combined_pl = pl.concat([df_existing, new_pl]).unique(subset=['datetime']).sort('datetime')
 
             tmp_path = parquet_path.with_suffix(".parquet.tmp")
