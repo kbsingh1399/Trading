@@ -1,0 +1,162 @@
+[
+  {
+    "window_id": 1,
+    "name": "Late 2023 Fed Higher-for-Longer Pause",
+    "start_date": "2023-09-15",
+    "end_date": "2023-10-31",
+    "regime": "Macro Yield Spike & Dollar Strength",
+    "description": "US 10-year yield breaks 5.0% driving strong USD expansion against EUR, JPY, and exotic currencies."
+  },
+  {
+    "window_id": 2,
+    "name": "Q4 2023 Year-End Soft Landing Rally",
+    "start_date": "2023-11-01",
+    "end_date": "2023-12-15",
+    "regime": "Cross-Asset Risk-On Expansion",
+    "description": "Aggressive disinflation prints spark massive rally in global indices (GER40, US2000) and commodity currencies."
+  },
+  {
+    "window_id": 3,
+    "name": "Q1 2024 Global Disinflation Surge",
+    "start_date": "2023-12-16",
+    "end_date": "2024-01-31",
+    "regime": "Mean-Reverting Session Volatility",
+    "description": "New year portfolio rebalancing and range compression across major Forex pairs."
+  },
+  {
+    "window_id": 4,
+    "name": "Early 2024 Tech & Index Expansion",
+    "start_date": "2024-02-01",
+    "end_date": "2024-03-15",
+    "regime": "Unidirectional Trend Momentum",
+    "description": "Global equity indices break all-time highs with strong opening range momentum breakouts in London and NY sessions."
+  },
+  {
+    "window_id": 5,
+    "name": "Spring 2024 Geopolitical Energy Spike",
+    "start_date": "2024-03-16",
+    "end_date": "2024-04-30",
+    "regime": "Commodity Shock & Safe Haven Flows",
+    "description": "Middle East geopolitical tension drives sharp expansion in Natural Gas and Gold (XAUCNH) with high session volatility."
+  },
+  {
+    "window_id": 6,
+    "name": "ECB Rate Cut Pivot & Dollar Strength",
+    "start_date": "2024-05-01",
+    "end_date": "2024-06-15",
+    "regime": "Central Bank Policy Divergence",
+    "description": "ECB delivers first rate cut ahead of the Fed, creating persistent trend continuation in European FX pairs."
+  },
+  {
+    "window_id": 7,
+    "name": "Mid-2024 High-Beta Equity Distribution",
+    "start_date": "2024-06-16",
+    "end_date": "2024-07-31",
+    "regime": "Range Distribution & Liquidity Sweeps",
+    "description": "Late-summer equity distribution in DAX and US small-caps with frequent Judas sweeps of previous day boundaries."
+  },
+  {
+    "window_id": 8,
+    "name": "August 2024 Global Carry Trade Flash Unwind",
+    "start_date": "2024-08-01",
+    "end_date": "2024-09-15",
+    "regime": "Global Macro Liquidity Shock",
+    "description": "Historic multi-billion dollar carry-trade unwind triggers global flash liquidations and massive orderbook absorption."
+  },
+  {
+    "window_id": 9,
+    "name": "Fed 50bps Jumbo Rate Cut Ignition",
+    "start_date": "2024-09-16",
+    "end_date": "2024-10-31",
+    "regime": "Monetary Easing Trend Breakout",
+    "description": "Federal Reserve initiates aggressive easing cycle with a 50bps rate cut, igniting sustained momentum across FX."
+  },
+  {
+    "window_id": 10,
+    "name": "US Presidential Election Mega Breakout",
+    "start_date": "2024-11-01",
+    "end_date": "2024-12-15",
+    "regime": "Macro Political Euphoria & Dollar Breakout",
+    "description": "US Election sparks massive dollar surge, global equity breakout, and extreme opening range volume."
+  },
+  {
+    "window_id": 11,
+    "name": "Year-End Cross-Currency Flow Rebalancing",
+    "start_date": "2024-12-16",
+    "end_date": "2025-01-31",
+    "regime": "Holiday Liquidity Contraction & Mean Reversion",
+    "description": "Thin year-end liquidity transitions into aggressive early January positioning."
+  },
+  {
+    "window_id": 12,
+    "name": "Post-Inauguration Trade Policy Realignment",
+    "start_date": "2025-02-01",
+    "end_date": "2025-03-15",
+    "regime": "Tariff & Trade Policy Volatility",
+    "description": "New trade and tariff policies trigger sharp trend adjustments in EUR, CNH, and SEK pairs."
+  },
+  {
+    "window_id": 13,
+    "name": "Spring 2025 Precious Metals All-Time High",
+    "start_date": "2025-03-16",
+    "end_date": "2025-04-30",
+    "regime": "Sovereign Gold Accumulation Shock",
+    "description": "Record central bank reserve diversification propels XAUCNH and GAUCNH to unprecedented highs."
+  },
+  {
+    "window_id": 14,
+    "name": "Late-Cycle Yield Curve Steepening",
+    "start_date": "2025-05-01",
+    "end_date": "2025-06-15",
+    "regime": "Fiscal Deficit & Term Premium Expansion",
+    "description": "Bond market term premium expansion drives steep yield curves and heavy FX volatility."
+  },
+  {
+    "window_id": 15,
+    "name": "European Macro Slowdown & CNH Divergence",
+    "start_date": "2025-06-16",
+    "end_date": "2025-07-31",
+    "regime": "Cross-Regional Growth Divergence",
+    "description": "Divergence between European stagnation and Asian stimulus drives wide swings in EURCNH and NZDCNH."
+  },
+  {
+    "window_id": 16,
+    "name": "Late-Summer Commodity Volatility Expansion",
+    "start_date": "2025-08-01",
+    "end_date": "2025-09-15",
+    "regime": "Industrial Metals Supply Squeeze",
+    "description": "Supply bottlenecks in Nickel and Lead trigger large intraday ranges and strong session breakout follow-through."
+  },
+  {
+    "window_id": 17,
+    "name": "Autumn 2025 Global Liquidity Injection",
+    "start_date": "2025-09-16",
+    "end_date": "2025-10-31",
+    "regime": "Coordinated Central Bank Balance Sheet Expansion",
+    "description": "Synchronized liquidity injections bolster global equity indices and compress Forex spreads."
+  },
+  {
+    "window_id": 18,
+    "name": "Q4 2025 Industrial Metals & Indices Momentum",
+    "start_date": "2025-11-01",
+    "end_date": "2025-12-31",
+    "regime": "Late-Cycle Momentum Run",
+    "description": "Year-end institutional window dressing drives strong trend continuation in GER40 and US2000."
+  },
+  {
+    "window_id": 19,
+    "name": "Q1 2026 New Year Cross-Asset Range Shift",
+    "start_date": "2026-01-01",
+    "end_date": "2026-02-15",
+    "regime": "Regime Transition & Volatility Compression",
+    "description": "Cross-asset institutional re-allocation establishing new quarterly trading ranges."
+  },
+  {
+    "window_id": 20,
+    "name": "March 2026 Modern Microstructure Shock",
+    "start_date": "2026-02-16",
+    "end_date": "2026-03-31",
+    "regime": "Mature Algorithmic Orderflow Cascade",
+    "description": "High-frequency algorithmic sweeps and institutional order absorption testing real-time FVG mitigation and CRT breakouts."
+  }
+]

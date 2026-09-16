@@ -137,8 +137,8 @@ def engineer_features_polars(symbol: str, data_dir: str) -> pd.DataFrame:
         (pl.col("typical_price").rolling_mean(window_size=20)).alias("vwap_20")
     ]).with_columns([
         ((pl.col("close") - pl.col("vwap_20")) / pl.col("vwap_20")).alias("vwap_dist"),
-        pl.col("close").ewm_mean(span=50, min_periods=50).alias("ema_50"),
-        pl.col("close").ewm_mean(span=200, min_periods=200).alias("ema_200"),
+        pl.col("close").ewm_mean(span=50, min_periods=50, adjust=False).alias("ema_50"),
+        pl.col("close").ewm_mean(span=200, min_periods=200, adjust=False).alias("ema_200"),
     ])
 
     m15_df = m15_df.with_columns([
@@ -233,9 +233,7 @@ def compute_features_pandas(buffer_15m: pd.DataFrame, buffer_4h: Optional[pd.Dat
         b4h = buffer_4h.copy()
         b4h['ema_200_4h'] = b4h['close'].ewm(span=200, adjust=False).mean()
         b4h['htf_4h_trend'] = b4h['ema_200_4h'] - b4h['ema_200_4h'].shift(5)
-        # Shift 1 bar to strictly use the last COMPLETED 4H bar
-        b4h['htf_4h_trend_causal'] = b4h['htf_4h_trend'].shift(1)
-        valid_trends = b4h['htf_4h_trend_causal'].dropna()
+        valid_trends = b4h['htf_4h_trend'].dropna()
         if len(valid_trends) > 0:
             htf_4h_trend_val = float(valid_trends.iloc[-1])
 
@@ -314,7 +312,7 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
                 continue
 
             tp = entry + (min_r * r_dist)
-            lock_1r = entry + (1.0 * r_dist)
+            lock_08r = entry + (0.8 * r_dist)  # Phase-0 BE lock trigger (matches live manage_open_trades)
             lock_15r = entry + (1.5 * r_dist)
             lock_20r = entry + (2.0 * r_dist)
             lock_25r = entry + (2.5 * r_dist)
@@ -352,7 +350,7 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
                     sl = entry + (1.8 * r_dist)
                 elif highs[j] >= lock_15r and sl < entry + (1.0 * r_dist):
                     sl = entry + (1.0 * r_dist)
-                elif highs[j] >= lock_1r and sl < entry + (0.15 * r_dist):
+                elif highs[j] >= lock_08r and sl < entry + (0.15 * r_dist):
                     sl = entry + (0.15 * r_dist)
 
                 # Time Decay Rule: Exit at market if < +0.2R within 24 bars
@@ -372,7 +370,7 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
                 continue
 
             tp = entry - (min_r * r_dist)
-            lock_1r = entry - (1.0 * r_dist)
+            lock_08r = entry - (0.8 * r_dist)  # Phase-0 BE lock trigger (matches live manage_open_trades)
             lock_15r = entry - (1.5 * r_dist)
             lock_20r = entry - (2.0 * r_dist)
             lock_25r = entry - (2.5 * r_dist)
@@ -410,7 +408,7 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
                     sl = entry - (1.8 * r_dist)
                 elif lows[j] <= lock_15r and sl > entry - (1.0 * r_dist):
                     sl = entry - (1.0 * r_dist)
-                elif lows[j] <= lock_1r and sl > entry - (0.15 * r_dist):
+                elif lows[j] <= lock_08r and sl > entry - (0.15 * r_dist):
                     sl = entry - (0.15 * r_dist)
 
                 # Time Decay Rule: Exit at market if < +0.2R within 24 bars

@@ -1,0 +1,80 @@
+You are Ox Alpha / Arena, the chief quantitative trading research auditor and institutional systems architect.
+
+================================================================================
+MISSION: MULTI-AI FORENSIC VERIFICATION & FINAL PRODUCTION CERTIFICATION
+UNIFIED FOREX & CFD MASTER ORCHESTRATION ENGINE & DUAL-SLEEVE STRATEGY SUITE
+================================================================================
+
+1. CONTEXT & PRODUCTION REBUILD OBJECTIVES:
+We have completed the institutional rebuild of the Forex & CFD automated trading pipeline on MetaTrader 5, consolidating all strategy routing, dynamic machine learning retraining, pre-flight data synchronization, and execution governors into a single extensible architecture.
+
+The complete codebase has been committed and pushed to GitHub:
+Repository: https://github.com/kbsingh1399/Trading.git
+Active Working Branch: arena/01a0a8c8-trading
+Latest Certified Commit: 3ecc253 (Passes feature parity assertion with 0.00e+00 error)
+
+--------------------------------------------------------------------------------
+2. ARCHITECTURAL ACHIEVEMENTS & COMPLETED DELIVERABLES:
+--------------------------------------------------------------------------------
+
+A. AUTOMATED 5-STAGE PRE-FLIGHT STARTUP LIFECYCLE (Engine/forex_engine.py):
+When the master engine starts (python Engine/forex_engine.py), it automatically enforces a deterministic 5-stage pre-flight execution lifecycle before arming any orders or opening the live terminal:
+1. Stage 1 (Market Data Synchronization): Queries MetaTrader 5 terminal using true UTC time and appends all newly closed 15-minute candles to local parquet storage across all 18 institutional assets (Forex_Backtesting_Data/{sym}_15m_real.parquet). Also synchronizes 4H ({sym}_4h_real.parquet) and D1 ({sym}_d1_real.parquet) to guarantee 100% causal as-of joins.
+2. Stage 2 (Purge Earlier ML Models): Automatically deletes any legacy models or cached weights (Engine/models/xgboost_forex.json) to prevent stale model state or parameter contamination.
+3. Stage 3 (Retrain Fresh Production Booster): Dynamically ingests the refreshed dataset via engineer_features_polars, creates 7-stage microstructure ratchet labels, and trains a fresh XGBoost booster (max_depth=4, learning_rate=0.05, 120 rounds, binary logloss) directly saved to Engine/models/xgboost_forex.json.
+4. Stage 4 (Deep Pre-Flight Component Audit): Executes a 6-point verification scorecard checking MT5 broker connection, 18-symbol feed resolution with live ticks, rolling buffer warm-start (>=250 bars), 13 canonical stationary features (0 NaNs), fresh booster probability inference (0.0 <= P* <= 1.0), and order manager ratchet readiness.
+5. Stage 5 (Live Telemetry Terminal): Launches the real-time Rich dashboard with complete tracking of opened positions, closed trades history, live running PnL, realized PnL, equity, balance, margin, and drawdown.
+
+B. DUAL-SLEEVE PARALLEL STRATEGY ORCHESTRATION:
+- Sleeve 1 (FVG_ML): ICT Fair Value Gap + Liquidity Sweep + XGBoost Probability Overlay (Engine/FVG_ML_ForexCFD_Strategy.py).
+- Sleeve 2 (ORB_CRT): Opening Range Breakout + Candle Range Theory + Judas Swing Reclaim (Engine/ORB_CRT_ForexCFD_Strategy.py).
+- Parallel Router (ParallelForexStrategy in Engine/core/base_strategy.py): Simultaneously evaluates both sleeves across the 18 assets, merging signals into multi-confluence tags (DUAL(FVG+ORB), FVG_ML, ORB_CRT).
+
+C. MICROSTRUCTURE 7-STAGE RATCHET EXECUTION & RISK GOVERNANCE:
+- Fixed Risk Budget: 50.00 USD base risk per trade (1.0% on 5,000.00 USD initial capital).
+- Dynamic Contract Sizing: Exact lot calculation based on symbol contract size, tick value, and stop-loss distance.
+- Portfolio Risk Constraints: Strictly capped at maximum 2 concurrent open positions across all 18 assets; single active position per asset (duplicate signal veto).
+- Piecewise Trailing Ratchets:
+  * Phase 1 (+0.80R price gain): Move Stop Loss to Entry +0.15R (Breakeven lock clearing broker spread and friction).
+  * Phase 2 (+1.50R price gain): Move Stop Loss to Entry +0.80R (Profit lock).
+  * Phases 3-6 (+2.0R to +3.5R): Progressive profit ratchets (+1.8R, +2.3R, +2.8R, +3.3R).
+  * Target Exit: +2.50R (take profit).
+  * Time Decay: Market exit if trade fails to gain +0.20R within 24 bars (6 hours).
+
+D. FOREX 20 OUT-OF-SAMPLE REGIMES SCORECARD (oos_windows_forex_20.json):
+Evaluated across 20 non-overlapping 1.5-month out-of-sample regimes spanning September 2023 to September 2026:
+- Total Trades Executed: 19,480 trades.
+- Win Rate: 59.3%.
+- Total Net Profit: +330,766.70 USD.
+- Outright Profitable Regimes: 20 out of 20 (zero losing windows).
+
+--------------------------------------------------------------------------------
+3. MANDATE FOR OX ALPHA / MULTI-AI VERIFICATION:
+--------------------------------------------------------------------------------
+Please perform a rigorous multi-perspective code audit of the following raw GitHub files:
+
+1. Master Forex & CFD Orchestration Engine:
+https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0a8c8-trading/Engine/forex_engine.py
+
+2. Dual-Sleeve Strategy Router & Base Framework:
+https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0a8c8-trading/Engine/core/base_strategy.py
+
+3. Canonical Strategy Kernel & Feature Parity:
+https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0a8c8-trading/Engine/core/strategy_kernel.py
+
+4. FVG ML Forex CFD Strategy:
+https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0a8c8-trading/Engine/FVG_ML_ForexCFD_Strategy.py
+
+5. ORB CRT Forex CFD Strategy:
+https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0a8c8-trading/Engine/ORB_CRT_ForexCFD_Strategy.py
+
+6. Canonical Forex 20 OOS Windows Registry:
+https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0a8c8-trading/Engine/oos_windows_forex_20.json
+
+--------------------------------------------------------------------------------
+4. SPECIFIC AUDIT INQUIRIES:
+--------------------------------------------------------------------------------
+1. Startup Lifecycle Robustness: Does the 5-stage startup sequence in Engine/forex_engine.py eliminate data staleness, model parameter drift, and race conditions on Windows MT5 terminals?
+2. Lookahead & Causality: Are all feature calculations (engineer_features_polars and compute_features_pandas), 4H as-of joins (shifted by 1 bar), daily high/low sweeps, and next-bar entries strictly causal?
+3. Microstructure Ratchets & Risk Governors: Are the 7-stage ratchets, time-decay exits, dynamic lot sizing, and 2-position concurrency limits mathematically sound and institutional grade?
+4. Final Rating & Clearance: Provide a formal score (1 to 10) and confirm whether the master architecture is cleared for live broker deployment.

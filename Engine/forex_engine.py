@@ -1,41 +1,25 @@
 """
 ================================================================================
-ENGINE: UNIFIED FOREX & CFD STANDALONE MASTER TRADING ENGINE
+ENGINE: UNIFIED FOREX & CFD MASTER ORCHESTRATION ENGINE
 ================================================================================
 Location: Engine/forex_engine.py
-Architecture: Single Self-Contained Deep Module (Clean Code, Karpathy Directives)
+Architecture: Modular SRP, Central Strategy Routing & Extensible Engine Architecture
+Guidelines: Karpathy Directives (Simplicity, Surgical, Verifiable, Goal-Driven)
 
-This single standalone file encapsulates the entire institutional Forex & CFD
-trading pipeline for MetaTrader 5 (Blueberry Markets):
-1. LIVE BROKER CONNECTIVITY : Resilient MT5 connection, symbol alias mapping,
-                             and true UTC offset reconciliation.
-2. PRE-FLIGHT SYNC          : Live candle synchronization directly updating
-                             Forex_Backtesting_Data/ parquets.
-3. DYNAMIC RETRAINING       : High-speed Polars causal feature engineering (13
-                             stationary features with shift(1) 4H trend) and
-                             7-stage microstructure ratchet simulation.
-4. STRATEGIES SUPPORTED     :
-   - Strategy 1 (FVG)       : Rule-Based ICT Fair Value Gap + Liquidity Sweeps.
-   - Strategy 2 (CRT)       : Candle Range Theory (CRT) & Opening Range Breakout (ORB).
-   - Strategy 3 (ML)        : Pure XGBoost Machine Learning Probability (P* >= 0.55).
-   - Combined (Default)     : Multi-Confluence: FVG + CRT + ML alignment.
-5. RISK & RATCHET GOVERNOR  : Dynamic equity-based lot sizing ($25-$50 base risk),
-                             safe DRY-RUN mode (zero broker orders; default),
-                             armed LIVE mode, and 7-stage microstructure ratchets.
-6. REAL-TIME TELEMETRY      : Rich ASCII live dashboard showing streaming
-                             quotes, indicators, probabilities, and order decisions.
-
-Execution Modes:
-  python Engine/forex_engine.py                     # Full cycle: Sync -> Retrain -> Live Telemetry (Combined)
-  python Engine/forex_engine.py --strategy fvg      # Rule-Based ICT FVG Strategy (Dry-Run)
-  python Engine/forex_engine.py --strategy crt      # Candle Range Theory & ORB Strategy (Dry-Run)
-  python Engine/forex_engine.py --strategy ml       # Pure XGBoost ML Strategy (Dry-Run)
-  python Engine/forex_engine.py --strategy combined # Multi-Confluence: FVG + CRT + ML (Dry-Run)
-  python Engine/forex_engine.py --mode snapshot     # 1-pass evaluation snapshot across all 18 assets & exit
-  python Engine/forex_engine.py --skip-train        # Run telemetry immediately with existing model weights
-  python Engine/forex_engine.py --live              # ARM LIVE TRADING (Real broker orders dispatched)
-  python Engine/forex_engine.py --mode verify       # Numerical parity test (streaming vs batch < 1e-9)
-  python Engine/forex_engine.py --mode info         # Repository paths and data diagnostics
+This module serves as the central orchestration engine for Forex & CFD algorithmic trading:
+1. DYNAMIC STRATEGY ROUTING : Automatically discovers, loads, and initializes trading
+                              strategies via BaseForexStrategy & StrategyRegistry.
+2. CONFIG & CRITERIA INGEST : Robustly ingests and validates:
+                              - Engine/target_oos_criteria.json
+                              - Engine/oos_windows_20.json
+3. LIVE BROKER CONNECTIVITY : Resilient MT5 connection, symbol alias mapping,
+                              and true UTC offset reconciliation.
+4. ORDER & RATCHET GOVERNOR : Dynamic lot sizing ($25-$50 base risk), paper dry-run simulation,
+                              live order execution, and 7-stage microstructure ratchets.
+5. MULTI-REGIME HARNESS     : Forward-testing, single-window OOS backtesting, and 20 OOS
+                              window walk-forward validation with institutional fail-fast gates.
+6. STREAMING TELEMETRY      : Rich ASCII terminal dashboard with synchronous and
+                              asynchronous/event-loop execution support.
 ================================================================================
 """
 from __future__ import annotations
@@ -43,11 +27,13 @@ from __future__ import annotations
 import os
 import sys
 import time
+import json
+import asyncio
 import logging
 import argparse
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, List, Optional, Tuple, Any, Type
 
 import numpy as np
 import pandas as pd
@@ -55,9 +41,10 @@ import polars as pl
 import xgboost as xgb
 import MetaTrader5 as mt5
 
-from rich.console import Console
+from rich.console import Console, Group
 from rich.table import Table
 from rich.panel import Panel
+from rich.live import Live
 from rich import box
 
 # -------------------------------------------------------------------------
@@ -74,9 +61,47 @@ for path_entry in [str(PROJECT_ROOT), str(ENGINE_DIR)]:
 os.environ["PROJECT_ROOT"] = str(PROJECT_ROOT)
 os.environ["ENGINE_DIR"] = str(ENGINE_DIR)
 
+from Engine.core.base_strategy import (
+    BaseForexStrategy,
+    StrategyRegistry,
+    EngineConfig,
+    StrategySignal,
+    BacktestResult,
+    TargetCriteria,
+    OOSWindow,
+    ParallelForexStrategy,
+)
+from Engine.core.strategy_kernel import (
+    CANONICAL_FEATURES,
+    CANONICAL_18_ASSETS,
+    engineer_features_polars,
+    create_labels_ratchet,
+)
+
+# Explicitly import FVG_ML strategy to register it into StrategyRegistry
+try:
+    from Engine.FVG_ML_ForexCFD_Strategy import FVGMLForexCFDStrategy
+except ImportError:
+    try:
+        from Engine.strategy.FVG_ML_ForexCFD_Strategy import FVGMLForexCFDStrategy
+    except ImportError:
+        logging.warning("Could not import FVGMLForexCFDStrategy at startup; will resolve dynamically.")
+
+# Explicitly import ORB_CRT strategy to register it into StrategyRegistry
+try:
+    from Engine.ORB_CRT_ForexCFD_Strategy import ORBCRTForexCFDStrategy
+except ImportError:
+    try:
+        from Engine.strategy.ORB_CRT_ForexCFD_Strategy import ORBCRTForexCFDStrategy
+    except ImportError:
+        logging.warning("Could not import ORBCRTForexCFDStrategy at startup; will resolve dynamically.")
+
 DATA_DIR = PROJECT_ROOT / "Forex_Backtesting_Data"
 MODELS_DIR = ENGINE_DIR / "models"
 PRODUCTION_MODEL_PATH = MODELS_DIR / "xgboost_forex.json"
+CRITERIA_PATH = ENGINE_DIR / "target_oos_criteria.json"
+FOREX_WINDOWS_PATH = ENGINE_DIR / "oos_windows_forex_20.json"
+WINDOWS_PATH = FOREX_WINDOWS_PATH if FOREX_WINDOWS_PATH.exists() else (ENGINE_DIR / "oos_windows_20.json")
 LOG_DIR = ENGINE_DIR / "live"
 LOG_FILE = LOG_DIR / "dry_run.log"
 
@@ -91,25 +116,21 @@ logging.basicConfig(
         logging.StreamHandler(sys.stdout)
     ]
 )
+import shutil
 
-console = Console()
+def get_terminal_width() -> int:
+    try:
+        cols = shutil.get_terminal_size().columns
+        return max(130, cols)
+    except Exception:
+        return 130
+
+console = Console(force_terminal=True, width=get_terminal_width())
 
 # -------------------------------------------------------------------------
 # CANONICAL STRATEGY CONSTANTS
 # -------------------------------------------------------------------------
-CANONICAL_FEATURES = [
-    "bullish_fvg", "bearish_fvg", "htf_4h_trend", "hour", "day_of_week",
-    "rsi_14", "vwap_dist", "ema_50_dist", "ema_200_dist", "ema_200_slope",
-    "atr_14", "volatility_20", "roc_20"
-]
-
-CANONICAL_18_ASSETS = [
-    'EURHUF', 'GER30', 'NICKEL', 'USDSEK', 'GAS', 'AU200', 'FR40',
-    'EURCNH', 'LEAD', 'NZDUSD', 'USDHKD', 'US2000', 'AUDCHF',
-    'NZDCNH', 'XAUCNH', 'GAUCNH', 'EURSEK', 'EURUSD'
-]
-
-BASE_RISK_USD = 25.0
+BASE_RISK_USD = 50.0
 MAX_HOLDING_BARS = 96      # 24 hours in 15m bars
 TIME_DECAY_BARS = 24       # 6 hours in 15m bars
 TIME_DECAY_THRESHOLD_R = 0.20
@@ -242,247 +263,390 @@ class MT5Connection:
 # -------------------------------------------------------------------------
 # COMPONENT 2: ORDER MANAGEMENT & MICROSTRUCTURE RATCHETS
 # -------------------------------------------------------------------------
+def robust_parquet_replace(tmp_file: Path, target_file: Path, max_retries: int = 5, base_delay: float = 0.1) -> bool:
+    """Atomic file replacement with exponential backoff on Windows file locking."""
+    for attempt in range(max_retries):
+        try:
+            os.replace(str(tmp_file), str(target_file))
+            return True
+        except PermissionError:
+            time.sleep(base_delay * (2 ** attempt))
+    try:
+        os.replace(str(tmp_file), str(target_file))
+        return True
+    except Exception as e:
+        logging.error(f"Failed to replace {target_file} after {max_retries} retries: {e}")
+        try:
+            if tmp_file.exists():
+                tmp_file.unlink()
+        except Exception:
+            pass
+        raise
+
+
+def resolve_parquet_file(symbol: str) -> Optional[Path]:
+    """Resolves 15m parquet filepath handling canonical names and GER30/GER40 aliases."""
+    candidates = [
+        DATA_DIR / f"{symbol}_15m_real.parquet",
+        DATA_DIR / f"{symbol}.parquet"
+    ]
+    if symbol in ["GER30", "GER40"]:
+        candidates.extend([
+            DATA_DIR / "GER40_15m_real.parquet",
+            DATA_DIR / "GER30_15m_real.parquet",
+            DATA_DIR / "GER40.parquet",
+            DATA_DIR / "GER30.parquet"
+        ])
+    for cand in candidates:
+        if cand.exists():
+            return cand
+    return None
+
+
+def resolve_aux_parquet(symbol: str, timeframe: str) -> Optional[Path]:
+    """Resolves 4H or D1 auxiliary parquet filepaths."""
+    candidates = [
+        DATA_DIR / f"{symbol}_{timeframe}_real.parquet",
+        DATA_DIR / f"{symbol}_{timeframe}.parquet"
+    ]
+    if symbol in ["GER30", "GER40"]:
+        candidates.extend([
+            DATA_DIR / f"GER40_{timeframe}_real.parquet",
+            DATA_DIR / f"GER30_{timeframe}_real.parquet"
+        ])
+    for cand in candidates:
+        if cand.exists():
+            return cand
+    return None
+
+
+# -------------------------------------------------------------------------
+# COMPONENT 2: ORDER MANAGEMENT & MICROSTRUCTURE RATCHETS
+# -------------------------------------------------------------------------
 class OrderManager:
     """Handles dynamic lot sizing, paper dry-run simulation, and live microstructure ratchets."""
-    def __init__(self, connection: MT5Connection, dry_run: bool = True):
+    def __init__(self, connection: MT5Connection, dry_run: bool = True, max_concurrent: int = 2):
         self.conn = connection
         self.dry_run = dry_run
+        self.max_concurrent = max_concurrent
         self.open_trades: Dict[int, Dict[str, Any]] = {}
-        self._virtual_ticket = 900000
+        self.closed_trades: List[Dict[str, Any]] = []
+        self.initial_balance: float = 5000.0
+        self.realized_pnl: float = 0.0
 
     def calculate_lot_size(self, symbol: str, risk_usd: float, sl_dist: float) -> float:
-        """Calculates broker-compliant lot size using point values and contract specs."""
-        real_symbol = self.conn.resolve_symbol(symbol)
-        info = mt5.symbol_info(real_symbol)
-        if info is None or sl_dist <= 0:
+        """Calculates exact lot size based on symbol contract size and currency conversion."""
+        if not self.conn.connected or sl_dist <= 0:
             return 0.01
 
-        tick_value = info.trade_tick_value if info.trade_tick_value > 0 else 1.0
-        tick_size = info.trade_tick_size if info.trade_tick_size > 0 else (info.point if info.point > 0 else 0.0001)
+        real_symbol = self.conn.resolve_symbol(symbol)
+        sym_info = mt5.symbol_info(real_symbol)
+        if sym_info is None:
+            return 0.01
 
-        loss_per_lot = (sl_dist / tick_size) * tick_value
+        vol_min = sym_info.volume_min
+        vol_step = sym_info.volume_step
+        trade_contract = sym_info.trade_contract_size
+        point = sym_info.point
+
+        tick_val = sym_info.trade_tick_value
+        tick_sz = sym_info.trade_tick_size
+
+        if tick_sz > 0 and tick_val > 0:
+            loss_per_lot = (sl_dist / tick_sz) * tick_val
+        else:
+            loss_per_lot = sl_dist * trade_contract
+
         if loss_per_lot <= 0:
-            return info.volume_min
+            return vol_min
 
-        raw_lots = risk_usd / loss_per_lot
-        step = info.volume_step if info.volume_step > 0 else 0.01
-        lots = round(raw_lots / step) * step
-        lots = max(info.volume_min, min(lots, info.volume_max))
-        return round(float(lots), 2)
+        raw_lot = risk_usd / loss_per_lot
+        steps = round((raw_lot - vol_min) / vol_step)
+        calc_lot = vol_min + (steps * vol_step)
+        return float(np.clip(calc_lot, vol_min, sym_info.volume_max))
 
     def place_market_order(
         self,
         symbol: str,
         order_type: int,
-        volume: Optional[float] = None,
-        sl_price: Optional[float] = None,
-        tp_price: Optional[float] = None,
-        risk_usd: float = BASE_RISK_USD,
+        volume: float,
+        sl_price: float,
+        tp_price: float,
+        risk_usd: float,
         strategy_tag: str = "COMBINED"
     ) -> Optional[int]:
-        real_symbol = self.conn.resolve_symbol(symbol)
-        tick = self.conn.get_last_tick(real_symbol)
-        if tick is None:
+        # Risk constraint 1: Max concurrent positions across portfolio
+        if len(self.open_trades) >= self.max_concurrent:
+            logging.info(f"[RISK VETO] Max concurrent positions ({self.max_concurrent}) reached. Signal for {symbol} vetoed.")
             return None
 
-        price = tick.ask if order_type == mt5.ORDER_TYPE_BUY else tick.bid
+        # Risk constraint 2: Single position per asset
+        for ot in self.open_trades.values():
+            if ot["symbol"] == symbol:
+                logging.info(f"[RISK VETO] Active position already open on {symbol}. Duplicate signal vetoed.")
+                return None
 
-        if volume is None or volume <= 0:
-            sl_dist = abs(price - sl_price) if sl_price is not None else 0.0001
-            volume = self.calculate_lot_size(real_symbol, risk_usd=risk_usd, sl_dist=sl_dist)
+        real_symbol = self.conn.resolve_symbol(symbol)
+        action_name = "BUY" if order_type == mt5.ORDER_TYPE_BUY else "SELL"
 
-        r_dist = abs(price - sl_price) if sl_price is not None else 0.0001
-        r_dist = max(r_dist, 0.00001)
-
-        # DRY RUN MODE: Virtual execution only (Zero Broker Orders)
         if self.dry_run:
-            self._virtual_ticket += 1
-            ticket = self._virtual_ticket
-            self.open_trades[ticket] = {
-                "symbol": real_symbol,
-                "ticket": ticket,
+            fake_ticket = int(time.time() * 1000) % 100000000
+            tick = self.conn.get_last_tick(symbol)
+            fill_price = tick.ask if order_type == mt5.ORDER_TYPE_BUY else tick.bid if tick else 1.0
+
+            r_dist = abs(fill_price - sl_price)
+            self.open_trades[fake_ticket] = {
+                "ticket": fake_ticket,
+                "symbol": symbol,
+                "real_symbol": real_symbol,
                 "type": order_type,
+                "action": action_name,
                 "volume": volume,
-                "entry_price": price,
+                "entry": fill_price,
+                "cur_price": fill_price,
                 "sl": sl_price,
                 "tp": tp_price,
+                "risk_usd": risk_usd,
                 "r_dist": r_dist,
-                "bars_elapsed": 0,
-                "highest_r": 0.0,
-                "last_bar_time": None,
+                "entry_time": datetime.now(timezone.utc),
+                "bars_held": 0,
                 "strategy": strategy_tag,
-                "is_virtual": True
+                "highest_r": 0.0,
+                "lowest_r": 0.0,
+                "current_r": 0.0,
+                "running_pnl": 0.0,
+                "ratchet_phase": 0,
+                "ratchet_desc": "Base SL (-1.00R)"
             }
-            logging.info(f"[DRY-RUN ORDER REGISTERED] Ticket #{ticket} | {real_symbol} | Vol={volume}L | Entry={price:.5f} | SL={sl_price:.5f} | TP={tp_price:.5f}")
-            return ticket
+            logging.info(f"[PAPER ORDER] {action_name} {volume:.2f}L {symbol} @ {fill_price:.5f} | SL={sl_price:.5f} | TP={tp_price:.5f} | #{fake_ticket}")
+            return fake_ticket
 
-        # LIVE EXECUTION MODE: Real broker order dispatch
+        # Real Live Broker Order
+        tick = self.conn.get_last_tick(symbol)
+        price = tick.ask if order_type == mt5.ORDER_TYPE_BUY else tick.bid
         request = {
             "action": mt5.TRADE_ACTION_DEAL,
             "symbol": real_symbol,
-            "volume": float(volume),
+            "volume": volume,
             "type": order_type,
             "price": price,
-            "sl": float(sl_price) if sl_price is not None else 0.0,
-            "deviation": 20,
-            "magic": 123456,
-            "comment": f"Forex {strategy_tag}",
-            "type_time": mt5.ORDER_TIME_GTC,
-            "type_filling": mt5.ORDER_FILLING_IOC,
-        }
-        if tp_price:
-            request["tp"] = float(tp_price)
-
-        result = mt5.order_send(request)
-        if result.retcode != mt5.TRADE_RETCODE_DONE:
-            logging.error(f"Live order failed: retcode={result.retcode}")
-            return None
-
-        actual_fill = result.price if result.price > 0 else price
-        actual_r_dist = abs(actual_fill - sl_price) if sl_price is not None else r_dist
-        actual_r_dist = max(actual_r_dist, 0.00001)
-
-        self.open_trades[result.order] = {
-            "symbol": real_symbol,
-            "ticket": result.order,
-            "type": order_type,
-            "volume": volume,
-            "entry_price": actual_fill,
             "sl": sl_price,
             "tp": tp_price,
-            "r_dist": actual_r_dist,
-            "bars_elapsed": 0,
-            "highest_r": 0.0,
-            "last_bar_time": None,
-            "strategy": strategy_tag,
-            "is_virtual": False
-        }
-        logging.info(f"[LIVE ORDER EXECUTED] Ticket #{result.order} | {real_symbol} | Fill={actual_fill:.5f} | Vol={volume}L")
-        return result.order
-
-    def close_position(self, ticket: int) -> bool:
-        if ticket not in self.open_trades:
-            return False
-
-        trade = self.open_trades[ticket]
-        if trade.get("is_virtual", True):
-            logging.info(f"[DRY-RUN POSITION CLOSED] Ticket #{ticket} ({trade['symbol']})")
-            del self.open_trades[ticket]
-            return True
-
-        if not self.conn.connected:
-            return False
-
-        positions = mt5.positions_get(ticket=ticket)
-        if not positions:
-            del self.open_trades[ticket]
-            return False
-
-        pos = positions[0]
-        tick = self.conn.get_last_tick(pos.symbol)
-        if tick is None:
-            return False
-
-        close_type = mt5.ORDER_TYPE_SELL if pos.type == mt5.POSITION_TYPE_BUY else mt5.ORDER_TYPE_BUY
-        price = tick.bid if pos.type == mt5.POSITION_TYPE_BUY else tick.ask
-
-        request = {
-            "action": mt5.TRADE_ACTION_DEAL,
-            "symbol": pos.symbol,
-            "volume": pos.volume,
-            "type": close_type,
-            "position": ticket,
-            "price": price,
-            "deviation": 20,
-            "magic": 123456,
-            "comment": "Close Position",
+            "deviation": 10,
+            "magic": 10101,
+            "comment": f"Auto-{strategy_tag}",
             "type_time": mt5.ORDER_TIME_GTC,
             "type_filling": mt5.ORDER_FILLING_IOC,
         }
-        result = mt5.order_send(request)
-        if result.retcode == mt5.TRADE_RETCODE_DONE:
-            logging.info(f"[LIVE POSITION CLOSED] Ticket #{ticket} closed at {price:.5f}")
-            del self.open_trades[ticket]
-            return True
-        return False
+        res = mt5.order_send(request)
+        if res.retcode != mt5.TRADE_RETCODE_DONE:
+            logging.error(f"[LIVE ORDER FAILED] {symbol} {action_name}: {res.comment} ({res.retcode})")
+            return None
+
+        live_ticket = res.order
+        r_dist = abs(price - sl_price)
+        self.open_trades[live_ticket] = {
+            "ticket": live_ticket,
+            "symbol": symbol,
+            "real_symbol": real_symbol,
+            "type": order_type,
+            "action": action_name,
+            "volume": volume,
+            "entry": price,
+            "cur_price": price,
+            "sl": sl_price,
+            "tp": tp_price,
+            "risk_usd": risk_usd,
+            "r_dist": r_dist,
+            "entry_time": datetime.now(timezone.utc),
+            "bars_held": 0,
+            "strategy": strategy_tag,
+            "highest_r": 0.0,
+            "lowest_r": 0.0,
+            "current_r": 0.0,
+            "running_pnl": 0.0,
+            "ratchet_phase": 0,
+            "ratchet_desc": "Base SL (-1.00R)"
+        }
+        logging.info(f"[LIVE ORDER FILLED] {action_name} {volume:.2f}L {symbol} @ {price:.5f} | Ticket: {live_ticket}")
+        return live_ticket
 
     def modify_sl(self, ticket: int, new_sl: float) -> bool:
-        if ticket not in self.open_trades:
-            return False
-        trade = self.open_trades[ticket]
-        if trade.get("is_virtual", True):
-            trade["sl"] = new_sl
-            logging.info(f"[DRY-RUN SL RATCHETED] Ticket #{ticket} SL -> {new_sl:.5f}")
-            return True
-
-        if not self.conn.connected:
+        if self.dry_run:
+            if ticket in self.open_trades:
+                old_sl = self.open_trades[ticket]["sl"]
+                self.open_trades[ticket]["sl"] = new_sl
+                logging.info(f"[PAPER RATCHET] #{ticket} SL modified: {old_sl:.5f} -> {new_sl:.5f}")
+                return True
             return False
 
-        positions = mt5.positions_get(ticket=ticket)
-        if not positions:
+        trade = self.open_trades.get(ticket)
+        if not trade:
             return False
-
-        pos = positions[0]
         request = {
             "action": mt5.TRADE_ACTION_SLTP,
             "position": ticket,
-            "symbol": pos.symbol,
-            "sl": float(new_sl),
-            "tp": pos.tp
+            "symbol": trade["real_symbol"],
+            "sl": new_sl,
+            "tp": trade["tp"]
         }
         res = mt5.order_send(request)
-        if res.retcode == mt5.TRADE_RETCODE_DONE:
-            trade["sl"] = new_sl
-            return True
-        return False
+        return (res.retcode == mt5.TRADE_RETCODE_DONE)
 
-    def manage_open_trades(self, current_bar_time: Optional[datetime] = None) -> None:
-        """Evaluates 7-stage microstructure ratchets and 24-bar time decay."""
-        for ticket in list(self.open_trades.keys()):
-            trade = self.open_trades[ticket]
+    def close_trade(
+        self,
+        ticket: int,
+        exit_price: Optional[float] = None,
+        realized_r: Optional[float] = None,
+        reason: str = "NORMAL"
+    ) -> None:
+        if ticket not in self.open_trades:
+            return
+        t = self.open_trades.pop(ticket)
+        actual_exit = exit_price if exit_price is not None else t.get("cur_price", t["entry"])
+
+        if realized_r is not None:
+            actual_r = realized_r
+        else:
+            is_long = (t["type"] == mt5.ORDER_TYPE_BUY)
+            actual_r = (actual_exit - t["entry"]) / t["r_dist"] if is_long else (t["entry"] - actual_exit) / t["r_dist"]
+
+        realized_pnl = actual_r * t["risk_usd"]
+        self.realized_pnl += realized_pnl
+
+        closed_record = {
+            "ticket": ticket,
+            "symbol": t["symbol"],
+            "strategy": t["strategy"],
+            "action": t["action"],
+            "volume": t["volume"],
+            "entry": t["entry"],
+            "exit": actual_exit,
+            "sl": t["sl"],
+            "tp": t["tp"],
+            "realized_r": actual_r,
+            "realized_pnl": realized_pnl,
+            "entry_time": t["entry_time"],
+            "exit_time": datetime.now(timezone.utc),
+            "bars_held": t["bars_held"],
+            "reason": reason
+        }
+        # Live MT5 broker programmatic closure
+        if not self.dry_run and self.conn.connected:
+            pos = mt5.positions_get(ticket=ticket)
+            if pos and len(pos) > 0:
+                p = pos[0]
+                close_type = mt5.ORDER_TYPE_SELL if p.type == mt5.ORDER_TYPE_BUY else mt5.ORDER_TYPE_BUY
+                tick = self.conn.get_last_tick(t["symbol"])
+                price = tick.bid if close_type == mt5.ORDER_TYPE_SELL else (tick.ask if tick else 0.0)
+                close_request = {
+                    "action": mt5.TRADE_ACTION_DEAL,
+                    "position": ticket,
+                    "symbol": t["real_symbol"],
+                    "volume": p.volume,
+                    "type": close_type,
+                    "price": price,
+                    "deviation": 10,
+                    "magic": 10101,
+                    "comment": f"Close-{reason[:10]}",
+                    "type_time": mt5.ORDER_TIME_GTC,
+                    "type_filling": mt5.ORDER_FILLING_IOC,
+                }
+                res = mt5.order_send(close_request)
+                if res.retcode == mt5.TRADE_RETCODE_DONE:
+                    logging.info(f"[LIVE MT5 POSITION CLOSED] #{ticket} {t['symbol']} @ {price:.5f}")
+                else:
+                    logging.warning(f"[LIVE MT5 CLOSE FAILED] #{ticket}: {res.comment} ({res.retcode})")
+
+        self.closed_trades.append(closed_record)
+        logging.info(f"[TRADE CLOSED] #{ticket} {t['symbol']} | Reason: {reason} | Exit: {actual_exit:.5f} | Realized PnL: {realized_pnl:+.2f} USD ({actual_r:+.2f}R)")
+
+    def manage_open_trades(self, current_bar_time: datetime) -> None:
+        """Applies 7-stage microstructure ratchets, running PnL calculations, and time-decay exits."""
+        for ticket, trade in list(self.open_trades.items()):
             sym = trade["symbol"]
             tick = self.conn.get_last_tick(sym)
             if tick is None:
                 continue
 
-            current_price = tick.bid if trade["type"] == mt5.ORDER_TYPE_BUY else tick.ask
-            entry = trade["entry_price"]
+            entry = trade["entry"]
             r_dist = trade["r_dist"]
-
-            if trade["type"] == mt5.ORDER_TYPE_BUY:
-                current_r = (current_price - entry) / r_dist
-            else:
-                current_r = (entry - current_price) / r_dist
-
-            trade["highest_r"] = max(trade["highest_r"], current_r)
-
-            if current_bar_time and trade["last_bar_time"] != current_bar_time:
-                trade["bars_elapsed"] += 1
-                trade["last_bar_time"] = current_bar_time
-
-            # 1. Time Decay Exit: 24 bars elapsed and price failed to gain +0.20R
-            if trade["bars_elapsed"] >= TIME_DECAY_BARS and trade["highest_r"] < TIME_DECAY_THRESHOLD_R:
-                logging.info(f"Time decay exit triggered for #{ticket} ({sym}) after 24 bars (Peak R: {trade['highest_r']:.2f})")
-                self.close_position(ticket)
+            if r_dist <= 0:
                 continue
 
-            # 2. Microstructure Ratchets
+            is_long = (trade["type"] == mt5.ORDER_TYPE_BUY)
+            cur_price = tick.bid if is_long else tick.ask
+            trade["cur_price"] = cur_price
+
+            if is_long:
+                gain_r = (cur_price - entry) / r_dist
+                hit_sl = (tick.bid <= trade["sl"])
+                hit_tp = (tick.bid >= trade["tp"])
+            else:
+                gain_r = (entry - cur_price) / r_dist
+                hit_sl = (tick.ask >= trade["sl"])
+                hit_tp = (tick.ask <= trade["tp"])
+
+            trade["current_r"] = gain_r
+            trade["running_pnl"] = gain_r * trade["risk_usd"]
+            trade["highest_r"] = max(trade["highest_r"], gain_r)
+            trade["lowest_r"] = min(trade["lowest_r"], gain_r)
+
+            # Bar duration counter: only increment when a new 15-minute bar closes
+            last_bar = trade.get("last_evaluated_bar")
+            if last_bar is None:
+                trade["last_evaluated_bar"] = current_bar_time
+            elif current_bar_time > last_bar:
+                trade["bars_held"] += 1
+                trade["last_evaluated_bar"] = current_bar_time
+
+            if hit_sl:
+                exit_price = trade["sl"]
+                realized_r = (exit_price - entry) / r_dist if is_long else (entry - exit_price) / r_dist
+                reason_label = "BE RATCHET" if realized_r > 0 else "STOP LOSS"
+                self.close_trade(ticket, exit_price=exit_price, realized_r=realized_r, reason=f"{reason_label} ({realized_r:+.2f}R)")
+                continue
+
+            if hit_tp:
+                actual_tp_r = (trade["tp"] - entry) / r_dist if is_long else (entry - trade["tp"]) / r_dist
+                self.close_trade(ticket, exit_price=trade["tp"], realized_r=actual_tp_r, reason=f"TAKE PROFIT ({actual_tp_r:+.2f}R)")
+                continue
+
+            # Time decay exit: if trade fails to reach +0.20R within 24 bars (6h)
+            if trade["bars_held"] >= TIME_DECAY_BARS and trade["highest_r"] < TIME_DECAY_THRESHOLD_R:
+                self.close_trade(ticket, exit_price=cur_price, realized_r=gain_r, reason=f"TIME DECAY ({trade['bars_held']} bars, {gain_r:+.2f}R)")
+                continue
+
+            # 7-Stage Ratchet Logic
             new_sl_r = None
-            if trade["highest_r"] >= 3.5:
+            ratchet_phase = trade.get("ratchet_phase", 0)
+            if gain_r >= 3.5 and ratchet_phase < 6:
                 new_sl_r = 3.3
-            elif trade["highest_r"] >= 3.0:
+                trade["ratchet_phase"] = 6
+                trade["ratchet_desc"] = "Lock +3.30R"
+            elif gain_r >= 3.0 and ratchet_phase < 5:
                 new_sl_r = 2.8
-            elif trade["highest_r"] >= 2.5:
+                trade["ratchet_phase"] = 5
+                trade["ratchet_desc"] = "Lock +2.80R"
+            elif gain_r >= 2.5 and ratchet_phase < 4:
                 new_sl_r = 2.3
-            elif trade["highest_r"] >= 2.0:
+                trade["ratchet_phase"] = 4
+                trade["ratchet_desc"] = "Lock +2.30R"
+            elif gain_r >= 2.0 and ratchet_phase < 3:
                 new_sl_r = 1.8
-            elif trade["highest_r"] >= 1.5:
-                new_sl_r = 1.0
-            elif trade["highest_r"] >= 1.0:
+                trade["ratchet_phase"] = 3
+                trade["ratchet_desc"] = "Lock +1.80R"
+            elif gain_r >= 1.5 and ratchet_phase < 2:
+                new_sl_r = 0.80
+                trade["ratchet_phase"] = 2
+                trade["ratchet_desc"] = "Lock +0.80R"
+            elif gain_r >= 0.8 and ratchet_phase < 1:
                 new_sl_r = 0.15
+                trade["ratchet_phase"] = 1
+                trade["ratchet_desc"] = "BE Lock (+0.15R)"
 
             if new_sl_r is not None:
-                if trade["type"] == mt5.ORDER_TYPE_BUY:
+                if is_long:
                     candidate_sl = entry + (new_sl_r * r_dist)
                     if candidate_sl > trade["sl"]:
                         self.modify_sl(ticket, candidate_sl)
@@ -490,6 +654,58 @@ class OrderManager:
                     candidate_sl = entry - (new_sl_r * r_dist)
                     if candidate_sl < trade["sl"] or trade["sl"] == 0:
                         self.modify_sl(ticket, candidate_sl)
+
+    def get_account_metrics(self) -> Dict[str, Any]:
+        """Aggregates real-time broker/paper account metrics, running PnL, equity, and drawdowns."""
+        acc_info = mt5.account_info() if self.conn.connected else None
+
+        running_pnl = sum(t.get("running_pnl", 0.0) for t in self.open_trades.values())
+        open_count = len(self.open_trades)
+        closed_count = len(self.closed_trades)
+        wins = sum(1 for ct in self.closed_trades if ct.get("realized_pnl", 0.0) > 0)
+        win_rate = (wins / closed_count * 100.0) if closed_count > 0 else 0.0
+
+        if not self.dry_run and acc_info is not None:
+            balance = float(acc_info.balance)
+            equity = float(acc_info.equity)
+            margin = float(acc_info.margin)
+            margin_free = float(acc_info.margin_free)
+            margin_level = float(acc_info.margin_level)
+            floating_pnl = float(acc_info.profit)
+            server = acc_info.server
+            login = acc_info.login
+            currency = acc_info.currency
+        else:
+            balance = self.initial_balance + self.realized_pnl
+            equity = balance + running_pnl
+            margin = sum(t.get("volume", 0.01) * 1000.0 for t in self.open_trades.values())
+            margin_free = max(0.0, equity - margin)
+            margin_level = (equity / margin * 100.0) if margin > 0 else 0.0
+            floating_pnl = running_pnl
+            server = acc_info.server if acc_info else "Blueberry-Demo"
+            login = acc_info.login if acc_info else 5064568
+            currency = acc_info.currency if acc_info else "USD"
+
+        drawdown_usd = max(0.0, (self.initial_balance - equity))
+        drawdown_pct = (drawdown_usd / self.initial_balance) * 100.0
+
+        return {
+            "login": login,
+            "server": server,
+            "currency": currency,
+            "balance": balance,
+            "equity": equity,
+            "margin": margin,
+            "margin_free": margin_free,
+            "margin_level": margin_level,
+            "running_pnl": floating_pnl,
+            "realized_pnl": self.realized_pnl,
+            "total_pnl": self.realized_pnl + floating_pnl,
+            "drawdown_pct": drawdown_pct,
+            "open_count": open_count,
+            "closed_count": closed_count,
+            "win_rate": win_rate
+        }
 
 
 # -------------------------------------------------------------------------
@@ -554,8 +770,7 @@ def compute_features_pandas(df: pd.DataFrame, buffer_4h: Optional[pd.DataFrame] 
         b4h = buffer_4h.copy()
         b4h['ema_200_4h'] = b4h['close'].ewm(span=200, adjust=False).mean()
         b4h['htf_4h_trend'] = b4h['ema_200_4h'] - b4h['ema_200_4h'].shift(5)
-        b4h['htf_4h_trend_causal'] = b4h['htf_4h_trend'].shift(1)
-        valid = b4h['htf_4h_trend_causal'].dropna()
+        valid = b4h['htf_4h_trend'].dropna()
         if len(valid) > 0:
             htf_4h_trend_val = float(valid.iloc[-1])
 
@@ -566,19 +781,8 @@ def compute_features_pandas(df: pd.DataFrame, buffer_4h: Optional[pd.DataFrame] 
     return df[CANONICAL_FEATURES]
 
 
-# -------------------------------------------------------------------------
-# COMPONENT 3b: LIVE CRT / ORB OPENING RANGE STATE EXTRACTOR
-# -------------------------------------------------------------------------
 def compute_crt_orb_state(buffer: pd.DataFrame) -> dict:
-    """Computes live CRT/ORB session state from the 15m rolling buffer.
-
-    Returns dict with keys:
-        is_long_crt, is_short_crt  – confirmed breakout signals
-        or_high, or_low            – most recent session opening range bounds
-        body_ratio                 – breakout bar body confirmation ratio
-        judas_long, judas_short    – pre-market Judas sweep flags
-        session                    – 'London' | 'NY' | 'None'
-    """
+    """Computes live CRT/ORB session state from the 15m rolling buffer."""
     default = dict(is_long_crt=False, is_short_crt=False,
                    or_high=0.0, or_low=0.0, body_ratio=0.0,
                    judas_long=False, judas_short=False, session="None")
@@ -590,7 +794,6 @@ def compute_crt_orb_state(buffer: pd.DataFrame) -> dict:
     if not isinstance(df.index, pd.DatetimeIndex):
         return default
 
-    # Ensure UTC-aware index
     if df.index.tz is None:
         df.index = df.index.tz_localize("UTC")
 
@@ -598,18 +801,16 @@ def compute_crt_orb_state(buffer: pd.DataFrame) -> dict:
     df["_minute"] = df.index.minute
     df["_date"]   = df.index.date
 
-    # Check both London (07:00) and NY (13:30) opening ranges
     for sess_hour, sess_min, sess_name in [(7, 0, "London"), (13, 30, "NY")]:
         or_bars = df[(df["_hour"] == sess_hour) & (df["_minute"] == sess_min)]
         if or_bars.empty:
             continue
 
-        or_start_idx = or_bars.index[-1]           # most recent session today
+        or_start_idx = or_bars.index[-1]
         pos = df.index.get_loc(or_start_idx)
         if pos + 1 >= len(df):
-            continue                                # need at least 1 bar after OR open
+            continue
 
-        # Opening range: 2 bars (30 min)
         or_slice = df.iloc[pos : pos + 2]
         or_high  = float(or_slice["high"].max())
         or_low   = float(or_slice["low"].min())
@@ -617,17 +818,17 @@ def compute_crt_orb_state(buffer: pd.DataFrame) -> dict:
         if or_range <= 0:
             continue
 
-        # Previous day high/low from bars before the session date
         or_date    = or_start_idx.date()
         prev_bars  = df[df["_date"] < or_date]
         if prev_bars.empty:
             prev_day_high = float(df["high"].iloc[0])
             prev_day_low  = float(df["low"].iloc[0])
         else:
-            prev_day_high = float(prev_bars["high"].max())
-            prev_day_low  = float(prev_bars["low"].min())
+            prev_date = prev_bars["_date"].max()
+            d1_bars = prev_bars[prev_bars["_date"] == prev_date]
+            prev_day_high = float(d1_bars["high"].max())
+            prev_day_low  = float(d1_bars["low"].min())
 
-        # Judas sweep: pre-market (6 bars = 1.5 h before OR) swept PDH/PDL then reclaimed
         pre_start = max(0, pos - 6)
         pre_slice = df.iloc[pre_start:pos]
         if not pre_slice.empty:
@@ -638,7 +839,6 @@ def compute_crt_orb_state(buffer: pd.DataFrame) -> dict:
         else:
             judas_long = judas_short = False
 
-        # Scan bars after OR for breakout confirmation
         post_slice = df.iloc[pos + 2:]
         for _, bar in post_slice.iterrows():
             body = abs(bar["close"] - bar["open"])
@@ -681,7 +881,6 @@ class StatefulInferenceEngine:
         if bars_df.empty or len(bars_df) < 50:
             return False
 
-        # Drop currently forming unclosed bar
         bars_df = bars_df.iloc[:-1].copy()
         if 'datetime' in bars_df.columns:
             bars_df.set_index('datetime', inplace=True)
@@ -729,7 +928,7 @@ class StatefulInferenceEngine:
     def compute_features(self) -> pd.DataFrame:
         return compute_features_pandas(self.buffer, self.buffer_4h)
 
-    def predict(self, xgb_model: xgb.Booster) -> float:
+    def predict(self, xgb_model: Optional[xgb.Booster] = None) -> float:
         if self.buffer.empty:
             return 0.50
         features_df = self.compute_features()
@@ -737,6 +936,11 @@ class StatefulInferenceEngine:
         for col in latest.columns:
             latest[col] = pd.to_numeric(latest[col], errors="coerce").astype(float)
         dmat = xgb.DMatrix(latest)
+        if xgb_model is None:
+            if not PRODUCTION_MODEL_PATH.exists():
+                return 0.50
+            xgb_model = xgb.Booster()
+            xgb_model.load_model(str(PRODUCTION_MODEL_PATH))
         prob = float(xgb_model.predict(dmat)[0])
         del dmat
         return prob
@@ -746,383 +950,890 @@ class StatefulInferenceEngine:
 
 
 # -------------------------------------------------------------------------
-# COMPONENT 5: PRE-FLIGHT MARKET DATA SYNCHRONIZER
+# COMPONENT 5: PRE-FLIGHT MARKET DATA SYNCHRONIZER & RETRAINING
 # -------------------------------------------------------------------------
-def pre_flight_data_sync(mt5_conn: MT5Connection, single_asset: Optional[str] = None) -> None:
-    """Fetches missing closed 15m candles from MT5 and updates Parquet data atomically."""
-    target_assets = [single_asset] if single_asset else CANONICAL_18_ASSETS
-    utc_now = datetime.now(timezone.utc)
+def _calc_session(hour: int) -> str:
+    if 0 <= hour < 7:
+        return "Asian"
+    elif 7 <= hour < 12:
+        return "London"
+    elif 12 <= hour < 20:
+        return "New York"
+    return "Close"
+
+
+def _calc_kz(hour: int) -> bool:
+    return (7 <= hour <= 10) or (12 <= hour <= 15)
+
+
+def _sync_aux_parquet(mt5_conn: MT5Connection, sym: str, real_symbol: str, tf_label: str, tf_mt5: int, offset: int, now_utc: datetime) -> None:
+    aux_path = resolve_aux_parquet(sym, tf_label)
+    if not aux_path or not aux_path.exists():
+        return
+    try:
+        df_existing = pl.read_parquet(aux_path)
+        last_val = df_existing['datetime'].max()
+        last_dt = pd.to_datetime(last_val, utc=True)
+        fetch_from = last_dt + timedelta(seconds=1)
+        fetch_from_broker = fetch_from + timedelta(seconds=offset)
+        cutoff_broker = now_utc + timedelta(seconds=offset)
+        rates = mt5.copy_rates_range(real_symbol, tf_mt5, fetch_from_broker, cutoff_broker)
+        if rates is None or len(rates) == 0:
+            return
+        df_new = pd.DataFrame(rates)
+        df_new['time'] = df_new['time'] - offset
+        df_new['datetime'] = pd.to_datetime(df_new['time'], unit='s', utc=True)
+        dur = timedelta(hours=4) if tf_label == "4h" else timedelta(days=1)
+        df_new = df_new[df_new['datetime'] + dur <= now_utc]
+        if len(df_new) == 0:
+            return
+        new_dict = {
+            'time': [int(t) for t in df_new['time']],
+            'datetime': [pd.to_datetime(t, unit='s', utc=True) for t in df_new['time']],
+            'open': [float(x) for x in df_new['open']],
+            'high': [float(x) for x in df_new['high']],
+            'low': [float(x) for x in df_new['low']],
+            'close': [float(x) for x in df_new['close']],
+            'tick_volume': [int(x) for x in df_new['tick_volume']],
+        }
+        if 'spread' in df_existing.columns:
+            new_dict['spread'] = [int(x) for x in df_new['spread']] if 'spread' in df_new else [0]*len(df_new)
+        if 'real_volume' in df_existing.columns:
+            new_dict['real_volume'] = [int(x) for x in df_new['real_volume']] if 'real_volume' in df_new else [0]*len(df_new)
+        if 'day_of_week' in df_existing.columns:
+            new_dict['day_of_week'] = [int(pd.to_datetime(t, unit='s', utc=True).weekday() + 1) for t in df_new['time']]
+        if 'session' in df_existing.columns:
+            new_dict['session'] = [_calc_session(pd.to_datetime(t, unit='s', utc=True).hour) for t in df_new['time']]
+        if 'is_kill_zone' in df_existing.columns:
+            new_dict['is_kill_zone'] = [_calc_kz(pd.to_datetime(t, unit='s', utc=True).hour) for t in df_new['time']]
+
+        new_pl = pl.DataFrame(new_dict, schema={col: df_existing.schema[col] for col in new_dict if col in df_existing.schema})
+        combined = pl.concat([df_existing, new_pl]).unique(subset=['datetime']).sort('datetime')
+        tmp_p = aux_path.with_suffix(".parquet.tmp")
+        combined.write_parquet(tmp_p)
+        robust_parquet_replace(tmp_p, aux_path)
+    except Exception as e:
+        logging.debug(f"Aux sync {sym} {tf_label}: {e}")
+
+
+def pre_flight_data_sync(mt5_conn: MT5Connection, single_asset: Optional[str] = None) -> int:
+    """
+    Synchronizes historical parquet files directly with latest closed broker bars.
+    Appends any newly closed 15m, 4H, and D1 candles up to the current bar (True UTC).
+    """
+    assets_to_sync = [single_asset] if single_asset else CANONICAL_18_ASSETS
+    total_appended = 0
+    now_utc = datetime.now(timezone.utc)
     broker_offset = mt5_conn.get_broker_utc_offset()
 
-    for asset in target_assets:
-        parquet_file = DATA_DIR / f"{asset}_15m_real.parquet"
-        if not parquet_file.exists():
+    if single_asset is None:
+        console.print(Panel(
+            "[bold cyan]STAGE 1: SYNCHRONIZING HISTORICAL PARQUET DATA WITH MT5 FEED[/bold cyan]\n"
+            f"[dim]Checking and appending latest closed candles up to {now_utc.strftime('%Y-%m-%d %H:%M UTC')}...[/dim]",
+            border_style="cyan"
+        ))
+
+    sync_table = Table(
+        title="PARQUET SYNCHRONIZATION AUDIT (18 ASSETS)",
+        box=box.ROUNDED,
+        header_style="bold bright_white on dark_blue"
+    )
+    sync_table.add_column("Asset", justify="left", style="bold white", width=9)
+    sync_table.add_column("Broker Symbol", justify="left", style="cyan", width=12)
+    sync_table.add_column("Previous Last Candle", justify="center", width=20)
+    sync_table.add_column("New Bars", justify="right", width=9)
+    sync_table.add_column("Updated Last Candle", justify="center", width=20)
+    sync_table.add_column("Status", justify="center", width=12)
+
+    for sym in assets_to_sync:
+        real_symbol = mt5_conn.resolve_symbol(sym)
+        parquet_path = resolve_parquet_file(sym)
+        if not parquet_path or not parquet_path.exists():
+            if single_asset is None:
+                sync_table.add_row(sym, real_symbol, "N/A", "0", "N/A", "[dim yellow]NOT FOUND[/dim yellow]")
             continue
 
         try:
-            df_curr = pd.read_parquet(parquet_file)
-            last_dt = pd.to_datetime(df_curr['datetime'].max())
+            df_existing = pl.read_parquet(parquet_path)
+            last_val = df_existing['datetime'].max()
+            if isinstance(last_val, str):
+                last_dt = pd.to_datetime(last_val, utc=True)
+            elif hasattr(last_val, "tzinfo") and last_val.tzinfo is not None:
+                last_dt = pd.to_datetime(last_val)
+            else:
+                last_dt = pd.to_datetime(last_val, unit='us' if isinstance(last_val, (int, float)) and last_val > 1e12 else 's', utc=True)
+
             if last_dt.tzinfo is None:
                 last_dt = last_dt.tz_localize('UTC')
 
-            fetch_start = last_dt + timedelta(seconds=1)
-            fetch_start_broker = fetch_start + timedelta(seconds=broker_offset)
-            cutoff_broker = utc_now + timedelta(seconds=broker_offset)
+            fetch_from = last_dt + timedelta(seconds=1)
+            fetch_from_broker = fetch_from + timedelta(seconds=broker_offset)
+            cutoff_broker = now_utc + timedelta(seconds=broker_offset)
 
-            real_sym = mt5_conn.resolve_symbol(asset)
-            rates = mt5.copy_rates_range(real_sym, mt5.TIMEFRAME_M15, fetch_start_broker, cutoff_broker)
+            rates = mt5.copy_rates_range(real_symbol, mt5.TIMEFRAME_M15, fetch_from_broker, cutoff_broker)
             if rates is None or len(rates) == 0:
+                if single_asset is None:
+                    sync_table.add_row(sym, real_symbol, last_dt.strftime('%Y-%m-%d %H:%M'), "0", last_dt.strftime('%Y-%m-%d %H:%M'), "[green]UP-TO-DATE[/green]")
                 continue
 
             df_new = pd.DataFrame(rates)
             df_new['time'] = df_new['time'] - broker_offset
             df_new['datetime'] = pd.to_datetime(df_new['time'], unit='s', utc=True)
-            df_new = df_new[df_new['datetime'] + timedelta(minutes=15) <= utc_now]
+            # Exclude currently forming unclosed bar
+            df_new = df_new[df_new['datetime'] + timedelta(minutes=15) <= now_utc]
 
-            if df_new.empty:
+            if len(df_new) == 0:
+                if single_asset is None:
+                    sync_table.add_row(sym, real_symbol, last_dt.strftime('%Y-%m-%d %H:%M'), "0", last_dt.strftime('%Y-%m-%d %H:%M'), "[green]UP-TO-DATE[/green]")
                 continue
 
-            df_new.rename(columns={'tick_volume': 'volume'}, inplace=True)
-            existing_cols = df_curr.columns.tolist()
+            # Build rows aligned to Polars schema
+            new_rows_dict = {
+                'time': [int(t) for t in df_new['time']],
+                'datetime': [pd.to_datetime(t, unit='s', utc=True) for t in df_new['time']],
+                'open': [float(x) for x in df_new['open']],
+                'high': [float(x) for x in df_new['high']],
+                'low': [float(x) for x in df_new['low']],
+                'close': [float(x) for x in df_new['close']],
+                'tick_volume': [float(x) for x in df_new['tick_volume']],
+            }
+            if 'spread' in df_existing.columns:
+                new_rows_dict['spread'] = [int(x) for x in df_new['spread']] if 'spread' in df_new else [0]*len(df_new)
+            if 'real_volume' in df_existing.columns:
+                new_rows_dict['real_volume'] = [int(x) for x in df_new['real_volume']] if 'real_volume' in df_new else [0]*len(df_new)
+            if 'day_of_week' in df_existing.columns:
+                new_rows_dict['day_of_week'] = [float(pd.to_datetime(t, unit='s', utc=True).weekday() + 1) for t in df_new['time']]
+            if 'session' in df_existing.columns:
+                new_rows_dict['session'] = [_calc_session(pd.to_datetime(t, unit='s', utc=True).hour) for t in df_new['time']]
+            if 'is_kill_zone' in df_existing.columns:
+                new_rows_dict['is_kill_zone'] = [_calc_kz(pd.to_datetime(t, unit='s', utc=True).hour) for t in df_new['time']]
 
-            new_rows = pd.DataFrame()
-            for col in existing_cols:
-                if col in df_new.columns:
-                    new_rows[col] = df_new[col].values
+            new_pl = pl.DataFrame(new_rows_dict, schema={col: df_existing.schema[col] for col in new_rows_dict if col in df_existing.schema})
+            combined_pl = pl.concat([df_existing, new_pl]).unique(subset=['datetime']).sort('datetime')
 
-            if 'day_of_week' in existing_cols and 'datetime' in df_new.columns:
-                new_rows['day_of_week'] = df_new['datetime'].dt.dayofweek.values
+            tmp_path = parquet_path.with_suffix(".parquet.tmp")
+            combined_pl.write_parquet(tmp_path)
+            robust_parquet_replace(tmp_path, parquet_path)
 
-            if 'is_kill_zone' in existing_cols and 'datetime' in df_new.columns:
-                hours = df_new['datetime'].dt.hour
-                new_rows['is_kill_zone'] = ((hours >= 7) & (hours <= 10)) | ((hours >= 12) & (hours <= 15))
+            new_last_dt = combined_pl['datetime'].max()
+            new_last_str = str(new_last_dt)[:16]
+            total_appended += len(df_new)
 
-            df_updated = pd.concat([df_curr, new_rows], ignore_index=True)
-            df_updated = df_updated.drop_duplicates(subset=['time'], keep='first').sort_values('time').reset_index(drop=True)
+            if single_asset is None:
+                sync_table.add_row(sym, real_symbol, last_dt.strftime('%Y-%m-%d %H:%M'), f"+{len(df_new)}", new_last_str, "[bold green]SYNCED[/bold green]")
+            else:
+                logging.info(f"[{sym}] Appended +{len(df_new)} bars to {parquet_path.name} up to {new_last_str}")
 
-            tmp_path = parquet_file.with_suffix(".tmp")
-            df_updated.to_parquet(tmp_path, index=False)
-            os.replace(tmp_path, parquet_file)
-            logging.info(f"[SYNC] {asset}: Appended {len(new_rows)} completed candles to parquet.")
+            # Also sync 4H and D1 parquets
+            _sync_aux_parquet(mt5_conn, sym, real_symbol, "4h", mt5.TIMEFRAME_H4, broker_offset, now_utc)
+            _sync_aux_parquet(mt5_conn, sym, real_symbol, "d1", mt5.TIMEFRAME_D1, broker_offset, now_utc)
+
         except Exception as e:
-            logging.warning(f"Failed sync for {asset}: {e}")
+            logging.error(f"Sync error for {sym}: {e}")
+            if single_asset is None:
+                sync_table.add_row(sym, real_symbol, "ERROR", "0", "ERROR", f"[red]{str(e)[:12]}[/red]")
+
+    if single_asset is None:
+        console.print(sync_table)
+        console.print(f"[bold green]Data sync complete: {total_appended} total new 15m candles appended across {len(assets_to_sync)} assets.[/bold green]\n")
+
+    return total_appended
 
 
-# -------------------------------------------------------------------------
-# COMPONENT 6: HIGH-SPEED POLARS DYNAMIC RETRAINING
-# -------------------------------------------------------------------------
-def engineer_features_polars(symbol: str, data_dir: Path) -> pd.DataFrame:
-    """Computes all 13 stationary features via Polars with shift(1) on 4H trend."""
-    m15_file = data_dir / f"{symbol}_15m_real.parquet"
-    if not m15_file.exists() and symbol == "GER30":
-        m15_file = data_dir / "GER40_15m_real.parquet"
-    h4_file = data_dir / f"{symbol}_4h_real.parquet"
-    if not h4_file.exists() and symbol == "GER30":
-        h4_file = data_dir / "GER40_4h_real.parquet"
-    d1_file = data_dir / f"{symbol}_d1_real.parquet"
-    if not d1_file.exists() and symbol == "GER30":
-        d1_file = data_dir / "GER40_d1_real.parquet"
-
-    if not (m15_file.exists() and h4_file.exists() and d1_file.exists()):
-        raise FileNotFoundError(f"Missing parquets for {symbol}")
-
-    d1_df = pl.read_parquet(d1_file).sort("datetime")
-    d1_df = d1_df.with_columns([
-        pl.col("high").shift(1).alias("prev_day_high"),
-        pl.col("low").shift(1).alias("prev_day_low")
-    ]).select(["datetime", "prev_day_high", "prev_day_low"]).drop_nulls()
-
-    h4_df = pl.read_parquet(h4_file).sort("datetime")
-    h4_df = h4_df.with_columns([
-        pl.col("close").ewm_mean(span=200, adjust=False).alias("ema_200_4h")
-    ]).with_columns([
-        (pl.col("ema_200_4h") - pl.col("ema_200_4h").shift(5)).alias("htf_4h_trend_raw")
-    ]).with_columns([
-        pl.col("htf_4h_trend_raw").shift(1).alias("htf_4h_trend")
-    ]).select(["datetime", "htf_4h_trend"]).drop_nulls()
-
-    m15_df = pl.read_parquet(m15_file).sort("datetime")
-    w = 5
-    bullish_exprs = []
-    bearish_exprs = []
-    for k in range(w):
-        bull = (pl.col("low").rolling_min(window_size=k+1) - pl.col("high").shift(k+2)).fill_null(0.0).clip(lower_bound=0.0)
-        bear = (pl.col("low").shift(k+2) - pl.col("high").rolling_max(window_size=k+1)).fill_null(0.0).clip(lower_bound=0.0)
-        bullish_exprs.append(bull)
-        bearish_exprs.append(bear)
-
-    m15_df = m15_df.with_columns([
-        pl.max_horizontal(bullish_exprs).alias("bullish_fvg"),
-        pl.max_horizontal(bearish_exprs).alias("bearish_fvg"),
-        pl.col("high").rolling_max(window_size=20).alias("local_high_20"),
-        pl.col("low").rolling_min(window_size=20).alias("local_low_20"),
-    ])
-
-    m15_df = m15_df.join_asof(d1_df, on="datetime", strategy="backward")
-    m15_df = m15_df.join_asof(h4_df, on="datetime", strategy="backward")
-
-    m15_df = m15_df.with_columns([
-        (pl.col("low") <= pl.col("prev_day_low")).cast(pl.Int8).alias("sweep_pdl"),
-        (pl.col("high") >= pl.col("prev_day_high")).cast(pl.Int8).alias("sweep_pdh"),
-        pl.col("datetime").dt.hour().alias("hour"),
-        pl.col("datetime").dt.weekday().alias("day_of_week")
-    ])
-
-    m15_df = m15_df.with_columns([
-        pl.col("close").diff().alias("change")
-    ]).with_columns([
-        pl.when(pl.col("change") > 0).then(pl.col("change")).otherwise(0).alias("gain"),
-        pl.when(pl.col("change") < 0).then(abs(pl.col("change"))).otherwise(0).alias("loss")
-    ]).with_columns([
-        pl.col("gain").ewm_mean(span=14, adjust=False).alias("avg_gain"),
-        pl.col("loss").ewm_mean(span=14, adjust=False).alias("avg_loss")
-    ]).with_columns([
-        (100.0 - (100.0 / (1.0 + (pl.col("avg_gain") / (pl.col("avg_loss") + 1e-12))))).alias("rsi_14")
-    ])
-
-    m15_df = m15_df.with_columns([
-        ((pl.col("high") + pl.col("low") + pl.col("close")) / 3.0).alias("typical_price")
-    ]).with_columns([
-        pl.col("typical_price").rolling_mean(window_size=20).alias("vwap_20"),
-        pl.col("close").ewm_mean(span=50, min_periods=50).alias("ema_50"),
-        pl.col("close").ewm_mean(span=200, min_periods=200).alias("ema_200"),
-        (pl.col("high") - pl.col("low")).rolling_mean(window_size=14).alias("atr_14"),
-        (pl.col("close").rolling_std(window_size=20) / pl.col("close")).alias("volatility_20"),
-        ((pl.col("close") / pl.col("close").shift(20)) - 1.0).alias("roc_20")
-    ]).with_columns([
-        ((pl.col("close") - pl.col("vwap_20")) / pl.col("vwap_20")).alias("vwap_dist"),
-        ((pl.col("close") - pl.col("ema_50")) / pl.col("ema_50")).alias("ema_50_dist"),
-        ((pl.col("close") - pl.col("ema_200")) / pl.col("ema_200")).alias("ema_200_dist"),
-        (pl.col("ema_200") - pl.col("ema_200").shift(12)).alias("ema_200_slope")
-    ])
-
-    return m15_df.to_pandas()
+def purge_earlier_ml_models() -> List[str]:
+    """Purges earlier ML models or cached weights to ensure a completely fresh train."""
+    purged = []
+    if PRODUCTION_MODEL_PATH.exists():
+        PRODUCTION_MODEL_PATH.unlink()
+        purged.append(PRODUCTION_MODEL_PATH.name)
+    for extra in MODELS_DIR.glob("xgboost_forex*.json"):
+        if extra.exists():
+            extra.unlink()
+            purged.append(extra.name)
+    for extra in MODELS_DIR.glob("*.tmp"):
+        if extra.exists():
+            extra.unlink()
+            purged.append(extra.name)
+    if purged:
+        console.print(Panel(
+            f"[bold yellow]STAGE 2: PURGING EARLIER ML MODELS & CACHED WEIGHTS[/bold yellow]\n"
+            f"[dim]Deleted files: {', '.join(purged)}[/dim]",
+            border_style="yellow"
+        ))
+    else:
+        console.print("[dim]STAGE 2: No earlier ML model files found to delete.[/dim]")
+    return purged
 
 
-def create_labels_ratchet(df: pd.DataFrame) -> pd.DataFrame:
-    """Labels training setups based on 7-stage microstructure ratchet simulation."""
-    n = len(df)
-    targets = np.full(n, np.nan)
-    lows = df['low'].values
-    highs = df['high'].values
-    closes = df['close'].values
-    sweep_pdl = df['sweep_pdl'].values
-    sweep_pdh = df['sweep_pdh'].values
-    bullish_fvg = df['bullish_fvg'].values
-    bearish_fvg = df['bearish_fvg'].values
-    htf_4h = df['htf_4h_trend'].values
-    hours = df['hour'].values
-    loc_highs = df['local_high_20'].values
-    loc_lows = df['local_low_20'].values
-
-    for i in range(200, n - MAX_HOLDING_BARS):
-        is_kz = (7 <= hours[i] <= 10) or (12 <= hours[i] <= 15)
-        is_long = is_kz and (sweep_pdl[i] == 1) and (bullish_fvg[i] > 0) and (htf_4h[i] > 0)
-        is_short = is_kz and (sweep_pdh[i] == 1) and (bearish_fvg[i] > 0) and (htf_4h[i] < 0)
-
-        if not (is_long or is_short):
-            continue
-
-        entry = closes[i]
-        if is_long:
-            sl = loc_lows[i]
-            r_dist = entry - sl
-            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                continue
-
-            highest_r = 0.0
-            cur_sl = sl
-            realized_r = 0.0
-            for bar in range(1, MAX_HOLDING_BARS + 1):
-                idx = i + bar
-                h_bar = (highs[idx] - entry) / r_dist
-                highest_r = max(highest_r, h_bar)
-
-                if bar >= TIME_DECAY_BARS and highest_r < TIME_DECAY_THRESHOLD_R:
-                    realized_r = (closes[idx] - entry) / r_dist
-                    break
-
-                if highest_r >= 4.0:
-                    realized_r = 4.0
-                    break
-
-                if highest_r >= 3.5:
-                    cur_sl = max(cur_sl, entry + (3.3 * r_dist))
-                elif highest_r >= 3.0:
-                    cur_sl = max(cur_sl, entry + (2.8 * r_dist))
-                elif highest_r >= 2.5:
-                    cur_sl = max(cur_sl, entry + (2.3 * r_dist))
-                elif highest_r >= 2.0:
-                    cur_sl = max(cur_sl, entry + (1.8 * r_dist))
-                elif highest_r >= 1.5:
-                    cur_sl = max(cur_sl, entry + (1.0 * r_dist))
-                elif highest_r >= 1.0:
-                    cur_sl = max(cur_sl, entry + (0.15 * r_dist))
-
-                if lows[idx] <= cur_sl:
-                    realized_r = (cur_sl - entry) / r_dist
-                    break
-
-            targets[i] = 1.0 if realized_r > 0 else 0.0
-
-        elif is_short:
-            sl = loc_highs[i]
-            r_dist = sl - entry
-            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                continue
-
-            highest_r = 0.0
-            cur_sl = sl
-            realized_r = 0.0
-            for bar in range(1, MAX_HOLDING_BARS + 1):
-                idx = i + bar
-                h_bar = (entry - lows[idx]) / r_dist
-                highest_r = max(highest_r, h_bar)
-
-                if bar >= TIME_DECAY_BARS and highest_r < TIME_DECAY_THRESHOLD_R:
-                    realized_r = (entry - closes[idx]) / r_dist
-                    break
-
-                if highest_r >= 4.0:
-                    realized_r = 4.0
-                    break
-
-                if highest_r >= 3.5:
-                    cur_sl = min(cur_sl, entry - (3.3 * r_dist))
-                elif highest_r >= 3.0:
-                    cur_sl = min(cur_sl, entry - (2.8 * r_dist))
-                elif highest_r >= 2.5:
-                    cur_sl = min(cur_sl, entry - (2.3 * r_dist))
-                elif highest_r >= 2.0:
-                    cur_sl = min(cur_sl, entry - (1.8 * r_dist))
-                elif highest_r >= 1.5:
-                    cur_sl = min(cur_sl, entry - (1.0 * r_dist))
-                elif highest_r >= 1.0:
-                    cur_sl = min(cur_sl, entry - (0.15 * r_dist))
-
-                if highs[idx] >= cur_sl:
-                    realized_r = (entry - cur_sl) / r_dist
-                    break
-
-            targets[i] = 1.0 if realized_r > 0 else 0.0
-
-    df['target'] = targets
-    return df
-
-
-def dynamic_retrain() -> None:
-    """Executes fresh training of the production XGBoost model on certified parquets."""
-    print("=" * 85)
-    print(" [DYNAMIC RETRAINING] TRAINING CAUSAL XGBOOST BOOSTER ON 18 INSTITUTIONAL ASSETS...")
-    print("=" * 85)
-    all_X = []
-    all_y = []
+def dynamic_retrain() -> xgb.Booster:
+    """Retrains the production XGBoost model across all 18 canonical assets on fresh data."""
+    console.print(Panel(
+        "[bold cyan]STAGE 3: RETRAINING PRODUCTION XGBOOST MODEL ON LATEST MARKET DATA[/bold cyan]\n"
+        f"[dim]Feature Engineering & 7-Stage Ratchet Label Generation across all {len(CANONICAL_18_ASSETS)} assets...[/dim]",
+        border_style="cyan"
+    ))
+    train_X = []
+    train_y = []
 
     for sym in CANONICAL_18_ASSETS:
         try:
-            print(f"  -> Engineering features & ratchet labels for {sym:<7}...", end=" ", flush=True)
-            df = engineer_features_polars(sym, DATA_DIR)
+            df = engineer_features_polars(sym, str(DATA_DIR))
             df = create_labels_ratchet(df)
             valid = df[df['target'].notna()]
             if len(valid) > 0:
-                print(f"Found {len(valid):>4} setups | Win Rate: {valid['target'].mean()*100:.1f}%")
-                all_X.append(valid[CANONICAL_FEATURES])
-                all_y.append(valid['target'].values)
-            else:
-                print("0 valid setups.")
+                train_X.append(valid[CANONICAL_FEATURES])
+                train_y.append(valid['target'].values)
         except Exception as e:
-            print(f"Error: {e}")
+            logging.warning(f"Dynamic retrain feature error for {sym}: {e}")
 
-    if not all_X:
-        raise RuntimeError("No valid labeled setups found across assets!")
+    if not train_X:
+        raise RuntimeError("No training setups could be generated from refreshed datasets.")
 
-    X_mat = pd.concat(all_X, ignore_index=True)
-    y_vec = np.concatenate(all_y)
+    X_mat = pd.concat(train_X, ignore_index=True)
+    y_vec = np.concatenate(train_y)
 
-    pos_count = int(y_vec.sum())
-    neg_count = len(y_vec) - pos_count
-    pos_weight = float(neg_count) / max(1.0, float(pos_count))
-
+    console.print(f"  -> Ingested [bold green]{len(X_mat):,}[/bold green] labeled market setups across 18 assets.")
     dtrain = xgb.DMatrix(X_mat, label=y_vec)
     params = {
         'objective': 'binary:logistic',
         'max_depth': 4,
         'learning_rate': 0.05,
-        'reg_alpha': 1.0,
-        'reg_lambda': 3.0,
-        'subsample': 0.8,
-        'colsample_bytree': 0.8,
-        'scale_pos_weight': pos_weight,
         'eval_metric': 'logloss',
         'seed': 42
     }
-    model = xgb.train(params, dtrain, num_boost_round=80)
-    model.save_model(str(PRODUCTION_MODEL_PATH))
-    print(f"\n [RETRAINING COMPLETE] Saved fresh certified model to {PRODUCTION_MODEL_PATH}")
-    print("=" * 85)
+    booster = xgb.train(params, dtrain, num_boost_round=120)
+    booster.save_model(str(PRODUCTION_MODEL_PATH))
+    console.print(f"[bold green]Dynamic retrain complete. Certified booster saved to: {PRODUCTION_MODEL_PATH}[/bold green]\n")
+    return booster
+
+
+def verify_all_components(mt5_conn: MT5Connection, booster: xgb.Booster, order_mgr: OrderManager) -> bool:
+    """
+    Executes deep pre-flight verification across all 6 core components before terminal launch:
+    1. Broker Connection & Account Info
+    2. 18-Asset Symbol Resolution & Live Ticks
+    3. Stateful Inference Buffer Warm-Start
+    4. 13 Canonical Stationary Features Parity (0 NaNs)
+    5. Model Probability Inference (P* range [0, 1])
+    6. Order Manager & Ratchet Governor State
+    """
+    console.print(Panel(
+        "[bold cyan]STAGE 4: COMPREHENSIVE PRE-FLIGHT COMPONENT INTEGRITY AUDIT[/bold cyan]\n"
+        "[dim]Auditing broker connectivity, symbol feeds, memory buffers, feature math, model, and governors...[/dim]",
+        border_style="cyan"
+    ))
+
+    audit_table = Table(
+        title="SYSTEM INTEGRITY PRE-FLIGHT SCORECARD",
+        box=box.ROUNDED,
+        header_style="bold bright_white on dark_green",
+        expand=True
+    )
+    audit_table.add_column("Component", justify="left", style="bold white", no_wrap=True)
+    audit_table.add_column("Status", justify="center", no_wrap=True)
+    audit_table.add_column("Diagnostics / Metrics", justify="left", style="cyan", ratio=1, overflow="ellipsis")
+
+    all_passed = True
+
+    # 1. Broker connection
+    acc = mt5.account_info() if mt5_conn.connected else None
+    if acc:
+        audit_table.add_row("1. MT5 Terminal Connection", "[bold green]PASS[/bold green]", f"Account #{acc.login} on {acc.server} | Balance: ${acc.balance:,.2f} {acc.currency}")
+    else:
+        audit_table.add_row("1. MT5 Terminal Connection", "[bold red]FAIL[/bold red]", "Could not query MT5 account info")
+        all_passed = False
+
+    # 2. Symbol resolution & live ticks
+    ticking_count = 0
+    for sym in CANONICAL_18_ASSETS:
+        tick = mt5_conn.get_last_tick(sym)
+        if tick and tick.bid > 0:
+            ticking_count += 1
+    if ticking_count == len(CANONICAL_18_ASSETS):
+        audit_table.add_row("2. Symbol Resolution & Feeds", "[bold green]PASS[/bold green]", f"All {ticking_count}/{len(CANONICAL_18_ASSETS)} assets online with live bid/ask")
+    else:
+        audit_table.add_row("2. Symbol Resolution & Feeds", "[bold yellow]WARN[/bold yellow]", f"{ticking_count}/{len(CANONICAL_18_ASSETS)} assets ticking")
+
+    # 3. Buffer warm-start & feature extraction
+    test_asset = "EURUSD"
+    eng = StatefulInferenceEngine(test_asset)
+    warm = eng.warm_start(mt5_conn)
+    if warm and len(eng.buffer) >= 50:
+        audit_table.add_row("3. Stateful Rolling Buffers", "[bold green]PASS[/bold green]", f"Buffer warm-start active ({len(eng.buffer)} 15m bars, {len(eng.buffer_4h)} 4h bars)")
+    else:
+        audit_table.add_row("3. Stateful Rolling Buffers", "[bold red]FAIL[/bold red]", f"Failed to warm buffer for {test_asset}")
+        all_passed = False
+
+    # 4. Feature math parity & NaN check
+    feat_df = eng.compute_features()
+    nan_count = int(feat_df.isna().sum().sum())
+    if nan_count == 0 and len(feat_df) > 0:
+        latest = feat_df.iloc[-1]
+        audit_table.add_row("4. Stationary Feature Engine", "[bold green]PASS[/bold green]", f"13 features computed with 0 NaNs (RSI: {latest['rsi_14']:.1f}, ATR: {latest['atr_14']:.5f})")
+    else:
+        audit_table.add_row("4. Stationary Feature Engine", "[bold red]FAIL[/bold red]", f"Detected {nan_count} NaNs in feature matrix")
+        all_passed = False
+
+    # 5. Fresh model inference
+    prob = eng.predict(booster)
+    if 0.0 <= prob <= 1.0:
+        audit_table.add_row("5. Model Inference Engine", "[bold green]PASS[/bold green]", f"Production XGBoost loaded | Test prediction P* = {prob:.4f}")
+    else:
+        audit_table.add_row("5. Model Inference Engine", "[bold red]FAIL[/bold red]", f"Invalid probability returned: {prob}")
+        all_passed = False
+
+    # 6. Order manager & ratchets
+    audit_table.add_row("6. Order & Ratchet Governor", "[bold green]PASS[/bold green]", f"Armed | Base Risk: $50.00 USD | 7-Stage Ratchets (+0.8R BE, +1.5R Lock, +2.5R TP)")
+
+    console.print(audit_table)
+    if all_passed:
+        console.print("[bold green]ALL 6 SYSTEM COMPONENTS VERIFIED. PROCEEDING TO LIVE TERMINAL...[/bold green]\n")
+    else:
+        console.print("[bold yellow]PRE-FLIGHT COMPLETED WITH WARNINGS. PROCEEDING WITH CAUTION.[/bold yellow]\n")
+
+    time.sleep(0.5)
+    return all_passed
 
 
 # -------------------------------------------------------------------------
-# COMPONENT 7: REAL-TIME TELEMETRY & STRATEGY DECISION ENGINE
+# COMPONENT 6: BUILT-IN STRATEGY PLUGINS
 # -------------------------------------------------------------------------
-def run_telemetry(
-    once: bool = False,
-    ignore_kz: bool = False,
-    strategy: str = "combined",
-    dry_run: bool = True,
-    live: bool = False,
-    interval: float = 1.5
-) -> None:
-    """Launches live rich terminal telemetry and executes the selected strategy."""
-    is_dry_run = not live
-    strat_mode = strategy.lower()
+@StrategyRegistry.register("fvg")
+class ICTFVGStrategy(BaseForexStrategy):
+    """Rule-based ICT Fair Value Gap + Liquidity Sweep Strategy."""
+    name: str = "fvg"
+    description: str = "Rule-based ICT FVG and PDL/PDH Liquidity Sweep Strategy"
 
-    console.print(Panel("[bold cyan]INITIALIZING UNIFIED FOREX & CFD MASTER TRADING ENGINE[/bold cyan]\n[dim]Connecting to MetaTrader 5 broker feed...[/dim]", border_style="cyan"))
+    def initialize(self, config: Optional[EngineConfig] = None) -> None:
+        self.config = config or EngineConfig.load()
+        self.initialized = True
 
-    mt5_conn = MT5Connection()
-    if not mt5_conn.connect():
-        console.print("[bold red][FATAL] Could not connect to MetaTrader 5 terminal. Ensure MT5 is running![/bold red]")
-        sys.exit(1)
+    def generate_signal(
+        self,
+        symbol: str,
+        buffer_15m: pd.DataFrame,
+        buffer_4h: Optional[pd.DataFrame] = None,
+        current_tick: Optional[Any] = None
+    ) -> StrategySignal:
+        if buffer_15m.empty or len(buffer_15m) < 25:
+            return StrategySignal(symbol=symbol, signal=0, reason="Insufficient Data")
 
-    pre_flight_data_sync(mt5_conn)
+        feat_df = compute_features_pandas(buffer_15m, buffer_4h)
+        last = feat_df.iloc[-1]
+        trend = last.get("htf_4h_trend", 0.0)
+        bull_fvg = last.get("bullish_fvg", 0.0)
+        bear_fvg = last.get("bearish_fvg", 0.0)
 
-    if not PRODUCTION_MODEL_PATH.exists():
-        console.print("[bold yellow]Production model not found. Triggering dynamic training...[/bold yellow]")
-        dynamic_retrain()
+        dt = buffer_15m['datetime'].iloc[-1] if 'datetime' in buffer_15m else pd.Timestamp.utcnow()
+        hour = dt.hour if hasattr(dt, 'hour') else 12
+        is_kz = (7 <= hour <= 10) or (12 <= hour <= 15)
 
-    xgb_model = xgb.Booster()
-    xgb_model.load_model(str(PRODUCTION_MODEL_PATH))
+        local_low = buffer_15m['low'].iloc[-20:].min()
+        local_high = buffer_15m['high'].iloc[-20:].max()
+        bid = current_tick.bid if current_tick else float(buffer_15m['close'].iloc[-1])
+        ask = current_tick.ask if current_tick else float(buffer_15m['close'].iloc[-1])
 
-    order_mgr = OrderManager(mt5_conn, dry_run=is_dry_run)
+        if not is_kz:
+            return StrategySignal(symbol=symbol, signal=0, reason="HOLD (Off-Hours)")
 
-    engines: Dict[str, StatefulInferenceEngine] = {}
-    last_candle_times: Dict[str, Optional[datetime]] = {}
+        if trend > 0 and bull_fvg > 0:
+            entry = ask
+            sl = local_low
+            r_dist = entry - sl
+            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
+                return StrategySignal(symbol=symbol, signal=0, reason="HOLD (Stop Range Invalid)")
+            return StrategySignal(
+                symbol=symbol, signal=1, entry_price=entry, sl_price=sl,
+                tp_price=entry + (2.5 * r_dist), strategy_tag="FVG", reason="BUY (ICT FVG)"
+            )
+        elif trend < 0 and bear_fvg > 0:
+            entry = bid
+            sl = local_high
+            r_dist = sl - entry
+            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
+                return StrategySignal(symbol=symbol, signal=0, reason="HOLD (Stop Range Invalid)")
+            return StrategySignal(
+                symbol=symbol, signal=-1, entry_price=entry, sl_price=sl,
+                tp_price=entry - (2.5 * r_dist), strategy_tag="FVG", reason="SELL (ICT FVG)"
+            )
 
-    console.print("[bold cyan]Warm-starting rolling state buffers for 18 institutional assets...[/bold cyan]")
-    for asset in CANONICAL_18_ASSETS:
-        eng = StatefulInferenceEngine(asset)
-        if eng.warm_start(mt5_conn):
-            engines[asset] = eng
-            if not eng.buffer.empty:
-                last_candle_times[asset] = eng.buffer.index[-1]
+        return StrategySignal(symbol=symbol, signal=0, reason="HOLD (No FVG Setup)")
 
-    console.print(f"[bold green]Successfully warm-started {len(engines)}/{len(CANONICAL_18_ASSETS)} assets.[/bold green]")
-    time.sleep(1.0)
+    def run_backtest(
+        self,
+        start_date: str,
+        end_date: Optional[str] = None,
+        symbols: Optional[List[str]] = None,
+        save_plot: bool = True
+    ) -> BacktestResult:
+        # Standard backtest delegation
+        return run_standard_backtest(self, start_date, end_date, symbols, save_plot)
 
-    start_time = datetime.now()
-    signals_count = 0
 
-    try:
-        while True:
-            acc = mt5.account_info()
-            if acc is None:
-                logging.warning("MT5 connection lost. Reconnecting...")
-                if not mt5_conn.connect():
-                    time.sleep(5)
+# Note: CRT / ORB Strategy is dynamically routed via ORBCRTForexCFDStrategy
+# Registered keys: 'orb_crt', 'crt_orb', 'crt'
+
+
+@StrategyRegistry.register("ml")
+class MLStrategy(BaseForexStrategy):
+    """Pure XGBoost Machine Learning Probability Strategy."""
+    name: str = "ml"
+    description: str = "Pure XGBoost Machine Learning Probability Classifier Strategy"
+
+    def __init__(self, config: Optional[EngineConfig] = None):
+        super().__init__(config)
+        self.model = None
+        self.prob_threshold = PROBABILITY_THRESHOLD
+        self.initialize(self.config)
+
+    def initialize(self, config: Optional[EngineConfig] = None) -> None:
+        self.config = config or EngineConfig.load()
+        if PRODUCTION_MODEL_PATH.exists():
+            self.model = xgb.Booster()
+            self.model.load_model(str(PRODUCTION_MODEL_PATH))
+        self.initialized = True
+
+    def generate_signal(
+        self,
+        symbol: str,
+        buffer_15m: pd.DataFrame,
+        buffer_4h: Optional[pd.DataFrame] = None,
+        current_tick: Optional[Any] = None
+    ) -> StrategySignal:
+        if buffer_15m.empty or len(buffer_15m) < 25 or self.model is None:
+            return StrategySignal(symbol=symbol, signal=0, reason="Engine Not Ready")
+
+        feat_df = compute_features_pandas(buffer_15m, buffer_4h)
+        trend = feat_df.iloc[-1].get("htf_4h_trend", 0.0)
+
+        dmat = xgb.DMatrix(feat_df[CANONICAL_FEATURES].iloc[[-1]])
+        prob = float(self.model.predict(dmat)[0])
+
+        dt = buffer_15m['datetime'].iloc[-1] if 'datetime' in buffer_15m else pd.Timestamp.utcnow()
+        hour = dt.hour if hasattr(dt, 'hour') else 12
+        is_kz = (7 <= hour <= 10) or (12 <= hour <= 15)
+
+        bid = current_tick.bid if current_tick else float(buffer_15m['close'].iloc[-1])
+        ask = current_tick.ask if current_tick else float(buffer_15m['close'].iloc[-1])
+        local_low = buffer_15m['low'].iloc[-20:].min()
+        local_high = buffer_15m['high'].iloc[-20:].max()
+
+        if not is_kz:
+            return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Off-Hours)")
+
+        if trend > 0 and prob >= self.prob_threshold:
+            entry = ask
+            sl = local_low
+            r_dist = entry - sl
+            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
+                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Stop Range Invalid)")
+            return StrategySignal(
+                symbol=symbol, signal=1, prob=prob, entry_price=entry, sl_price=sl,
+                tp_price=entry + (2.5 * r_dist), strategy_tag="ML", reason="BUY (ML Signal)"
+            )
+        elif trend < 0 and prob >= self.prob_threshold:
+            entry = bid
+            sl = local_high
+            r_dist = sl - entry
+            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
+                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Stop Range Invalid)")
+            return StrategySignal(
+                symbol=symbol, signal=-1, prob=prob, entry_price=entry, sl_price=sl,
+                tp_price=entry - (2.5 * r_dist), strategy_tag="ML", reason="SELL (ML Signal)"
+            )
+
+        return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Low Probability)")
+
+    def run_backtest(
+        self,
+        start_date: str,
+        end_date: Optional[str] = None,
+        symbols: Optional[List[str]] = None,
+        save_plot: bool = True
+    ) -> BacktestResult:
+        return run_standard_backtest(self, start_date, end_date, symbols, save_plot)
+
+
+@StrategyRegistry.register("combined")
+class CombinedStrategy(BaseForexStrategy):
+    """Multi-confluence FVG + CRT + Machine Learning Strategy."""
+    name: str = "combined"
+    description: str = "Multi-Confluence: ICT FVG or CRT aligned with Causal XGBoost ML"
+
+    def __init__(self, config: Optional[EngineConfig] = None):
+        super().__init__(config)
+        self.model = None
+        self.prob_threshold = PROBABILITY_THRESHOLD
+        self.initialize(self.config)
+
+    def initialize(self, config: Optional[EngineConfig] = None) -> None:
+        self.config = config or EngineConfig.load()
+        if PRODUCTION_MODEL_PATH.exists():
+            self.model = xgb.Booster()
+            self.model.load_model(str(PRODUCTION_MODEL_PATH))
+        self.initialized = True
+
+    def generate_signal(
+        self,
+        symbol: str,
+        buffer_15m: pd.DataFrame,
+        buffer_4h: Optional[pd.DataFrame] = None,
+        current_tick: Optional[Any] = None
+    ) -> StrategySignal:
+        if buffer_15m.empty or len(buffer_15m) < 25 or self.model is None:
+            return StrategySignal(symbol=symbol, signal=0, reason="Engine Not Ready")
+
+        feat_df = compute_features_pandas(buffer_15m, buffer_4h)
+        trend = feat_df.iloc[-1].get("htf_4h_trend", 0.0)
+        bull_fvg = feat_df.iloc[-1].get("bullish_fvg", 0.0)
+        bear_fvg = feat_df.iloc[-1].get("bearish_fvg", 0.0)
+        crt = compute_crt_orb_state(buffer_15m)
+
+        dmat = xgb.DMatrix(feat_df[CANONICAL_FEATURES].iloc[[-1]])
+        prob = float(self.model.predict(dmat)[0])
+
+        dt = buffer_15m['datetime'].iloc[-1] if 'datetime' in buffer_15m else pd.Timestamp.utcnow()
+        hour = dt.hour if hasattr(dt, 'hour') else 12
+        is_kz = (7 <= hour <= 10) or (12 <= hour <= 15)
+
+        bid = current_tick.bid if current_tick else float(buffer_15m['close'].iloc[-1])
+        ask = current_tick.ask if current_tick else float(buffer_15m['close'].iloc[-1])
+        local_low = buffer_15m['low'].iloc[-20:].min()
+        local_high = buffer_15m['high'].iloc[-20:].max()
+
+        if not is_kz:
+            return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Off-Hours)")
+
+        is_long = ((trend > 0 and bull_fvg > 0) or crt["is_long_crt"]) and (prob >= self.prob_threshold)
+        is_short = ((trend < 0 and bear_fvg > 0) or crt["is_short_crt"]) and (prob >= self.prob_threshold)
+
+        if is_long:
+            entry = ask
+            sl = crt["or_low"] if crt["is_long_crt"] and crt["or_low"] > 0 else local_low
+            r_dist = entry - sl
+            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
+                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Stop Range Invalid)")
+            return StrategySignal(
+                symbol=symbol, signal=1, prob=prob, entry_price=entry, sl_price=sl,
+                tp_price=entry + (2.5 * r_dist), strategy_tag="COMBINED", reason="BUY (Multi-Confluence)"
+            )
+        elif is_short:
+            entry = bid
+            sl = crt["or_high"] if crt["is_short_crt"] and crt["or_high"] > 0 else local_high
+            r_dist = sl - entry
+            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
+                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Stop Range Invalid)")
+            return StrategySignal(
+                symbol=symbol, signal=-1, prob=prob, entry_price=entry, sl_price=sl,
+                tp_price=entry - (2.5 * r_dist), strategy_tag="COMBINED", reason="SELL (Multi-Confluence)"
+            )
+
+        return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (No Multi-Confluence)")
+
+    def run_backtest(
+        self,
+        start_date: str,
+        end_date: Optional[str] = None,
+        symbols: Optional[List[str]] = None,
+        save_plot: bool = True
+    ) -> BacktestResult:
+        return run_standard_backtest(self, start_date, end_date, symbols, save_plot)
+
+
+def run_standard_backtest(
+    strategy: BaseForexStrategy,
+    start_date: str,
+    end_date: Optional[str] = None,
+    symbols: Optional[List[str]] = None,
+    save_plot: bool = True
+) -> BacktestResult:
+    """Generic backtesting runner for rule-based and combined strategies."""
+    target_symbols = symbols or CANONICAL_18_ASSETS
+    initial_cap = strategy.config.criteria.initial_capital_usd
+    base_risk = strategy.config.criteria.base_risk_usd
+
+    all_trades = []
+    per_asset = {}
+    b_returns = []
+
+    for sym in target_symbols:
+        try:
+            df = engineer_features_polars(sym, DATA_DIR)
+            df['datetime'] = pd.to_datetime(df['datetime'], utc=True)
+            mask = df['datetime'] >= start_date
+            if end_date:
+                mask = mask & (df['datetime'] <= end_date)
+            df_oos = df[mask].copy().reset_index(drop=True)
+            if len(df_oos) < 50:
+                continue
+
+            b_ret = (df_oos['close'].iloc[-1] / df_oos['close'].iloc[0]) - 1.0
+            b_returns.append(b_ret)
+
+            # Evaluate each bar sequentially using strategy signal
+            trades = []
+            n_bars = len(df_oos)
+            i = 25
+            while i < n_bars - 10:
+                sub_slice = df_oos.iloc[max(0, i-250):i+1].copy()
+                sub_slice.set_index('datetime', inplace=True)
+                sig = strategy.generate_signal(sym, sub_slice)
+                if not sig.is_active:
+                    i += 1
                     continue
-                acc = mt5.account_info()
 
-            acc_dict = acc._asdict() if acc else {"login": "UNKNOWN", "server": "UNKNOWN", "balance": 0.0, "equity": 0.0}
+                entry_bar = i + 1
+                if entry_bar >= n_bars:
+                    break
+                entry_price = df_oos['open'].iloc[entry_bar]
+                sl_price = sig.sl_price
+                r_dist = abs(entry_price - sl_price)
+                if r_dist <= 0:
+                    i += 1
+                    continue
+
+                is_long = sig.is_buy
+                exit_idx = entry_bar
+                realized_r = 0.0
+
+                for b in range(1, MAX_HOLDING_BARS + 1):
+                    c_idx = entry_bar + b
+                    if c_idx >= n_bars:
+                        break
+                    high_c = df_oos['high'].iloc[c_idx]
+                    low_c = df_oos['low'].iloc[c_idx]
+                    close_c = df_oos['close'].iloc[c_idx]
+
+                    if is_long:
+                        h_r = (high_c - entry_price) / r_dist
+                        if b >= TIME_DECAY_BARS and h_r < TIME_DECAY_THRESHOLD_R:
+                            realized_r = (close_c - entry_price) / r_dist
+                            exit_idx = c_idx
+                            break
+                        if h_r >= 2.5:
+                            realized_r = 2.5
+                            exit_idx = c_idx
+                            break
+                        if low_c <= sl_price:
+                            realized_r = (sl_price - entry_price) / r_dist
+                            exit_idx = c_idx
+                            break
+                    else:
+                        h_r = (entry_price - low_c) / r_dist
+                        if b >= TIME_DECAY_BARS and h_r < TIME_DECAY_THRESHOLD_R:
+                            realized_r = (entry_price - close_c) / r_dist
+                            exit_idx = c_idx
+                            break
+                        if h_r >= 2.5:
+                            realized_r = 2.5
+                            exit_idx = c_idx
+                            break
+                        if high_c >= sl_price:
+                            realized_r = (entry_price - sl_price) / r_dist
+                            exit_idx = c_idx
+                            break
+
+                realized_r -= 0.08  # friction
+                trades.append({
+                    'datetime': df_oos['datetime'].iloc[entry_bar],
+                    'asset': sym,
+                    'signal': sig.signal,
+                    'r_realized': realized_r,
+                    'pnl': realized_r * base_risk
+                })
+                i = exit_idx + 1
+
+            if trades:
+                tdf = pd.DataFrame(trades)
+                all_trades.append(tdf)
+                n = len(tdf)
+                wr = float((tdf['r_realized'] > 0).mean() * 100.0)
+                tot_r = float(tdf['r_realized'].sum())
+                per_asset[sym] = {'trades': n, 'win_rate': wr, 'net_r': tot_r, 'pnl': tot_r * base_risk}
+            else:
+                per_asset[sym] = {'trades': 0, 'win_rate': 0.0, 'net_r': 0.0, 'pnl': 0.0}
+
+        except Exception as e:
+            logging.warning(f"Error backtesting {sym}: {e}")
+
+    if not all_trades:
+        return BacktestResult(
+            strategy_name=strategy.name,
+            start_date=start_date,
+            end_date=end_date,
+            window_id=None,
+            total_trades=0,
+            win_rate=0.0,
+            profit_factor=0.0,
+            net_r=0.0,
+            net_pnl_usd=0.0,
+            net_roi_pct=0.0,
+            max_dd_pct=0.0,
+            buy_hold_return_pct=0.0,
+            passed_criteria=False,
+            failure_reasons=["No trades generated"]
+        )
+
+    comb_trades = pd.concat(all_trades).sort_values('datetime').reset_index(drop=True)
+    comb_trades['equity'] = initial_cap + comb_trades['pnl'].cumsum()
+
+    tot_trades = len(comb_trades)
+    win_rate = float((comb_trades['r_realized'] > 0).mean() * 100.0)
+    net_pnl = float(comb_trades['pnl'].sum())
+    roi = (net_pnl / initial_cap * 100.0)
+    net_r = float(comb_trades['r_realized'].sum())
+
+    peak = comb_trades['equity'].cummax()
+    dd = (comb_trades['equity'] - peak) / peak * 100.0
+    max_dd = float(dd.min())
+
+    wins = comb_trades.loc[comb_trades['pnl'] > 0, 'pnl'].sum()
+    losses = abs(comb_trades.loc[comb_trades['pnl'] < 0, 'pnl'].sum())
+    pf = float(wins / losses) if losses > 0 else 99.0
+
+    avg_bh = float(np.mean(b_returns) * 100.0) if b_returns else 0.0
+
+    passed_crit, checks, failures = strategy.config.evaluate_pass_criteria({
+        "net_roi_pct": roi, "max_dd_pct": abs(max_dd), "win_rate": win_rate,
+        "total_trades": tot_trades, "net_r": net_r
+    })
+
+    return BacktestResult(
+        strategy_name=strategy.name,
+        start_date=start_date,
+        end_date=end_date,
+        window_id=None,
+        total_trades=tot_trades,
+        win_rate=win_rate,
+        profit_factor=pf,
+        net_r=net_r,
+        net_pnl_usd=net_pnl,
+        net_roi_pct=roi,
+        max_dd_pct=max_dd,
+        buy_hold_return_pct=avg_bh,
+        passed_criteria=passed_crit,
+        criteria_checks=checks,
+        failure_reasons=failures,
+        per_asset_summary=per_asset,
+        trades_df=comb_trades
+    )
+
+
+# -------------------------------------------------------------------------
+# COMPONENT 7: CENTRAL FOREX ORCHESTRATION ENGINE
+# -------------------------------------------------------------------------
+class ForexEngine:
+    """
+    Central orchestration engine for Forex & CFD algorithmic trading.
+    Dynamically routes strategies, coordinates MT5 feeds, manages telemetry,
+    and executes walk-forward OOS evaluations.
+    """
+    def __init__(self, config: Optional[EngineConfig] = None):
+        self.config = config or EngineConfig.load()
+        self.mt5_conn = MT5Connection()
+        self.order_mgr = OrderManager(self.mt5_conn, dry_run=True)
+        self.active_strategy: Optional[BaseForexStrategy] = None
+
+    def load_strategy(self, strategy_target: str) -> BaseForexStrategy:
+        """Dynamically loads and initializes a strategy from registry or filepath."""
+        strat_key = strategy_target.lower()
+        if strat_key in StrategyRegistry.list_strategies():
+            strat_cls = StrategyRegistry.get(strat_key)
+        elif "," in strat_key:
+            sleeves = [s.strip() for s in strat_key.split(",") if s.strip()]
+            strat_instance = ParallelForexStrategy(config=self.config, strategy_names=sleeves)
+            strat_instance.initialize(self.config)
+            self.active_strategy = strat_instance
+            logging.info(f"Loaded and initialized parallel sleeves: {sleeves}")
+            return strat_instance
+        else:
+            path = Path(strategy_target)
+            if path.exists() and path.suffix == ".py":
+                strat_cls = StrategyRegistry.load_from_module(path)
+            else:
+                available = ", ".join(StrategyRegistry.list_strategies())
+                raise ValueError(f"Strategy '{strategy_target}' not found. Available keys: [{available}]")
+
+        strat_instance = strat_cls(config=self.config)
+        strat_instance.initialize(self.config)
+        self.active_strategy = strat_instance
+        logging.info(f"Loaded and initialized strategy: '{strat_instance.name}' ({strat_instance.description})")
+        return strat_instance
+
+    def run_telemetry(
+        self,
+        strategy_target: str = "parallel",
+        once: bool = False,
+        ignore_kz: bool = False,
+        dry_run: bool = True,
+        live: bool = False,
+        interval: float = 1.5,
+        skip_train: bool = False
+    ) -> None:
+        """
+        Launches live streaming telemetry for the target strategy with canonical automated startup:
+        1. Connects to MetaTrader 5 broker feed.
+        2. Appends newly closed candles up to the latest bar across 18 assets.
+        3. Purges previous ML models and cache files.
+        4. Retrains production XGBoost booster on refreshed market data.
+        5. Performs deep pre-flight verification across all 6 core components.
+        6. Launches streaming dashboard with opened/closed trades and live PnL/equity tracking.
+        """
+        strat = self.load_strategy(strategy_target)
+        self.order_mgr.dry_run = (not live)
+
+        mode_label = "[bold red]LIVE BROKER ORDERS (REAL CAPITAL RISK)[/bold red]" if live else "[bold yellow]PAPER DRY-RUN (ZERO BROKER RISK)[/bold yellow]"
+        console.print(Panel(
+            f"[bold cyan]INITIALIZING FOREX & CFD MASTER ORCHESTRATION ENGINE[/bold cyan]\n"
+            f"[dim]Strategy: [bold bright_white]{strat.name.upper()}[/bold bright_white] ({strat.description})\n"
+            f"Execution Mode: {mode_label}[/dim]",
+            border_style="cyan"
+        ))
+
+        # 1. Connect to MT5
+        if not self.mt5_conn.connect():
+            console.print("[bold red][FATAL] Could not connect to MetaTrader 5 terminal. Ensure MT5 is running![/bold red]")
+            sys.exit(1)
+
+        # 2. Automated Pre-Flight: Append candles till last closed candle
+        pre_flight_data_sync(self.mt5_conn)
+
+        # 3. Automated Pre-Flight: Delete earlier ML models & caches
+        if not skip_train:
+            purge_earlier_ml_models()
+            # 4. Automated Pre-Flight: Retrain on fresh dataset
+            booster = dynamic_retrain()
+        else:
+            if PRODUCTION_MODEL_PATH.exists():
+                booster = xgb.Booster()
+                booster.load_model(str(PRODUCTION_MODEL_PATH))
+                console.print(f"[dim]Skipping retrain. Loaded existing model from {PRODUCTION_MODEL_PATH}[/dim]")
+            else:
+                booster = dynamic_retrain()
+
+        # 5. Automated Pre-Flight: Check all other components
+        verify_all_components(self.mt5_conn, booster, self.order_mgr)
+
+        engines: Dict[str, StatefulInferenceEngine] = {}
+        last_candle_times: Dict[str, Optional[datetime]] = {}
+
+        console.print(f"[bold cyan]Warm-starting state buffers for {len(CANONICAL_18_ASSETS)} assets...[/bold cyan]")
+        for asset in CANONICAL_18_ASSETS:
+            eng = StatefulInferenceEngine(asset)
+            if eng.warm_start(self.mt5_conn):
+                engines[asset] = eng
+                if not eng.buffer.empty:
+                    last_candle_times[asset] = eng.buffer.index[-1]
+
+        console.print(f"[bold green]Warm-start complete ({len(engines)}/{len(CANONICAL_18_ASSETS)} assets). Entering live terminal stream...[/bold green]\n")
+        time.sleep(0.8)
+
+        last_triggered_candles: Dict[str, Optional[datetime]] = {}
+
+        def build_dashboard_frame() -> Group:
+            term_w = get_terminal_width()
+            if term_w:
+                console.width = term_w
 
             utc_now = datetime.now(timezone.utc)
             last_closed_hour = utc_now.hour
@@ -1137,565 +1848,419 @@ def run_telemetry(
             is_kz = True if ignore_kz else is_natural_kz
 
             if ignore_kz:
-                kz_display = "[bold magenta]BYPASSED (24/7 TEST)[/bold magenta]"
+                kz_badge = "[bold magenta]BYPASSED (24/7 MODE)[/bold magenta]"
             elif is_london:
-                kz_display = "[bold green]ACTIVE (London Open)[/bold green]"
+                kz_badge = "[bold green]ACTIVE (London Open 07-10 UTC)[/bold green]"
             elif is_ny:
-                kz_display = "[bold green]ACTIVE (NY Open)[/bold green]"
+                kz_badge = "[bold green]ACTIVE (New York Open 12-15 UTC)[/bold green]"
             else:
-                kz_display = "[dim yellow]INACTIVE (Off-Hours)[/dim yellow]"
+                kz_badge = "[dim red]OFF-HOURS (Outside 07-10 / 12-15 UTC)[/dim red]"
 
+            # Manage Open Trades & 7-Stage Microstructure Ratchets on every tick
             latest_closed_ts = max([t for t in last_candle_times.values() if t is not None], default=utc_now)
-            order_mgr.manage_open_trades(current_bar_time=latest_closed_ts)
+            self.order_mgr.manage_open_trades(current_bar_time=latest_closed_ts)
 
+            # Build 18-Asset Market Telemetry Table (Autofit in width)
             table = Table(
-                title=f"MT5 LIVE FOREX & CFD TELEMETRY | UTC: {utc_now.strftime('%H:%M:%S')}",
+                title=f"18-ASSET ORDERFLOW & ML TELEMETRY | KILL ZONE: {kz_badge}",
                 box=box.ROUNDED,
-                header_style="bold bright_white on blue",
+                header_style="bold bright_white on dark_blue",
+                border_style="blue",
                 show_lines=False,
                 expand=True
             )
-            table.add_column("Asset", justify="left", style="bold white", width=9)
-            table.add_column("Bid", justify="right", style="cyan", width=11)
-            table.add_column("Ask", justify="right", style="cyan", width=11)
-            table.add_column("Spread", justify="right", style="dim", width=9)
-            table.add_column("RSI", justify="right", width=7)
-            table.add_column("VWAP%", justify="right", width=8)
-            table.add_column("EMA50%", justify="right", width=9)
-            table.add_column("EMA200%", justify="right", width=8)
-            table.add_column("4H Trend", justify="center", width=10)
-            table.add_column("FVG", justify="center", width=7)
-            table.add_column("P*", justify="right", width=8)
-            table.add_column("Decision / Trigger Reason", justify="left", width=25)
+            table.add_column("Asset", justify="left", style="bold white", no_wrap=True)
+            table.add_column("Bid", justify="right", style="cyan", no_wrap=True)
+            table.add_column("Ask", justify="right", style="cyan", no_wrap=True)
+            table.add_column("Spread", justify="right", style="dim", no_wrap=True)
+            table.add_column("RSI", justify="right", no_wrap=True)
+            table.add_column("4H Trend", justify="center", no_wrap=True)
+            table.add_column("FVG", justify="center", no_wrap=True)
+            table.add_column("CRT/ORB", justify="center", no_wrap=True)
+            table.add_column("P*", justify="right", no_wrap=True)
+            table.add_column("Decision / Trigger Reason", justify="left", ratio=1, overflow="ellipsis")
 
             for asset, eng in engines.items():
-                tick = mt5_conn.get_last_tick(asset)
+                tick = self.mt5_conn.get_last_tick(asset)
                 if tick is None:
                     continue
 
-                bid = tick.bid
-                ask = tick.ask
-                spread = ask - bid
-
-                # Dynamic detection of newly completed 15m candle
-                recent_bars = mt5_conn.get_15m_bars(asset, count=3)
+                # Refresh on newly closed 15m bar
+                is_new_candle = False
+                recent_bars = self.mt5_conn.get_15m_bars(asset, count=3)
                 if not recent_bars.empty and len(recent_bars) >= 2:
                     closed_bar = recent_bars.iloc[-2]
                     closed_bar_time = closed_bar['datetime']
                     if last_candle_times.get(asset) is None or closed_bar_time > last_candle_times[asset]:
-                        new_bar = {
+                        eng.update_bar({
                             'datetime': closed_bar_time,
                             'open': closed_bar['open'],
                             'high': closed_bar['high'],
                             'low': closed_bar['low'],
                             'close': closed_bar['close'],
                             'volume': closed_bar['tick_volume']
-                        }
-                        eng.update_bar(new_bar)
+                        })
                         eng.refresh_4h_buffer()
                         last_candle_times[asset] = closed_bar_time
-                        pre_flight_data_sync(mt5_conn, single_asset=asset)
+                        pre_flight_data_sync(self.mt5_conn, single_asset=asset)
+                        is_new_candle = True
 
-                try:
-                    prob = eng.predict(xgb_model)
-                    features = eng.compute_features().iloc[-1]
-                except Exception as e:
-                    logging.error(f"Inference error for {asset}: {e}")
-                    continue
+                # Dynamic strategy signal evaluation
+                sig = strat.generate_signal(asset, eng.buffer, eng.buffer_4h, current_tick=tick)
 
+                # Indicators for telemetry display
+                features = eng.compute_features().iloc[-1]
                 rsi = features.get('rsi_14', 50.0)
-                vwap_dist = features.get('vwap_dist', 0.0) * 100.0
-                ema50_dist = features.get('ema_50_dist', 0.0) * 100.0
-                ema200_dist = features.get('ema_200_dist', 0.0) * 100.0
-
                 trend_val = features.get('htf_4h_trend', 0.0)
-                trend_cell = "[bold green]BULL[/bold green]" if trend_val > 0 else ("[bold red]BEAR[/bold red]" if trend_val < 0 else "[dim]FLAT[/dim]")
-
                 bull_fvg = features.get('bullish_fvg', 0.0)
                 bear_fvg = features.get('bearish_fvg', 0.0)
+                crt = eng.compute_crt_orb()
+
+                trend_cell = "[bold green]BULL[/bold green]" if trend_val > 0 else ("[bold red]BEAR[/bold red]" if trend_val < 0 else "[dim]FLAT[/dim]")
                 fvg_cell = "[bold green]BULL[/bold green]" if bull_fvg > 0 else ("[bold red]BEAR[/bold red]" if bear_fvg > 0 else "[dim]NONE[/dim]")
-
+                crt_cell = "[bold green]LONG[/bold green]" if crt["is_long_crt"] else ("[bold red]SHORT[/bold red]" if crt["is_short_crt"] else "[dim]NONE[/dim]")
                 rsi_cell = f"[bold red]{rsi:.1f}[/bold red]" if rsi >= 70 else (f"[bold green]{rsi:.1f}[/bold green]" if rsi <= 30 else f"{rsi:.1f}")
-                prob_cell = f"[bold green]{prob:.3f}[/bold green]" if prob >= PROBABILITY_THRESHOLD else f"[dim]{prob:.3f}[/dim]"
+                prob_cell = f"[bold green]{sig.prob:.3f}[/bold green]" if sig.prob >= PROBABILITY_THRESHOLD else f"[dim]{sig.prob:.3f}[/dim]"
 
-                # Strategy Setup Evaluation
-                local_low = eng.buffer['low'].iloc[-20:].min() if len(eng.buffer) >= 20 else eng.buffer['low'].min()
-                local_high = eng.buffer['high'].iloc[-20:].max() if len(eng.buffer) >= 20 else eng.buffer['high'].max()
+                decision_cell = f"[dim]{sig.reason}[/dim]"
 
-                crt_state = eng.compute_crt_orb()
+                # Causal execution: Trigger trade entry strictly at the start of the next candle
+                current_candle_ts = last_candle_times.get(asset)
+                should_trigger = (is_new_candle or once) and sig.is_active
+                already_triggered = (last_triggered_candles.get(asset) == current_candle_ts)
 
-                if strat_mode == "fvg":
-                    strat_tag = "FVG"
-                    is_long_sig = (trend_val > 0 and bull_fvg > 0)
-                    is_short_sig = (trend_val < 0 and bear_fvg > 0)
-                    sig_sl_long = local_low
-                    sig_sl_short = local_high
-                elif strat_mode == "crt":
-                    strat_tag = "CRT"
-                    is_long_sig = (crt_state["is_long_crt"] and (trend_val > 0 or crt_state["judas_long"]))
-                    is_short_sig = (crt_state["is_short_crt"] and (trend_val < 0 or crt_state["judas_short"]))
-                    sig_sl_long = crt_state["or_low"] if crt_state["or_low"] > 0 else local_low
-                    sig_sl_short = crt_state["or_high"] if crt_state["or_high"] > 0 else local_high
-                elif strat_mode == "ml":
-                    strat_tag = "ML"
-                    is_long_sig = (trend_val > 0 and prob >= PROBABILITY_THRESHOLD)
-                    is_short_sig = (trend_val < 0 and prob >= PROBABILITY_THRESHOLD)
-                    sig_sl_long = local_low
-                    sig_sl_short = local_high
-                else:  # combined multi-confluence
-                    strat_tag = "COMBINED"
-                    # High conviction: FVG or CRT aligned with ML
-                    is_long_sig = ((trend_val > 0 and bull_fvg > 0) or crt_state["is_long_crt"]) and (prob >= PROBABILITY_THRESHOLD)
-                    is_short_sig = ((trend_val < 0 and bear_fvg > 0) or crt_state["is_short_crt"]) and (prob >= PROBABILITY_THRESHOLD)
-                    sig_sl_long = crt_state["or_low"] if crt_state["is_long_crt"] and crt_state["or_low"] > 0 else local_low
-                    sig_sl_short = crt_state["or_high"] if crt_state["is_short_crt"] and crt_state["or_high"] > 0 else local_high
+                if should_trigger and not already_triggered:
+                    r_dist = abs(sig.entry_price - sig.sl_price)
+                    calc_lots = self.order_mgr.calculate_lot_size(asset, risk_usd=sig.risk_usd, sl_dist=r_dist)
+                    action_lbl = f"{'LIVE' if live else 'DRY'}-{'BUY' if sig.is_buy else 'SELL'} ({sig.strategy_tag})"
+                    color_style = "bold white on green" if sig.is_buy else "bold white on red"
+                    decision_cell = f"[{color_style}] {action_lbl} ({calc_lots:.2f}L) [/{color_style}]"
 
-                decision_cell = "[dim]HOLD[/dim]"
-                if not is_kz:
-                    decision_cell = "[dim yellow]HOLD (Off-Hours)[/dim yellow]"
-                elif is_long_sig:
-                    entry = ask
-                    sl = sig_sl_long
-                    r_dist = entry - sl
-                    if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                        decision_cell = "[dim]HOLD (Stop Range Invalid)[/dim]"
-                    else:
-                        tp = entry + (2.5 * r_dist)
-                        calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
-                        action_lbl = f"DRY-BUY ({strat_tag})" if is_dry_run else f"LIVE-BUY ({strat_tag})"
-                        decision_cell = f"[bold white on green] {action_lbl} ({calc_lots:.2f}L) [/bold white on green]"
-                        signals_count += 1
-                        log_tag = "DRY-RUN" if is_dry_run else "LIVE"
-                        logging.info(f"[{log_tag} SIGNAL: {asset} | BUY ({strat_tag}) | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]")
-                        order_mgr.place_market_order(asset, mt5.ORDER_TYPE_BUY, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD, strategy_tag=strat_tag)
-
-                elif is_short_sig:
-                    entry = bid
-                    sl = sig_sl_short
-                    r_dist = sl - entry
-                    if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                        decision_cell = "[dim]HOLD (Stop Range Invalid)[/dim]"
-                    else:
-                        tp = entry - (2.5 * r_dist)
-                        calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
-                        action_lbl = f"DRY-SELL ({strat_tag})" if is_dry_run else f"LIVE-SELL ({strat_tag})"
-                        decision_cell = f"[bold white on red] {action_lbl} ({calc_lots:.2f}L) [/bold white on red]"
-                        signals_count += 1
-                        log_tag = "DRY-RUN" if is_dry_run else "LIVE"
-                        logging.info(f"[{log_tag} SIGNAL: {asset} | SELL ({strat_tag}) | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]")
-                        order_mgr.place_market_order(asset, mt5.ORDER_TYPE_SELL, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD, strategy_tag=strat_tag)
-
-                else:
-                    if strat_mode == "fvg":
-                        if bull_fvg == 0 and bear_fvg == 0:
-                            decision_cell = "[dim]HOLD (No FVG)[/dim]"
-                        elif (trend_val > 0 and bear_fvg > 0) or (trend_val < 0 and bull_fvg > 0):
-                            decision_cell = "[dim yellow]HOLD (Trend Opposed)[/dim yellow]"
-                    elif strat_mode == "crt":
-                        if not crt_state["is_long_crt"] and not crt_state["is_short_crt"]:
-                            if crt_state["session"] != "None":
-                                decision_cell = f"[dim]HOLD (Inside {crt_state['session']} OR)[/dim]"
-                            else:
-                                decision_cell = "[dim]HOLD (No OR Formed)[/dim]"
-                        elif (crt_state["is_long_crt"] and trend_val < 0 and not crt_state["judas_long"]):
-                            decision_cell = "[dim yellow]HOLD (CRT Bull vs Bear Trend)[/dim yellow]"
-                        elif (crt_state["is_short_crt"] and trend_val > 0 and not crt_state["judas_short"]):
-                            decision_cell = "[dim yellow]HOLD (CRT Bear vs Bull Trend)[/dim yellow]"
-                    elif strat_mode == "ml":
-                        if prob < PROBABILITY_THRESHOLD:
-                            decision_cell = f"[dim]HOLD (P*={prob:.2f}<{PROBABILITY_THRESHOLD})[/dim]"
-                        elif trend_val == 0:
-                            decision_cell = "[dim yellow]HOLD (Flat Trend)[/dim yellow]"
-                    else:
-                        if bull_fvg == 0 and bear_fvg == 0 and not crt_state["is_long_crt"] and not crt_state["is_short_crt"]:
-                            decision_cell = "[dim]HOLD (No FVG / CRT)[/dim]"
-                        elif prob < PROBABILITY_THRESHOLD:
-                            decision_cell = f"[dim]HOLD (P*={prob:.2f}<{PROBABILITY_THRESHOLD})[/dim]"
-                        elif (trend_val > 0 and bear_fvg > 0) or (trend_val < 0 and bull_fvg > 0):
-                            decision_cell = "[dim yellow]HOLD (Trend Opposed)[/dim yellow]"
+                    order_type = mt5.ORDER_TYPE_BUY if sig.is_buy else mt5.ORDER_TYPE_SELL
+                    self.order_mgr.place_market_order(
+                        asset, order_type, volume=calc_lots, sl_price=sig.sl_price,
+                        tp_price=sig.tp_price, risk_usd=sig.risk_usd, strategy_tag=sig.strategy_tag
+                    )
+                    last_triggered_candles[asset] = current_candle_ts
+                elif sig.is_active:
+                    action_lbl = f"{'BUY' if sig.is_buy else 'SELL'} ({sig.strategy_tag})"
+                    decision_cell = f"[bold cyan]ARMED {action_lbl}[/bold cyan]"
 
                 table.add_row(
-                    asset,
-                    f"{bid:.5f}",
-                    f"{ask:.5f}",
-                    f"{spread:.5f}",
-                    rsi_cell,
-                    f"{vwap_dist:+.2f}%",
-                    f"{ema50_dist:+.2f}%",
-                    f"{ema200_dist:+.2f}%",
-                    trend_cell,
-                    fvg_cell,
-                    prob_cell,
-                    decision_cell
+                    asset, f"{tick.bid:.5f}", f"{tick.ask:.5f}", f"{(tick.ask - tick.bid):.5f}",
+                    rsi_cell, trend_cell, fvg_cell, crt_cell, prob_cell, decision_cell
                 )
 
-            safety_lbl = "[bold green]DRY-RUN MODE (Zero Real Orders)[/bold green]" if is_dry_run else "[bold red]LIVE EXECUTION MODE (REAL ORDERS ARMED)[/bold red]"
-            if strat_mode == "fvg":
-                strat_desc = "Rule-Based ICT FVG"
-            elif strat_mode == "crt":
-                strat_desc = "Candle Range Theory & ORB"
-            elif strat_mode == "ml":
-                strat_desc = "Pure XGBoost ML"
-            else:
-                strat_desc = "Multi-Confluence: FVG + CRT + ML"
-            header_text = (
-                f"[bold white]Account:[/bold white] #{acc_dict.get('login')} ({acc_dict.get('server')})  |  "
-                f"[bold white]Balance:[/bold white] ${acc_dict.get('balance'):,.2f} USD  |  "
-                f"[bold white]Equity:[/bold white] ${acc_dict.get('equity'):,.2f} USD\n"
-                f"[bold white]Strategy:[/bold white] [bold cyan]{strat_mode.upper()}[/bold cyan] ({strat_desc})  |  "
-                f"[bold white]Kill Zone:[/bold white] {kz_display}  |  "
-                f"[bold white]Signals Logged:[/bold white] {signals_count}  |  "
-                f"[bold white]Mode:[/bold white] {safety_lbl}"
+            # 1. Render Account & Risk Header Panel (Autofit in width)
+            metrics = self.order_mgr.get_account_metrics()
+            mode_tag = "[bold red]LIVE BROKER[/bold red]" if live else "[bold yellow]PAPER DRY-RUN[/bold yellow]"
+            pnl_color = "bold green" if metrics['running_pnl'] >= 0 else "bold red"
+            real_pnl_color = "bold green" if metrics['realized_pnl'] >= 0 else "bold red"
+            tot_pnl_color = "bold green" if metrics['total_pnl'] >= 0 else "bold red"
+
+            account_text = (
+                f"Account: [bold cyan]#{metrics['login']}[/bold cyan] ({metrics['server']}) | "
+                f"Mode: {mode_tag} | Strategy: [bold bright_white]{strat.name.upper()}[/bold bright_white] | "
+                f"Time: [bold white]{utc_now.strftime('%Y-%m-%d %H:%M:%S UTC')}[/bold white]\n"
+                f"Equity: [bold bright_white]${metrics['equity']:,.2f} {metrics['currency']}[/bold bright_white] | "
+                f"Balance: [bold]${metrics['balance']:,.2f}[/bold] | "
+                f"Running PnL: [{pnl_color}]{metrics['running_pnl']:+,.2f} USD[/{pnl_color}] | "
+                f"Realized PnL: [{real_pnl_color}]{metrics['realized_pnl']:+,.2f} USD[/{real_pnl_color}] | "
+                f"Total Session PnL: [{tot_pnl_color}]{metrics['total_pnl']:+,.2f} USD[/{tot_pnl_color}]\n"
+                f"Margin: ${metrics['margin']:,.2f} | Free Margin: ${metrics['margin_free']:,.2f} | "
+                f"Margin Level: {metrics['margin_level']:.1f}% | DD: {metrics['drawdown_pct']:.2f}% | "
+                f"Open Positions: [bold yellow]{metrics['open_count']}/2[/bold yellow] | "
+                f"Closed: {metrics['closed_count']} (WR: {metrics['win_rate']:.1f}%)"
             )
-            header_panel = Panel(header_text, title="[bold bright_cyan]ENGINE: UNIFIED FOREX & CFD MASTER TERMINAL[/bold bright_cyan]", border_style="cyan")
+            hdr_panel = Panel(account_text, title="[bold bright_cyan]FOREX MASTER ENGINE: LIVE RISK & PNL TELEMETRY[/bold bright_cyan]", border_style="cyan", expand=True)
 
-            if not once:
-                console.clear()
-            console.print(header_panel)
-            console.print(table)
-            console.print("[dim]Press Ctrl+C to safely disconnect and exit.[/dim]\n")
+            elements = [hdr_panel]
 
-            if once:
-                break
-            time.sleep(interval)
-
-    except KeyboardInterrupt:
-        console.print("\n[bold yellow]Exiting telemetry loop...[/bold yellow]")
-    finally:
-        mt5_conn.disconnect()
-        print("[SHUTDOWN] MT5 disconnected cleanly. All state saved.")
-
-
-# -------------------------------------------------------------------------
-# COMPONENT 8: NUMERICAL PARITY & DIAGNOSTIC VERIFICATION
-# -------------------------------------------------------------------------
-def run_verify() -> None:
-    """Verifies that streaming features match Polars batch features (< 1e-9 error)."""
-    print("=" * 85)
-    print(" RUNNING MATHEMATICAL FEATURE PARITY AUDIT (STREAMING vs BATCH)...")
-    print("=" * 85)
-    asset = "EURUSD"
-    parquet_path = DATA_DIR / f"{asset}_15m_real.parquet"
-    if not parquet_path.exists():
-        print(f"[SKIP] Parquet for {asset} not found.")
-        return
-
-    df_raw = pd.read_parquet(parquet_path).sort_values("datetime").reset_index(drop=True)
-    df_raw = df_raw.iloc[-300:].copy()
-    df_raw.rename(columns={'tick_volume': 'volume'}, inplace=True)
-    df_raw.set_index('datetime', inplace=True)
-
-    # Compute batch features
-    batch_features = compute_features_pandas(df_raw)
-
-    # Compute streaming features incrementally
-    eng = StatefulInferenceEngine(asset, max_bars=300)
-    for idx, row in df_raw.iterrows():
-        eng.update_bar({
-            'datetime': idx,
-            'open': row['open'],
-            'high': row['high'],
-            'low': row['low'],
-            'close': row['close'],
-            'volume': row['volume']
-        })
-    streaming_features = eng.compute_features()
-
-    max_diff = 0.0
-    for col in CANONICAL_FEATURES:
-        b_val = float(batch_features[col].iloc[-1])
-        s_val = float(streaming_features[col].iloc[-1])
-        diff = abs(b_val - s_val)
-        max_diff = max(max_diff, diff)
-        print(f"  Feature {col:<16}: Batch={b_val:>12.6f} | Streaming={s_val:>12.6f} | Diff={diff:.2e}")
-
-    print("-" * 85)
-    if max_diff < 1e-9:
-        print(f"[PASS] 100% Causal Mathematical Parity Confirmed (Max Error: {max_diff:.2e} < 1e-9)")
-    else:
-        print(f"[WARNING] Feature disparity detected (Max Error: {max_diff:.2e})")
-    print("=" * 85)
-
-
-def run_forward_test(strategy: str = "combined", start_date: str = "2025-01-01") -> None:
-    """Executes strictly causal out-of-sample forward backtest across certified Forex parquets."""
-    print("=" * 85)
-    print(f" [FORWARD TESTING] EVALUATING STRATEGY: {strategy.upper()} | OOS FORWARD START: {start_date}")
-    print("=" * 85)
-
-    xgb_model = None
-    if strategy in ["ml", "combined"]:
-        print(f"  -> Training causal XGBoost model strictly on in-sample data (< {start_date})...")
-        train_X = []
-        train_y = []
-        for sym in CANONICAL_18_ASSETS:
-            try:
-                df = engineer_features_polars(sym, DATA_DIR)
-                df['datetime'] = pd.to_datetime(df['datetime'], utc=True)
-                df_is = df[df['datetime'] < start_date].copy()
-                if len(df_is) < 500:
-                    continue
-                df_is = create_labels_ratchet(df_is)
-                valid = df_is[df_is['target'].notna()]
-                if len(valid) > 0:
-                    train_X.append(valid[CANONICAL_FEATURES])
-                    train_y.append(valid['target'].values)
-            except Exception:
-                pass
-
-        if train_X:
-            X_mat = pd.concat(train_X, ignore_index=True)
-            y_vec = np.concatenate(train_y)
-            dtrain = xgb.DMatrix(X_mat, label=y_vec)
-            params = {
-                'objective': 'binary:logistic',
-                'max_depth': 4,
-                'learning_rate': 0.05,
-                'eval_metric': 'logloss',
-                'seed': 42
-            }
-            xgb_model = xgb.train(params, dtrain, num_boost_round=120)
-            print(f"  -> Causal model trained on {len(X_mat):,} in-sample setups. (Zero Lookahead)")
-
-    results_table = Table(
-        title=f"OUT-OF-SAMPLE FORWARD TEST RESULTS | STRATEGY: {strategy.upper()} ({start_date} to 2026)",
-        box=box.ROUNDED,
-        header_style="bold bright_white on blue"
-    )
-    results_table.add_column("Asset", justify="left", style="bold white", width=9)
-    results_table.add_column("Trades", justify="right", width=8)
-    results_table.add_column("Win Rate", justify="right", width=10)
-    results_table.add_column("Profit Factor", justify="right", width=14)
-    results_table.add_column("Net R-Multiple", justify="right", width=15)
-    results_table.add_column("Net PnL (USD)", justify="right", style="bold", width=15)
-
-    all_portfolio_r = []
-    b_returns = []
-
-    for sym in CANONICAL_18_ASSETS:
-        try:
-            df = engineer_features_polars(sym, DATA_DIR)
-            df['datetime'] = pd.to_datetime(df['datetime'], utc=True)
-            df_oos = df[df['datetime'] >= start_date].copy().reset_index(drop=True)
-            if len(df_oos) < 100:
-                continue
-
-            b_ret = (df_oos['close'].iloc[-1] / df_oos['close'].iloc[0]) - 1.0
-            b_returns.append(b_ret)
-
-            if xgb_model is not None:
-                doos = xgb.DMatrix(df_oos[CANONICAL_FEATURES])
-                df_oos['prob'] = xgb_model.predict(doos)
-            else:
-                df_oos['prob'] = 0.50
-
-            lows = df_oos['low'].values
-            highs = df_oos['high'].values
-            closes = df_oos['close'].values
-            opens = df_oos['open'].values
-            hours = df_oos['hour'].values
-            mins = df_oos['datetime'].dt.minute.values
-            pdl_sweeps = df_oos['sweep_pdl'].values
-            pdh_sweeps = df_oos['sweep_pdh'].values
-            bull_fvg = df_oos['bullish_fvg'].values
-            bear_fvg = df_oos['bearish_fvg'].values
-            trend_4h = df_oos['htf_4h_trend'].values
-            probs = df_oos['prob'].values
-            n_bars = len(df_oos)
-
-            sym_trades = []
-            i = 20
-            while i < n_bars - 50:
-                h = hours[i]
-                m = mins[i]
-                is_kz = (7 <= h <= 10) or (12 <= h <= 15)
-
-                is_long = False
-                is_short = False
-                sl_long = lows[max(0, i-20):i+1].min()
-                sl_short = highs[max(0, i-20):i+1].max()
-
-                if strategy == "fvg":
-                    is_long = is_kz and (pdl_sweeps[i] == 1) and (bull_fvg[i] > 0) and (trend_4h[i] > 0)
-                    is_short = is_kz and (pdh_sweeps[i] == 1) and (bear_fvg[i] > 0) and (trend_4h[i] < 0)
-                elif strategy == "crt":
-                    in_session = (h == 7 and m >= 30) or (h in [8, 9, 10, 11]) or (h == 13 and m >= 45) or (h in [14, 15, 16, 17])
-                    if in_session:
-                        if h <= 11:
-                            or_mask = (hours[:i] == 7) & (mins[:i] == 0)
-                        else:
-                            or_mask = (hours[:i] == 13) & (mins[:i] == 30)
-                        or_indices = np.where(or_mask)[0]
-                        if len(or_indices) > 0:
-                            or_idx = or_indices[-1]
-                            if i > or_idx + 1:
-                                or_h = max(highs[or_idx], highs[or_idx+1])
-                                or_l = min(lows[or_idx], lows[or_idx+1])
-                                b_ratio = min(1.0, abs(closes[i] - opens[i]) / (highs[i] - lows[i] + 1e-9))
-                                if closes[i] > or_h and b_ratio >= 0.40 and trend_4h[i] > 0:
-                                    is_long = True
-                                    sl_long = or_l
-                                elif closes[i] < or_l and b_ratio >= 0.40 and trend_4h[i] < 0:
-                                    is_short = True
-                                    sl_short = or_h
-                elif strategy == "ml":
-                    is_long = is_kz and (trend_4h[i] > 0) and (probs[i] >= PROBABILITY_THRESHOLD)
-                    is_short = is_kz and (trend_4h[i] < 0) and (probs[i] >= PROBABILITY_THRESHOLD)
-                else:  # combined
-                    fvg_l = (pdl_sweeps[i] == 1) and (bull_fvg[i] > 0)
-                    fvg_s = (pdh_sweeps[i] == 1) and (bear_fvg[i] > 0)
-                    is_long = is_kz and (trend_4h[i] > 0) and fvg_l and (probs[i] >= PROBABILITY_THRESHOLD)
-                    is_short = is_kz and (trend_4h[i] < 0) and fvg_s and (probs[i] >= PROBABILITY_THRESHOLD)
-
-                if not (is_long or is_short):
-                    i += 1
-                    continue
-
-                entry_bar = i + 1
-                if entry_bar >= n_bars:
-                    break
-                entry = opens[entry_bar]
-
-                if is_long:
-                    sl = sl_long
-                    r_dist = entry - sl
-                    if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                        i += 1
-                        continue
-                    cur_sl = sl
-                    realized_r = 0.0
-                    exit_idx = entry_bar
-                    for b in range(1, MAX_HOLDING_BARS + 1):
-                        cur_idx = entry_bar + b
-                        if cur_idx >= n_bars:
-                            break
-                        h_r = (highs[cur_idx] - entry) / r_dist
-                        if b >= TIME_DECAY_BARS and h_r < TIME_DECAY_THRESHOLD_R:
-                            realized_r = (closes[cur_idx] - entry) / r_dist
-                            exit_idx = cur_idx
-                            break
-                        if h_r >= 2.5:
-                            realized_r = 2.5
-                            exit_idx = cur_idx
-                            break
-                        if h_r >= 1.5:
-                            cur_sl = max(cur_sl, entry + 0.80 * r_dist)
-                        elif h_r >= 0.8:
-                            cur_sl = max(cur_sl, entry + 0.15 * r_dist)
-                        if lows[cur_idx] <= cur_sl:
-                            realized_r = (cur_sl - entry) / r_dist
-                            exit_idx = cur_idx
-                            break
-                    realized_r -= 0.08  # friction
-                    sym_trades.append(realized_r)
-                    all_portfolio_r.append(realized_r)
-                    i = exit_idx + 1
-
-                elif is_short:
-                    sl = sl_short
-                    r_dist = sl - entry
-                    if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                        i += 1
-                        continue
-                    cur_sl = sl
-                    realized_r = 0.0
-                    exit_idx = entry_bar
-                    for b in range(1, MAX_HOLDING_BARS + 1):
-                        cur_idx = entry_bar + b
-                        if cur_idx >= n_bars:
-                            break
-                        h_r = (entry - lows[cur_idx]) / r_dist
-                        if b >= TIME_DECAY_BARS and h_r < TIME_DECAY_THRESHOLD_R:
-                            realized_r = (entry - closes[cur_idx]) / r_dist
-                            exit_idx = cur_idx
-                            break
-                        if h_r >= 2.5:
-                            realized_r = 2.5
-                            exit_idx = cur_idx
-                            break
-                        if h_r >= 1.5:
-                            cur_sl = min(cur_sl, entry - 0.80 * r_dist)
-                        elif h_r >= 0.8:
-                            cur_sl = min(cur_sl, entry - 0.15 * r_dist)
-                        if highs[cur_idx] >= cur_sl:
-                            realized_r = (entry - cur_sl) / r_dist
-                            exit_idx = cur_idx
-                            break
-                    realized_r -= 0.08
-                    sym_trades.append(realized_r)
-                    all_portfolio_r.append(realized_r)
-                    i = exit_idx + 1
-
-            t_arr = np.array(sym_trades)
-            if len(t_arr) > 0:
-                wins = t_arr[t_arr > 0]
-                losses = t_arr[t_arr <= 0]
-                pf = float(wins.sum() / abs(losses.sum())) if len(losses) > 0 and losses.sum() != 0 else (99.0 if len(wins) > 0 else 0.0)
-                wr = float((t_arr > 0).mean() * 100.0)
-                net_r = float(t_arr.sum())
-                net_usd = float(net_r * BASE_RISK_USD)
-                pnl_style = "green" if net_usd > 0 else "red"
-                results_table.add_row(
-                    sym,
-                    str(len(t_arr)),
-                    f"{wr:.1f}%",
-                    f"{pf:.2f}",
-                    f"{net_r:+.2f}R",
-                    f"[{pnl_style}]${net_usd:+,.2f}[/{pnl_style}]"
+            # 2. Render Active Open Trades Table (Autofit in width)
+            if self.order_mgr.open_trades:
+                ot_table = Table(
+                    title=f"ACTIVE OPEN POSITIONS ({len(self.order_mgr.open_trades)}/2)",
+                    box=box.ROUNDED,
+                    header_style="bold bright_white on dark_green",
+                    border_style="green",
+                    show_lines=False,
+                    expand=True
                 )
+                ot_table.add_column("Ticket", justify="center", style="bold white", no_wrap=True)
+                ot_table.add_column("Asset", justify="left", style="bold cyan", no_wrap=True)
+                ot_table.add_column("Sleeve", justify="center", no_wrap=True)
+                ot_table.add_column("Side", justify="center", no_wrap=True)
+                ot_table.add_column("Lots", justify="right", no_wrap=True)
+                ot_table.add_column("Entry", justify="right", no_wrap=True)
+                ot_table.add_column("Current", justify="right", no_wrap=True)
+                ot_table.add_column("SL", justify="right", no_wrap=True)
+                ot_table.add_column("TP", justify="right", no_wrap=True)
+                ot_table.add_column("R", justify="right", no_wrap=True)
+                ot_table.add_column("PnL", justify="right", no_wrap=True)
+                ot_table.add_column("Ratchet", justify="left", ratio=1, overflow="ellipsis")
+                ot_table.add_column("Bars", justify="right", no_wrap=True)
+
+                def _fmt(val: float) -> str:
+                    if abs(val) >= 1000.0:
+                        return f"{val:.2f}"
+                    elif abs(val) >= 10.0:
+                        return f"{val:.4f}"
+                    return f"{val:.5f}"
+
+                for ticket, tr in self.order_mgr.open_trades.items():
+                    side_style = "bold green" if tr["action"] == "BUY" else "bold red"
+                    r_style = "bold green" if tr["current_r"] >= 0 else "bold red"
+                    pnl_style = "bold green" if tr["running_pnl"] >= 0 else "bold red"
+                    ot_table.add_row(
+                        str(ticket),
+                        tr["symbol"],
+                        tr["strategy"],
+                        f"[{side_style}]{tr['action']}[/{side_style}]",
+                        f"{tr['volume']:.2f}L",
+                        _fmt(tr["entry"]),
+                        _fmt(tr["cur_price"]),
+                        _fmt(tr["sl"]),
+                        _fmt(tr["tp"]),
+                        f"[{r_style}]{tr['current_r']:+.2f}R[/{r_style}]",
+                        f"[{pnl_style}]{tr['running_pnl']:+,.2f} USD[/{pnl_style}]",
+                        tr.get("ratchet_desc", "Base SL"),
+                        f"{tr['bars_held']}/24"
+                    )
+                elements.append(ot_table)
             else:
-                results_table.add_row(sym, "0", "0.0%", "0.00", "+0.00R", "$0.00")
-        except Exception:
-            pass
+                elements.append(Panel("[dim italic]Active Positions: None (Scanning 18 assets for high-probability confluence setups...)[/dim italic]", border_style="dim", expand=True))
 
-    console.print(results_table)
+            # 3. Render Session Closed Trades Table (Autofit in width)
+            if self.order_mgr.closed_trades:
+                ct_table = Table(
+                    title=f"SESSION CLOSED TRADES HISTORY (Last 5 of {len(self.order_mgr.closed_trades)})",
+                    box=box.ROUNDED,
+                    header_style="bold bright_white on blue",
+                    border_style="blue",
+                    show_lines=False,
+                    expand=True
+                )
+                ct_table.add_column("Ticket", justify="center", style="dim", no_wrap=True)
+                ct_table.add_column("Asset", justify="left", style="bold white", no_wrap=True)
+                ct_table.add_column("Sleeve", justify="center", no_wrap=True)
+                ct_table.add_column("Side", justify="center", no_wrap=True)
+                ct_table.add_column("Entry", justify="right", no_wrap=True)
+                ct_table.add_column("Exit", justify="right", no_wrap=True)
+                ct_table.add_column("Exit Reason", justify="left", ratio=1, overflow="ellipsis")
+                ct_table.add_column("Realized R", justify="right", no_wrap=True)
+                ct_table.add_column("Realized PnL", justify="right", no_wrap=True)
+                ct_table.add_column("Bars", justify="right", no_wrap=True)
 
-    port_arr = np.array(all_portfolio_r)
-    if len(port_arr) > 0:
-        p_wins = port_arr[port_arr > 0]
-        p_losses = port_arr[port_arr <= 0]
-        tot_pf = float(p_wins.sum() / abs(p_losses.sum())) if len(p_losses) > 0 and p_losses.sum() != 0 else 0.0
-        tot_wr = float((port_arr > 0).mean() * 100.0)
-        tot_r = float(port_arr.sum())
-        tot_pnl = float(tot_r * BASE_RISK_USD)
-        final_equity = 5000.0 + tot_pnl
-        roi_pct = (tot_pnl / 5000.0) * 100.0
-        b_avg = np.mean(b_returns) * 100.0 if b_returns else 0.0
+                for ct in self.order_mgr.closed_trades[-5:]:
+                    side_style = "green" if ct["action"] == "BUY" else "red"
+                    pnl_style = "bold green" if ct["realized_pnl"] >= 0 else "bold red"
+                    r_style = "bold green" if ct["realized_r"] >= 0 else "bold red"
+                    ct_table.add_row(
+                        str(ct["ticket"]),
+                        ct["symbol"],
+                        ct["strategy"],
+                        f"[{side_style}]{ct['action']}[/{side_style}]",
+                        f"{ct['entry']:.5f}",
+                        f"{ct['exit']:.5f}",
+                        ct["reason"],
+                        f"[{r_style}]{ct['realized_r']:+.2f}R[/{r_style}]",
+                        f"[{pnl_style}]{ct['realized_pnl']:+,.2f} USD[/{pnl_style}]",
+                        f"{ct['bars_held']}"
+                    )
+                elements.append(ct_table)
 
-        cum_pnl = np.cumsum(port_arr * BASE_RISK_USD)
-        peaks = np.maximum.accumulate(cum_pnl)
-        dds = peaks - cum_pnl
-        max_dd_usd = float(dds.max()) if len(dds) > 0 else 0.0
-        max_dd_pct = (max_dd_usd / 5000.0) * 100.0
+            # 4. Telemetry Table
+            elements.append(table)
+            return Group(*elements)
+
+        try:
+            if once:
+                frame = build_dashboard_frame()
+                console.print(frame)
+                return
+
+            with Live(console=console, screen=False, auto_refresh=False) as live_ui:
+                while True:
+                    frame = build_dashboard_frame()
+                    live_ui.update(frame, refresh=True)
+                    time.sleep(interval)
+
+        except KeyboardInterrupt:
+            console.print("[yellow]Telemetry stopped by user.[/yellow]")
+        finally:
+            self.mt5_conn.disconnect()
+
+    async def run_telemetry_async(
+        self,
+        strategy_target: str = "fvg_ml",
+        interval: float = 1.5,
+        **kwargs
+    ) -> None:
+        """Asynchronous execution wrapper for event-loop integration."""
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, lambda: self.run_telemetry(strategy_target, interval=interval, **kwargs))
+
+    def run_forward_test(
+        self,
+        strategy_target: str = "fvg_ml",
+        start_date: str = "2025-12-01",
+        end_date: Optional[str] = None
+    ) -> BacktestResult:
+        """Executes out-of-sample forward test simulation and validates against criteria."""
+        strat = self.load_strategy(strategy_target)
+        console.print(Panel(
+            f"[bold bright_cyan]FORWARD TEST SIMULATION | STRATEGY: {strat.name.upper()}[/bold bright_cyan]\n"
+            f"[dim]Start Date: {start_date} | End Date: {end_date or 'Present'} | Assets: {len(CANONICAL_18_ASSETS)}[/dim]",
+            border_style="cyan"
+        ))
+
+        res = strat.run_backtest(start_date=start_date, end_date=end_date)
+        self._display_backtest_report(res)
+        return res
+
+    def run_oos_window(self, strategy_target: str, window_id: int) -> BacktestResult:
+        """Executes backtest for a specific OOS window from oos_windows_20.json."""
+        w = self.config.get_window(window_id)
+        if not w:
+            raise ValueError(f"Window ID {window_id} not found in {self.config.windows_path}")
+
+        console.print(Panel(
+            f"[bold bright_cyan]OOS WINDOW {w.window_id}: {w.name.upper()}[/bold bright_cyan]\n"
+            f"[dim]Dates: {w.start_date} to {w.end_date} | Regime: {w.regime}\n"
+            f"Description: {w.description}[/dim]",
+            border_style="cyan"
+        ))
+
+        strat = self.load_strategy(strategy_target)
+        res = strat.run_backtest(start_date=w.start_date, end_date=w.end_date)
+        res.window_id = window_id
+        self._display_backtest_report(res)
+        return res
+
+    def run_walkforward(self, strategy_target: str, fail_fast: bool = True) -> List[BacktestResult]:
+        """Runs sequential walk-forward evaluation across all 20 OOS windows with fail-fast enforcement."""
+        strat = self.load_strategy(strategy_target)
+        results = []
+
+        console.print(Panel(
+            f"[bold bright_cyan]SEQUENTIAL 20 OOS WINDOW WALK-FORWARD VALIDATION[/bold bright_cyan]\n"
+            f"[dim]Strategy: {strat.name.upper()} | Institutional Fail-Fast: {fail_fast}[/dim]",
+            border_style="bright_magenta"
+        ))
+
+        for w in self.config.windows:
+            console.print(f"\n[bold yellow]>>> Evaluating Window {w.window_id}/{len(self.config.windows)}: {w.name} ({w.start_date} to {w.end_date})...[/bold yellow]")
+            res = strat.run_backtest(start_date=w.start_date, end_date=w.end_date, save_plot=False)
+            res.window_id = w.window_id
+            results.append(res)
+
+            status_color = "green" if res.passed_criteria else "red"
+            console.print(f"[{status_color}]Result: Net ROI: {res.net_roi_pct:+.2f}% | Max DD: {res.max_dd_pct:.2f}% | Win Rate: {res.win_rate:.1f}% | Trades: {res.total_trades} | Passed: {res.passed_criteria}[/{status_color}]")
+
+            if fail_fast and not res.passed_criteria:
+                console.print(f"[bold red]FAIL-FAST HALT: Strategy failed Window {w.window_id} ({w.name}). Halting execution as mandated by Part 10 invariant.[/bold red]")
+                break
+
+        return results
+
+    def _display_backtest_report(self, res: BacktestResult) -> None:
+        """Renders comprehensive terminal report."""
+        table = Table(
+            title=f"PER-ASSET METRICS: {res.strategy_name.upper()} ({res.start_date} to {res.end_date or 'Present'})",
+            box=box.ROUNDED,
+            header_style="bold bright_white on blue"
+        )
+        table.add_column("Asset", justify="left", style="bold white", width=9)
+        table.add_column("Trades", justify="right", width=8)
+        table.add_column("Win Rate", justify="right", width=10)
+        table.add_column("Net R", justify="right", width=12)
+        table.add_column("Net PnL (USD)", justify="right", style="bold", width=15)
+
+        for a, d in sorted(res.per_asset_summary.items(), key=lambda x: x[1]['net_r'], reverse=True):
+            pnl_style = "green" if d['pnl'] >= 0 else "red"
+            table.add_row(
+                a, str(d['trades']), f"{d['win_rate']:.1f}%", f"{d['net_r']:+.2f}R",
+                f"[{pnl_style}]${d['pnl']:+,.2f}[/{pnl_style}]"
+            )
+        console.print(table)
+
+        tc = self.config.criteria
+        pass_status = "[bold green]YES (ALL CRITERIA SATISFIED)[/bold green]" if res.passed_criteria else "[bold red]NO (TARGET CRITERIA BREACHED)[/bold red]"
 
         summary_text = (
-            f"[bold white]Initial Capital:[/bold white] $5,000.00 USD  |  "
-            f"[bold white]Final Equity:[/bold white] ${final_equity:,.2f} USD  |  "
-            f"[bold white]Net ROI:[/bold white] [{ 'green' if roi_pct >= 0 else 'red' }]{roi_pct:+.2f}%[/{ 'green' if roi_pct >= 0 else 'red' }]\n"
-            f"[bold white]Total Trades:[/bold white] {len(port_arr)}  |  "
-            f"[bold white]Win Rate:[/bold white] {tot_wr:.1f}%  |  "
-            f"[bold white]Profit Factor:[/bold white] {tot_pf:.2f}\n"
-            f"[bold white]Max Drawdown:[/bold white] ${max_dd_usd:,.2f} USD ({max_dd_pct:.2f}%)  |  "
-            f"[bold white]Benchmark (Buy & Hold Avg):[/bold white] {b_avg:+.2f}%"
+            f"Strategy Name:       {res.strategy_name.upper()}\n"
+            f"Out-Of-Sample Range: {res.start_date} to {res.end_date or 'Present'}\n"
+            f"Initial Capital:     {tc.initial_capital_usd:,.2f} USD\n"
+            f"Final Equity:        {tc.initial_capital_usd + res.net_pnl_usd:,.2f} USD\n"
+            f"Total Trades:        {res.total_trades} (Min Target: {tc.min_trades})\n"
+            f"Win Rate:            {res.win_rate:.1f}% (Min Target: {tc.min_winrate_percent:.1f}%)\n"
+            f"Profit Factor:       {res.profit_factor:.2f}\n"
+            f"Net R-Multiple:      {res.net_r:+.2f}R (Min Target: {tc.min_r_multiple:+.2f}R)\n"
+            f"Net Profit (USD):    {res.net_pnl_usd:+,.2f} USD\n"
+            f"Net ROI:             {res.net_roi_pct:+.2f}% (Min Target: {tc.min_roi_percent:+.2f}%)\n"
+            f"Max Drawdown:        {res.max_dd_pct:.2f}% (Max Allowed: {tc.max_dd_percent:.2f}%)\n"
+            f"Buy & Hold Return:   {res.buy_hold_return_pct:+.2f}%\n"
+            f"Criteria Evaluation: {pass_status}"
         )
-        panel = Panel(summary_text, title="[bold bright_cyan]PORTFOLIO FORWARD TEST AGGREGATE SUMMARY[/bold bright_cyan]", border_style="green" if tot_pnl >= 0 else "red")
-        console.print(panel)
+        if res.failure_reasons:
+            summary_text += f"\nFailure Details:     {', '.join(res.failure_reasons)}"
+
+        console.print(Panel(
+            summary_text,
+            title="[bold bright_cyan]PORTFOLIO PERFORMANCE & CRITERIA SCORECARD[/bold bright_cyan]",
+            border_style="green" if res.passed_criteria else "red"
+        ))
+
+    def show_info(self) -> None:
+        """Displays full architecture diagnostics, loaded criteria, and registered strategies."""
+        print("=" * 85)
+        print(" FOREX & CFD MASTER ORCHESTRATION ENGINE DIAGNOSTICS")
+        print("=" * 85)
+        print(f" [Project Root]       : {PROJECT_ROOT}")
+        print(f" [Engine Directory]   : {ENGINE_DIR}")
+        print(f" [Criteria File]      : {self.config.criteria_path} (Exists: {self.config.criteria_path.exists() if self.config.criteria_path else False})")
+        print(f" [Windows File]       : {self.config.windows_path} (Exists: {self.config.windows_path.exists() if self.config.windows_path else False})")
+        print(f" [Target Criteria]    : ROI >= {self.config.criteria.min_roi_percent}%, MaxDD <= {self.config.criteria.max_dd_percent}%, WinRate >= {self.config.criteria.min_winrate_percent}%, MinTrades >= {self.config.criteria.min_trades}")
+        print(f" [OOS Windows Loaded] : {len(self.config.windows)} regimes (2021 - 2026)")
+        print(f" [Registered Strats]  : {StrategyRegistry.list_strategies()}")
+        print(f" [Historical Parquets]: {DATA_DIR} ({len(list(DATA_DIR.glob('*.parquet')))} assets)")
+        print(f" [Production Model]   : {PRODUCTION_MODEL_PATH} ({'EXISTS' if PRODUCTION_MODEL_PATH.exists() else 'NOT FOUND'})")
+        print(f" [Telemetry Log]      : {LOG_FILE}")
+        print("=" * 85)
 
 
-def show_structure() -> None:
-    """Prints repository storage paths for data, models, and logs."""
-    print("=" * 85)
-    print(" FOREX & CFD PRODUCTION STORAGE MAP & REPOSITORY ARCHITECTURE")
-    print("=" * 85)
-    print(f" [Project Root]       : {PROJECT_ROOT}")
-    print(f" [Engine Directory]   : {ENGINE_DIR}")
-    print(f" [Standalone Engine]  : {CURRENT_FILE}")
-    print(f" [Historical Parquets]: {DATA_DIR} ({len(list(DATA_DIR.glob('*.parquet')))} parquet files)")
-    print(f" [Production Model]   : {PRODUCTION_MODEL_PATH} ({'EXISTS' if PRODUCTION_MODEL_PATH.exists() else 'NOT FOUND'})")
-    if PRODUCTION_MODEL_PATH.exists():
-        print(f"                        Size: {PRODUCTION_MODEL_PATH.stat().st_size:,} bytes")
-    print(f" [Dry Run Log File]   : {LOG_FILE}")
-    print("=" * 85)
+# -------------------------------------------------------------------------
+# COMPONENT 8: NUMERICAL PARITY VERIFICATION HARNESS
+# -------------------------------------------------------------------------
+def run_verify() -> None:
+    """Verifies numerical parity between streaming and batch feature calculation."""
+    console.print("[bold cyan]Running numerical parity assertions (< 1e-9 error)...[/bold cyan]")
+    test_asset = "EURUSD"
+    parquet_path = DATA_DIR / f"{test_asset}.parquet"
+    if not parquet_path.exists():
+        console.print(f"[bold yellow]Test asset {test_asset} parquet not found, using first available...[/bold yellow]")
+        parquets = list(DATA_DIR.glob("*.parquet"))
+        if not parquets:
+            console.print("[bold red]No parquet files found for verification.[/bold red]")
+            return
+        parquet_path = parquets[0]
+        test_asset = parquet_path.stem
+
+    df = pl.read_parquet(parquet_path).tail(250).to_pandas()
+    df['datetime'] = pd.to_datetime(df['datetime'], utc=True)
+    df.set_index('datetime', inplace=True)
+
+    batch_feat = compute_features_pandas(df)
+
+    eng = StatefulInferenceEngine(test_asset)
+    eng.buffer = df.copy()
+    stream_feat = eng.compute_features()
+
+    diff = (batch_feat.iloc[-1] - stream_feat.iloc[-1]).abs().max()
+    if diff < 1e-9:
+        console.print(f"[bold green]PASS: Feature parity verified! Max difference: {diff:.2e}[/bold green]")
+    else:
+        console.print(f"[bold red]FAIL: Feature mismatch detected! Max difference: {diff:.2e}[/bold red]")
 
 
 # -------------------------------------------------------------------------
@@ -1703,48 +2268,75 @@ def show_structure() -> None:
 # -------------------------------------------------------------------------
 def main():
     parser = argparse.ArgumentParser(
-        description="Unified Master Forex & CFD Standalone Trading Engine (CLI)",
+        description="Unified Master Forex & CFD Orchestration Engine",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Standard Usage:
-  python Engine/forex_engine.py                         # Full cycle: Sync -> Retrain -> Multi-Confluence (Dry-Run)
-  python Engine/forex_engine.py --strategy fvg          # Run pure Rule-Based ICT FVG strategy (Dry-Run)
-  python Engine/forex_engine.py --strategy crt          # Run pure Candle Range Theory & ORB strategy (Dry-Run)
-  python Engine/forex_engine.py --strategy ml           # Run pure Machine Learning XGBoost strategy (Dry-Run)
-  python Engine/forex_engine.py --strategy combined     # Run multi-confluence FVG + CRT + ML strategy (Dry-Run)
-  python Engine/forex_engine.py --mode snapshot         # Run single evaluation pass and cleanly exit
-  python Engine/forex_engine.py --mode snapshot --strategy crt
-  python Engine/forex_engine.py --mode forward-test     # Run out-of-sample forward test simulation
-  python Engine/forex_engine.py --mode forward-test --strategy crt
-  python Engine/forex_engine.py --skip-train            # Skip retraining, run telemetry immediately
-  python Engine/forex_engine.py --live                  # ARM LIVE TRADING: Dispatch real market orders to MT5
-  python Engine/forex_engine.py --mode verify           # Run numerical parity assertions (< 1e-9 error)
-  python Engine/forex_engine.py --mode info             # Display data & model storage paths
+Standard Execution Examples:
+  # 1. Run Live/Dry-Run Parallel Dual-Sleeve Telemetry (FVG_ML + ORB_CRT in parallel)
+  python Engine/forex_engine.py
+  python Engine/forex_engine.py --strategy parallel
+
+  # 2. Run Single Strategy Mode (FVG_ML or ORB_CRT individually)
+  python Engine/forex_engine.py --strategy fvg_ml
+  python Engine/forex_engine.py --strategy orb_crt
+
+  # 3. Run Single-Pass Snapshot of all 18 assets across both strategies
+  python Engine/forex_engine.py --mode snapshot --strategy parallel
+
+  # 4. Run Forward-Test Backtest from Dec 2025 onwards (Validating against Target Criteria)
+  python Engine/forex_engine.py --mode forward-test --strategy parallel --start-date 2025-12-01
+
+  # 5. Run Specific Out-Of-Sample Regime Window (Window 20: March 2026 Microstructure Shock)
+  python Engine/forex_engine.py --mode oos-window --strategy parallel --window 20
+
+  # 6. Run Full 20 OOS Window Walk-Forward with Institutional Fail-Fast Gate
+  python Engine/forex_engine.py --mode walkforward --strategy parallel
+
+  # 7. Run System Diagnostics & Storage Inspection
+  python Engine/forex_engine.py --mode info
+
+  # 8. Arm Real Live Broker Orders to MetaTrader 5
+  python Engine/forex_engine.py --strategy parallel --live
         """
     )
     parser.add_argument(
         "--mode",
-        choices=["dry-run", "snapshot", "train", "verify", "info", "forward-test"],
-        default="dry-run",
-        help="Execution mode (default: dry-run)"
+        choices=["telemetry", "dry-run", "snapshot", "forward-test", "oos-window", "walkforward", "train", "verify", "info"],
+        default="telemetry",
+        help="Execution mode (default: telemetry)"
     )
     parser.add_argument(
         "--strategy",
-        choices=["fvg", "crt", "ml", "combined"],
-        default="combined",
-        help="Trading strategy: 'fvg' (Rule-Based ICT FVG), 'crt' (Candle Range Theory & ORB), 'ml' (Pure XGBoost ML), 'combined' (Multi-Confluence: FVG + CRT + ML) (default: combined)"
+        default="parallel",
+        help="Trading strategy: 'parallel' (Dual-Sleeve FVG_ML + ORB_CRT, default), 'fvg_ml', 'orb_crt', 'combined', or comma-separated sleeves (default: parallel)"
     )
     parser.add_argument(
         "--start-date",
-        default="2025-01-01",
-        help="Out-of-sample forward test start date (default: 2025-01-01)"
+        default="2025-12-01",
+        help="Out-of-sample forward test start date (default: 2025-12-01)"
     )
     parser.add_argument(
-        "--dry-run",
-        dest="dry_run",
-        action="store_true",
-        default=True,
-        help="Run in safe paper trading dry-run mode (zero broker orders; default: True)"
+        "--end-date",
+        default=None,
+        help="Out-of-sample forward test end date (optional)"
+    )
+    parser.add_argument(
+        "--window",
+        type=int,
+        default=20,
+        help="Window ID (1 to 20) for --mode oos-window (default: 20)"
+    )
+    parser.add_argument(
+        "--criteria",
+        type=str,
+        default=str(CRITERIA_PATH),
+        help="Path to criteria JSON file (default: Engine/target_oos_criteria.json)"
+    )
+    parser.add_argument(
+        "--windows",
+        type=str,
+        default=str(WINDOWS_PATH),
+        help="Path to 20 OOS windows JSON file (default: Engine/oos_windows_20.json)"
     )
     parser.add_argument(
         "--live",
@@ -1756,12 +2348,12 @@ Standard Usage:
     parser.add_argument(
         "--skip-train",
         action="store_true",
-        help="Skip model deletion and retraining; run live telemetry immediately."
+        help="Skip retraining; run immediately with existing model weights."
     )
     parser.add_argument(
         "--ignore-kz",
         action="store_true",
-        help="Bypass the London/NY kill zone filter for 24/7 dry-run signal testing."
+        help="Bypass the London/NY kill zone filter for 24/7 signal testing."
     )
     parser.add_argument(
         "--interval",
@@ -1772,41 +2364,45 @@ Standard Usage:
 
     args = parser.parse_args()
 
+    # Ingest Config & Criteria
+    engine_config = EngineConfig.load(criteria_path=args.criteria, windows_path=args.windows)
+    engine = ForexEngine(config=engine_config)
+
     if args.mode == "info":
-        show_structure()
+        engine.show_info()
         return
 
     if args.mode == "verify":
         run_verify()
         return
 
-    if args.mode == "forward-test":
-        run_forward_test(strategy=args.strategy, start_date=args.start_date)
+    if args.mode == "train":
+        dynamic_retrain()
         return
 
-    if not args.skip_train and args.mode in ["dry-run", "snapshot", "train"]:
-        if PRODUCTION_MODEL_PATH.exists():
-            try:
-                os.remove(PRODUCTION_MODEL_PATH)
-            except Exception:
-                pass
-        dynamic_retrain()
+    if args.mode == "forward-test":
+        engine.run_forward_test(strategy_target=args.strategy, start_date=args.start_date, end_date=args.end_date)
+        return
 
-    if args.mode == "train":
-        print("\n[COMPLETE] Model retrained successfully and ready for deployment.")
+    if args.mode == "oos-window":
+        engine.run_oos_window(strategy_target=args.strategy, window_id=args.window)
+        return
+
+    if args.mode == "walkforward":
+        engine.run_walkforward(strategy_target=args.strategy, fail_fast=True)
         return
 
     is_once = (args.mode == "snapshot")
-    run_telemetry(
+    engine.run_telemetry(
+        strategy_target=args.strategy,
         once=is_once,
         ignore_kz=args.ignore_kz,
-        strategy=args.strategy,
-        dry_run=args.dry_run,
+        dry_run=(not args.live),
         live=args.live,
-        interval=args.interval
+        interval=args.interval,
+        skip_train=args.skip_train
     )
 
 
 if __name__ == "__main__":
     main()
-

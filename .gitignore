@@ -3,12 +3,23 @@ Seeding/
 *.xlsx
 *.xls
 
-# Ignore screenshots/media
+# Ignore screenshots/media (except equity curves, research papers, and audit artifacts)
 *.png
 *.jpg
 *.jpeg
 *.pdf
 *.zip
+# Allow equity curve artifacts
+!Engine/artifacts/*.png
+# Allow reports/ equity curve PNGs
+!reports/*.png
+# Allow research papers and quant knowledge PDFs
+!Quant_Knowledge/**
+!papers/**
+# Allow skills/copilot_packages zip bundles
+!skills/copilot_packages/**
+# Allow .claude-flow workflow state
+!.claude-flow/
 
 # Ignore python caches and model run summaries
 __pycache__/
@@ -80,3 +91,6 @@ Engine/binance_backtesting_data_backup/
 
 graphify-out/
 arena_01a09b0e/
+
+# Allow compliance and audit PDFs in docs/
+!docs/*.pdf
