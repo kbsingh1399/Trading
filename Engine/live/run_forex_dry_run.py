@@ -50,6 +50,7 @@ logging.basicConfig(
 )
 
 if sys.platform == "win32":
+    os.system('chcp 65001 > nul 2>&1')
     try:
         sys.stdout.reconfigure(encoding='utf-8')
         sys.stderr.reconfigure(encoding='utf-8')
@@ -64,20 +65,42 @@ BASE_RISK_USD = 50.0  # 1.0% on 5,000 USD capital
 # ============================================================================
 # PRE-FLIGHT DATA GAP SYNCHRONIZATION
 # ============================================================================
-def pre_flight_data_sync(mt5_conn: MT5Connection):
+def robust_parquet_replace(tmp_file, target_file, max_retries=5, base_delay=0.1):
+    import time
+    for attempt in range(max_retries):
+        try:
+            os.replace(tmp_file, target_file)
+            return True
+        except PermissionError:
+            time.sleep(base_delay * (2 ** attempt))
+    try:
+        os.replace(tmp_file, target_file)
+        return True
+    except Exception as e:
+        logging.error(f"Failed to replace {target_file} after {max_retries} retries: {e}")
+        try:
+            os.remove(tmp_file)
+        except:
+            pass
+        raise
+
+def pre_flight_data_sync(mt5_conn: MT5Connection, single_asset=None):
     """
     Checks each asset's parquet file in Forex_Backtesting_Data/ and appends
     any missing closed candles up to the current moment using true UTC time.
     """
-    print("=" * 115)
-    print(" [PRE-FLIGHT] Checking and synchronizing missing candles from MT5 server (True UTC)...")
-    print("=" * 115)
+    if single_asset is None:
+        print("=" * 115)
+        print(" [PRE-FLIGHT] Checking and synchronizing missing candles from MT5 server (True UTC)...")
+        print("=" * 115)
 
     total_appended = 0
     now_utc = datetime.now(timezone.utc)
     broker_offset = mt5_conn.get_broker_utc_offset()
 
-    for asset in ASSETS:
+    assets_to_sync = [single_asset] if single_asset else ASSETS
+
+    for asset in assets_to_sync:
         real_symbol = mt5_conn.resolve_symbol(asset)
         base_name = asset
         m15_file = os.path.join(DATA_DIR, f"{base_name}_15m_real.parquet")
@@ -131,20 +154,28 @@ def pre_flight_data_sync(mt5_conn: MT5Connection):
                     df_combined = df_combined.drop_duplicates(subset=['time'], keep='first').sort_values('time').reset_index(drop=True)
                     tmp_file = m15_file + ".tmp"
                     df_combined.to_parquet(tmp_file, index=False)
-                    os.replace(tmp_file, m15_file)
-                    print(f"  -> [{asset:<7}] Appended +{len(new_rows):>2} missing candles (Up to {df_combined['datetime'].iloc[-1].strftime('%Y-%m-%d %H:%M UTC')})")
+                    robust_parquet_replace(tmp_file, m15_file)
+                    
+                    if single_asset is None:
+                        print(f"  -> [{asset:<7}] Appended +{len(new_rows):>2} missing candles (Up to {df_combined['datetime'].iloc[-1].strftime('%Y-%m-%d %H:%M UTC')})")
+                    else:
+                        logging.info(f"[{asset}] Live telemetry appended +{len(new_rows)} candles to parquet.")
                     total_appended += len(new_rows)
                 else:
-                    print(f"  -> [{asset:<7}] 100% Up-to-date (Last: {last_dt.strftime('%Y-%m-%d %H:%M UTC')})")
+                    if single_asset is None:
+                        print(f"  -> [{asset:<7}] 100% Up-to-date (Last: {last_dt.strftime('%Y-%m-%d %H:%M UTC')})")
             else:
-                print(f"  -> [{asset:<7}] 100% Up-to-date (Last: {last_dt.strftime('%Y-%m-%d %H:%M UTC')})")
+                if single_asset is None:
+                    print(f"  -> [{asset:<7}] 100% Up-to-date (Last: {last_dt.strftime('%Y-%m-%d %H:%M UTC')})")
         except Exception as e:
             logging.error(f"Pre-flight sync error for {asset}: {e}")
-            print(f"  -> [{asset:<7}] Sync Error: {e}")
+            if single_asset is None:
+                print(f"  -> [{asset:<7}] Sync Error: {e}")
 
-    print(f"\n [PRE-FLIGHT COMPLETE] Total new bars appended: {total_appended}")
-    print("=" * 115)
-    time.sleep(0.5)
+    if single_asset is None:
+        print(f"\n [PRE-FLIGHT COMPLETE] Total new bars appended: {total_appended}")
+        print("=" * 115)
+        time.sleep(0.5)
 
 
 # ============================================================================
@@ -180,9 +211,6 @@ def main():
         console.print("[bold red][FATAL] Could not connect to MetaTrader 5 terminal. Ensure MT5 is running![/bold red]")
         sys.exit(1)
 
-    acc = mt5.account_info()
-    acc_dict = acc._asdict() if acc is not None else {"login": "UNKNOWN", "server": "UNKNOWN", "balance": 0.0, "equity": 0.0}
-
     # Pre-flight data sync
     pre_flight_data_sync(mt5_conn)
 
@@ -214,6 +242,17 @@ def main():
 
     try:
         while True:
+            # Reconnection logic & dynamic account updates
+            acc = mt5.account_info()
+            if acc is None:
+                logging.warning("MT5 connection lost in telemetry loop. Attempting to reconnect...")
+                if not mt5_conn.connect():
+                    time.sleep(5)
+                    continue
+                acc = mt5.account_info()
+            
+            acc_dict = acc._asdict() if acc is not None else {"login": "UNKNOWN", "server": "UNKNOWN", "balance": 0.0, "equity": 0.0}
+
             utc_now = datetime.now(timezone.utc)
             # London KZ: 07-10 UTC | NY KZ: 12-15 UTC
             is_london = (7 <= utc_now.hour <= 10)
@@ -276,7 +315,11 @@ def main():
                             'volume': closed_bar['tick_volume']
                         }
                         engine.update_bar(new_bar)
+                        engine.refresh_4h_buffer()
                         last_candle_times[asset] = closed_bar_time
+                        
+                        # Append closed candle to persistent parquet storage immediately
+                        pre_flight_data_sync(mt5_conn, single_asset=asset)
 
                 # Compute features & probability
                 try:
@@ -329,47 +372,45 @@ def main():
                 decision_cell = "[dim]HOLD[/dim]"
                 calc_lots = 0.01
 
-                # 1. EVALUATE LONG SETUP
-                if trend_val > 0 and bull_fvg > 0 and prob >= 0.55:
-                    if not is_kz:
-                        decision_cell = "[dim yellow]HOLD (Off-Hours)[/dim yellow]"
-                    else:
-                        entry = ask
-                        sl = local_low
-                        r_dist = entry - sl
-                        if r_dist <= 0:
-                            decision_cell = "[dim red]HOLD (Invalid SL)[/dim red]"
-                        elif (r_dist / entry) > 0.025:
-                            decision_cell = "[dim red]HOLD (SL > 2.5%)[/dim red]"
-                        else:
-                            tp = entry + (4.0 * r_dist)
-                            calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
-                            decision_cell = f"[bold white on green] DRY-BUY ({calc_lots:.2f}L) [/bold white on green]"
-                            signals_count += 1
-                            log_msg = f"[DRY-RUN SIGNAL: {asset} | BUY | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
-                            logging.info(log_msg)
+                # 1. GATING LOGIC FIRST
+                if not is_kz:
+                    decision_cell = "[dim yellow]HOLD (Off-Hours)[/dim yellow]"
 
-                # 2. EVALUATE SHORT SETUP
+                # 2. EVALUATE LONG SETUP
+                elif trend_val > 0 and bull_fvg > 0 and prob >= 0.55:
+                    entry = ask
+                    sl = local_low
+                    r_dist = entry - sl
+                    if r_dist <= 0:
+                        decision_cell = "[dim red]HOLD (Invalid SL)[/dim red]"
+                    elif (r_dist / entry) > 0.025:
+                        decision_cell = "[dim red]HOLD (SL > 2.5%)[/dim red]"
+                    else:
+                        tp = entry + (4.0 * r_dist)
+                        calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
+                        decision_cell = f"[bold white on green] DRY-BUY ({calc_lots:.2f}L) [/bold white on green]"
+                        signals_count += 1
+                        log_msg = f"[DRY-RUN SIGNAL: {asset} | BUY | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
+                        logging.info(log_msg)
+
+                # 3. EVALUATE SHORT SETUP
                 elif trend_val < 0 and bear_fvg > 0 and prob >= 0.55:
-                    if not is_kz:
-                        decision_cell = "[dim yellow]HOLD (Off-Hours)[/dim yellow]"
+                    entry = bid
+                    sl = local_high
+                    r_dist = sl - entry
+                    if r_dist <= 0:
+                        decision_cell = "[dim red]HOLD (Invalid SL)[/dim red]"
+                    elif (r_dist / entry) > 0.025:
+                        decision_cell = "[dim red]HOLD (SL > 2.5%)[/dim red]"
                     else:
-                        entry = bid
-                        sl = local_high
-                        r_dist = sl - entry
-                        if r_dist <= 0:
-                            decision_cell = "[dim red]HOLD (Invalid SL)[/dim red]"
-                        elif (r_dist / entry) > 0.025:
-                            decision_cell = "[dim red]HOLD (SL > 2.5%)[/dim red]"
-                        else:
-                            tp = entry - (4.0 * r_dist)
-                            calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
-                            decision_cell = f"[bold white on red] DRY-SELL ({calc_lots:.2f}L) [/bold white on red]"
-                            signals_count += 1
-                            log_msg = f"[DRY-RUN SIGNAL: {asset} | SELL | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
-                            logging.info(log_msg)
+                        tp = entry - (4.0 * r_dist)
+                        calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
+                        decision_cell = f"[bold white on red] DRY-SELL ({calc_lots:.2f}L) [/bold white on red]"
+                        signals_count += 1
+                        log_msg = f"[DRY-RUN SIGNAL: {asset} | SELL | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
+                        logging.info(log_msg)
 
-                # 3. DIAGNOSTIC REASON FOR NO SIGNAL
+                # 4. DIAGNOSTIC REASON FOR NO SIGNAL
                 else:
                     if bull_fvg == 0 and bear_fvg == 0:
                         decision_cell = "[dim]HOLD (No FVG)[/dim]"

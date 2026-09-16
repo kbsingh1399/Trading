@@ -85,7 +85,7 @@ class StatefulInferenceEngine:
         else:
             self.buffer = pd.concat([self.buffer, new_df])
             if len(self.buffer) > self.max_bars:
-                self.buffer = self.buffer.iloc[-self.max_bars:]
+                self.buffer = self.buffer.iloc[-self.max_bars:].copy()
 
     def refresh_4h_buffer(self) -> None:
         """Periodically refreshes 4H buffer from MT5 to keep trend current."""
@@ -118,4 +118,8 @@ class StatefulInferenceEngine:
 
         dmatrix = xgb.DMatrix(latest_features)
         prediction = xgb_model.predict(dmatrix)
+        
+        # Prevent C-level memory leak in high-frequency loops
+        del dmatrix
+        
         return float(prediction[0])

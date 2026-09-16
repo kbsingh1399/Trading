@@ -91,12 +91,19 @@ def sync_latest_data(mt5_conn=None):
     from Engine.live.run_forex_dry_run import pre_flight_data_sync
     from Engine.live.mt5_connection import MT5Connection
 
+    owns_connection = False
     if mt5_conn is None:
         mt5_conn = MT5Connection()
         if not mt5_conn.connect():
             raise ConnectionError("[FATAL] Could not connect to MetaTrader 5 terminal for data sync!")
+        owns_connection = True
 
-    pre_flight_data_sync(mt5_conn)
+    try:
+        pre_flight_data_sync(mt5_conn)
+    finally:
+        if owns_connection:
+            mt5_conn.disconnect()
+            
     print(" [STAGE 2 COMPLETE] Historical Parquets updated with latest completed candles.")
     print("=" * 85)
 

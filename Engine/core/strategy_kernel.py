@@ -87,15 +87,20 @@ def engineer_features_polars(symbol: str, data_dir: str) -> pd.DataFrame:
         pl.col("ema_200_4h").shift(1).alias("ema_200_4h")
     ]).select(["datetime", "ema_200_4h", "htf_4h_trend"]).drop_nulls()
 
-    # 3. 15M Data: Base calculations
+    # 3. 15M Data: Base calculations (Rolling Unmitigated FVGs)
     m15_df = pl.read_parquet(m15_file).sort("datetime")
+    w = 5
+    bullish_exprs = []
+    bearish_exprs = []
+    for k in range(w):
+        bullish = (pl.col("low").rolling_min(window_size=k+1) - pl.col("high").shift(k+2)).fill_null(0.0).clip(lower_bound=0.0)
+        bearish = (pl.col("low").shift(k+2) - pl.col("high").rolling_max(window_size=k+1)).fill_null(0.0).clip(lower_bound=0.0)
+        bullish_exprs.append(bullish)
+        bearish_exprs.append(bearish)
+
     m15_df = m15_df.with_columns([
-        pl.when(pl.col("low") > pl.col("high").shift(2))
-          .then(pl.col("low") - pl.col("high").shift(2))
-          .otherwise(0.0).alias("bullish_fvg"),
-        pl.when(pl.col("high") < pl.col("low").shift(2))
-          .then(pl.col("low").shift(2) - pl.col("high"))
-          .otherwise(0.0).alias("bearish_fvg"),
+        pl.max_horizontal(bullish_exprs).alias("bullish_fvg"),
+        pl.max_horizontal(bearish_exprs).alias("bearish_fvg"),
         pl.col("high").rolling_max(window_size=20).alias("local_high_20"),
         pl.col("low").rolling_min(window_size=20).alias("local_low_20"),
     ])
@@ -186,11 +191,18 @@ def compute_features_pandas(buffer_15m: pd.DataFrame, buffer_4h: Optional[pd.Dat
     vwap_20 = typical_price.rolling(window=20).mean()
     df['vwap_dist'] = (df['close'] - vwap_20) / vwap_20
 
-    # 4. FVGs (exact wick magnitude)
-    prev_2_high = df['high'].shift(2)
-    prev_2_low = df['low'].shift(2)
-    df['bullish_fvg'] = np.where(df['low'] > prev_2_high, df['low'] - prev_2_high, 0.0)
-    df['bearish_fvg'] = np.where(df['high'] < prev_2_low, prev_2_low - df['high'], 0.0)
+    # 4. FVGs (Rolling Unmitigated Logic W=5)
+    w = 5
+    bullish_fvgs = []
+    bearish_fvgs = []
+    for k in range(w):
+        bull = (df['low'].rolling(k+1, min_periods=1).min() - df['high'].shift(k+2)).clip(lower=0.0)
+        bear = (df['low'].shift(k+2) - df['high'].rolling(k+1, min_periods=1).max()).clip(lower=0.0)
+        bullish_fvgs.append(bull)
+        bearish_fvgs.append(bear)
+        
+    df['bullish_fvg'] = pd.concat(bullish_fvgs, axis=1).max(axis=1).fillna(0.0)
+    df['bearish_fvg'] = pd.concat(bearish_fvgs, axis=1).max(axis=1).fillna(0.0)
 
     # 5. Distances & Slopes
     df['ema_50_dist'] = (df['close'] - df['ema_50']) / df['ema_50']
