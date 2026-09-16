@@ -45348,3 +45348,14 @@ study sessin chat for FVG based strategy which was giving postive alpha...
   2. Strict Causal Next-Candle Open Trigger Architecture: Aligned live execution strictly with backtest behavior (opens[j+1]). Signals are armed on newly closed 15-minute candle j and orders are triggered strictly on the opening tick of candle j+1 (last_triggered_candles), completely eliminating mid-candle tick churning.
   3. In-Place Non-Repeating Terminal Dashboard: Integrated rich.live.Live(console=console, screen=False, auto_refresh=False) with atomic frame rendering. Telemetry updates smoothly in place without terminal duplication or scrolling flicker.
   4. Verified in snapshot mode (python Engine/forex_engine.py --mode snapshot), verified risk governors (2/2 max concurrency enforcement), committed changes (e79e3a3), and pushed to remote branch arena/01a0a8c8-trading.
+
+## Session Turn: 2026-09-16 15-Minute Pipeline Verification Timer & Zero-Contradiction Invariant Audit
+- **User Prompt**: "set 15 minute timer to check if all parameters and pipeline is loaded corrected as required...I donot want to get my self ditched again...many a time AI say we have an edge in strategy but later on it contradct itself...also updat session chat"
+- **Actions & Results**:
+  1. Scheduled 15-Minute System Verification Timer (Task task-6223): Armed automated background timer (900 seconds) to trigger an automated pipeline, buffer, and parameter integrity check on the next 15-minute bar cycle.
+  2. End-to-End Parameter & Invariant Audit: Audited all mathematical parameters across the 5 core modules (target_oos_criteria.json, base_strategy.py, strategy_kernel.py, FVG_ML_ForexCFD_Strategy.py, ORB_CRT_ForexCFD_Strategy.py, forex_engine.py).
+  3. Verified Invariant Parity:
+     - Capital & Risk: Initial Capital = 5,000.00 USD, Base Risk = 50.00 USD (1.00%), Max Drawdown Stop = 5.00% (250.00 USD), Max Concurrent Positions = 2.
+     - Microstructure Exits: Phase 0 BE move to entry +0.15R at +0.80R price excursion; Phase 1 Profit Lock move to entry +0.80R at +1.50R price excursion; Final Target at +2.50R; Time Decay exit after 24 bars (6h) if trade fails to gain +0.20R.
+     - Causal Execution: Bar j close evaluation, order dispatch on opening tick of bar j+1 (opens[j+1]), 4H trend shifted by 1 bar to prevent 3h45m lookahead, daily D-1 range bounds strictly previous closed day.
+  4. Memory & Git Parity: Synchronized session history into session_chat_history.md across both repositories.
