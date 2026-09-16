@@ -255,8 +255,15 @@ def main():
 
             utc_now = datetime.now(timezone.utc)
             # London KZ: 07-10 UTC | NY KZ: 12-15 UTC
-            is_london = (7 <= utc_now.hour <= 10)
-            is_ny = (12 <= utc_now.hour <= 15)
+            # Use the hour of the last closed bar to prevent wall-clock race conditions
+            last_closed_hour = utc_now.hour
+            if last_candle_times:
+                first_asset = list(last_candle_times.keys())[0]
+                if last_candle_times[first_asset] is not None:
+                    last_closed_hour = last_candle_times[first_asset].hour
+
+            is_london = (7 <= last_closed_hour <= 10)
+            is_ny = (12 <= last_closed_hour <= 15)
             is_natural_kz = is_london or is_ny
             is_kz = True if args.ignore_kz else is_natural_kz
 
@@ -449,7 +456,7 @@ def main():
 
             # Clear screen for live loop
             if not args.once:
-                os.system('cls' if os.name == 'nt' else 'clear')
+                console.clear()
 
             console.print(header_panel)
             console.print(table)

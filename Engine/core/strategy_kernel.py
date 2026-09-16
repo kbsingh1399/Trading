@@ -156,7 +156,12 @@ def engineer_features_polars(symbol: str, data_dir: str) -> pd.DataFrame:
          ((pl.col("hour") >= 12) & (pl.col("hour") <= 15))).alias("is_kill_zone")
     ])
 
-    df = m15_df.drop_nulls().to_pandas()
+    # Drop nulls ONLY for required columns (avoids dropping fresh data due to legacy column nulls)
+    subset_cols = CANONICAL_FEATURES + ["datetime", "open", "high", "low", "close", "is_kill_zone"]
+    # Filter to columns that actually exist to avoid subset errors
+    subset_cols = [c for c in subset_cols if c in m15_df.columns]
+    
+    df = m15_df.drop_nulls(subset=subset_cols).to_pandas()
     return df
 
 
@@ -196,8 +201,8 @@ def compute_features_pandas(buffer_15m: pd.DataFrame, buffer_4h: Optional[pd.Dat
     bullish_fvgs = []
     bearish_fvgs = []
     for k in range(w):
-        bull = (df['low'].rolling(k+1, min_periods=1).min() - df['high'].shift(k+2)).clip(lower=0.0)
-        bear = (df['low'].shift(k+2) - df['high'].rolling(k+1, min_periods=1).max()).clip(lower=0.0)
+        bull = (df['low'].rolling(k+1, min_periods=k+1).min() - df['high'].shift(k+2)).fillna(0.0).clip(lower=0.0)
+        bear = (df['low'].shift(k+2) - df['high'].rolling(k+1, min_periods=k+1).max()).fillna(0.0).clip(lower=0.0)
         bullish_fvgs.append(bull)
         bearish_fvgs.append(bear)
         

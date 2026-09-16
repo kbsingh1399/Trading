@@ -87,6 +87,11 @@ class MT5Connection:
         Calculates broker server time offset from UTC in seconds.
         Blueberry Markets server time is UTC+3 in summer (+10800s).
         """
+        import time
+        if hasattr(self, '_cached_utc_offset') and self._cached_utc_offset is not None:
+            if time.time() - getattr(self, '_last_offset_fetch', 0) < 3600:
+                return self._cached_utc_offset
+
         if not self.connected:
             return 3 * 3600
         tick = mt5.symbol_info_tick("EURUSD.pi") or mt5.symbol_info_tick("EURUSD") or mt5.symbol_info_tick("EURUSD.p")
@@ -95,6 +100,9 @@ class MT5Connection:
         from datetime import datetime, timezone
         now_utc_ts = datetime.now(timezone.utc).timestamp()
         offset_seconds = int(round((tick.time - now_utc_ts) / 3600.0) * 3600)
+        
+        self._cached_utc_offset = offset_seconds
+        self._last_offset_fetch = time.time()
         return offset_seconds
 
     def get_15m_bars(self, symbol, count=100):

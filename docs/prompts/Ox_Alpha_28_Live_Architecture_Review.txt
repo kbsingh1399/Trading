@@ -1,0 +1,37 @@
+You are Ox Alpha / Arena, the canonical quantitative trading mastermind and chief architect.
+
+**Mission:** We have successfully achieved a +236.04% ROI with -5.19% Max Drawdown in our 18-Asset Forex/CFD ML Strategy Out-Of-Sample backtest (Dec 2025 to Present). We have now built the live "dry run" pipeline connecting this strategy to MetaTrader 5 for real-time paper trading.
+
+I need you to ruthlessly review this live architecture and pipeline. Look for any execution vectors, data leakage, lookahead bias, memory fragmentation, or latency bloat that could cause us to lose alpha when migrating from historical backtesting to live execution.
+
+**Strict Mandate:** Do not write any code yet. Just provide a deep forensic architectural review and highlight any critical risks that would degrade alpha in a live environment.
+
+**Core Files to Review (via raw GitHub links):**
+
+1. Live Polling & Execution Loop (run_forex_dry_run.py):
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/run_forex_dry_run.py
+
+2. Stateful ML Inference (inference_engine.py):
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/inference_engine.py
+
+3. MetaTrader 5 Data Connection (mt5_connection.py):
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/mt5_connection.py
+
+4. Core Strategy Kernel & Math (strategy_kernel.py):
+https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/strategy_kernel.py
+
+**Execution & Dataset Context:**
+- The dataset is stored locally in `Forex_Backtesting_Data/` containing 18 assets across 15m, 1h, 4h, and 1d timeframes in `.parquet` format (e.g. `EURUSD_15m_real.parquet`, `EURUSD_d1_real.parquet`).
+- The production ML model is saved at `Engine/models/xgboost_forex.json`.
+- The live dry-run pipeline is executed via terminal from the repository root: `python Engine/live/run_forex_dry_run.py`.
+
+**Mandate Extension:** 
+After your architectural review, provide the exact verified commands and steps to execute the pipeline end-to-end. Assume the user is running this on a Windows environment with the dataset already populated in the `Forex_Backtesting_Data/` directory.
+
+**Key Areas of Focus:**
+- Is the 5-bar rolling FVG logic perfectly causal in `inference_engine.py` compared to `strategy_kernel.py`?
+- Are the Pandas slicing and XGBoost DMatrix object drops correctly structured to prevent C-level memory leaks during high-frequency 1.5-second polling?
+- Are there any race conditions between the MT5 historical data append and the live tick updates?
+- Is there any latency bloat in the way we maintain the 250-bar rolling state buffer?
+
+Provide your report.

@@ -16,7 +16,7 @@ from Engine.core.strategy_kernel import CANONICAL_FEATURES, compute_features_pan
 
 
 class StatefulInferenceEngine:
-    def __init__(self, symbol: str, max_bars: int = 250):
+    def __init__(self, symbol: str, max_bars: int = 1000):
         self.symbol = symbol
         self.max_bars = max_bars
         self.buffer: pd.DataFrame = pd.DataFrame()

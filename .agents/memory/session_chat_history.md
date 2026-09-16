@@ -45004,3 +45004,14 @@ eports/equity_curve_comparison.png and brain artifacts.
 **Assistant:** Explained that 'Off-Hours' means the bot is currently outside the ICT Kill Zones (London 07:00-10:00 UTC and New York 12:00-15:00 UTC). Since the terminal clock shows 20:13 UTC, the strategy locks out trade entries to avoid low-probability chop in the Asian session.
 '  P u s h e d   P r o m p t s   1 1 - 2 3   t o   m a i n   a n d   a r e n a / 0 1 a 0 a 5 b f - t r a d i n g  
  
+**User:** let's push all to git and let's check with arena.ai to review how does this architect and pipeline or any thing which could make us loose alpha...
+**Assistant:** Pushed all pipeline updates to git and generated Ox_Alpha_28.txt for Arena.ai to conduct a deep forensic review of the architecture for any latency, memory, or alpha-leakage vectors.
+
+**User:** ask him to run pipeline as well...explain full like where our data set is available
+**Assistant:** Updated the Ox_Alpha_28.txt prompt to include explicit dataset locations (Forex_Backtesting_Data/) and terminal execution instructions, directing Arena.ai to guide the user on running the pipeline end-to-end after the architectural review.
+
+**User:** Till then you share backtesting results in last 6 quarters seperately... if we start with 5K captial at starting of quarter
+**Assistant:** Built and executed a script to isolate the last 6 quarters independently, each resetting to a fresh  starting capital. Shared the exact ROI, Win Rate, and Max Drawdown for each individual quarter from Q2 2025 through Q3 2026.
+
+**User:** (Pasted Fable's architectural review detailing 6 critical alpha-decay vectors)
+**Assistant:** Acknowledged the severity of the findings (data truncation, EMA200 memory limits, MT5 IPC race conditions, etc.) and drafted a surgical implementation plan to eliminate every single alpha-decay vector identified by Arena.
