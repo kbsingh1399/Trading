@@ -608,7 +608,8 @@ class OrderManager:
                 continue
 
             if hit_tp:
-                self.close_trade(ticket, exit_price=trade["tp"], realized_r=2.50, reason="TAKE PROFIT (+2.50R)")
+                actual_tp_r = (trade["tp"] - entry) / r_dist if is_long else (entry - trade["tp"]) / r_dist
+                self.close_trade(ticket, exit_price=trade["tp"], realized_r=actual_tp_r, reason=f"TAKE PROFIT ({actual_tp_r:+.2f}R)")
                 continue
 
             # Time decay exit: if trade fails to reach +0.20R within 24 bars (6h)

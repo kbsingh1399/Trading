@@ -312,7 +312,7 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
                 continue
 
             tp = entry + (min_r * r_dist)
-            lock_1r = entry + (1.0 * r_dist)
+            lock_08r = entry + (0.8 * r_dist)  # Phase-0 BE lock trigger (matches live manage_open_trades)
             lock_15r = entry + (1.5 * r_dist)
             lock_20r = entry + (2.0 * r_dist)
             lock_25r = entry + (2.5 * r_dist)
@@ -350,7 +350,7 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
                     sl = entry + (1.8 * r_dist)
                 elif highs[j] >= lock_15r and sl < entry + (1.0 * r_dist):
                     sl = entry + (1.0 * r_dist)
-                elif highs[j] >= lock_1r and sl < entry + (0.15 * r_dist):
+                elif highs[j] >= lock_08r and sl < entry + (0.15 * r_dist):
                     sl = entry + (0.15 * r_dist)
 
                 # Time Decay Rule: Exit at market if < +0.2R within 24 bars
@@ -370,7 +370,7 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
                 continue
 
             tp = entry - (min_r * r_dist)
-            lock_1r = entry - (1.0 * r_dist)
+            lock_08r = entry - (0.8 * r_dist)  # Phase-0 BE lock trigger (matches live manage_open_trades)
             lock_15r = entry - (1.5 * r_dist)
             lock_20r = entry - (2.0 * r_dist)
             lock_25r = entry - (2.5 * r_dist)
@@ -408,7 +408,7 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
                     sl = entry - (1.8 * r_dist)
                 elif lows[j] <= lock_15r and sl > entry - (1.0 * r_dist):
                     sl = entry - (1.0 * r_dist)
-                elif lows[j] <= lock_1r and sl > entry - (0.15 * r_dist):
+                elif lows[j] <= lock_08r and sl > entry - (0.15 * r_dist):
                     sl = entry - (0.15 * r_dist)
 
                 # Time Decay Rule: Exit at market if < +0.2R within 24 bars
