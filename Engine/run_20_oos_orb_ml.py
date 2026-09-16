@@ -45,7 +45,9 @@ def process_asset(asset, df, start_h, start_m):
     if len(outcomes) == 0:
         return pd.DataFrame()
         
-    res_df = pd.DataFrame(features, columns=['direction_enum', 'or_range_pct', 'rsi_14', 'vwap_dist', 'ema_dist', 'hour', 'day_of_week'])
+    res_df = pd.DataFrame(features, columns=['direction_enum', 'or_range_pct', 'rsi_14', 'vwap_dist', 'ema_dist', 
+                                             'hour', 'day_of_week', 'ema_200_dist', 'ema_200_slope', 'atr_14_pct', 
+                                             'vol_spike', 'or_range_atr', 'pdl_dist', 'pdh_dist', 'swept_pdl', 'swept_pdh'])
     res_df['outcome'] = outcomes
     res_df['datetime'] = pd.to_datetime(timestamps_out, unit='s', utc=True)
     res_df['asset'] = asset
@@ -84,7 +86,9 @@ def evaluate_oos():
     master_df = pd.concat(all_trades, ignore_index=True)
     master_df = master_df.sort_values('datetime').dropna().reset_index(drop=True)
     
-    features = ['direction_enum', 'or_range_pct', 'rsi_14', 'vwap_dist', 'ema_dist', 'hour', 'day_of_week']
+    features = ['direction_enum', 'or_range_pct', 'rsi_14', 'vwap_dist', 'ema_dist', 
+                'hour', 'day_of_week', 'ema_200_dist', 'ema_200_slope', 'atr_14_pct', 
+                'vol_spike', 'or_range_atr', 'pdl_dist', 'pdh_dist', 'swept_pdl', 'swept_pdh']
     
     total_oos_pnl = 0.0
     total_trades = 0
@@ -106,31 +110,43 @@ def evaluate_oos():
         if len(train_df) < 500 or len(test_df) == 0:
             continue
             
-        # Train ML Classifier
+        # Train ML Regressor
         X_train = train_df[features]
+        # Regress directly on the Net R outcome (-1.0 to 2.5)
         y_train = train_df['outcome']
         
-        from sklearn.linear_model import LogisticRegression
-        clf = LogisticRegression(max_iter=1000)
+        # We use XGBoost with strict institutional regularization
+        import xgboost as xgb
+        clf = xgb.XGBRegressor(
+            n_estimators=100, 
+            max_depth=3,            # Shallow trees to prevent noise memorization
+            learning_rate=0.05,
+            reg_alpha=2.0,          # Extreme L1 regularization
+            reg_lambda=5.0,         # Extreme L2 regularization
+            subsample=0.8,
+            colsample_bytree=0.8,
+            random_state=42,
+            n_jobs=-1
+        )
         clf.fit(X_train, y_train)
         
         X_test = test_df[features]
-        preds = clf.predict_proba(X_test)[:, 1]
+        preds = clf.predict(X_test)
         
-        # ML Filter: Only take trades with > 55% win probability
+        # ML Filter: Only take trades with a predicted EV of > +0.20 R
         test_df = test_df.copy()
         test_df['ml_prob'] = preds
         
-        taken_trades = test_df
+        taken_trades = test_df[test_df['ml_prob'] >= 0.15]
         
         if len(taken_trades) == 0:
             continue
             
-        w_wins = taken_trades['outcome'].sum()
+        w_wins = (taken_trades['outcome'] > 0).sum()
         w_losses = len(taken_trades) - w_wins
         
-        # 1.5R Win, -1R Loss
-        w_pnl_r = (w_wins * 1.5) - (w_losses * 1.0)
+        # We now use the exact Net R calculated directly in Numba (including ratchets, TP, SL)
+        w_pnl_r = taken_trades['outcome'].sum()
         win_rate = (w_wins / len(taken_trades)) * 100 if len(taken_trades) > 0 else 0
         
         total_oos_pnl += w_pnl_r
