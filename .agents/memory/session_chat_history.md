@@ -45156,3 +45156,7 @@ ame: quant-coding-skills), only 2 --- delimiters in entire file.
   - Updated ACTIVE_CONTEXT.md and SESSION_CONTEXT_MAP.md (Phase 15).
   - Pushed all updates to origin/arena/01a0a8c8-trading and origin/main at commit d006dba.
   - Working tree 100% clean on both branches.
+
+### Turn 2026-09-16 (Two Production Strategies Comparative Synthesis & Benchmarking)
+- User Prompt: now we have 2 strategies
+- Action: Formulated comprehensive comparative breakdown of Strategy 1 (Dual-Model Orderflow Baseline, +129.1% ROI) vs Strategy 2 (S3 ORB/CRT Multiverse, +225.8% ROI, 10/10 Arena Certified) benchmarked against BTC Buy & Hold with comparative equity and drawdown visualization.
