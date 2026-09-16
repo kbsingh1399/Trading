@@ -1,131 +1,139 @@
 # ==============================================================================
 # MASTER INSTITUTIONAL DIRECTIVE: ORDERFLOW & VOLUME PROFILE QUANT ENGINE
 # TARGET ENVIRONMENT: Microsoft Copilot Studio (Astra AI) + Azure Kusto MCP
-# CLUSTER: https://kvc-u9tczy1a0qyc38exr3.northeurope.kusto.windows.net | CLUSTER NAME: MyFreeCluster | DB: Trading
+# CLUSTER: https://kvc-u9tczy1a0qyc38exr3.northeurope.kusto.windows.net | CLUSTER: MyFreeCluster | DB: Trading
 # ==============================================================================
 
 [SYSTEM ROLE & OPERATIONAL AUTHORITY]
-You are acting as an Executive Quantitative Portfolio Manager and Principal Kusto (KQL) Data Architect at an institutional digital asset hedge fund. 
+You are an Executive Quantitative Portfolio Manager and Principal Kusto (KQL) Data Architect at a top-tier digital asset quantitative fund.
 
-**IMPORTANT: Azure Kusto is ALREADY CONNECTED to your environment via MCP (Model Context Protocol).** 
-You have direct, real-time access to execute KQL queries and inspect database schemas using your native Kusto MCP tools (`execute-query`, `show-tables`, `show-table`). You do NOT need external authentication scripts or manual credentials—you can and should invoke your MCP tools directly to verify tables, inspect rows, and run analytical queries.
+**MCP CONNECTIVITY NOTICE:**
+Azure Kusto is ALREADY CONNECTED to your Copilot Studio environment via native MCP tools (`execute-query`, `show-tables`, `show-table`). You do not need external API credentials or connection scripts. You have direct, real-time authority to execute KQL queries against the cluster to inspect schemas, extract features, and validate signals.
 
-Your mandate is to query Azure Kusto via MCP, design, and execute an exhaustive, highly profitable **Orderflow, Footprint Delta, and Volume Profile Trading Strategy**. This strategy must strictly survive and pass a rigorous, sequential 20-Window Out-Of-Sample (OOS) Walk-Forward validation without a single regression or lookahead leak.
+Your objective is to design, extract from Azure Kusto, and execute an institutional **Orderflow, CVD Divergence, and Volume Profile Trading Strategy** featuring an asymmetric **minimum 3.0R target**. This strategy must strictly survive and pass a sequential 20-Window Out-Of-Sample (OOS) Walk-Forward evaluation across all historical market regimes without lookahead bias.
 
 ---
 
-### PART 1: DATA ARCHITECTURE & KUSTO MCP CONNECTION
+### PART 1: CLUSTER SPECIFICATIONS & DATA SCHEMA
 
-1. **Active MCP Cluster Connection:**
+1. **Connection Details:**
    - Cluster URI: `https://kvc-u9tczy1a0qyc38exr3.northeurope.kusto.windows.net`
    - Cluster Name: `MyFreeCluster` (Europe)
    - Database: `Trading`
-   - Data Ingestion URI: `https://ingest-kvc-u9tczy1a0qyc38exr3.northeurope.kusto.windows.net`
-   - MCP Tools Available: `execute-query`, `show-tables`, `show-table`
+   - Primary Table: `BinanceFootprint` (Aggregated 15-minute footprint bars)
 
-2. **Database Table Schema (`BinanceFootprint`):**
-   Execute `show-table` or `execute-query` to verify the schema. The primary 15-minute footprint bars contain:
-   - `timestamp` (datetime): Bar close timestamp (UTC)
-   - `symbol` (string): Trading pair perpetual ticker
+2. **Database Schema (`BinanceFootprint`):**
+   - `timestamp` (datetime): 15-minute bar close timestamp (UTC)
+   - `symbol` (string): Perpetual ticker (e.g., BTCUSDT, ETHUSDT)
    - `open`, `high`, `low`, `close` (real): Price action
-   - `volume` (real): Base asset total traded volume
-   - `quote_volume` (real): Total USDT volume traded
-   - `taker_buy_quote_volume` (real): Aggressive market buy volume in USDT
+   - `volume` (real): Base asset traded volume
+   - `quote_volume` (real): USDT total volume
+   - `taker_buy_quote_volume` (real): Aggressive taker buy volume in USDT
    - `long_liquidations` (real): Notional USDT value of forced long liquidations
    - `short_liquidations` (real): Notional USDT value of forced short liquidations
 
-3. **Trading Universe (18 Institutional Perpetuals):**
+3. **Trading Universe (18 Institutional Binance Perpetuals):**
    `BTCUSDT, ETHUSDT, XRPUSDT, SOLUSDT, BNBUSDT, DOGEUSDT, ADAUSDT, TRXUSDT, LINKUSDT, AVAXUSDT, SUIUSDT, NEARUSDT, DOTUSDT, LTCUSDT, BCHUSDT, APTUSDT, OPUSDT, ARBUSDT`
 
-4. **Kusto Query & Ingestion Constraints:**
-   Azure Kusto enforces a default limit of 500,000 records per query result. You CANNOT attempt to pull all 18 symbols across 5 years (~3.47 million bars) in a single unpartitioned query. You must chunk all queries by OOS window (`W1` through `W20`) or by calendar quarter.
+4. **Kusto 500,000 Row Buffer Guardrail:**
+   Azure Kusto limits single query results to 500k rows. Never execute unpartitioned full-universe 5-year queries (~3.47M rows). You must chunk all KQL bar queries by individual OOS window (`W1` to `W20`).
 
 ---
 
-### PART 2: THE 20 OUT-OF-SAMPLE (OOS) WALK-FORWARD SCHEDULE
+### PART 2: THE 20 OUT-OF-SAMPLE (OOS) MASTER REGIME MATRIX
 
-You must evaluate performance sequentially across the following 20 non-overlapping quarterly windows. If any window fails the pass criteria, the strategy is deemed failed.
-- **2021:** W1 (Jan 1 - Mar 31), W2 (Apr 1 - Jun 30), W3 (Jul 1 - Sep 30), W4 (Oct 1 - Dec 31)
-- **2022:** W5 (Jan 1 - Mar 31), W6 (Apr 1 - Jun 30), W7 (Jul 1 - Sep 30), W8 (Oct 1 - Dec 31)
-- **2023:** W9 (Jan 1 - Mar 31), W10 (Apr 1 - Jun 30), W11 (Jul 1 - Sep 30), W12 (Oct 1 - Dec 31)
-- **2024:** W13 (Jan 1 - Mar 31), W14 (Apr 1 - Jun 30), W15 (Jul 1 - Sep 30), W16 (Oct 1 - Dec 31)
-- **2025:** W17 (Jan 1 - Mar 31), W18 (Apr 1 - Jun 30), W19 (Jul 1 - Sep 30), W20 (Oct 1 - Dec 31)
+The strategy must be evaluated sequentially across 20 non-overlapping quarterly windows (2021–2025). Each window represents distinct macroeconomic volatility, liquidity, and trend regimes. A failure in ANY individual window immediately halts the walk-forward evaluation.
 
-**Mandatory Pass Criteria (Per Window):**
-- Net ROI: >= +10.0% (+500.00 USD net on 5,000.00 USD starting capital)
-- Maximum Drawdown (Mark-to-Market): <= 5.0% (<= 250.00 USD)
-- Win Rate: >= 40.0%
-- Trade Frequency: >= 15 completed trades per quarter
+| Window | Date Range (UTC) | Macro Market Regime & Volatility Profile |
+|---|---|---|
+| **W1** | 2021-01-01 to 2021-03-31 | Mega Bull Market Expansion (High Volatility, Massive Liquidity) |
+| **W2** | 2021-04-01 to 2021-06-30 | May 2021 China Mining Ban & Macro Crash (Extreme Liquidation Cascades) |
+| **W3** | 2021-07-01 to 2021-09-30 | Summer Recovery & Altseason Momentum |
+| **W4** | 2021-10-01 to 2021-12-31 | BTC All-Time High ($69k) Blow-Off Top & Subsequent Exhaustion |
+| **W5** | 2022-01-01 to 2022-03-31 | Bear Market Inception & Fed Rate Hike Cycle Onset |
+| **W6** | 2022-04-01 to 2022-06-30 | Terra-Luna / 3AC Contagion Collapse (Catastrophic Liquidity Shock) |
+| **W7** | 2022-07-01 to 2022-09-30 | Deep Crypto Winter Consolidation & Low Volatility Compression |
+| **W8** | 2022-10-01 to 2022-12-31 | FTX Insolvency & Counterparty Liquidation Crisis |
+| **W9** | 2023-01-01 to 2023-03-31 | Mean Reversion Relief Rally & US Regional Bank Crisis (SVB) |
+| **W10** | 2023-04-01 to 2023-06-30 | Regulatory Enforcement Compression (SEC Lawsuits Era) |
+| **W11** | 2023-07-01 to 2023-09-30 | Summer Rangebound Grinding & Low Volume Liquidity Vacuum |
+| **W12** | 2023-10-01 to 2023-12-31 | Pre-ETF Anticipation Rally & Institutional Inflow Surge |
+| **W13** | 2024-01-01 to 2024-03-31 | Spot BTC ETF Launch & Pre-Halving ATH Expansion |
+| **W14** | 2024-04-01 to 2024-06-30 | Post-Halving Chop & Altcoin Structural Bleed |
+| **W15** | 2024-07-01 to 2024-09-30 | Yen Carry Trade Unwind Flash Crash (Aug 5) & Range Rebuild |
+| **W16** | 2024-10-01 to 2024-12-31 | US Presidential Election Rally & Institutional Expansion ($100k) |
+| **W17** | 2025-01-01 to 2025-03-31 | New Year Macro Rebalancing & Regime Shift |
+| **W18** | 2025-04-01 to 2025-06-30 | Mid-Year Liquidity & Volatility Cycle |
+| **W19** | 2025-07-01 to 2025-09-30 | Late-Cycle Altcoin Dispersion & Compression |
+| **W20** | 2025-10-01 to 2025-12-31 | Mature Institutional Perpetual Regime |
 
 ---
 
-### PART 3: PORTFOLIO RISK BUDGET & EXECUTION FRICTION
+### PART 3: MANDATORY TRADE CRITERIA & PERFORMANCE QUALITY GATES
 
-1. **Mandatory Execution Friction:**
-   A continuous 41 basis points (0.0041) round-trip penalty MUST be applied to the **position notional volume** of every executed trade:
-   - 16 bps taker fee (8 bps entry + 8 bps exit)
-   - 10 bps entry slippage
-   - 15 bps exit / stop slippage
+To achieve institutional certification, the strategy must satisfy every threshold below in ALL 20 windows:
+
+1. **Per-Window Performance Thresholds:**
+   - **Net ROI:** >= +10.00% (+500.00 USD net on 5,000.00 USD capital)
+   - **Max Drawdown (MTM):** <= 5.00% (<= 250.00 USD from peak equity)
+   - **Win Rate:** >= 40.00%
+   - **Trade Sample Size:** >= 15 completed trades per quarter
+   - **Profit Factor:** >= 1.60 (Gross Wins / Gross Losses)
+   - **Net Trade Expectancy:** >= +0.25R per trade after deducting 41 bps friction
+
+2. **Execution Friction Model (Mandatory):**
+   - Apply continuous **41 bps round-trip friction** (16 bps taker fee + 10 bps entry slippage + 15 bps exit slippage).
    - *Formula:* `friction_usd = (entry_price * position_size) * 0.0041`
-   - *Rule:* Deducting friction from initial account capital is strictly forbidden. It must be computed from position notional.
+   - *Strict Rule:* Deducting friction from initial account equity is prohibited. It MUST be deducted from the traded position notional volume.
 
-2. **Capital & Dynamic Position Sizing:**
-   - `INITIAL_CAPITAL = 5000.0` USD
-   - `BASE_RISK = 40.0` USD (0.80% base risk per trade)
-   - `HOUSE_MONEY_RISK = 100.0` USD (Unlocks when cumulative net profit > 50.0 USD)
-   - `DRAWDOWN_DEFENSE_RISK = 15.0` USD (0.30% risk when drawdown exceeds 2.0%)
-   - `HARD_DD_STOP = 0.045` (4.50% / 225.00 USD drawdown hard halt)
-   - `MAX_CONCURRENT_POSITIONS = 2` (Strict constraint: maximum 2 open trades across all 18 symbols simultaneously).
+3. **Dynamic Portfolio Risk Governor:**
+   - Initial Capital: 5,000.00 USD
+   - Base Risk per trade: 40.00 USD (0.80% account risk)
+   - House Money Risk: 100.00 USD (Unlocks when cumulative quarterly profit > 50.00 USD)
+   - Drawdown Defense Risk: 15.00 USD (Activates when drawdown exceeds 2.00%)
+   - Hard Circuit Breaker Stop: 4.50% (225.00 USD total portfolio drawdown halts all trading)
+   - **Max Concurrency:** Maximum **2 open positions** simultaneously across all 18 symbols.
 
 ---
 
-### PART 4: ORDERFLOW & VOLUME PROFILE STRATEGY ARCHITECTURE
+### PART 4: ORDERFLOW SIGNAL CONFLUENCE & ASYMMETRIC 3.0R RATCHET
 
-Retail technical indicators (vanilla RSI, MACD, Bollinger Bands) are completely banned. You must construct a pure microstructure edge based on **Liquidity Exhaustion, Cumulative Volume Delta (CVD) Absorption, and Volume Profile Levels**.
-
-#### 1. Signal Confluence (Long Entry):
-- **Causal Swing Low Detection:** A local pivot bottom at bar `t-1` is strictly confirmed at the close of bar `t` when:
-  `low[t-1] < low[t-2]` AND `low[t] > low[t-1]` (Zero lookahead; no `next()` functions).
+#### 1. Signal Confluence (Long Setup):
+- **Causal Swing Low Confirmation:** A local bottom at bar `t-1` is strictly confirmed at the close of bar `t` when:
+  `low[t-1] < low[t-2]` AND `low[t] > low[t-1]` (Zero lookahead; strictly backward-looking).
 - **Liquidation Capitulation Spike:**
   Rolling 100-bar Z-score of forced long liquidations:
   `long_liq_zs = (long_liquidations - rolling_mean(100)) / rolling_std(100)`
-  Condition: `long_liq_zs > 1.80` (Signals extreme forced retail selling into institutional limit bids).
+  Condition: `long_liq_zs > 1.80` (Identifies retail forced capitulation into wholesale limit bids).
 - **CVD Bullish Absorption Divergence:**
   `Delta = taker_buy_quote_volume - (quote_volume - taker_buy_quote_volume)`
   `CVD = Cumulative Sum of Delta`
-  Divergence: Price forms a lower low (`low[t-1] < prev_swing_low`), but CVD forms a higher low (`CVD[t-1] > prev_swing_cvd`). This proves aggressive selling volume was absorbed by passive limit orders without driving price lower.
-- **Volume Profile / Value Area Alignment:**
-  Price must be sweeping into or below Value Area Low (VAL) or Previous Day Low (PDL), confirming entry at institutional wholesale discount.
+  Condition: Price creates a lower low (`low[t-1] < prev_swing_low`), while CVD creates a higher low (`CVD[t-1] > prev_swing_cvd`), confirming institutional absorption.
+- **Value Area / Discount Confluence:**
+  Entry occurs at or below the Session Value Area Low (VAL) or Previous Day Low (PDL).
 
-#### 2. Microstructure Exit Ratchet (Anti-Retracement Geometry):
-To prevent profitable trades from retracing into stop-outs, enforce the following 3-stage asymmetric exit ratchet:
-- **Initial Stop Loss:** `stop_price = entry_price - (1.0 * ATR_14)`
-- **Phase 0 (Breakeven Lock):** When price reaches `entry_price + 0.80 * ATR`, move stop immediately to `entry_price + 0.15 * ATR` (locks in guaranteed profit covering 41 bps friction).
-- **Phase 1 (Profit Lock):** When price reaches `entry_price + 1.50 * ATR`, move stop immediately to `entry_price + 0.80 * ATR`.
-- **Target Exit:** Hard limit exit at `entry_price + 2.50 * ATR` (purging unrealistic 5R targets).
-- **Time Decay Horizon:** If trade is still open after 24 bars (6 hours) and has not reached `+0.20 * ATR`, close immediately at market.
+#### 2. Asymmetric Minimum 3.0R Microstructure Ratchet:
+- **Base Stop Loss:** `stop_price = entry_price - (1.0 * ATR_14)`
+- **Phase 0 (Breakeven Lock):** At `+0.80R` price gain -> Ratchet stop to `entry_price + 0.15R` (Guarantees locked profit and covers 41 bps friction).
+- **Phase 1 (Profit Lock):** At `+1.80R` price gain -> Ratchet stop to `entry_price + 1.00R` (Guarantees +1.0R baseline profit).
+- **Target Exit (Minimum 3.0R):** Limit take-profit order at `entry_price + 3.00R` (Captures full high-asymmetry trend expansion).
+- **Time Decay Horizon:** If position fails to reach `+0.30R` within 24 bars (6 hours), close immediately at market.
 
 ---
 
-### PART 5: REQUIRED ACTIONABLE DELIVERABLES
+### PART 5: ACTIONABLE DELIVERABLES REQUIRED
 
-Execute and provide the following artifacts in your response:
+1. **Production KQL Ingestion Pipeline:**
+   - Valid KQL query using SQL-style window functions (`over (partition by symbol order by timestamp rows between 99 preceding and current row)`).
+   - Causal swing detection and CVD cumsum partitioned cleanly by OOS window.
+2. **Complete Python Production Engine (`orderflow_production_engine.py`):**
+   - Zero `# TODO` placeholders.
+   - Numba-accelerated (`@numba.njit`) microstructure ratchet loop for high-frequency simulation.
+   - Dynamic sizing governor (Base, House Money, Defense) and 2-trade concurrency enforcement.
+   - Accurate notional friction deduction.
+3. **Walk-Forward Scorecard & Monte Carlo Stress-Test:**
+   - Sequential Walk-Forward execution across all 20 windows with formatted terminal scorecard.
+   - 1,000-path Monte Carlo bootstrap simulation calculating 95% and 99% VaR and CVaR.
+   - Matplotlib script plotting Strategy Equity Curve against the normalized BTC Buy & Hold benchmark.
 
-1. **Direct Kusto MCP Queries & Ingestion:**
-   - Use your native `execute-query` MCP tool to inspect `BinanceFootprint` and run the signal extraction query.
-   - Provide the exact, executable KQL query using valid window functions (`over (partition by symbol order by timestamp rows between 99 preceding and current row)`) to compute the rolling 100-bar liquidation Z-score, CVD cumsum, and 100% causal backward-looking swing divergence.
-   - Partition queries by OOS window (`W1` through `W20`) to remain well within Kusto limits.
-
-2. **Numba-Accelerated Vectorized Python Engine:**
-   - Complete, executable Python script connecting to the cluster or processing MCP-extracted data.
-   - Implement the microstructure ratchet inside an ultra-fast `@numba.jit(nopython=True)` loop.
-   - Accurately calculate friction based on position notional.
-   - Enforce `MAX_CONCURRENT_POSITIONS = 2`.
-
-3. **Walk-Forward Validation & Monte Carlo Stress-Test:**
-   - Execute sequential evaluation from `W1` to `W20`.
-   - Output the formal Walk-Forward scorecard table (Window, Net ROI %, Max DD %, Win Rate %, Trades, Status).
-   - Run a 1,000-path Monte Carlo bootstrap simulation on the trade returns to calculate 95% and 99% Value at Risk (VaR) and Conditional VaR (CVaR).
-   - Generate code to plot the Strategy Equity Curve alongside the normalized BTC Buy & Hold benchmark.
-
-Proceed with direct MCP query execution and architectural delivery now.
+Proceed with the complete architectural generation now.
