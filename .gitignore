@@ -11,9 +11,13 @@ Seeding/
 *.zip
 # Allow equity curve artifacts
 !Engine/artifacts/*.png
+# Allow reports/ equity curve PNGs
+!reports/*.png
 # Allow research papers and quant knowledge PDFs
 !Quant_Knowledge/**
 !papers/**
+# Allow skills/copilot_packages zip bundles
+!skills/copilot_packages/**
 # Allow .claude-flow workflow state
 !.claude-flow/
 
