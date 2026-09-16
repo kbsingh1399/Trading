@@ -1,21 +1,21 @@
-# 📚 MASTER SKILLS DIRECTORY & NAVIGATION INDEX
+# MASTER SKILLS DIRECTORY & NAVIGATION INDEX
 
-> **Master Multi-Part Compilation** of all 1,303 specialized agent skills and methodologies.
-> Split into **6 volume parts**, each strictly sized under 2 MB for universal compatibility.
+> Master Multi-Part Compilation of all 1,303 specialized agent skills and methodologies.
+> Split into 6 volume parts, each strictly sized under 2 MB for Microsoft Copilot Studio compatibility.
 
-## 📦 VOLUME SUMMARY
+## VOLUME SUMMARY
 
 | Volume Part | Filename | Skills Range | Count | Estimated Size |
 |---|---|---|---|---|
-| Part 1 | [`MASTER_SKILLS_PART_1.md`](MASTER_SKILLS_PART_1.md) | `a-b-test-config-creator` .. `building-recommendation-systems` | 225 skills | ~1.6 MB |
-| Part 2 | [`MASTER_SKILLS_PART_2.md`](MASTER_SKILLS_PART_2.md) | `burp-suite-testing` .. `error-debugging-error-analysis` | 233 skills | ~1.6 MB |
-| Part 3 | [`MASTER_SKILLS_PART_3.md`](MASTER_SKILLS_PART_3.md) | `error-debugging-error-trace` .. `kpi-definition-helper` | 226 skills | ~1.6 MB |
-| Part 4 | [`MASTER_SKILLS_PART_4.md`](MASTER_SKILLS_PART_4.md) | `lambdatest-agent-skills` .. `ponytail-gain` | 217 skills | ~1.6 MB |
-| Part 5 | [`MASTER_SKILLS_PART_5.md`](MASTER_SKILLS_PART_5.md) | `ponytail-help` .. `testing-load-balancers` | 261 skills | ~1.6 MB |
-| Part 6 | [`MASTER_SKILLS_PART_6.md`](MASTER_SKILLS_PART_6.md) | `testing-mobile-apps` .. `zigzag-pattern-classifier` | 141 skills | ~1.6 MB |
+| Part 1 | [`MASTER_SKILLS_PART_1.md`](MASTER_SKILLS_PART_1.md) | `a-b-test-config-creator` .. `brooks-test` | 218 skills | ~1.6 MB |
+| Part 2 | [`MASTER_SKILLS_PART_2.md`](MASTER_SKILLS_PART_2.md) | `browser-automation` .. `dotnet-backend` | 228 skills | ~1.6 MB |
+| Part 3 | [`MASTER_SKILLS_PART_3.md`](MASTER_SKILLS_PART_3.md) | `drive-automation-session` .. `jmeter-test-plan-creator` | 217 skills | ~1.6 MB |
+| Part 4 | [`MASTER_SKILLS_PART_4.md`](MASTER_SKILLS_PART_4.md) | `juicebox-data-handling` .. `performance-lighthouse-runner` | 207 skills | ~1.6 MB |
+| Part 5 | [`MASTER_SKILLS_PART_5.md`](MASTER_SKILLS_PART_5.md) | `performance-optimization` .. `supabase-debug-bundle` | 248 skills | ~1.6 MB |
+| Part 6 | [`MASTER_SKILLS_PART_6.md`](MASTER_SKILLS_PART_6.md) | `supabase-performance-tuning` .. `zigzag-pattern-classifier` | 185 skills | ~1.6 MB |
 
 
-## 📑 COMPLETE ALPHABETICAL SKILLS DIRECTORY
+## COMPLETE ALPHABETICAL SKILLS DIRECTORY
 
 | # | Skill Name | Source File | Assigned Volume Part |
 |---|---|---|---|
@@ -237,13 +237,13 @@
 | 216 | `brightdata-upgrade-migration` | `brightdata-upgrade-migration.md` | [`Part 1`](MASTER_SKILLS_PART_1.md#skill-brightdata-upgrade-migration) |
 | 217 | `brightdata-webhooks-events` | `brightdata-webhooks-events.md` | [`Part 1`](MASTER_SKILLS_PART_1.md#skill-brightdata-webhooks-events) |
 | 218 | `brooks-test` | `brooks-test.md` | [`Part 1`](MASTER_SKILLS_PART_1.md#skill-brooks-test) |
-| 219 | `browser-automation` | `browser-automation.md` | [`Part 1`](MASTER_SKILLS_PART_1.md#skill-browser-automation) |
-| 220 | `browser-test` | `browser-test.md` | [`Part 1`](MASTER_SKILLS_PART_1.md#skill-browser-test) |
-| 221 | `browser-testing-with-devtools` | `browser-testing-with-devtools.md` | [`Part 1`](MASTER_SKILLS_PART_1.md#skill-browser-testing-with-devtools) |
-| 222 | `building-automl-pipelines` | `building-automl-pipelines.md` | [`Part 1`](MASTER_SKILLS_PART_1.md#skill-building-automl-pipelines) |
-| 223 | `building-classification-models` | `building-classification-models.md` | [`Part 1`](MASTER_SKILLS_PART_1.md#skill-building-classification-models) |
-| 224 | `building-neural-networks` | `building-neural-networks.md` | [`Part 1`](MASTER_SKILLS_PART_1.md#skill-building-neural-networks) |
-| 225 | `building-recommendation-systems` | `building-recommendation-systems.md` | [`Part 1`](MASTER_SKILLS_PART_1.md#skill-building-recommendation-systems) |
+| 219 | `browser-automation` | `browser-automation.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-browser-automation) |
+| 220 | `browser-test` | `browser-test.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-browser-test) |
+| 221 | `browser-testing-with-devtools` | `browser-testing-with-devtools.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-browser-testing-with-devtools) |
+| 222 | `building-automl-pipelines` | `building-automl-pipelines.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-building-automl-pipelines) |
+| 223 | `building-classification-models` | `building-classification-models.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-building-classification-models) |
+| 224 | `building-neural-networks` | `building-neural-networks.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-building-neural-networks) |
+| 225 | `building-recommendation-systems` | `building-recommendation-systems.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-building-recommendation-systems) |
 | 226 | `burp-suite-testing` | `burp-suite-testing.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-burp-suite-testing) |
 | 227 | `business-analyst` | `business-analyst.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-business-analyst) |
 | 228 | `c4-architecture-c4-architecture` | `c4-architecture-c4-architecture.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-c4-architecture-c4-architecture) |
@@ -465,18 +465,18 @@
 | 444 | `domain-modeling` | `domain-modeling.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-domain-modeling) |
 | 445 | `dotnet-backend-patterns` | `dotnet-backend-patterns.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-dotnet-backend-patterns) |
 | 446 | `dotnet-backend` | `dotnet-backend.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-dotnet-backend) |
-| 447 | `drive-automation-session` | `drive-automation-session.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-drive-automation-session) |
-| 448 | `drive-desktop-app` | `drive-desktop-app.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-drive-desktop-app) |
-| 449 | `e2e-testing-patterns` | `e2e-testing-patterns.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-e2e-testing-patterns) |
-| 450 | `e2e-testing` | `e2e-testing.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-e2e-testing) |
-| 451 | `early-stopping-callback` | `early-stopping-callback.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-early-stopping-callback) |
-| 452 | `elevenlabs-debug-bundle` | `elevenlabs-debug-bundle.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-elevenlabs-debug-bundle) |
-| 453 | `elevenlabs-performance-tuning` | `elevenlabs-performance-tuning.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-elevenlabs-performance-tuning) |
-| 454 | `elevenlabs-reference-architecture` | `elevenlabs-reference-architecture.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-elevenlabs-reference-architecture) |
-| 455 | `embedding-strategies` | `embedding-strategies.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-embedding-strategies) |
-| 456 | `encrypting-and-decrypting-data` | `encrypting-and-decrypting-data.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-encrypting-and-decrypting-data) |
-| 457 | `engineering-features-for-machine-learning` | `engineering-features-for-machine-learning.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-engineering-features-for-machine-learning) |
-| 458 | `error-debugging-error-analysis` | `error-debugging-error-analysis.md` | [`Part 2`](MASTER_SKILLS_PART_2.md#skill-error-debugging-error-analysis) |
+| 447 | `drive-automation-session` | `drive-automation-session.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-drive-automation-session) |
+| 448 | `drive-desktop-app` | `drive-desktop-app.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-drive-desktop-app) |
+| 449 | `e2e-testing-patterns` | `e2e-testing-patterns.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-e2e-testing-patterns) |
+| 450 | `e2e-testing` | `e2e-testing.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-e2e-testing) |
+| 451 | `early-stopping-callback` | `early-stopping-callback.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-early-stopping-callback) |
+| 452 | `elevenlabs-debug-bundle` | `elevenlabs-debug-bundle.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-elevenlabs-debug-bundle) |
+| 453 | `elevenlabs-performance-tuning` | `elevenlabs-performance-tuning.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-elevenlabs-performance-tuning) |
+| 454 | `elevenlabs-reference-architecture` | `elevenlabs-reference-architecture.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-elevenlabs-reference-architecture) |
+| 455 | `embedding-strategies` | `embedding-strategies.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-embedding-strategies) |
+| 456 | `encrypting-and-decrypting-data` | `encrypting-and-decrypting-data.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-encrypting-and-decrypting-data) |
+| 457 | `engineering-features-for-machine-learning` | `engineering-features-for-machine-learning.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-engineering-features-for-machine-learning) |
+| 458 | `error-debugging-error-analysis` | `error-debugging-error-analysis.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-error-debugging-error-analysis) |
 | 459 | `error-debugging-error-trace` | `error-debugging-error-trace.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-error-debugging-error-trace) |
 | 460 | `error-debugging-multi-agent-review` | `error-debugging-multi-agent-review.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-error-debugging-multi-agent-review) |
 | 461 | `error-diagnostics-smart-debug` | `error-diagnostics-smart-debug.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-error-diagnostics-smart-debug) |
@@ -682,27 +682,27 @@
 | 661 | `javascript-testing-patterns` | `javascript-testing-patterns.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-javascript-testing-patterns) |
 | 662 | `jest-test-generator` | `jest-test-generator.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-jest-test-generator) |
 | 663 | `jmeter-test-plan-creator` | `jmeter-test-plan-creator.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-jmeter-test-plan-creator) |
-| 664 | `juicebox-data-handling` | `juicebox-data-handling.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-juicebox-data-handling) |
-| 665 | `juicebox-debug-bundle` | `juicebox-debug-bundle.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-juicebox-debug-bundle) |
-| 666 | `juicebox-performance-tuning` | `juicebox-performance-tuning.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-juicebox-performance-tuning) |
-| 667 | `juicebox-reference-architecture` | `juicebox-reference-architecture.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-juicebox-reference-architecture) |
-| 668 | `k6-load-testing` | `k6-load-testing.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-k6-load-testing) |
-| 669 | `k6-script-generator` | `k6-script-generator.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-k6-script-generator) |
-| 670 | `kafka-producer-consumer` | `kafka-producer-consumer.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-kafka-producer-consumer) |
-| 671 | `kafka-stream-processor` | `kafka-stream-processor.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-kafka-stream-processor) |
-| 672 | `karpathy-guidelines` | `karpathy-guidelines.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-karpathy-guidelines) |
-| 673 | `keyboard-navigation-tester` | `keyboard-navigation-tester.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-keyboard-navigation-tester) |
-| 674 | `klaviyo-data-handling` | `klaviyo-data-handling.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-klaviyo-data-handling) |
-| 675 | `klaviyo-debug-bundle` | `klaviyo-debug-bundle.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-klaviyo-debug-bundle) |
-| 676 | `klaviyo-performance-tuning` | `klaviyo-performance-tuning.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-klaviyo-performance-tuning) |
-| 677 | `klaviyo-reference-architecture` | `klaviyo-reference-architecture.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-klaviyo-reference-architecture) |
-| 678 | `klingai-async-workflows` | `klingai-async-workflows.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-klingai-async-workflows) |
-| 679 | `klingai-debug-bundle` | `klingai-debug-bundle.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-klingai-debug-bundle) |
-| 680 | `klingai-performance-tuning` | `klingai-performance-tuning.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-klingai-performance-tuning) |
-| 681 | `klingai-reference-architecture` | `klingai-reference-architecture.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-klingai-reference-architecture) |
-| 682 | `kotlin-testing` | `kotlin-testing.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-kotlin-testing) |
-| 683 | `kpi-dashboard-design` | `kpi-dashboard-design.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-kpi-dashboard-design) |
-| 684 | `kpi-definition-helper` | `kpi-definition-helper.md` | [`Part 3`](MASTER_SKILLS_PART_3.md#skill-kpi-definition-helper) |
+| 664 | `juicebox-data-handling` | `juicebox-data-handling.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-juicebox-data-handling) |
+| 665 | `juicebox-debug-bundle` | `juicebox-debug-bundle.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-juicebox-debug-bundle) |
+| 666 | `juicebox-performance-tuning` | `juicebox-performance-tuning.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-juicebox-performance-tuning) |
+| 667 | `juicebox-reference-architecture` | `juicebox-reference-architecture.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-juicebox-reference-architecture) |
+| 668 | `k6-load-testing` | `k6-load-testing.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-k6-load-testing) |
+| 669 | `k6-script-generator` | `k6-script-generator.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-k6-script-generator) |
+| 670 | `kafka-producer-consumer` | `kafka-producer-consumer.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-kafka-producer-consumer) |
+| 671 | `kafka-stream-processor` | `kafka-stream-processor.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-kafka-stream-processor) |
+| 672 | `karpathy-guidelines` | `karpathy-guidelines.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-karpathy-guidelines) |
+| 673 | `keyboard-navigation-tester` | `keyboard-navigation-tester.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-keyboard-navigation-tester) |
+| 674 | `klaviyo-data-handling` | `klaviyo-data-handling.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-klaviyo-data-handling) |
+| 675 | `klaviyo-debug-bundle` | `klaviyo-debug-bundle.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-klaviyo-debug-bundle) |
+| 676 | `klaviyo-performance-tuning` | `klaviyo-performance-tuning.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-klaviyo-performance-tuning) |
+| 677 | `klaviyo-reference-architecture` | `klaviyo-reference-architecture.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-klaviyo-reference-architecture) |
+| 678 | `klingai-async-workflows` | `klingai-async-workflows.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-klingai-async-workflows) |
+| 679 | `klingai-debug-bundle` | `klingai-debug-bundle.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-klingai-debug-bundle) |
+| 680 | `klingai-performance-tuning` | `klingai-performance-tuning.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-klingai-performance-tuning) |
+| 681 | `klingai-reference-architecture` | `klingai-reference-architecture.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-klingai-reference-architecture) |
+| 682 | `kotlin-testing` | `kotlin-testing.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-kotlin-testing) |
+| 683 | `kpi-dashboard-design` | `kpi-dashboard-design.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-kpi-dashboard-design) |
+| 684 | `kpi-definition-helper` | `kpi-definition-helper.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-kpi-definition-helper) |
 | 685 | `lambdatest-agent-skills` | `lambdatest-agent-skills.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-lambdatest-agent-skills) |
 | 686 | `langchain-architecture` | `langchain-architecture.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-langchain-architecture) |
 | 687 | `langchain-data-handling` | `langchain-data-handling.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-langchain-data-handling) |
@@ -889,37 +889,37 @@
 | 868 | `performance-baseline-creator` | `performance-baseline-creator.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-performance-baseline-creator) |
 | 869 | `performance-engineer` | `performance-engineer.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-performance-engineer) |
 | 870 | `performance-lighthouse-runner` | `performance-lighthouse-runner.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-performance-lighthouse-runner) |
-| 871 | `performance-optimization` | `performance-optimization.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-performance-optimization) |
-| 872 | `performance-optimizer` | `performance-optimizer.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-performance-optimizer) |
-| 873 | `performance-profiler` | `performance-profiler.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-performance-profiler) |
-| 874 | `performance-profiling` | `performance-profiling.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-performance-profiling) |
-| 875 | `performance-testing-review-ai-review` | `performance-testing-review-ai-review.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-performance-testing-review-ai-review) |
-| 876 | `performance-testing-review-multi-agent-review` | `performance-testing-review-multi-agent-review.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-performance-testing-review-multi-agent-review) |
-| 877 | `performing-penetration-testing` | `performing-penetration-testing.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-performing-penetration-testing) |
-| 878 | `performing-regression-analysis` | `performing-regression-analysis.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-performing-regression-analysis) |
-| 879 | `performing-security-testing` | `performing-security-testing.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-performing-security-testing) |
-| 880 | `perl-testing` | `perl-testing.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-perl-testing) |
-| 881 | `perplexity-architecture-variants` | `perplexity-architecture-variants.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-perplexity-architecture-variants) |
-| 882 | `perplexity-data-handling` | `perplexity-data-handling.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-perplexity-data-handling) |
-| 883 | `perplexity-debug-bundle` | `perplexity-debug-bundle.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-perplexity-debug-bundle) |
-| 884 | `perplexity-performance-tuning` | `perplexity-performance-tuning.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-perplexity-performance-tuning) |
-| 885 | `perplexity-reference-architecture` | `perplexity-reference-architecture.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-perplexity-reference-architecture) |
-| 886 | `persona-debug-bundle` | `persona-debug-bundle.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-persona-debug-bundle) |
-| 887 | `persona-performance-tuning` | `persona-performance-tuning.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-persona-performance-tuning) |
-| 888 | `persona-reference-architecture` | `persona-reference-architecture.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-persona-reference-architecture) |
-| 889 | `phase-gated-debugging` | `phase-gated-debugging.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-phase-gated-debugging) |
-| 890 | `pipeline-monitoring-setup` | `pipeline-monitoring-setup.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-pipeline-monitoring-setup) |
-| 891 | `pivot-table-creator` | `pivot-table-creator.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-pivot-table-creator) |
-| 892 | `plan-writing` | `plan-writing.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-plan-writing) |
-| 893 | `plankton-code-quality` | `plankton-code-quality.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-plankton-code-quality) |
-| 894 | `plantuml-diagram-generator` | `plantuml-diagram-generator.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-plantuml-diagram-generator) |
-| 895 | `playwright-skill` | `playwright-skill.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-playwright-skill) |
-| 896 | `pocock-implement` | `pocock-implement.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-pocock-implement) |
-| 897 | `pocock-research` | `pocock-research.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-pocock-research) |
-| 898 | `pocock-tdd` | `pocock-tdd.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-pocock-tdd) |
-| 899 | `ponytail-audit` | `ponytail-audit.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-ponytail-audit) |
-| 900 | `ponytail-debt` | `ponytail-debt.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-ponytail-debt) |
-| 901 | `ponytail-gain` | `ponytail-gain.md` | [`Part 4`](MASTER_SKILLS_PART_4.md#skill-ponytail-gain) |
+| 871 | `performance-optimization` | `performance-optimization.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-performance-optimization) |
+| 872 | `performance-optimizer` | `performance-optimizer.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-performance-optimizer) |
+| 873 | `performance-profiler` | `performance-profiler.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-performance-profiler) |
+| 874 | `performance-profiling` | `performance-profiling.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-performance-profiling) |
+| 875 | `performance-testing-review-ai-review` | `performance-testing-review-ai-review.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-performance-testing-review-ai-review) |
+| 876 | `performance-testing-review-multi-agent-review` | `performance-testing-review-multi-agent-review.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-performance-testing-review-multi-agent-review) |
+| 877 | `performing-penetration-testing` | `performing-penetration-testing.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-performing-penetration-testing) |
+| 878 | `performing-regression-analysis` | `performing-regression-analysis.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-performing-regression-analysis) |
+| 879 | `performing-security-testing` | `performing-security-testing.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-performing-security-testing) |
+| 880 | `perl-testing` | `perl-testing.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-perl-testing) |
+| 881 | `perplexity-architecture-variants` | `perplexity-architecture-variants.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-perplexity-architecture-variants) |
+| 882 | `perplexity-data-handling` | `perplexity-data-handling.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-perplexity-data-handling) |
+| 883 | `perplexity-debug-bundle` | `perplexity-debug-bundle.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-perplexity-debug-bundle) |
+| 884 | `perplexity-performance-tuning` | `perplexity-performance-tuning.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-perplexity-performance-tuning) |
+| 885 | `perplexity-reference-architecture` | `perplexity-reference-architecture.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-perplexity-reference-architecture) |
+| 886 | `persona-debug-bundle` | `persona-debug-bundle.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-persona-debug-bundle) |
+| 887 | `persona-performance-tuning` | `persona-performance-tuning.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-persona-performance-tuning) |
+| 888 | `persona-reference-architecture` | `persona-reference-architecture.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-persona-reference-architecture) |
+| 889 | `phase-gated-debugging` | `phase-gated-debugging.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-phase-gated-debugging) |
+| 890 | `pipeline-monitoring-setup` | `pipeline-monitoring-setup.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-pipeline-monitoring-setup) |
+| 891 | `pivot-table-creator` | `pivot-table-creator.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-pivot-table-creator) |
+| 892 | `plan-writing` | `plan-writing.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-plan-writing) |
+| 893 | `plankton-code-quality` | `plankton-code-quality.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-plankton-code-quality) |
+| 894 | `plantuml-diagram-generator` | `plantuml-diagram-generator.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-plantuml-diagram-generator) |
+| 895 | `playwright-skill` | `playwright-skill.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-playwright-skill) |
+| 896 | `pocock-implement` | `pocock-implement.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-pocock-implement) |
+| 897 | `pocock-research` | `pocock-research.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-pocock-research) |
+| 898 | `pocock-tdd` | `pocock-tdd.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-pocock-tdd) |
+| 899 | `ponytail-audit` | `ponytail-audit.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-ponytail-audit) |
+| 900 | `ponytail-debt` | `ponytail-debt.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-ponytail-debt) |
+| 901 | `ponytail-gain` | `ponytail-gain.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-ponytail-gain) |
 | 902 | `ponytail-help` | `ponytail-help.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-ponytail-help) |
 | 903 | `ponytail-review` | `ponytail-review.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-ponytail-review) |
 | 904 | `ponytail` | `ponytail.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-ponytail) |
@@ -1137,50 +1137,50 @@
 | 1116 | `supabase-architecture-variants` | `supabase-architecture-variants.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-supabase-architecture-variants) |
 | 1117 | `supabase-data-handling` | `supabase-data-handling.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-supabase-data-handling) |
 | 1118 | `supabase-debug-bundle` | `supabase-debug-bundle.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-supabase-debug-bundle) |
-| 1119 | `supabase-performance-tuning` | `supabase-performance-tuning.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-supabase-performance-tuning) |
-| 1120 | `supabase-reference-architecture` | `supabase-reference-architecture.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-supabase-reference-architecture) |
-| 1121 | `swift-protocol-di-testing` | `swift-protocol-di-testing.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-swift-protocol-di-testing) |
-| 1122 | `swiftui-performance-audit` | `swiftui-performance-audit.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-swiftui-performance-audit) |
-| 1123 | `swiftui-view-refactor` | `swiftui-view-refactor.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-swiftui-view-refactor) |
-| 1124 | `sync-profiles` | `sync-profiles.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-sync-profiles) |
-| 1125 | `sync-status` | `sync-status.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-sync-status) |
-| 1126 | `systematic-debugging` | `systematic-debugging.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-systematic-debugging) |
-| 1127 | `tailwind-patterns` | `tailwind-patterns.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tailwind-patterns) |
-| 1128 | `tdd-orchestrator` | `tdd-orchestrator.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tdd-orchestrator) |
-| 1129 | `tdd-repair` | `tdd-repair.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tdd-repair) |
-| 1130 | `tdd-workflow` | `tdd-workflow.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tdd-workflow) |
-| 1131 | `tdd-workflows-tdd-cycle` | `tdd-workflows-tdd-cycle.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tdd-workflows-tdd-cycle) |
-| 1132 | `tdd-workflows-tdd-green` | `tdd-workflows-tdd-green.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tdd-workflows-tdd-green) |
-| 1133 | `tdd-workflows-tdd-red` | `tdd-workflows-tdd-red.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tdd-workflows-tdd-red) |
-| 1134 | `tdd-workflows-tdd-refactor` | `tdd-workflows-tdd-refactor.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tdd-workflows-tdd-refactor) |
-| 1135 | `tdd-workflows` | `tdd-workflows.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tdd-workflows) |
-| 1136 | `tdd` | `tdd.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tdd) |
-| 1137 | `teach` | `teach.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-teach) |
-| 1138 | `techsmith-debug-bundle` | `techsmith-debug-bundle.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-techsmith-debug-bundle) |
-| 1139 | `techsmith-performance-tuning` | `techsmith-performance-tuning.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-techsmith-performance-tuning) |
-| 1140 | `techsmith-reference-architecture` | `techsmith-reference-architecture.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-techsmith-reference-architecture) |
-| 1141 | `temporal-python-pro` | `temporal-python-pro.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-temporal-python-pro) |
-| 1142 | `temporal-python-testing` | `temporal-python-testing.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-temporal-python-testing) |
-| 1143 | `tensorboard-visualizer` | `tensorboard-visualizer.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tensorboard-visualizer) |
-| 1144 | `tensorflow-model-trainer` | `tensorflow-model-trainer.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tensorflow-model-trainer) |
-| 1145 | `tensorflow-savedmodel-creator` | `tensorflow-savedmodel-creator.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tensorflow-savedmodel-creator) |
-| 1146 | `tensorflow-serving-setup` | `tensorflow-serving-setup.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-tensorflow-serving-setup) |
-| 1147 | `terraform-state-manager` | `terraform-state-manager.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-terraform-state-manager) |
-| 1148 | `test-automator` | `test-automator.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-test-automator) |
-| 1149 | `test-data-builder` | `test-data-builder.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-test-data-builder) |
-| 1150 | `test-driven-development` | `test-driven-development.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-test-driven-development) |
-| 1151 | `test-error-states` | `test-error-states.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-test-error-states) |
-| 1152 | `test-fixing` | `test-fixing.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-test-fixing) |
-| 1153 | `test-framework-migration-skill` | `test-framework-migration-skill.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-test-framework-migration-skill) |
-| 1154 | `test-gaps` | `test-gaps.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-test-gaps) |
-| 1155 | `test-guard` | `test-guard.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-test-guard) |
-| 1156 | `test-naming-enforcer` | `test-naming-enforcer.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-test-naming-enforcer) |
-| 1157 | `test-organization-helper` | `test-organization-helper.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-test-organization-helper) |
-| 1158 | `test-parallelizer` | `test-parallelizer.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-test-parallelizer) |
-| 1159 | `test-retry-config` | `test-retry-config.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-test-retry-config) |
-| 1160 | `test-skill` | `test-skill.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-test-skill) |
-| 1161 | `testing-browser-compatibility` | `testing-browser-compatibility.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-testing-browser-compatibility) |
-| 1162 | `testing-load-balancers` | `testing-load-balancers.md` | [`Part 5`](MASTER_SKILLS_PART_5.md#skill-testing-load-balancers) |
+| 1119 | `supabase-performance-tuning` | `supabase-performance-tuning.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-supabase-performance-tuning) |
+| 1120 | `supabase-reference-architecture` | `supabase-reference-architecture.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-supabase-reference-architecture) |
+| 1121 | `swift-protocol-di-testing` | `swift-protocol-di-testing.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-swift-protocol-di-testing) |
+| 1122 | `swiftui-performance-audit` | `swiftui-performance-audit.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-swiftui-performance-audit) |
+| 1123 | `swiftui-view-refactor` | `swiftui-view-refactor.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-swiftui-view-refactor) |
+| 1124 | `sync-profiles` | `sync-profiles.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-sync-profiles) |
+| 1125 | `sync-status` | `sync-status.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-sync-status) |
+| 1126 | `systematic-debugging` | `systematic-debugging.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-systematic-debugging) |
+| 1127 | `tailwind-patterns` | `tailwind-patterns.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tailwind-patterns) |
+| 1128 | `tdd-orchestrator` | `tdd-orchestrator.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tdd-orchestrator) |
+| 1129 | `tdd-repair` | `tdd-repair.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tdd-repair) |
+| 1130 | `tdd-workflow` | `tdd-workflow.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tdd-workflow) |
+| 1131 | `tdd-workflows-tdd-cycle` | `tdd-workflows-tdd-cycle.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tdd-workflows-tdd-cycle) |
+| 1132 | `tdd-workflows-tdd-green` | `tdd-workflows-tdd-green.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tdd-workflows-tdd-green) |
+| 1133 | `tdd-workflows-tdd-red` | `tdd-workflows-tdd-red.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tdd-workflows-tdd-red) |
+| 1134 | `tdd-workflows-tdd-refactor` | `tdd-workflows-tdd-refactor.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tdd-workflows-tdd-refactor) |
+| 1135 | `tdd-workflows` | `tdd-workflows.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tdd-workflows) |
+| 1136 | `tdd` | `tdd.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tdd) |
+| 1137 | `teach` | `teach.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-teach) |
+| 1138 | `techsmith-debug-bundle` | `techsmith-debug-bundle.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-techsmith-debug-bundle) |
+| 1139 | `techsmith-performance-tuning` | `techsmith-performance-tuning.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-techsmith-performance-tuning) |
+| 1140 | `techsmith-reference-architecture` | `techsmith-reference-architecture.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-techsmith-reference-architecture) |
+| 1141 | `temporal-python-pro` | `temporal-python-pro.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-temporal-python-pro) |
+| 1142 | `temporal-python-testing` | `temporal-python-testing.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-temporal-python-testing) |
+| 1143 | `tensorboard-visualizer` | `tensorboard-visualizer.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tensorboard-visualizer) |
+| 1144 | `tensorflow-model-trainer` | `tensorflow-model-trainer.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tensorflow-model-trainer) |
+| 1145 | `tensorflow-savedmodel-creator` | `tensorflow-savedmodel-creator.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tensorflow-savedmodel-creator) |
+| 1146 | `tensorflow-serving-setup` | `tensorflow-serving-setup.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-tensorflow-serving-setup) |
+| 1147 | `terraform-state-manager` | `terraform-state-manager.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-terraform-state-manager) |
+| 1148 | `test-automator` | `test-automator.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-test-automator) |
+| 1149 | `test-data-builder` | `test-data-builder.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-test-data-builder) |
+| 1150 | `test-driven-development` | `test-driven-development.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-test-driven-development) |
+| 1151 | `test-error-states` | `test-error-states.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-test-error-states) |
+| 1152 | `test-fixing` | `test-fixing.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-test-fixing) |
+| 1153 | `test-framework-migration-skill` | `test-framework-migration-skill.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-test-framework-migration-skill) |
+| 1154 | `test-gaps` | `test-gaps.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-test-gaps) |
+| 1155 | `test-guard` | `test-guard.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-test-guard) |
+| 1156 | `test-naming-enforcer` | `test-naming-enforcer.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-test-naming-enforcer) |
+| 1157 | `test-organization-helper` | `test-organization-helper.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-test-organization-helper) |
+| 1158 | `test-parallelizer` | `test-parallelizer.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-test-parallelizer) |
+| 1159 | `test-retry-config` | `test-retry-config.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-test-retry-config) |
+| 1160 | `test-skill` | `test-skill.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-test-skill) |
+| 1161 | `testing-browser-compatibility` | `testing-browser-compatibility.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-testing-browser-compatibility) |
+| 1162 | `testing-load-balancers` | `testing-load-balancers.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-testing-load-balancers) |
 | 1163 | `testing-mobile-apps` | `testing-mobile-apps.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-testing-mobile-apps) |
 | 1164 | `testing-patterns` | `testing-patterns.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-testing-patterns) |
 | 1165 | `testing-qa` | `testing-qa.md` | [`Part 6`](MASTER_SKILLS_PART_6.md#skill-testing-qa) |

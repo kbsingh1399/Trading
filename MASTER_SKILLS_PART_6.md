@@ -1,15 +1,64 @@
-# 📚 MASTER SKILLS — PART 6 OF 6
+---
+name: master-skills-part-6
+description: "Master Quantitative Trading and Autonomous Agent Engineering Methodologies Part 6 of 6."
+---
 
-> **Volume 6 of 6**: Skills [1163 to 1303] of 1,303 total skills.
+# MASTER SKILLS - PART 6 OF 6
+
+> **Volume 6 of 6**: Skills [1119 to 1303] of 1,303 total skills.
 > File size: strictly < 2.0 MB. Zero deletions. Full verbatim content.
 
 - **Master Index**: [`MASTER_SKILLS_INDEX.md`](MASTER_SKILLS_INDEX.md)
 - **Navigation**: Previous: [`MASTER_SKILLS_PART_5.md`](MASTER_SKILLS_PART_5.md) | Next: None
 
-## 📑 CONTENTS OF PART 6
+## CONTENTS OF PART 6
 
 | # | Skill Name | Anchor Link | Original Size |
 |---|---|---|---|
+| 1119 | `supabase-performance-tuning` | [supabase-performance-tuning](#skill-supabase-performance-tuning) | 13,099 bytes |
+| 1120 | `supabase-reference-architecture` | [supabase-reference-architecture](#skill-supabase-reference-architecture) | 12,115 bytes |
+| 1121 | `swift-protocol-di-testing` | [swift-protocol-di-testing](#skill-swift-protocol-di-testing) | 6,303 bytes |
+| 1122 | `swiftui-performance-audit` | [swiftui-performance-audit](#skill-swiftui-performance-audit) | 5,477 bytes |
+| 1123 | `swiftui-view-refactor` | [swiftui-view-refactor](#skill-swiftui-view-refactor) | 8,423 bytes |
+| 1124 | `sync-profiles` | [sync-profiles](#skill-sync-profiles) | 2,147 bytes |
+| 1125 | `sync-status` | [sync-status](#skill-sync-status) | 1,237 bytes |
+| 1126 | `systematic-debugging` | [systematic-debugging](#skill-systematic-debugging) | 10,564 bytes |
+| 1127 | `tailwind-patterns` | [tailwind-patterns](#skill-tailwind-patterns) | 7,234 bytes |
+| 1128 | `tdd-orchestrator` | [tdd-orchestrator](#skill-tdd-orchestrator) | 10,799 bytes |
+| 1129 | `tdd-repair` | [tdd-repair](#skill-tdd-repair) | 6,417 bytes |
+| 1130 | `tdd-workflow` | [tdd-workflow](#skill-tdd-workflow) | 3,402 bytes |
+| 1131 | `tdd-workflows-tdd-cycle` | [tdd-workflows-tdd-cycle](#skill-tdd-workflows-tdd-cycle) | 9,232 bytes |
+| 1132 | `tdd-workflows-tdd-green` | [tdd-workflows-tdd-green](#skill-tdd-workflows-tdd-green) | 2,356 bytes |
+| 1133 | `tdd-workflows-tdd-red` | [tdd-workflows-tdd-red](#skill-tdd-workflows-tdd-red) | 5,179 bytes |
+| 1134 | `tdd-workflows-tdd-refactor` | [tdd-workflows-tdd-refactor](#skill-tdd-workflows-tdd-refactor) | 6,577 bytes |
+| 1135 | `tdd-workflows` | [tdd-workflows](#skill-tdd-workflows) | 1,327 bytes |
+| 1136 | `tdd` | [tdd](#skill-tdd) | 3,587 bytes |
+| 1137 | `teach` | [teach](#skill-teach) | 9,646 bytes |
+| 1138 | `techsmith-debug-bundle` | [techsmith-debug-bundle](#skill-techsmith-debug-bundle) | 1,860 bytes |
+| 1139 | `techsmith-performance-tuning` | [techsmith-performance-tuning](#skill-techsmith-performance-tuning) | 1,890 bytes |
+| 1140 | `techsmith-reference-architecture` | [techsmith-reference-architecture](#skill-techsmith-reference-architecture) | 1,910 bytes |
+| 1141 | `temporal-python-pro` | [temporal-python-pro](#skill-temporal-python-pro) | 11,269 bytes |
+| 1142 | `temporal-python-testing` | [temporal-python-testing](#skill-temporal-python-testing) | 5,803 bytes |
+| 1143 | `tensorboard-visualizer` | [tensorboard-visualizer](#skill-tensorboard-visualizer) | 2,384 bytes |
+| 1144 | `tensorflow-model-trainer` | [tensorflow-model-trainer](#skill-tensorflow-model-trainer) | 2,400 bytes |
+| 1145 | `tensorflow-savedmodel-creator` | [tensorflow-savedmodel-creator](#skill-tensorflow-savedmodel-creator) | 2,450 bytes |
+| 1146 | `tensorflow-serving-setup` | [tensorflow-serving-setup](#skill-tensorflow-serving-setup) | 2,391 bytes |
+| 1147 | `terraform-state-manager` | [terraform-state-manager](#skill-terraform-state-manager) | 2,388 bytes |
+| 1148 | `test-automator` | [test-automator](#skill-test-automator) | 11,675 bytes |
+| 1149 | `test-data-builder` | [test-data-builder](#skill-test-data-builder) | 2,250 bytes |
+| 1150 | `test-driven-development` | [test-driven-development](#skill-test-driven-development) | 10,623 bytes |
+| 1151 | `test-error-states` | [test-error-states](#skill-test-error-states) | 4,533 bytes |
+| 1152 | `test-fixing` | [test-fixing](#skill-test-fixing) | 3,553 bytes |
+| 1153 | `test-framework-migration-skill` | [test-framework-migration-skill](#skill-test-framework-migration-skill) | 8,883 bytes |
+| 1154 | `test-gaps` | [test-gaps](#skill-test-gaps) | 871 bytes |
+| 1155 | `test-guard` | [test-guard](#skill-test-guard) | 8,418 bytes |
+| 1156 | `test-naming-enforcer` | [test-naming-enforcer](#skill-test-naming-enforcer) | 2,284 bytes |
+| 1157 | `test-organization-helper` | [test-organization-helper](#skill-test-organization-helper) | 2,326 bytes |
+| 1158 | `test-parallelizer` | [test-parallelizer](#skill-test-parallelizer) | 2,255 bytes |
+| 1159 | `test-retry-config` | [test-retry-config](#skill-test-retry-config) | 2,249 bytes |
+| 1160 | `test-skill` | [test-skill](#skill-test-skill) | 1,565 bytes |
+| 1161 | `testing-browser-compatibility` | [testing-browser-compatibility](#skill-testing-browser-compatibility) | 7,112 bytes |
+| 1162 | `testing-load-balancers` | [testing-load-balancers](#skill-testing-load-balancers) | 6,387 bytes |
 | 1163 | `testing-mobile-apps` | [testing-mobile-apps](#skill-testing-mobile-apps) | 5,768 bytes |
 | 1164 | `testing-patterns` | [testing-patterns](#skill-testing-patterns) | 3,792 bytes |
 | 1165 | `testing-qa` | [testing-qa](#skill-testing-qa) | 5,424 bytes |
@@ -157,6 +206,7277 @@
 
 
 
+<a id="skill-supabase-performance-tuning"></a>
+
+# [1119/1303] SKILL: supabase-performance-tuning
+
+- **Source File:** `skills/supabase-performance-tuning.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 13,099 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: supabase-performance-tuning.md ***
+```
+
+***
+name: supabase-performance-tuning
+description: 'Optimize Supabase query performance with indexes, EXPLAIN ANALYZE, connection
+  pooling,
+
+  column selection, pagination, RPC functions, materialized views, and diagnostics.
+
+  Use when queries are slow, connections are exhausted, response payloads are bloated,
+
+  or when preparing a Supabase project for production-scale traffic.
+
+  Trigger with phrases like "supabase performance", "supabase slow queries",
+
+  "optimize supabase", "supabase index", "supabase connection pool",
+
+  "supabase pagination", "supabase explain analyze".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(npx:supabase), Bash(supabase:*), Grep
+version: 1.53.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- saas
+- supabase
+- performance
+- optimization
+- postgres
+compatibility: Designed for Claude Code
+***
+# Supabase Performance Tuning
+
+## Overview
+
+Systematically improve Supabase query and database performance across three layers: PostgreSQL engine (indexes, query plans, materialized views), Supabase infrastructure (Supavisor connection pooling, Edge Functions, read replicas), and client SDK patterns (column selection, pagination, RPC functions). Every technique here is measurable — run `EXPLAIN ANALYZE` before and after to confirm the improvement.
+
+## Prerequisites
+
+- Supabase project (local or hosted) with `@supabase/supabase-js` v2+ installed
+- Supabase CLI installed (`npx supabase --version` to verify)
+- Access to the SQL Editor in the Supabase Dashboard or a direct Postgres connection
+- `pg_stat_statements` extension enabled (Step 1 covers this)
+
+## Instructions
+
+### Step 1: Diagnose — Find What Is Slow
+
+Start every performance effort with data. Enable `pg_stat_statements` and run the Supabase CLI diagnostics to identify bottlenecks before optimizing.
+
+**Enable the stats extension:**
+
+```sql
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+```
+
+**Find the slowest queries by average execution time:**
+
+```sql
+SELECT
+  query,
+  calls,
+  mean_exec_time::numeric(10,2) AS avg_ms,
+  total_exec_time::numeric(10,2) AS total_ms,
+  rows
+FROM pg_stat_statements
+ORDER BY mean_exec_time DESC
+LIMIT 10;
+```
+
+**Check index usage and cache hit rates with the Supabase CLI:**
+
+```bash
+# Which indexes are actually being used?
+npx supabase inspect db index-usage
+
+# What percentage of queries are served from cache vs disk?
+npx supabase inspect db cache-hit
+
+# Tables consuming the most space
+npx supabase inspect db table-sizes
+```
+
+**Inspect active connections for pooling issues:**
+
+```sql
+SELECT state, count(*), max(age(now(), state_change)) AS max_age
+FROM pg_stat_activity
+WHERE datname = current_database()
+GROUP BY state;
+```
+
+If `idle` connections exceed your plan's limit or `active` queries show high `max_age`, connection pooling (Step 2) and query optimization (Step 3) are the priority.
+
+### Step 2: Indexes and Query Plans
+
+Indexes are the single highest-impact optimization. Use `EXPLAIN ANALYZE` to read query plans, then create targeted indexes.
+
+**Read a query plan:**
+
+```sql
+EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT)
+SELECT * FROM users WHERE email = 'alice@example.com';
+```
+
+Look for `Seq Scan` on large tables — that means no index is being used. After adding an index, the plan should show `Index Scan` or `Index Only Scan`.
+
+**Create a basic index:**
+
+```sql
+CREATE INDEX idx_users_email ON users(email);
+```
+
+**Create a composite index for multi-column filters:**
+
+```sql
+-- Optimizes: WHERE user_id = ? AND created_at > ? ORDER BY created_at DESC
+CREATE INDEX idx_orders_user_created
+  ON orders(user_id, created_at DESC);
+```
+
+**Create a partial index to cover a common filter pattern:**
+
+```sql
+-- Only indexes incomplete todos — much smaller and faster than full-table index
+CREATE INDEX idx_todos_user_incomplete
+  ON todos(user_id, inserted_at DESC)
+  WHERE is_complete = false;
+```
+
+**Find missing indexes on foreign keys (common source of slow JOINs):**
+
+```sql
+SELECT
+  tc.table_name,
+  kcu.column_name AS fk_column,
+  'CREATE INDEX idx_' || tc.table_name || '_' || kcu.column_name
+    || ' ON public.' || tc.table_name || '(' || kcu.column_name || ');' AS fix
+FROM information_schema.table_constraints tc
+JOIN information_schema.key_column_usage kcu
+  ON tc.constraint_name = kcu.constraint_name
+LEFT JOIN pg_indexes i
+  ON i.tablename = tc.table_name
+  AND i.indexdef LIKE '%' || kcu.column_name || '%'
+WHERE tc.constraint_type = 'FOREIGN KEY'
+  AND tc.table_schema = 'public'
+  AND i.indexname IS NULL;
+```
+
+**Find unused indexes (candidates for removal to reduce write overhead):**
+
+```sql
+SELECT schemaname, relname, indexrelname, idx_scan
+FROM pg_stat_user_indexes
+WHERE idx_scan = 0 AND schemaname = 'public'
+ORDER BY pg_relation_size(indexrelid) DESC;
+```
+
+Always use `CREATE INDEX CONCURRENTLY` on production tables to avoid locking writes during index creation.
+
+### Step 3: Client SDK and Infrastructure Optimization
+
+Optimize the Supabase JS client calls, then leverage infrastructure features for scale.
+
+**Select only needed columns — avoid `select('*')`:**
+
+```typescript
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_ANON_KEY!
+)
+
+// BAD: fetches every column, large payloads
+const { data } = await supabase.from('users').select('*')
+
+// GOOD: only the columns you need
+const { data } = await supabase.from('users').select('id, name, avatar_url')
+```
+
+**Paginate with `.range()` instead of loading all rows:**
+
+```typescript
+// Page 1: rows 0-49
+const { data: page1 } = await supabase
+  .from('products')
+  .select('id, name, price')
+  .order('created_at', { ascending: false })
+  .range(0, 49)
+
+// Page 2: rows 50-99
+const { data: page2 } = await supabase
+  .from('products')
+  .select('id, name, price')
+  .order('created_at', { ascending: false })
+  .range(50, 99)
+```
+
+**Use RPC functions to push complex logic to Postgres:**
+
+```sql
+-- Create a server-side function for an expensive aggregation
+CREATE OR REPLACE FUNCTION get_dashboard_stats(org_id uuid)
+RETURNS json AS $$
+  SELECT json_build_object(
+    'total_users', (SELECT count(*) FROM users WHERE organization_id = org_id),
+    'active_projects', (SELECT count(*) FROM projects WHERE organization_id = org_id AND status = 'active'),
+    'tasks_completed_30d', (SELECT count(*) FROM tasks t
+      JOIN projects p ON p.id = t.project_id
+      WHERE p.organization_id = org_id
+      AND t.completed_at > now() - interval '30 days')
+  );
+$$ LANGUAGE sql STABLE;
+```
+
+```typescript
+// One network call instead of three separate queries
+const { data } = await supabase.rpc('get_dashboard_stats', {
+  org_id: 'your-org-uuid'
+})
+```
+
+**Create materialized views for expensive aggregations:**
+
+```sql
+-- Precompute a leaderboard instead of recalculating on every request
+CREATE MATERIALIZED VIEW leaderboard AS
+SELECT
+  u.id,
+  u.username,
+  count(t.id) AS tasks_completed,
+  rank() OVER (ORDER BY count(t.id) DESC) AS rank
+FROM users u
+LEFT JOIN tasks t ON t.assignee_id = u.id AND t.status = 'done'
+GROUP BY u.id, u.username;
+
+-- Create an index on the materialized view
+CREATE UNIQUE INDEX idx_leaderboard_user ON leaderboard(id);
+
+-- Refresh on a schedule (e.g., via pg_cron or a cron Edge Function)
+REFRESH MATERIALIZED VIEW CONCURRENTLY leaderboard;
+```
+
+**Configure connection pooling with Supavisor:**
+
+```typescript
+// For serverless environments (Vercel, Netlify, Cloudflare Workers):
+// Use the pooled connection string with transaction mode
+// Dashboard → Settings → Database → Connection string → "Transaction mode"
+
+// The JS SDK uses PostgREST (HTTP) which has its own pooling — no config needed.
+// Direct Postgres clients (Prisma, Drizzle, pg) need the pooled string:
+import { Pool } from 'pg'
+
+const pool = new Pool({
+  connectionString: 'postgres://postgres.[ref]:[pwd]@aws-0-[region].pooler.supabase.com:6543/postgres',
+  max: 5,  // Keep low in serverless — Supavisor manages the upstream pool
+  idleTimeoutMillis: 10000,
+})
+```
+
+**Use Edge Functions for compute-heavy operations close to data:**
+
+```typescript
+// supabase/functions/generate-report/index.ts
+// Edge Functions run in the same region as your database — low latency
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+Deno.serve(async (req) => {
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+  )
+
+  // Heavy aggregation runs next to the database, not in the user's browser
+  const { data } = await supabase.rpc('get_dashboard_stats', {
+    org_id: (await req.json()).org_id
+  })
+
+  return new Response(JSON.stringify(data), {
+    headers: { 'Content-Type': 'application/json' }
+  })
+})
+```
+
+**Enable read replicas on Pro+ plans** for read-heavy workloads — route analytics and reporting queries to the replica to offload the primary.
+
+## Output
+
+After completing these steps, you will have:
+
+- Diagnostic baseline from `pg_stat_statements`, `index-usage`, and `cache-hit`
+- Targeted indexes on slow query columns, foreign keys, and common filter patterns
+- Query plans verified with `EXPLAIN ANALYZE` showing Index Scan instead of Seq Scan
+- Client queries optimized with column selection, pagination, and joined queries
+- RPC functions and materialized views for expensive server-side aggregations
+- Connection pooling configured via Supavisor for serverless deployments
+- Edge Functions deployed for compute-heavy operations near the database
+
+## Error Handling
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| `Seq Scan` in EXPLAIN output on large table | Missing index on filtered/sorted column | `CREATE INDEX` on the column(s) in the WHERE/ORDER BY clause |
+| `PGRST000: could not connect to server` | Connection pool exhausted | Switch to Supavisor pooled connection string; reduce `max` pool size in serverless |
+| Slow RLS policies (visible in `pg_stat_statements`) | Subquery in policy evaluates per row | Refactor to `security definer` function or use `EXISTS` instead of `IN` |
+| Response payloads > 1MB | `select('*')` returning all columns/rows | Use `.select('col1, col2')` and `.range()` for pagination |
+| Stale materialized view data | View not refreshed after writes | Set up `pg_cron` or a cron Edge Function to run `REFRESH MATERIALIZED VIEW CONCURRENTLY` |
+| `cache-hit` ratio below 99% | Working set exceeds RAM (shared_buffers) | Upgrade compute add-on or optimize queries to access fewer pages |
+| High latency on aggregation endpoints | Aggregation computed live on every request | Move to materialized view or RPC function; cache at the Edge Function layer |
+
+## Examples
+
+**Before/after index optimization:**
+
+```sql
+-- Before: 450ms, Seq Scan
+EXPLAIN (ANALYZE) SELECT * FROM orders WHERE customer_id = 'abc-123';
+-- Seq Scan on orders  (cost=0.00..15234.00 rows=50 width=128) (actual time=0.015..450.123 rows=50 loops=1)
+
+CREATE INDEX idx_orders_customer ON orders(customer_id);
+
+-- After: 0.8ms, Index Scan
+EXPLAIN (ANALYZE) SELECT * FROM orders WHERE customer_id = 'abc-123';
+-- Index Scan using idx_orders_customer on orders  (cost=0.42..8.44 rows=50 width=128) (actual time=0.025..0.812 rows=50 loops=1)
+```
+
+**Client query optimization — eliminating N+1:**
+
+```typescript
+// BAD: N+1 — one query per project (10 projects = 11 queries)
+const { data: projects } = await supabase.from('projects').select('id, name')
+for (const project of projects!) {
+  const { data: tasks } = await supabase
+    .from('tasks').select('*').eq('project_id', project.id)
+}
+
+// GOOD: Single query with embedded join (1 query total)
+const { data } = await supabase
+  .from('projects')
+  .select('id, name, tasks(id, title, status)')
+  .eq('organization_id', orgId)
+```
+
+## Resources
+
+- [Supabase Performance Advisor](https://supabase.com/docs/guides/database/inspect) — built-in CLI diagnostics
+- [PostgreSQL Index Types](https://supabase.com/docs/guides/database/postgres/indexes) — B-tree, GIN, GiST, and when to use each
+- [Connection Pooling with Supavisor](https://supabase.com/docs/guides/database/connecting-to-postgres#connection-pooler) — transaction vs session mode
+- [Supabase Edge Functions](https://supabase.com/docs/guides/functions) — deploy serverless functions next to your database
+- [Read Replicas](https://supabase.com/docs/guides/platform/read-replicas) — offload read-heavy queries on Pro+ plans
+- [RLS Performance Best Practices](https://supabase.com/docs/guides/troubleshooting/rls-performance-and-best-practices-Z5Jjwv) — avoid per-row subqueries
+
+## Next Steps
+
+- For RLS policy design, see `supabase-rls-policies`
+- For cost optimization, see `supabase-cost-tuning`
+- For real-time subscriptions, see `supabase-realtime`
+
+
+```markdown
+*** END OF FILE: supabase-performance-tuning.md ***
+```
+
+
+***
+
+
+<a id="skill-supabase-reference-architecture"></a>
+
+# [1120/1303] SKILL: supabase-reference-architecture
+
+- **Source File:** `skills/supabase-reference-architecture.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 12,115 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: supabase-reference-architecture.md ***
+```
+
+***
+name: supabase-reference-architecture
+description: "Implement enterprise Supabase reference architectures \u2014 monorepo\
+  \ layout, multi-tenant RLS,\nmicroservices with cross-project access, framework\
+  \ integration, edge functions, caching,\nqueue patterns, and audit logging.\nUse\
+  \ when designing a new Supabase project from scratch, reviewing project structure\
+  \ for\nproduction readiness, planning multi-tenant isolation, or establishing team\
+  \ architecture standards.\nTrigger with phrases like \"supabase architecture\",\
+  \ \"supabase project structure\",\n\"supabase monorepo\", \"supabase multi-tenant\"\
+  , \"supabase reference design\",\n\"how to organize supabase at scale\".\n"
+allowed-tools: Read, Write, Edit, Bash(npm:*), Bash(npx:*), Bash(supabase:*), Grep,
+  Glob
+version: 1.53.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- saas
+- supabase
+- architecture
+- patterns
+- multi-tenant
+- monorepo
+compatibility: Designed for Claude Code
+***
+# Supabase Reference Architecture
+
+## Overview
+
+Production Supabase applications need more than a flat `lib/supabase.ts` file. This skill covers five enterprise architecture patterns: monorepo with shared types, multi-tenant RLS isolation, microservices with separate Supabase projects, framework integration (Next.js / SvelteKit), and operational patterns (edge functions, caching, queues, audit trails). Each pattern stands alone — pick the ones that match your scale.
+
+For the full monorepo directory layout and microservices cross-project access, see [Project Structure](references/project-structure.md). For edge functions, caching, queue, and audit trail patterns, see [Operational Patterns](references/key-components.md).
+
+## Prerequisites
+
+- `@supabase/supabase-js` v2+ installed (`npm install @supabase/supabase-js`)
+- Supabase CLI installed (`npm install -g supabase`)
+- A Supabase project at [supabase.com/dashboard](https://supabase.com/dashboard)
+- Familiarity with `supabase-install-auth` (project URL, anon key, service role key)
+- PostgreSQL basics (RLS policies, triggers, functions)
+
+## Instructions
+
+### Step 1: Client Singleton — The Foundation
+
+Every app in the monorepo imports from a shared package instead of creating its own client. This guarantees a single source of truth for the URL, keys, and type definitions.
+
+```typescript
+// packages/supabase/src/client.ts
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from './database.types'
+
+let client: SupabaseClient<Database> | null = null
+
+export function getSupabaseClient(): SupabaseClient<Database> {
+  if (!client) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.SUPABASE_ANON_KEY
+    if (!url || !key) {
+      throw new Error('Missing SUPABASE_URL or SUPABASE_ANON_KEY environment variables')
+    }
+    client = createClient<Database>(url, key)
+  }
+  return client
+}
+
+// Reset for testing
+export function resetClient(): void {
+  client = null
+}
+```
+
+```typescript
+// packages/supabase/src/admin.ts — Server-side only, never bundle in client code
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from './database.types'
+
+export function getSupabaseAdmin() {
+  const url = process.env.SUPABASE_URL
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !serviceKey) {
+    throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY — server-only')
+  }
+  return createClient<Database>(url, serviceKey, {
+    auth: { autoRefreshToken: false, persistSession: false }
+  })
+}
+```
+
+Key detail: The admin client sets `autoRefreshToken: false` and `persistSession: false` because server-side code should never store user sessions.
+
+### Step 2: Multi-Tenant RLS via JWT Claims
+
+The most scalable Supabase multi-tenant pattern uses a custom JWT claim (`org_id`) combined with RLS policies. Every table includes an `org_id` column, and RLS extracts the tenant from the user's JWT — no application-level filtering needed.
+
+```sql
+-- Migration: 20260101000000_create_tenants.sql
+
+-- Tenants table
+create table public.tenants (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  slug text unique not null,
+  plan text default 'free' check (plan in ('free', 'pro', 'enterprise')),
+  created_at timestamptz default now()
+);
+
+-- Tenant membership
+create table public.tenant_members (
+  tenant_id uuid references public.tenants(id) on delete cascade,
+  user_id uuid references auth.users(id) on delete cascade,
+  role text default 'member' check (role in ('owner', 'admin', 'member', 'viewer')),
+  primary key (tenant_id, user_id)
+);
+
+-- Example tenant-scoped table
+create table public.projects (
+  id uuid primary key default gen_random_uuid(),
+  org_id uuid not null references public.tenants(id) on delete cascade,
+  name text not null,
+  created_by uuid references auth.users(id),
+  created_at timestamptz default now()
+);
+
+-- Enable RLS on all tenant-scoped tables
+alter table public.projects enable row level security;
+
+-- RLS policy: users can only see rows belonging to their tenant
+-- The org_id is extracted from the JWT claims set during authentication
+create policy "Tenant isolation" on public.projects
+  for all
+  using (
+    org_id = (auth.jwt() ->> 'org_id')::uuid
+  );
+```
+
+The tenant-switching function verifies membership before updating the JWT claim:
+
+```sql
+-- Helper function to set org_id in JWT claims after login
+create or replace function public.set_tenant_claim(tenant_id uuid)
+returns void as $$
+begin
+  -- Verify user is a member of this tenant
+  if not exists (
+    select 1 from public.tenant_members
+    where tenant_members.tenant_id = set_tenant_claim.tenant_id
+      and tenant_members.user_id = auth.uid()
+  ) then
+    raise exception 'Not a member of tenant %', tenant_id;
+  end if;
+
+  -- Set the custom claim
+  perform auth.update_user_metadata(
+    auth.uid(),
+    jsonb_build_object('org_id', tenant_id)
+  );
+end;
+$$ language plpgsql security definer;
+```
+
+Key details for multi-tenant RLS:
+
+- `auth.jwt() ->> 'org_id'` reads a custom claim from the user's JWT — zero application code needed
+- Every tenant-scoped table must have an `org_id` column and RLS enabled
+- Tenant switching requires updating the JWT claim and re-authenticating
+- For row-level tenant + role permissions, combine `org_id` with a role lookup
+
+### Step 3: Framework Integration (Next.js)
+
+Server components use the `service_role` key for direct database access. Client components use the `anon` key with RLS protection.
+
+```typescript
+// app/lib/supabase-server.ts — Next.js App Router (server components)
+import { createClient } from '@supabase/supabase-js'
+import { cookies } from 'next/headers'
+import type { Database } from '@my-platform/supabase'
+
+export async function getSupabaseServer() {
+  const cookieStore = await cookies()
+
+  return createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: { autoRefreshToken: false, persistSession: false },
+      global: {
+        headers: {
+          // Forward the user's auth cookie for RLS context
+          cookie: cookieStore.toString()
+        }
+      }
+    }
+  )
+}
+
+// app/projects/page.tsx — Server component with direct DB access
+export default async function ProjectsPage() {
+  const supabase = await getSupabaseServer()
+  const { data: projects } = await supabase
+    .from('projects')
+    .select('id, name, created_at')
+    .order('created_at', { ascending: false })
+    .limit(50)
+
+  return <ProjectList projects={projects ?? []} />
+}
+```
+
+```typescript
+// app/lib/supabase-browser.ts — Client components use the anon key
+'use client'
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@my-platform/supabase'
+
+let browserClient: ReturnType<typeof createClient<Database>> | null = null
+
+export function getSupabaseBrowser() {
+  if (!browserClient) {
+    browserClient = createClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+  }
+  return browserClient
+}
+```
+
+For SvelteKit integration and additional framework patterns, see [Examples](references/examples.md).
+
+## Output
+
+After applying these patterns you will have:
+
+- Monorepo with shared Supabase client, typed database access, and centralized migrations
+- Multi-tenant RLS isolation using `auth.jwt() ->> 'org_id'` — zero application-level filtering
+- Framework-specific integration for Next.js (server/client split) and SvelteKit (hooks)
+- Edge Functions, caching layer, job queue, and audit trail (see [Operational Patterns](references/key-components.md))
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| `Missing SUPABASE_URL or SUPABASE_ANON_KEY` | Environment variables not set | Check `.env` file and ensure variables are loaded |
+| `new row violates row-level security policy` | RLS blocks the operation | Verify `org_id` JWT claim matches the row's `org_id` |
+| `Not a member of tenant` | User tried switching to unauthorized tenant | Check `tenant_members` table for the user-tenant pair |
+| `TypeError: Cannot read properties of null` | Client singleton not initialized | Ensure env vars are available before first `getSupabaseClient()` call |
+| `cron.schedule: permission denied` | `pg_cron` extension not enabled | Enable via dashboard: Database > Extensions > pg_cron |
+
+For the full error reference including RLS debugging and cross-project troubleshooting, see [Error Handling Reference](references/errors.md).
+
+## Examples
+
+### Multi-Tenant Query Flow (TypeScript)
+
+```typescript
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from './database.types'
+
+const supabase = createClient<Database>(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_ANON_KEY!
+)
+
+// 1. Sign in
+const { data: { session } } = await supabase.auth.signInWithPassword({
+  email: 'user@example.com',
+  password: 'secure-password'
+})
+
+// 2. Switch tenant context
+const { error: claimError } = await supabase.rpc('set_tenant_claim', {
+  tenant_id: 'tenant-uuid-here'
+})
+if (claimError) throw claimError
+
+// 3. Refresh session to pick up new JWT claims
+await supabase.auth.refreshSession()
+
+// 4. All subsequent queries are automatically scoped to this tenant
+const { data: projects } = await supabase
+  .from('projects')
+  .select('id, name, created_at')
+  .order('created_at', { ascending: false })
+
+console.log('Tenant projects:', projects)
+// Only returns projects where org_id matches the JWT claim
+```
+
+For the job queue consumer example and SvelteKit integration, see [Examples](references/examples.md).
+
+## Resources
+
+- [Supabase Architecture](https://supabase.com/docs/guides/getting-started/architecture)
+- [Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security)
+- [Multi-Tenant RLS](https://supabase.com/docs/guides/auth/row-level-security#multi-tenant-applications)
+- [Edge Functions](https://supabase.com/docs/guides/functions)
+- [TypeScript Support](https://supabase.com/docs/reference/javascript/typescript-support)
+- [Generating Types](https://supabase.com/docs/guides/api/rest/generating-types)
+- [pg_cron Extension](https://supabase.com/docs/guides/database/extensions/pg_cron)
+- [Auth JWT Helper](https://supabase.com/docs/guides/auth/jwts)
+- [createClient Reference](https://supabase.com/docs/reference/javascript/initializing)
+
+## Next Steps
+
+For performance optimization and indexing strategies, see `supabase-performance-tuning`. For deployment pipelines and CI integration, see `supabase-ci-integration`. For security hardening and policy guardrails, see `supabase-security-basics`.
+
+
+```markdown
+*** END OF FILE: supabase-reference-architecture.md ***
+```
+
+
+***
+
+
+<a id="skill-swift-protocol-di-testing"></a>
+
+# [1121/1303] SKILL: swift-protocol-di-testing
+
+- **Source File:** `skills/swift-protocol-di-testing.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 6,303 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: swift-protocol-di-testing.md ***
+```
+
+***
+name: swift-protocol-di-testing
+description: Protocol-based dependency injection for testable Swift code — mock file system, network, and external APIs using focused protocols and Swift Testing. Use when Swift code needs testing and file system, network, or external APIs must be mocked.
+metadata:
+  origin: ECC
+***
+
+# Swift Protocol-Based Dependency Injection for Testing
+
+Patterns for making Swift code testable by abstracting external dependencies (file system, network, iCloud) behind small, focused protocols. Enables deterministic tests without I/O.
+
+## When to Activate
+
+- Writing Swift code that accesses file system, network, or external APIs
+- Need to test error handling paths without triggering real failures
+- Building modules that work across environments (app, test, SwiftUI preview)
+- Designing testable architecture with Swift concurrency (actors, Sendable)
+
+## Core Pattern
+
+### 1. Define Small, Focused Protocols
+
+Each protocol handles exactly one external concern.
+
+```swift
+// File system access
+public protocol FileSystemProviding: Sendable {
+    func containerURL(for purpose: Purpose) -> URL?
+}
+
+// File read/write operations
+public protocol FileAccessorProviding: Sendable {
+    func read(from url: URL) throws -> Data
+    func write(_ data: Data, to url: URL) throws
+    func fileExists(at url: URL) -> Bool
+}
+
+// Bookmark storage (e.g., for sandboxed apps)
+public protocol BookmarkStorageProviding: Sendable {
+    func saveBookmark(_ data: Data, for key: String) throws
+    func loadBookmark(for key: String) throws -> Data?
+}
+```
+
+### 2. Create Default (Production) Implementations
+
+```swift
+public struct DefaultFileSystemProvider: FileSystemProviding {
+    public init() {}
+
+    public func containerURL(for purpose: Purpose) -> URL? {
+        FileManager.default.url(forUbiquityContainerIdentifier: nil)
+    }
+}
+
+public struct DefaultFileAccessor: FileAccessorProviding {
+    public init() {}
+
+    public func read(from url: URL) throws -> Data {
+        try Data(contentsOf: url)
+    }
+
+    public func write(_ data: Data, to url: URL) throws {
+        try data.write(to: url, options: .atomic)
+    }
+
+    public func fileExists(at url: URL) -> Bool {
+        FileManager.default.fileExists(atPath: url.path)
+    }
+}
+```
+
+### 3. Create Mock Implementations for Testing
+
+```swift
+public final class MockFileAccessor: FileAccessorProviding, @unchecked Sendable {
+    public var files: [URL: Data] = [:]
+    public var readError: Error?
+    public var writeError: Error?
+
+    public init() {}
+
+    public func read(from url: URL) throws -> Data {
+        if let error = readError { throw error }
+        guard let data = files[url] else {
+            throw CocoaError(.fileReadNoSuchFile)
+        }
+        return data
+    }
+
+    public func write(_ data: Data, to url: URL) throws {
+        if let error = writeError { throw error }
+        files[url] = data
+    }
+
+    public func fileExists(at url: URL) -> Bool {
+        files[url] != nil
+    }
+}
+```
+
+### 4. Inject Dependencies with Default Parameters
+
+Production code uses defaults; tests inject mocks.
+
+```swift
+public actor SyncManager {
+    private let fileSystem: FileSystemProviding
+    private let fileAccessor: FileAccessorProviding
+
+    public init(
+        fileSystem: FileSystemProviding = DefaultFileSystemProvider(),
+        fileAccessor: FileAccessorProviding = DefaultFileAccessor()
+    ) {
+        self.fileSystem = fileSystem
+        self.fileAccessor = fileAccessor
+    }
+
+    public func sync() async throws {
+        guard let containerURL = fileSystem.containerURL(for: .sync) else {
+            throw SyncError.containerNotAvailable
+        }
+        let data = try fileAccessor.read(
+            from: containerURL.appendingPathComponent("data.json")
+        )
+        // Process data...
+    }
+}
+```
+
+### 5. Write Tests with Swift Testing
+
+```swift
+import Testing
+
+@Test("Sync manager handles missing container")
+func testMissingContainer() async {
+    let mockFileSystem = MockFileSystemProvider(containerURL: nil)
+    let manager = SyncManager(fileSystem: mockFileSystem)
+
+    await #expect(throws: SyncError.containerNotAvailable) {
+        try await manager.sync()
+    }
+}
+
+@Test("Sync manager reads data correctly")
+func testReadData() async throws {
+    let mockFileAccessor = MockFileAccessor()
+    mockFileAccessor.files[testURL] = testData
+
+    let manager = SyncManager(fileAccessor: mockFileAccessor)
+    let result = try await manager.loadData()
+
+    #expect(result == expectedData)
+}
+
+@Test("Sync manager handles read errors gracefully")
+func testReadError() async {
+    let mockFileAccessor = MockFileAccessor()
+    mockFileAccessor.readError = CocoaError(.fileReadCorruptFile)
+
+    let manager = SyncManager(fileAccessor: mockFileAccessor)
+
+    await #expect(throws: SyncError.self) {
+        try await manager.sync()
+    }
+}
+```
+
+## Best Practices
+
+- **Single Responsibility**: Each protocol should handle one concern — don't create "god protocols" with many methods
+- **Sendable conformance**: Required when protocols are used across actor boundaries
+- **Default parameters**: Let production code use real implementations by default; only tests need to specify mocks
+- **Error simulation**: Design mocks with configurable error properties for testing failure paths
+- **Only mock boundaries**: Mock external dependencies (file system, network, APIs), not internal types
+
+## Anti-Patterns to Avoid
+
+- Creating a single large protocol that covers all external access
+- Mocking internal types that have no external dependencies
+- Using `#if DEBUG` conditionals instead of proper dependency injection
+- Forgetting `Sendable` conformance when used with actors
+- Over-engineering: if a type has no external dependencies, it doesn't need a protocol
+
+## When to Use
+
+- Any Swift code that touches file system, network, or external APIs
+- Testing error handling paths that are hard to trigger in real environments
+- Building modules that need to work in app, test, and SwiftUI preview contexts
+- Apps using Swift concurrency (actors, structured concurrency) that need testable architecture
+
+
+```markdown
+*** END OF FILE: swift-protocol-di-testing.md ***
+```
+
+
+***
+
+
+<a id="skill-swiftui-performance-audit"></a>
+
+# [1122/1303] SKILL: swiftui-performance-audit
+
+- **Source File:** `skills/swiftui-performance-audit.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 5,477 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: swiftui-performance-audit.md ***
+```
+
+***
+name: swiftui-performance-audit
+description: Audit SwiftUI performance issues from code review and profiling evidence.
+risk: safe
+source: "Dimillian/Skills (MIT)"
+date_added: "2026-03-25"
+***
+
+# SwiftUI Performance Audit
+
+## Quick start
+
+Use this skill to diagnose SwiftUI performance issues from code first, then request profiling evidence when code review alone cannot explain the symptoms.
+
+## When to Use
+- When the user reports slow rendering, janky scrolling, layout thrash, or high CPU in SwiftUI.
+- When you need a code-first audit plus Instruments guidance if profiling evidence is required.
+
+## Workflow
+
+1. Classify the symptom: slow rendering, janky scrolling, high CPU, memory growth, hangs, or excessive view updates.
+2. If code is available, start with a code-first review using `references/code-smells.md`.
+3. If code is not available, ask for the smallest useful slice: target view, data flow, reproduction steps, and deployment target.
+4. If code review is inconclusive or runtime evidence is required, guide the user through profiling with `references/profiling-intake.md`.
+5. Summarize likely causes, evidence, remediation, and validation steps using `references/report-template.md`.
+
+## 1. Intake
+
+Collect:
+- Target view or feature code.
+- Symptoms and exact reproduction steps.
+- Data flow: `@State`, `@Binding`, environment dependencies, and observable models.
+- Whether the issue shows up on device or simulator, and whether it was observed in Debug or Release.
+
+Ask the user to classify the issue if possible:
+- CPU spike or battery drain
+- Janky scrolling or dropped frames
+- High memory or image pressure
+- Hangs or unresponsive interactions
+- Excessive or unexpectedly broad view updates
+
+For the full profiling intake checklist, read `references/profiling-intake.md`.
+
+## 2. Code-First Review
+
+Focus on:
+- Invalidation storms from broad observation or environment reads.
+- Unstable identity in lists and `ForEach`.
+- Heavy derived work in `body` or view builders.
+- Layout thrash from complex hierarchies, `GeometryReader`, or preference chains.
+- Large image decode or resize work on the main thread.
+- Animation or transition work applied too broadly.
+
+Use `references/code-smells.md` for the detailed smell catalog and fix guidance.
+
+Provide:
+- Likely root causes with code references.
+- Suggested fixes and refactors.
+- If needed, a minimal repro or instrumentation suggestion.
+
+## 3. Guide the User to Profile
+
+If code review does not explain the issue, ask for runtime evidence:
+- A trace export or screenshots of the SwiftUI timeline and Time Profiler call tree.
+- Device/OS/build configuration.
+- The exact interaction being profiled.
+- Before/after metrics if the user is comparing a change.
+
+Use `references/profiling-intake.md` for the exact checklist and collection steps.
+
+## 4. Analyze and Diagnose
+
+- Map the evidence to the most likely category: invalidation, identity churn, layout thrash, main-thread work, image cost, or animation cost.
+- Prioritize problems by impact, not by how easy they are to explain.
+- Distinguish code-level suspicion from trace-backed evidence.
+- Call out when profiling is still insufficient and what additional evidence would reduce uncertainty.
+
+## 5. Remediate
+
+Apply targeted fixes:
+- Narrow state scope and reduce broad observation fan-out.
+- Stabilize identities for `ForEach` and lists.
+- Move heavy work out of `body` into derived state updated from inputs, model-layer precomputation, memoized helpers, or background preprocessing. Use `@State` only for view-owned state, not as an ad hoc cache for arbitrary computation.
+- Use `equatable()` only when equality is cheaper than recomputing the subtree and the inputs are truly value-semantic.
+- Downsample images before rendering.
+- Reduce layout complexity or use fixed sizing where possible.
+
+Use `references/code-smells.md` for examples, Observation-specific fan-out guidance, and remediation patterns.
+
+## 6. Verify
+
+Ask the user to re-run the same capture and compare with baseline metrics.
+Summarize the delta (CPU, frame drops, memory peak) if provided.
+
+## Outputs
+
+Provide:
+- A short metrics table (before/after if available).
+- Top issues (ordered by impact).
+- Proposed fixes with estimated effort.
+
+Use `references/report-template.md` when formatting the final audit.
+
+## References
+
+- Profiling intake and collection checklist: `references/profiling-intake.md`
+- Common code smells and remediation patterns: `references/code-smells.md`
+- Audit output template: `references/report-template.md`
+- Add Apple documentation and WWDC resources under `references/` as they are supplied by the user.
+- Optimizing SwiftUI performance with Instruments: `references/optimizing-swiftui-performance-instruments.md`
+- Understanding and improving SwiftUI performance: `references/understanding-improving-swiftui-performance.md`
+- Understanding hangs in your app: `references/understanding-hangs-in-your-app.md`
+- Demystify SwiftUI performance (WWDC23): `references/demystify-swiftui-performance-wwdc23.md`
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: swiftui-performance-audit.md ***
+```
+
+
+***
+
+
+<a id="skill-swiftui-view-refactor"></a>
+
+# [1123/1303] SKILL: swiftui-view-refactor
+
+- **Source File:** `skills/swiftui-view-refactor.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 8,423 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: swiftui-view-refactor.md ***
+```
+
+***
+name: swiftui-view-refactor
+description: Refactor SwiftUI views into smaller components with stable, explicit data flow.
+risk: safe
+source: "Dimillian/Skills (MIT)"
+date_added: "2026-03-25"
+***
+
+# SwiftUI View Refactor
+
+## Overview
+Refactor SwiftUI views toward small, explicit, stable view types. Default to vanilla SwiftUI: local state in the view, shared dependencies in the environment, business logic in services/models, and view models only when the request or existing code clearly requires one.
+
+## When to Use
+- When cleaning up a large SwiftUI view or splitting long `body` implementations.
+- When you need smaller subviews, explicit dependency injection, or better Observation usage.
+
+## Core Guidelines
+
+### 1) View ordering (top → bottom)
+- Enforce this ordering unless the existing file has a stronger local convention you must preserve.
+- Environment
+- `private`/`public` `let`
+- `@State` / other stored properties
+- computed `var` (non-view)
+- `init`
+- `body`
+- computed view builders / other view helpers
+- helper / async functions
+
+### 2) Default to MV, not MVVM
+- Views should be lightweight state expressions and orchestration points, not containers for business logic.
+- Favor `@State`, `@Environment`, `@Query`, `.task`, `.task(id:)`, and `onChange` before reaching for a view model.
+- Inject services and shared models via `@Environment`; keep domain logic in services/models, not in the view body.
+- Do not introduce a view model just to mirror local view state or wrap environment dependencies.
+- If a screen is getting large, split the UI into subviews before inventing a new view model layer.
+
+### 3) Strongly prefer dedicated subview types over computed `some View` helpers
+- Flag `body` properties that are longer than roughly one screen or contain multiple logical sections.
+- Prefer extracting dedicated `View` types for non-trivial sections, especially when they have state, async work, branching, or deserve their own preview.
+- Keep computed `some View` helpers rare and small. Do not build an entire screen out of `private var header: some View`-style fragments.
+- Pass small, explicit inputs (data, bindings, callbacks) into extracted subviews instead of handing down the entire parent state.
+- If an extracted subview becomes reusable or independently meaningful, move it to its own file.
+
+Prefer:
+
+```swift
+var body: some View {
+    List {
+        HeaderSection(title: title, subtitle: subtitle)
+        FilterSection(
+            filterOptions: filterOptions,
+            selectedFilter: $selectedFilter
+        )
+        ResultsSection(items: filteredItems)
+        FooterSection()
+    }
+}
+
+private struct HeaderSection: View {
+    let title: String
+    let subtitle: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title).font(.title2)
+            Text(subtitle).font(.subheadline)
+        }
+    }
+}
+
+private struct FilterSection: View {
+    let filterOptions: [FilterOption]
+    @Binding var selectedFilter: FilterOption
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack {
+                ForEach(filterOptions, id: \.self) { option in
+                    FilterChip(option: option, isSelected: option == selectedFilter)
+                        .onTapGesture { selectedFilter = option }
+                }
+            }
+        }
+    }
+}
+```
+
+Avoid:
+
+```swift
+var body: some View {
+    List {
+        header
+        filters
+        results
+        footer
+    }
+}
+
+private var header: some View {
+    VStack(alignment: .leading, spacing: 6) {
+        Text(title).font(.title2)
+        Text(subtitle).font(.subheadline)
+    }
+}
+```
+
+### 3b) Extract actions and side effects out of `body`
+- Do not keep non-trivial button actions inline in the view body.
+- Do not bury business logic inside `.task`, `.onAppear`, `.onChange`, or `.refreshable`.
+- Prefer calling small private methods from the view, and move real business logic into services/models.
+- The body should read like UI, not like a view controller.
+
+```swift
+Button("Save", action: save)
+    .disabled(isSaving)
+
+.task(id: searchText) {
+    await reload(for: searchText)
+}
+
+private func save() {
+    Task { await saveAsync() }
+}
+
+private func reload(for searchText: String) async {
+    guard !searchText.isEmpty else {
+        results = []
+        return
+    }
+    await searchService.search(searchText)
+}
+```
+
+### 4) Keep a stable view tree (avoid top-level conditional view swapping)
+- Avoid `body` or computed views that return completely different root branches via `if/else`.
+- Prefer a single stable base view with conditions inside sections/modifiers (`overlay`, `opacity`, `disabled`, `toolbar`, etc.).
+- Root-level branch swapping causes identity churn, broader invalidation, and extra recomputation.
+
+Prefer:
+
+```swift
+var body: some View {
+    List {
+        documentsListContent
+    }
+    .toolbar {
+        if canEdit {
+            editToolbar
+        }
+    }
+}
+```
+
+Avoid:
+
+```swift
+var documentsListView: some View {
+    if canEdit {
+        editableDocumentsList
+    } else {
+        readOnlyDocumentsList
+    }
+}
+```
+
+### 5) View model handling (only if already present or explicitly requested)
+- Treat view models as a legacy or explicit-need pattern, not the default.
+- Do not introduce a view model unless the request or existing code clearly calls for one.
+- If a view model exists, make it non-optional when possible.
+- Pass dependencies to the view via `init`, then create the view model in the view's `init`.
+- Avoid `bootstrapIfNeeded` patterns and other delayed setup workarounds.
+
+Example (Observation-based):
+
+```swift
+@State private var viewModel: SomeViewModel
+
+init(dependency: Dependency) {
+    _viewModel = State(initialValue: SomeViewModel(dependency: dependency))
+}
+```
+
+### 6) Observation usage
+- For `@Observable` reference types on iOS 17+, store them as `@State` in the owning view.
+- Pass observables down explicitly; avoid optional state unless the UI genuinely needs it.
+- If the deployment target includes iOS 16 or earlier, use `@StateObject` at the owner and `@ObservedObject` when injecting legacy observable models.
+
+## Workflow
+
+1. Reorder the view to match the ordering rules.
+2. Remove inline actions and side effects from `body`; move business logic into services/models and keep only thin orchestration in the view.
+3. Shorten long bodies by extracting dedicated subview types; avoid rebuilding the screen out of many computed `some View` helpers.
+4. Ensure stable view structure: avoid top-level `if`-based branch swapping; move conditions to localized sections/modifiers.
+5. If a view model exists or is explicitly required, replace optional view models with a non-optional `@State` view model initialized in `init`.
+6. Confirm Observation usage: `@State` for root `@Observable` models on iOS 17+, legacy wrappers only when the deployment target requires them.
+7. Keep behavior intact: do not change layout or business logic unless requested.
+
+## Notes
+
+- Prefer small, explicit view types over large conditional blocks and large computed `some View` properties.
+- Keep computed view builders below `body` and non-view computed vars above `init`.
+- A good SwiftUI refactor should make the view read top-to-bottom as data flow plus layout, not as mixed layout and imperative logic.
+- For MV-first guidance and rationale, see `references/mv-patterns.md`.
+
+## Large-view handling
+
+When a SwiftUI view file exceeds ~300 lines, split it aggressively. Extract meaningful sections into dedicated `View` types instead of hiding complexity in many computed properties. Use `private` extensions with `// MARK: -` comments for actions and helpers, but do not treat extensions as a substitute for breaking a giant screen into smaller view types. If an extracted subview is reused or independently meaningful, move it into its own file.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: swiftui-view-refactor.md ***
+```
+
+
+***
+
+
+<a id="skill-sync-profiles"></a>
+
+# [1124/1303] SKILL: sync-profiles
+
+- **Source File:** `skills/sync-profiles.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 2,147 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: sync-profiles.md ***
+```
+
+***
+name: sync-profiles
+description: Use when the user wants to list, create, switch, delete, compare, or inspect config sync profiles.
+argument-hint: "<list|create|switch|delete|diff|info> [name] [--from existing]"
+user-invocable: true
+allowed-tools: Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/*"), Bash(gh *), Bash(git *), Read
+version: 0.2.0
+author: Rohit Hazra
+license: MIT
+***
+
+# Config Sync Profiles
+
+Manage multiple configuration profiles stored in your GitHub backup repo.
+
+## Available actions
+
+### List profiles
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/profile-manager.sh" list
+```
+Shows all profiles with file counts, last push time, and which is active.
+
+### Create a profile
+```bash
+# Empty profile
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/profile-manager.sh" create NAME
+
+# Clone from existing profile
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/profile-manager.sh" create NAME --from EXISTING
+```
+Creates a new profile. Use `--from` to clone an existing profile as a starting point.
+
+### Switch to a profile
+Switching means pulling a different profile's config:
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/sync-pull.sh" --profile NAME
+```
+This backs up current config, then applies the target profile. The active profile is updated automatically.
+
+### Delete a profile
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/profile-manager.sh" delete NAME
+```
+Cannot delete the active profile. Switch to a different one first.
+
+### Compare two profiles
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/profile-manager.sh" diff NAME1 NAME2
+```
+Shows files that exist in only one profile or differ between them.
+
+### Profile info
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/profile-manager.sh" info NAME
+```
+Shows metadata and contents of a specific profile.
+
+## Instructions
+
+Parse the user's action from $ARGUMENTS and run the appropriate command above.
+
+If the user says "switch" to a profile, use the pull script with `--profile` rather than the profile-manager (since switching = pulling a different profile).
+
+If no action is specified, default to `list`.
+
+## User Arguments
+
+$ARGUMENTS
+
+
+```markdown
+*** END OF FILE: sync-profiles.md ***
+```
+
+
+***
+
+
+<a id="skill-sync-status"></a>
+
+# [1125/1303] SKILL: sync-status
+
+- **Source File:** `skills/sync-status.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 1,237 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: sync-status.md ***
+```
+
+***
+name: sync-status
+description: Use when the user wants to check what config has changed, see sync status, or compare local vs remote config.
+user-invocable: true
+allowed-tools: Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/*"), Bash(gh *), Bash(git *), Read
+version: 0.2.0
+author: Rohit Hazra
+license: MIT
+***
+
+# Config Sync Status
+
+Compare your local Claude Code configuration against what's stored in the GitHub backup repo.
+
+## Instructions
+
+Run the diff script:
+
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/diff-config.sh" --profile PROFILE_NAME
+```
+
+If the user doesn't specify a profile, omit the `--profile` flag (uses active profile).
+
+### Interpreting output
+
+The script shows each tracked file/directory with a status:
+
+- `+ local only` (green) — Exists locally but hasn't been pushed yet
+- `+ remote only` (cyan) — Exists in the repo but hasn't been pulled yet
+- `~ modified` (yellow) — Exists in both but differs
+
+### Recommendations
+
+Based on the output, suggest the appropriate action:
+- Local-only files → suggest `/sync-push`
+- Remote-only files → suggest `/sync-pull`
+- Modified files → suggest checking what changed, then push or pull
+
+## User Arguments
+
+$ARGUMENTS
+
+
+```markdown
+*** END OF FILE: sync-status.md ***
+```
+
+
+***
+
+
+<a id="skill-systematic-debugging"></a>
+
+# [1126/1303] SKILL: systematic-debugging
+
+- **Source File:** `skills/systematic-debugging.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 10,564 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: systematic-debugging.md ***
+```
+
+***
+name: systematic-debugging
+description: "Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes"
+risk: unknown
+source: community
+date_added: "2026-02-27"
+***
+
+# Systematic Debugging
+
+## Overview
+
+Random fixes waste time and create new bugs. Quick patches mask underlying issues.
+
+**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.
+
+**Violating the letter of this process is violating the spirit of debugging.**
+
+## The Iron Law
+
+```
+NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
+```
+
+If you haven't completed Phase 1, you cannot propose fixes.
+
+## When to Use
+Use for ANY technical issue:
+- Test failures
+- Bugs in production
+- Unexpected behavior
+- Performance problems
+- Build failures
+- Integration issues
+
+**Use this ESPECIALLY when:**
+- Under time pressure (emergencies make guessing tempting)
+- "Just one quick fix" seems obvious
+- You've already tried multiple fixes
+- Previous fix didn't work
+- You don't fully understand the issue
+
+**Don't skip when:**
+- Issue seems simple (simple bugs have root causes too)
+- You're in a hurry (rushing guarantees rework)
+- Manager wants it fixed NOW (systematic is faster than thrashing)
+
+## The Four Phases
+
+You MUST complete each phase before proceeding to the next.
+
+### Phase 1: Root Cause Investigation
+
+**BEFORE attempting ANY fix:**
+
+1. **Read Error Messages Carefully**
+   - Don't skip past errors or warnings
+   - They often contain the exact solution
+   - Read stack traces completely
+   - Note line numbers, file paths, error codes
+
+2. **Reproduce Consistently**
+   - Can you trigger it reliably?
+   - What are the exact steps?
+   - Does it happen every time?
+   - If not reproducible → gather more data, don't guess
+
+3. **Check Recent Changes**
+   - What changed that could cause this?
+   - Git diff, recent commits
+   - New dependencies, config changes
+   - Environmental differences
+
+4. **Gather Evidence in Multi-Component Systems**
+
+   **WHEN system has multiple components (CI → build → signing, API → service → database):**
+
+   **BEFORE proposing fixes, add diagnostic instrumentation:**
+   ```
+   For EACH component boundary:
+     - Log what data enters component
+     - Log what data exits component
+     - Verify environment/config propagation
+     - Check state at each layer
+
+   Run once to gather evidence showing WHERE it breaks
+   THEN analyze evidence to identify failing component
+   THEN investigate that specific component
+   ```
+
+   **Example (multi-layer system):**
+   ```bash
+   # Layer 1: Workflow
+   echo "=== Secrets available in workflow: ==="
+   echo "IDENTITY: ${IDENTITY:+SET}${IDENTITY:-UNSET}"
+
+   # Layer 2: Build script
+   echo "=== Env vars in build script: ==="
+   env | grep IDENTITY || echo "IDENTITY not in environment"
+
+   # Layer 3: Signing script
+   echo "=== Keychain state: ==="
+   security list-keychains
+   security find-identity -v
+
+   # Layer 4: Actual signing
+   codesign --sign "$IDENTITY" --verbose=4 "$APP"
+   ```
+
+   **This reveals:** Which layer fails (secrets → workflow ✓, workflow → build ✗)
+
+5. **Trace Data Flow**
+
+   **WHEN error is deep in call stack:**
+
+   See `root-cause-tracing.md` in this directory for the complete backward tracing technique.
+
+   **Quick version:**
+   - Where does bad value originate?
+   - What called this with bad value?
+   - Keep tracing up until you find the source
+   - Fix at source, not at symptom
+
+### Phase 2: Pattern Analysis
+
+**Find the pattern before fixing:**
+
+1. **Find Working Examples**
+   - Locate similar working code in same codebase
+   - What works that's similar to what's broken?
+
+2. **Compare Against References**
+   - If implementing pattern, read reference implementation COMPLETELY
+   - Don't skim - read every line
+   - Understand the pattern fully before applying
+
+3. **Identify Differences**
+   - What's different between working and broken?
+   - List every difference, however small
+   - Don't assume "that can't matter"
+
+4. **Understand Dependencies**
+   - What other components does this need?
+   - What settings, config, environment?
+   - What assumptions does it make?
+
+### Phase 3: Hypothesis and Testing
+
+**Scientific method:**
+
+1. **Form Single Hypothesis**
+   - State clearly: "I think X is the root cause because Y"
+   - Write it down
+   - Be specific, not vague
+
+2. **Test Minimally**
+   - Make the SMALLEST possible change to test hypothesis
+   - One variable at a time
+   - Don't fix multiple things at once
+
+3. **Verify Before Continuing**
+   - Did it work? Yes → Phase 4
+   - Didn't work? Form NEW hypothesis
+   - DON'T add more fixes on top
+
+4. **When You Don't Know**
+   - Say "I don't understand X"
+   - Don't pretend to know
+   - Ask for help
+   - Research more
+
+### Phase 4: Implementation
+
+**Fix the root cause, not the symptom:**
+
+1. **Create Failing Test Case**
+   - Simplest possible reproduction
+   - Automated test if possible
+   - One-off test script if no framework
+   - MUST have before fixing
+   - Use the `superpowers:test-driven-development` skill for writing proper failing tests
+
+2. **Implement Single Fix**
+   - Address the root cause identified
+   - ONE change at a time
+   - No "while I'm here" improvements
+   - No bundled refactoring
+
+3. **Verify Fix**
+   - Test passes now?
+   - No other tests broken?
+   - Issue actually resolved?
+
+4. **If Fix Doesn't Work**
+   - STOP
+   - Count: How many fixes have you tried?
+   - If < 3: Return to Phase 1, re-analyze with new information
+   - **If ≥ 3: STOP and question the architecture (step 5 below)**
+   - DON'T attempt Fix #4 without architectural discussion
+
+5. **If 3+ Fixes Failed: Question Architecture**
+
+   **Pattern indicating architectural problem:**
+   - Each fix reveals new shared state/coupling/problem in different place
+   - Fixes require "massive refactoring" to implement
+   - Each fix creates new symptoms elsewhere
+
+   **STOP and question fundamentals:**
+   - Is this pattern fundamentally sound?
+   - Are we "sticking with it through sheer inertia"?
+   - Should we refactor architecture vs. continue fixing symptoms?
+
+   **Discuss with your human partner before attempting more fixes**
+
+   This is NOT a failed hypothesis - this is a wrong architecture.
+
+## Red Flags - STOP and Follow Process
+
+If you catch yourself thinking:
+- "Quick fix for now, investigate later"
+- "Just try changing X and see if it works"
+- "Add multiple changes, run tests"
+- "Skip the test, I'll manually verify"
+- "It's probably X, let me fix that"
+- "I don't fully understand but this might work"
+- "Pattern says X but I'll adapt it differently"
+- "Here are the main problems: [lists fixes without investigation]"
+- Proposing solutions before tracing data flow
+- **"One more fix attempt" (when already tried 2+)**
+- **Each fix reveals new problem in different place**
+
+**ALL of these mean: STOP. Return to Phase 1.**
+
+**If 3+ fixes failed:** Question the architecture (see Phase 4.5)
+
+## your human partner's Signals You're Doing It Wrong
+
+**Watch for these redirections:**
+- "Is that not happening?" - You assumed without verifying
+- "Will it show us...?" - You should have added evidence gathering
+- "Stop guessing" - You're proposing fixes without understanding
+- "Ultrathink this" - Question fundamentals, not just symptoms
+- "We're stuck?" (frustrated) - Your approach isn't working
+
+**When you see these:** STOP. Return to Phase 1.
+
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "Issue is simple, don't need process" | Simple issues have root causes too. Process is fast for simple bugs. |
+| "Emergency, no time for process" | Systematic debugging is FASTER than guess-and-check thrashing. |
+| "Just try this first, then investigate" | First fix sets the pattern. Do it right from the start. |
+| "I'll write test after confirming fix works" | Untested fixes don't stick. Test first proves it. |
+| "Multiple fixes at once saves time" | Can't isolate what worked. Causes new bugs. |
+| "Reference too long, I'll adapt the pattern" | Partial understanding guarantees bugs. Read it completely. |
+| "I see the problem, let me fix it" | Seeing symptoms ≠ understanding root cause. |
+| "One more fix attempt" (after 2+ failures) | 3+ failures = architectural problem. Question pattern, don't fix again. |
+
+## Quick Reference
+
+| Phase | Key Activities | Success Criteria |
+|-------|---------------|------------------|
+| **1. Root Cause** | Read errors, reproduce, check changes, gather evidence | Understand WHAT and WHY |
+| **2. Pattern** | Find working examples, compare | Identify differences |
+| **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
+| **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |
+
+## When Process Reveals "No Root Cause"
+
+If systematic investigation reveals issue is truly environmental, timing-dependent, or external:
+
+1. You've completed the process
+2. Document what you investigated
+3. Implement appropriate handling (retry, timeout, error message)
+4. Add monitoring/logging for future investigation
+
+**But:** 95% of "no root cause" cases are incomplete investigation.
+
+## Supporting Techniques
+
+These techniques are part of systematic debugging and available in this directory:
+
+- **`root-cause-tracing.md`** - Trace bugs backward through call stack to find original trigger
+- **`defense-in-depth.md`** - Add validation at multiple layers after finding root cause
+- **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling
+
+**Related skills:**
+- **superpowers:test-driven-development** - For creating failing test case (Phase 4, Step 1)
+- **superpowers:verification-before-completion** - Verify fix worked before claiming success
+
+## Real-World Impact
+
+From debugging sessions:
+- Systematic approach: 15-30 minutes to fix
+- Random fixes approach: 2-3 hours of thrashing
+- First-time fix rate: 95% vs 40%
+- New bugs introduced: Near zero vs common
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: systematic-debugging.md ***
+```
+
+
+***
+
+
+<a id="skill-tailwind-patterns"></a>
+
+# [1127/1303] SKILL: tailwind-patterns
+
+- **Source File:** `skills/tailwind-patterns.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 7,234 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tailwind-patterns.md ***
+```
+
+***
+name: tailwind-patterns
+description: Tailwind CSS v4 principles. CSS-first configuration, container queries, modern patterns, design token architecture.
+when_to_use: "When using Tailwind CSS v4, implementing design tokens, container queries, or modern CSS patterns with Tailwind."
+allowed-tools: Read, Write, Edit, Glob, Grep
+***
+
+# Tailwind CSS Patterns (v4)
+
+> Modern utility-first CSS with CSS-native configuration.
+
+***
+
+## 1. Tailwind v4 Architecture
+
+### What Changed from v3
+
+| v3 (Legacy) | v4 (Current) |
+|-------------|--------------|
+| `tailwind.config.js` | CSS-based `@theme` directive |
+| PostCSS plugin | Oxide engine (full builds ~5x, incremental >100x) |
+| JIT mode | Native, always-on |
+| Plugin system | CSS-native features |
+| `@apply` directive | Still works, discouraged |
+
+### v4 Core Concepts
+
+| Concept | Description |
+|---------|-------------|
+| **CSS-first** | Configuration in CSS, not JavaScript |
+| **Oxide Engine** | Rust-based compiler, much faster |
+| **Native Nesting** | CSS nesting without PostCSS |
+| **CSS Variables** | All tokens exposed as `--*` vars |
+
+***
+
+## 2. CSS-Based Configuration
+
+### Theme Definition
+
+```
+@theme {
+  /* Colors - use semantic names */
+  --color-primary: oklch(0.7 0.15 250);
+  --color-surface: oklch(0.98 0 0);
+  --color-surface-dark: oklch(0.15 0 0);
+  
+  /* Spacing scale */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  
+  /* Typography */
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+```
+
+### When to Extend vs Override
+
+| Action | Use When |
+|--------|----------|
+| **Extend** | Adding new values alongside defaults |
+| **Override** | Replacing default scale entirely |
+| **Semantic tokens** | Project-specific naming (primary, surface) |
+
+***
+
+## 3. Container Queries (v4 Native)
+
+### Breakpoint vs Container
+
+| Type | Responds To |
+|------|-------------|
+| **Breakpoint** (`md:`) | Viewport width |
+| **Container** (`@container`) | Parent element width |
+
+### Container Query Usage
+
+| Pattern | Classes |
+|---------|---------|
+| Define container | `@container` on parent |
+| Container breakpoint | `@sm:`, `@md:`, `@lg:` on children |
+| Named containers | `@container/card` for specificity |
+
+### When to Use
+
+| Scenario | Use |
+|----------|-----|
+| Page-level layouts | Viewport breakpoints |
+| Component-level responsive | Container queries |
+| Reusable components | Container queries (context-independent) |
+
+***
+
+## 4. Responsive Design
+
+### Breakpoint System
+
+| Prefix | Min Width | Target |
+|--------|-----------|--------|
+| (none) | 0px | Mobile-first base |
+| `sm:` | 640px | Large phone / small tablet |
+| `md:` | 768px | Tablet |
+| `lg:` | 1024px | Laptop |
+| `xl:` | 1280px | Desktop |
+| `2xl:` | 1536px | Large desktop |
+
+### Mobile-First Principle
+
+1. Write mobile styles first (no prefix)
+2. Add larger screen overrides with prefixes
+3. Example: `w-full md:w-1/2 lg:w-1/3`
+
+***
+
+## 5. Dark Mode
+
+### Configuration Strategies
+
+| Method | Behavior | Use When |
+|--------|----------|----------|
+| `class` | `.dark` class toggles | Manual theme switcher |
+| `media` | Follows system preference | No user control |
+| `selector` | Custom selector (v4) | Complex theming |
+
+### Dark Mode Pattern
+
+| Element | Light | Dark |
+|---------|-------|------|
+| Background | `bg-white` | `dark:bg-zinc-900` |
+| Text | `text-zinc-900` | `dark:text-zinc-100` |
+| Borders | `border-zinc-200` | `dark:border-zinc-700` |
+
+***
+
+## 6. Modern Layout Patterns
+
+### Flexbox Patterns
+
+| Pattern | Classes |
+|---------|---------|
+| Center (both axes) | `flex items-center justify-center` |
+| Vertical stack | `flex flex-col gap-4` |
+| Horizontal row | `flex gap-4` |
+| Space between | `flex justify-between items-center` |
+| Wrap grid | `flex flex-wrap gap-4` |
+
+### Grid Patterns
+
+| Pattern | Classes |
+|---------|---------|
+| Auto-fit responsive | `grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))]` |
+| Asymmetric (Bento) | `grid grid-cols-3 grid-rows-2` with spans |
+| Sidebar layout | `grid grid-cols-[auto_1fr]` |
+
+> **Note:** Prefer asymmetric/Bento layouts over symmetric 3-column grids.
+
+***
+
+## 7. Modern Color System
+
+### OKLCH vs RGB/HSL
+
+| Format | Advantage |
+|--------|-----------|
+| **OKLCH** | Perceptually uniform, better for design |
+| **HSL** | Intuitive hue/saturation |
+| **RGB** | Legacy compatibility |
+
+### Color Token Architecture
+
+| Layer | Example | Purpose |
+|-------|---------|---------|
+| **Primitive** | `--blue-500` | Raw color values |
+| **Semantic** | `--color-primary` | Purpose-based naming |
+| **Component** | `--button-bg` | Component-specific |
+
+***
+
+## 8. Typography System
+
+### Font Stack Pattern
+
+| Type | Recommended |
+|------|-------------|
+| Sans | `'Inter', 'SF Pro', system-ui, sans-serif` |
+| Mono | `'JetBrains Mono', 'Fira Code', monospace` |
+| Display | `'Outfit', 'Poppins', sans-serif` |
+
+### Type Scale
+
+| Class | Size | Use |
+|-------|------|-----|
+| `text-xs` | 0.75rem | Labels, captions |
+| `text-sm` | 0.875rem | Secondary text |
+| `text-base` | 1rem | Body text |
+| `text-lg` | 1.125rem | Lead text |
+| `text-xl`+ | 1.25rem+ | Headings |
+
+***
+
+## 9. Animation & Transitions
+
+### Built-in Animations
+
+| Class | Effect |
+|-------|--------|
+| `animate-spin` | Continuous rotation |
+| `animate-ping` | Attention pulse |
+| `animate-pulse` | Subtle opacity pulse |
+| `animate-bounce` | Bouncing effect |
+
+### Transition Patterns
+
+| Pattern | Classes |
+|---------|---------|
+| All properties | `transition-all duration-200` |
+| Specific | `transition-colors duration-150` |
+| With easing | `ease-out` or `ease-in-out` |
+| Hover effect | `hover:scale-105 transition-transform` |
+
+***
+
+## 10. Component Extraction
+
+### When to Extract
+
+| Signal | Action |
+|--------|--------|
+| Same class combo 3+ times | Extract component |
+| Complex state variants | Extract component |
+| Design system element | Extract + document |
+
+### Extraction Methods
+
+| Method | Use When |
+|--------|----------|
+| **React/Vue component** | Dynamic, JS needed |
+| **@apply in CSS** | Sparingly — only when a component layer isn't available |
+| **Design tokens** | Reusable values |
+
+***
+
+## 11. Anti-Patterns
+
+| Don't | Do |
+|-------|-----|
+| Arbitrary values everywhere | Use design system scale |
+| `!important` | Fix specificity properly |
+| Inline `style=` | Use utilities |
+| Duplicate long class lists | Extract component |
+| Mix v3 config with v4 | Migrate fully to CSS-first |
+| Use `@apply` heavily | Prefer components |
+
+***
+
+## 12. Performance Principles
+
+| Principle | Implementation |
+|-----------|----------------|
+| **Purge unused** | Automatic in v4 |
+| **Avoid dynamism** | No template string classes |
+| **Use Oxide** | Default in v4 (full builds ~5x, incremental >100x) |
+| **Cache builds** | CI/CD caching |
+
+***
+
+> **Remember:** Tailwind v4 is CSS-first. Embrace CSS variables, container queries, and native features. The config file is now optional.
+
+
+```markdown
+*** END OF FILE: tailwind-patterns.md ***
+```
+
+
+***
+
+
+<a id="skill-tdd-orchestrator"></a>
+
+# [1128/1303] SKILL: tdd-orchestrator
+
+- **Source File:** `skills/tdd-orchestrator.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 10,799 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tdd-orchestrator.md ***
+```
+
+***
+name: tdd-orchestrator
+description: Master TDD orchestrator specializing in red-green-refactor discipline, multi-agent workflow coordination, and comprehensive test-driven development practices.
+risk: critical
+source: community
+date_added: '2026-02-27'
+***
+
+## Use this skill when
+
+- Working on tdd orchestrator tasks or workflows
+- Needing guidance, best practices, or checklists for tdd orchestrator
+
+## Do not use this skill when
+
+- The task is unrelated to tdd orchestrator
+- You need a different domain or tool outside this scope
+
+## Instructions
+
+- Clarify goals, constraints, and required inputs.
+- Apply relevant best practices and validate outcomes.
+- Provide actionable steps and verification.
+- If detailed examples are required, open `resources/implementation-playbook.md`.
+
+You are an expert TDD orchestrator specializing in comprehensive test-driven development coordination, modern TDD practices, and multi-agent workflow management.
+
+## Expert Purpose
+
+Elite TDD orchestrator focused on enforcing disciplined test-driven development practices across complex software projects. Masters the complete red-green-refactor cycle, coordinates multi-agent TDD workflows, and ensures comprehensive test coverage while maintaining development velocity. Combines deep TDD expertise with modern AI-assisted testing tools to deliver robust, maintainable, and thoroughly tested software systems.
+
+## Capabilities
+
+### TDD Discipline & Cycle Management
+
+- Complete red-green-refactor cycle orchestration and enforcement
+- TDD rhythm establishment and maintenance across development teams
+- Test-first discipline verification and automated compliance checking
+- Refactoring safety nets and regression prevention strategies
+- TDD flow state optimization and developer productivity enhancement
+- Cycle time measurement and optimization for rapid feedback loops
+- TDD anti-pattern detection and prevention (test-after, partial coverage)
+
+### Multi-Agent TDD Workflow Coordination
+
+- Orchestration of specialized testing agents (unit, integration, E2E)
+- Coordinated test suite evolution across multiple development streams
+- Cross-team TDD practice synchronization and knowledge sharing
+- Agent task delegation for parallel test development and execution
+- Workflow automation for continuous TDD compliance monitoring
+- Integration with development tools and IDE TDD plugins
+- Multi-repository TDD governance and consistency enforcement
+
+### Modern TDD Practices & Methodologies
+
+- Classic TDD (Chicago School) implementation and coaching
+- London School (mockist) TDD practices and double management
+- Acceptance Test-Driven Development (ATDD) integration
+- Behavior-Driven Development (BDD) workflow orchestration
+- Outside-in TDD for feature development and user story implementation
+- Inside-out TDD for component and library development
+- Hexagonal architecture TDD with ports and adapters testing
+
+### AI-Assisted Test Generation & Evolution
+
+- Intelligent test case generation from requirements and user stories
+- AI-powered test data creation and management strategies
+- Machine learning for test prioritization and execution optimization
+- Natural language to test code conversion and automation
+- Predictive test failure analysis and proactive test maintenance
+- Automated test evolution based on code changes and refactoring
+- Smart test doubles and mock generation with realistic behaviors
+
+### Test Suite Architecture & Organization
+
+- Test pyramid optimization and balanced testing strategy implementation
+- Comprehensive test categorization (unit, integration, contract, E2E)
+- Test suite performance optimization and parallel execution strategies
+- Test isolation and independence verification across all test levels
+- Shared test utilities and common testing infrastructure management
+- Test data management and fixture orchestration across test types
+- Cross-cutting concern testing (security, performance, accessibility)
+
+### TDD Metrics & Quality Assurance
+
+- Comprehensive TDD metrics collection and analysis (cycle time, coverage)
+- Test quality assessment through mutation testing and fault injection
+- Code coverage tracking with meaningful threshold establishment
+- TDD velocity measurement and team productivity optimization
+- Test maintenance cost analysis and technical debt prevention
+- Quality gate enforcement and automated compliance reporting
+- Trend analysis for continuous improvement identification
+
+### Framework & Technology Integration
+
+- Multi-language TDD support (Java, C#, Python, JavaScript, TypeScript, Go)
+- Testing framework expertise (JUnit, NUnit, pytest, Jest, Mocha, testing/T)
+- Test runner optimization and IDE integration across development environments
+- Build system integration (Maven, Gradle, npm, Cargo, MSBuild)
+- Continuous Integration TDD pipeline design and execution
+- Cloud-native testing infrastructure and containerized test environments
+- Microservices TDD patterns and distributed system testing strategies
+
+### Property-Based & Advanced Testing Techniques
+
+- Property-based testing implementation with QuickCheck, Hypothesis, fast-check
+- Generative testing strategies and property discovery methodologies
+- Mutation testing orchestration for test suite quality validation
+- Fuzz testing integration and security vulnerability discovery
+- Contract testing coordination between services and API boundaries
+- Snapshot testing for UI components and API response validation
+- Chaos engineering integration with TDD for resilience validation
+
+### Test Data & Environment Management
+
+- Test data generation strategies and realistic dataset creation
+- Database state management and transactional test isolation
+- Environment provisioning and cleanup automation
+- Test doubles orchestration (mocks, stubs, fakes, spies)
+- External dependency management and service virtualization
+- Test environment configuration and infrastructure as code
+- Secrets and credential management for testing environments
+
+### Legacy Code & Refactoring Support
+
+- Legacy code characterization through comprehensive test creation
+- Seam identification and dependency breaking for testability improvement
+- Refactoring orchestration with safety net establishment
+- Golden master testing for legacy system behavior preservation
+- Approval testing implementation for complex output validation
+- Incremental TDD adoption strategies for existing codebases
+- Technical debt reduction through systematic test-driven refactoring
+
+### Cross-Team TDD Governance
+
+- TDD standard establishment and organization-wide implementation
+- Training program coordination and developer skill assessment
+- Code review processes with TDD compliance verification
+- Pair programming and mob programming TDD session facilitation
+- TDD coaching and mentorship program management
+- Best practice documentation and knowledge base maintenance
+- TDD culture transformation and organizational change management
+
+### Performance & Scalability Testing
+
+- Performance test-driven development for scalability requirements
+- Load testing integration within TDD cycles for performance validation
+- Benchmark-driven development with automated performance regression detection
+- Memory usage and resource consumption testing automation
+- Database performance testing and query optimization validation
+- API performance contracts and SLA-driven test development
+- Scalability testing coordination for distributed system components
+
+## Behavioral Traits
+
+- Enforces unwavering test-first discipline and maintains TDD purity
+- Champions comprehensive test coverage without sacrificing development speed
+- Facilitates seamless red-green-refactor cycle adoption across teams
+- Prioritizes test maintainability and readability as first-class concerns
+- Advocates for balanced testing strategies avoiding over-testing and under-testing
+- Promotes continuous learning and TDD practice improvement
+- Emphasizes refactoring confidence through comprehensive test safety nets
+- Maintains development momentum while ensuring thorough test coverage
+- Encourages collaborative TDD practices and knowledge sharing
+- Adapts TDD approaches to different project contexts and team dynamics
+
+## Knowledge Base
+
+- Kent Beck's original TDD principles and modern interpretations
+- Growing Object-Oriented Software Guided by Tests methodologies
+- Test-Driven Development by Example and advanced TDD patterns
+- Modern testing frameworks and toolchain ecosystem knowledge
+- Refactoring techniques and automated refactoring tool expertise
+- Clean Code principles applied specifically to test code quality
+- Domain-Driven Design integration with TDD and ubiquitous language
+- Continuous Integration and DevOps practices for TDD workflows
+- Agile development methodologies and TDD integration strategies
+- Software architecture patterns that enable effective TDD practices
+
+## Response Approach
+
+1. **Assess TDD readiness** and current development practices maturity
+2. **Establish TDD discipline** with appropriate cycle enforcement mechanisms
+3. **Orchestrate test workflows** across multiple agents and development streams
+4. **Implement comprehensive metrics** for TDD effectiveness measurement
+5. **Coordinate refactoring efforts** with safety net establishment
+6. **Optimize test execution** for rapid feedback and development velocity
+7. **Monitor compliance** and provide continuous improvement recommendations
+8. **Scale TDD practices** across teams and organizational boundaries
+
+## Example Interactions
+
+- "Orchestrate a complete TDD implementation for a new microservices project"
+- "Design a multi-agent workflow for coordinated unit and integration testing"
+- "Establish TDD compliance monitoring and automated quality gate enforcement"
+- "Implement property-based testing strategy for complex business logic validation"
+- "Coordinate legacy code refactoring with comprehensive test safety net creation"
+- "Design TDD metrics dashboard for team productivity and quality tracking"
+- "Create cross-team TDD governance framework with automated compliance checking"
+- "Orchestrate performance TDD workflow with load testing integration"
+- "Implement mutation testing pipeline for test suite quality validation"
+- "Design AI-assisted test generation workflow for rapid TDD cycle acceleration"
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: tdd-orchestrator.md ***
+```
+
+
+***
+
+
+<a id="skill-tdd-repair"></a>
+
+# [1129/1303] SKILL: tdd-repair
+
+- **Source File:** `skills/tdd-repair.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 6,417 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tdd-repair.md ***
+```
+
+***
+name: tdd-repair
+description: Test-Driven Repair — given a failing test, spawn a bounded headless `claude -p` (Read/Edit/Bash only) that makes the test pass without modifying it. Modeled on agent-harness-generator's ADR-175 Test-Driven Repair mode. Bounded cost via --max-budget-usd, bounded capability via --allowedTools. Closes the loop the TDD plugins didn't — we generate tests, this fixes the code to satisfy them.
+argument-hint: "--repo <path> --test <path> --test-command <cmd> [--max-attempts 1] [--budget 5.00] [--model haiku] [--confirm]"
+allowed-tools: Bash
+***
+
+Surfaces the **Test-Driven Repair** loop as a ruflo skill. Use when you have a failing test and want the source-under-test fixed automatically, with the test's pass/fail as the verification gate (no LLM-as-judge).
+
+## When to use
+
+- Failing CI test from a recent commit — point this at the test file, get a verified fix (or a clear "couldn't repair within budget" receipt).
+- Local TDD workflow — write the failing test first (`tdd-workflow` skill), then run `tdd-repair` to drive the green.
+- Regression triage — a previously-green test went red; before opening an issue, spend ~$1 to see if the fix is trivial.
+
+## When NOT to use
+
+- **No failing test exists.** Conformant mode (`--no-test-oracle`) is scoped for a follow-up ADR — needs MCTS over repro generation. For now, write a failing test first.
+- **Architectural changes.** This skill is for tactical "make red green" fixes. Cross-module refactors that incidentally break tests should be done by a human or a swarm.
+- **Untrusted code.** The headless `claude -p` runs with `--allowedTools Read,Edit,Bash` — no MCP, no network, no arbitrary file writes — but Bash can still touch the filesystem. Don't point this at code you wouldn't `git checkout .` after.
+
+## Algorithm
+
+Implementation: [`scripts/tdd-repair/tdd-repair.mjs`](../../scripts/tdd-repair/tdd-repair.mjs).
+
+1. **Pre-flight verify** — run the test command. If it already passes, exit 2 (`test-already-passes`). Repairing a green test is either a no-op or a `--test-command` typo.
+2. **Spawn `claude -p`** with a focused prompt:
+   - Failing test file path (read-only intent)
+   - Test command (run only)
+   - Hard constraint: do NOT modify the test
+   - Hard constraint: do NOT add new dependencies
+3. **`--allowedTools Read,Edit,Bash`** restricts capability. **`--max-budget-usd`** caps cost per attempt. **`--permission-mode acceptEdits`** auto-accepts file edits within the allowed set.
+4. **Re-run the test** to verify. The test's exit code IS the fitness function — no separate sandbox / LLM-as-judge.
+5. **If green:** emit `success: true` + per-attempt usage. **If red after `--max-attempts`:** emit `success: false` + receipts. Either way, the workspace is left as `claude -p` modified it (caller can `git diff` to review).
+
+## Output shape
+
+```json
+{
+  "success": true,
+  "data": {
+    "repaired": true,
+    "attemptsTaken": 1,
+    "mode": "test-driven",
+    "before": { "passed": false, "exitCode": 1 },
+    "after":  { "passed": true,  "exitCode": 0, "durationMs": 4321 },
+    "attempts": [
+      { "attempt": 1, "claude": { "ok": true, "durationMs": 38421, "usage": { "cost_usd": 0.0234 } }, "verify": { "passed": true } }
+    ],
+    "totalCostUsd": 0.0234,
+    "budgetUsd": 5.0,
+    "budgetExhausted": false,
+    "shape": { "repo": "...", "test": "...", "testCommand": "...", "maxAttempts": 1, "model": "haiku" }
+  }
+}
+```
+
+## Exit codes
+
+| Code | Meaning |
+|---|---|
+| 0  | Test green after repair (success) |
+| 1  | Test still red after `--max-attempts` |
+| 2  | Config error (test file missing, test already passes, `--no-test-oracle` unsupported, etc.) |
+| 3  | Claude CLI exited non-zero (infrastructure failure) |
+| 99 | Reserved for safety tripwire (per ADR-153) |
+
+## Safety posture
+
+| Layer | Mechanism |
+|---|---|
+| Cost cap | `--max-budget-usd` default $5, divided across `--max-attempts`. Hard ceiling — claude exits when reached. |
+| Capability cap | `--allowedTools Read,Edit,Bash` — no MCP, no network, no arbitrary writes. |
+| Scope cap | Prompt forbids modifying the test or adding dependencies. |
+| Confirmation gate | `--confirm` REQUIRED — without it, returns dry-run plan (mirrors `harness-evolve` / `harness-mint` convention). |
+| Hard timeout | 15 min total wall-clock; per-attempt budget of `timeoutMs / maxAttempts`. |
+| Pre-flight | Refuses to run if the test already passes (catches `--test-command` typos). |
+
+## Inspiration
+
+Modeled on the **Test-Driven Repair** mode from [agent-harness-generator/packages/darwin-mode](https://github.com/ruvnet/agent-harness-generator/tree/main/packages/darwin-mode) ADR-175. Key design difference: instead of wrapping `metaharness-darwin evolve` (population-based search), we drive a single `claude -p` invocation. Rationale:
+
+- The test command IS the fitness function — no need for variant scoring
+- `claude -p` is already in our stack — no new optional dep
+- Bounded cost / capability are first-class flags
+- Resumable via `--session-id` if iteration is needed
+
+Conformant mode (no test, write own repro via MCTS) is deferred to a future ADR.
+
+## Example
+
+```bash
+# Smoke / dry-run (no --confirm yet)
+node plugins/ruflo-testgen/scripts/tdd-repair/tdd-repair.mjs \
+  --repo /path/to/myrepo \
+  --test tests/auth.test.ts \
+  --test-command "npx vitest run tests/auth.test.ts"
+
+# Actually repair (Haiku tier, $5 budget, 1 attempt)
+node plugins/ruflo-testgen/scripts/tdd-repair/tdd-repair.mjs \
+  --repo /path/to/myrepo \
+  --test tests/auth.test.ts \
+  --test-command "npx vitest run tests/auth.test.ts" \
+  --confirm
+
+# Bigger model + more attempts for harder bugs
+node plugins/ruflo-testgen/scripts/tdd-repair/tdd-repair.mjs \
+  --repo . --test tests/regression-2456.test.ts \
+  --test-command "npm test -- tests/regression-2456.test.ts" \
+  --model sonnet --max-attempts 3 --budget 15.00 \
+  --confirm
+```
+
+## Cost ladder
+
+| Tier | Model | Per-attempt typical | Use when |
+|---|---|---:|---|
+| 1 | Haiku | $0.02 – $0.20 | First try — most "make red green" bugs are tactical |
+| 2 | Sonnet | $0.30 – $2.00 | Haiku failed, or the bug has multi-file scope |
+| 3 | Opus | $1.50 – $8.00 | Sonnet failed — architectural reasoning required (rarely worth it for a single failing test) |
+
+
+```markdown
+*** END OF FILE: tdd-repair.md ***
+```
+
+
+***
+
+
+<a id="skill-tdd-workflow"></a>
+
+# [1130/1303] SKILL: tdd-workflow
+
+- **Source File:** `skills/tdd-workflow.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 3,402 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tdd-workflow.md ***
+```
+
+***
+name: tdd-workflow
+description: "Test-Driven Development workflow principles. RED-GREEN-REFACTOR cycle."
+risk: unknown
+source: community
+date_added: "2026-02-27"
+***
+
+# TDD Workflow
+
+> Write tests first, code second.
+
+***
+
+## 1. The TDD Cycle
+
+```
+🔴 RED → Write failing test
+    ↓
+🟢 GREEN → Write minimal code to pass
+    ↓
+🔵 REFACTOR → Improve code quality
+    ↓
+   Repeat...
+```
+
+***
+
+## 2. The Three Laws of TDD
+
+1. Write production code only to make a failing test pass
+2. Write only enough test to demonstrate failure
+3. Write only enough code to make the test pass
+
+***
+
+## 3. RED Phase Principles
+
+### What to Write
+
+| Focus | Example |
+|-------|---------|
+| Behavior | "should add two numbers" |
+| Edge cases | "should handle empty input" |
+| Error states | "should throw for invalid data" |
+
+### RED Phase Rules
+
+- Test must fail first
+- Test name describes expected behavior
+- One assertion per test (ideally)
+
+***
+
+## 4. GREEN Phase Principles
+
+### Minimum Code
+
+| Principle | Meaning |
+|-----------|---------|
+| **YAGNI** | You Aren't Gonna Need It |
+| **Simplest thing** | Write the minimum to pass |
+| **No optimization** | Just make it work |
+
+### GREEN Phase Rules
+
+- Don't write unneeded code
+- Don't optimize yet
+- Pass the test, nothing more
+
+***
+
+## 5. REFACTOR Phase Principles
+
+### What to Improve
+
+| Area | Action |
+|------|--------|
+| Duplication | Extract common code |
+| Naming | Make intent clear |
+| Structure | Improve organization |
+| Complexity | Simplify logic |
+
+### REFACTOR Rules
+
+- All tests must stay green
+- Small incremental changes
+- Commit after each refactor
+
+***
+
+## 6. AAA Pattern
+
+Every test follows:
+
+| Step | Purpose |
+|------|---------|
+| **Arrange** | Set up test data |
+| **Act** | Execute code under test |
+| **Assert** | Verify expected outcome |
+
+***
+
+## 7. When to Use TDD
+
+| Scenario | TDD Value |
+|----------|-----------|
+| New feature | High |
+| Bug fix | High (write test first) |
+| Complex logic | High |
+| Exploratory | Low (spike, then TDD) |
+| UI layout | Low |
+
+***
+
+## 8. Test Prioritization
+
+| Priority | Test Type |
+|----------|-----------|
+| 1 | Happy path |
+| 2 | Error cases |
+| 3 | Edge cases |
+| 4 | Performance |
+
+***
+
+## 9. Anti-Patterns
+
+| ❌ Don't | ✅ Do |
+|----------|-------|
+| Skip the RED phase | Watch test fail first |
+| Write tests after | Write tests before |
+| Over-engineer initial | Keep it simple |
+| Multiple asserts | One behavior per test |
+| Test implementation | Test behavior |
+
+***
+
+## 10. AI-Augmented TDD
+
+### Multi-Agent Pattern
+
+| Agent | Role |
+|-------|------|
+| Agent A | Write failing tests (RED) |
+| Agent B | Implement to pass (GREEN) |
+| Agent C | Optimize (REFACTOR) |
+
+***
+
+> **Remember:** The test is the specification. If you can't write a test, you don't understand the requirement.
+
+## When to Use
+This skill is applicable to execute the workflow or actions described in the overview.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: tdd-workflow.md ***
+```
+
+
+***
+
+
+<a id="skill-tdd-workflows-tdd-cycle"></a>
+
+# [1131/1303] SKILL: tdd-workflows-tdd-cycle
+
+- **Source File:** `skills/tdd-workflows-tdd-cycle.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 9,232 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tdd-workflows-tdd-cycle.md ***
+```
+
+***
+name: tdd-workflows-tdd-cycle
+description: "Use when working with tdd workflows tdd cycle"
+risk: critical
+source: community
+date_added: "2026-02-27"
+***
+
+## Use this skill when
+
+- Working on tdd workflows tdd cycle tasks or workflows
+- Needing guidance, best practices, or checklists for tdd workflows tdd cycle
+
+## Do not use this skill when
+
+- The task is unrelated to tdd workflows tdd cycle
+- You need a different domain or tool outside this scope
+
+## Instructions
+
+- Clarify goals, constraints, and required inputs.
+- Apply relevant best practices and validate outcomes.
+- Provide actionable steps and verification.
+- If detailed examples are required, open `resources/implementation-playbook.md`.
+
+Execute a comprehensive Test-Driven Development (TDD) workflow with strict red-green-refactor discipline:
+
+[Extended thinking: This workflow enforces test-first development through coordinated agent orchestration. Each phase of the TDD cycle is strictly enforced with fail-first verification, incremental implementation, and continuous refactoring. The workflow supports both single test and test suite approaches with configurable coverage thresholds.]
+
+## Configuration
+
+### Coverage Thresholds
+- Minimum line coverage: 80%
+- Minimum branch coverage: 75%
+- Critical path coverage: 100%
+
+### Refactoring Triggers
+- Cyclomatic complexity > 10
+- Method length > 20 lines
+- Class length > 200 lines
+- Duplicate code blocks > 3 lines
+
+## Phase 1: Test Specification and Design
+
+### 1. Requirements Analysis
+- Use Task tool with subagent_type="comprehensive-review::architect-review"
+- Prompt: "Analyze requirements for: $ARGUMENTS. Define acceptance criteria, identify edge cases, and create test scenarios. Output a comprehensive test specification."
+- Output: Test specification, acceptance criteria, edge case matrix
+- Validation: Ensure all requirements have corresponding test scenarios
+
+### 2. Test Architecture Design
+- Use Task tool with subagent_type="unit-testing::test-automator"
+- Prompt: "Design test architecture for: $ARGUMENTS based on test specification. Define test structure, fixtures, mocks, and test data strategy. Ensure testability and maintainability."
+- Output: Test architecture, fixture design, mock strategy
+- Validation: Architecture supports isolated, fast, reliable tests
+
+## Phase 2: RED - Write Failing Tests
+
+### 3. Write Unit Tests (Failing)
+- Use Task tool with subagent_type="unit-testing::test-automator"
+- Prompt: "Write FAILING unit tests for: $ARGUMENTS. Tests must fail initially. Include edge cases, error scenarios, and happy paths. DO NOT implement production code."
+- Output: Failing unit tests, test documentation
+- **CRITICAL**: Verify all tests fail with expected error messages
+
+### 4. Verify Test Failure
+- Use Task tool with subagent_type="tdd-workflows::code-reviewer"
+- Prompt: "Verify that all tests for: $ARGUMENTS are failing correctly. Ensure failures are for the right reasons (missing implementation, not test errors). Confirm no false positives."
+- Output: Test failure verification report
+- **GATE**: Do not proceed until all tests fail appropriately
+
+## Phase 3: GREEN - Make Tests Pass
+
+### 5. Minimal Implementation
+- Use Task tool with subagent_type="backend-development::backend-architect"
+- Prompt: "Implement MINIMAL code to make tests pass for: $ARGUMENTS. Focus only on making tests green. Do not add extra features or optimizations. Keep it simple."
+- Output: Minimal working implementation
+- Constraint: No code beyond what's needed to pass tests
+
+### 6. Verify Test Success
+- Use Task tool with subagent_type="unit-testing::test-automator"
+- Prompt: "Run all tests for: $ARGUMENTS and verify they pass. Check test coverage metrics. Ensure no tests were accidentally broken."
+- Output: Test execution report, coverage metrics
+- **GATE**: All tests must pass before proceeding
+
+## Phase 4: REFACTOR - Improve Code Quality
+
+### 7. Code Refactoring
+- Use Task tool with subagent_type="tdd-workflows::code-reviewer"
+- Prompt: "Refactor implementation for: $ARGUMENTS while keeping tests green. Apply SOLID principles, remove duplication, improve naming, and optimize performance. Run tests after each refactoring."
+- Output: Refactored code, refactoring report
+- Constraint: Tests must remain green throughout
+
+### 8. Test Refactoring
+- Use Task tool with subagent_type="unit-testing::test-automator"
+- Prompt: "Refactor tests for: $ARGUMENTS. Remove test duplication, improve test names, extract common fixtures, and enhance test readability. Ensure tests still provide same coverage."
+- Output: Refactored tests, improved test structure
+- Validation: Coverage metrics unchanged or improved
+
+## Phase 5: Integration and System Tests
+
+### 9. Write Integration Tests (Failing First)
+- Use Task tool with subagent_type="unit-testing::test-automator"
+- Prompt: "Write FAILING integration tests for: $ARGUMENTS. Test component interactions, API contracts, and data flow. Tests must fail initially."
+- Output: Failing integration tests
+- Validation: Tests fail due to missing integration logic
+
+### 10. Implement Integration
+- Use Task tool with subagent_type="backend-development::backend-architect"
+- Prompt: "Implement integration code for: $ARGUMENTS to make integration tests pass. Focus on component interaction and data flow."
+- Output: Integration implementation
+- Validation: All integration tests pass
+
+## Phase 6: Continuous Improvement Cycle
+
+### 11. Performance and Edge Case Tests
+- Use Task tool with subagent_type="unit-testing::test-automator"
+- Prompt: "Add performance tests and additional edge case tests for: $ARGUMENTS. Include stress tests, boundary tests, and error recovery tests."
+- Output: Extended test suite
+- Metric: Increased test coverage and scenario coverage
+
+### 12. Final Code Review
+- Use Task tool with subagent_type="comprehensive-review::architect-review"
+- Prompt: "Perform comprehensive review of: $ARGUMENTS. Verify TDD process was followed, check code quality, test quality, and coverage. Suggest improvements."
+- Output: Review report, improvement suggestions
+- Action: Implement critical suggestions while maintaining green tests
+
+## Incremental Development Mode
+
+For test-by-test development:
+1. Write ONE failing test
+2. Make ONLY that test pass
+3. Refactor if needed
+4. Repeat for next test
+
+Use this approach by adding `--incremental` flag to focus on one test at a time.
+
+## Test Suite Mode
+
+For comprehensive test suite development:
+1. Write ALL tests for a feature/module (failing)
+2. Implement code to pass ALL tests
+3. Refactor entire module
+4. Add integration tests
+
+Use this approach by adding `--suite` flag for batch test development.
+
+## Validation Checkpoints
+
+### RED Phase Validation
+- [ ] All tests written before implementation
+- [ ] All tests fail with meaningful error messages
+- [ ] Test failures are due to missing implementation
+- [ ] No test passes accidentally
+
+### GREEN Phase Validation
+- [ ] All tests pass
+- [ ] No extra code beyond test requirements
+- [ ] Coverage meets minimum thresholds
+- [ ] No test was modified to make it pass
+
+### REFACTOR Phase Validation
+- [ ] All tests still pass after refactoring
+- [ ] Code complexity reduced
+- [ ] Duplication eliminated
+- [ ] Performance improved or maintained
+- [ ] Test readability improved
+
+## Coverage Reports
+
+Generate coverage reports after each phase:
+- Line coverage
+- Branch coverage
+- Function coverage
+- Statement coverage
+
+## Failure Recovery
+
+If TDD discipline is broken:
+1. **STOP** immediately
+2. Identify which phase was violated
+3. Rollback to last valid state
+4. Resume from correct phase
+5. Document lesson learned
+
+## TDD Metrics Tracking
+
+Track and report:
+- Time in each phase (Red/Green/Refactor)
+- Number of test-implementation cycles
+- Coverage progression
+- Refactoring frequency
+- Defect escape rate
+
+## Anti-Patterns to Avoid
+
+- Writing implementation before tests
+- Writing tests that already pass
+- Skipping the refactor phase
+- Writing multiple features without tests
+- Modifying tests to make them pass
+- Ignoring failing tests
+- Writing tests after implementation
+
+## Success Criteria
+
+- 100% of code written test-first
+- All tests pass continuously
+- Coverage exceeds thresholds
+- Code complexity within limits
+- Zero defects in covered code
+- Clear test documentation
+- Fast test execution (< 5 seconds for unit tests)
+
+## Notes
+
+- Enforce strict RED-GREEN-REFACTOR discipline
+- Each phase must be completed before moving to next
+- Tests are the specification
+- If a test is hard to write, the design needs improvement
+- Refactoring is NOT optional
+- Keep test execution fast
+- Tests should be independent and isolated
+
+TDD implementation for: $ARGUMENTS
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: tdd-workflows-tdd-cycle.md ***
+```
+
+
+***
+
+
+<a id="skill-tdd-workflows-tdd-green"></a>
+
+# [1132/1303] SKILL: tdd-workflows-tdd-green
+
+- **Source File:** `skills/tdd-workflows-tdd-green.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 2,356 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tdd-workflows-tdd-green.md ***
+```
+
+***
+name: tdd-workflows-tdd-green
+description: "Implement the minimal code needed to make failing tests pass in the TDD green phase."
+risk: critical
+source: community
+date_added: "2026-02-27"
+***
+
+# Green Phase: Simple function
+def product_list(request):
+    products = Product.objects.all()
+    return JsonResponse({'products': list(products.values())})
+
+# Refactor: Class-based view
+class ProductListView(View):
+    def get(self, request):
+        products = Product.objects.all()
+        return JsonResponse({'products': list(products.values())})
+
+# Refactor: Generic view
+class ProductListView(ListView):
+    model = Product
+    context_object_name = 'products'
+```
+
+### Express Patterns
+
+**Inline → Middleware → Service Layer:**
+```javascript
+// Green Phase: Inline logic
+app.post('/api/users', (req, res) => {
+  const user = { id: Date.now(), ...req.body };
+  users.push(user);
+  res.json(user);
+});
+
+// Refactor: Extract middleware
+app.post('/api/users', validateUser, (req, res) => {
+  const user = userService.create(req.body);
+  res.json(user);
+});
+
+// Refactor: Full layering
+app.post('/api/users',
+  validateUser,
+  asyncHandler(userController.create)
+);
+```
+
+## Use this skill when
+
+- Moving from red to green in a TDD cycle
+- Implementing minimal behavior to satisfy tests
+- You want to keep implementation intentionally simple
+
+## Do not use this skill when
+
+- You are refactoring for design or performance
+- Tests are already passing and you need new requirements
+- You need a full architectural redesign
+
+## Instructions
+
+1. Review failing tests and identify the smallest fix.
+2. Implement the minimal change to pass the next test.
+3. Run tests after each change to confirm progress.
+4. Record shortcuts or debt for the refactor phase.
+
+## Safety
+
+- Avoid bypassing tests to make them pass.
+- Keep changes scoped to the failing behavior only.
+
+## Resources
+
+- `resources/implementation-playbook.md` for detailed patterns and examples.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: tdd-workflows-tdd-green.md ***
+```
+
+
+***
+
+
+<a id="skill-tdd-workflows-tdd-red"></a>
+
+# [1133/1303] SKILL: tdd-workflows-tdd-red
+
+- **Source File:** `skills/tdd-workflows-tdd-red.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 5,179 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tdd-workflows-tdd-red.md ***
+```
+
+***
+name: tdd-workflows-tdd-red
+description: "Generate failing tests for the TDD red phase to define expected behavior and edge cases."
+risk: critical
+source: community
+date_added: "2026-02-27"
+***
+
+Write comprehensive failing tests following TDD red phase principles.
+
+[Extended thinking: Generates failing tests that properly define expected behavior using test-automator agent.]
+
+## Use this skill when
+
+- Starting the TDD red phase for new behavior
+- You need failing tests that capture expected behavior
+- You want edge case coverage before implementation
+
+## Do not use this skill when
+
+- You are in the green or refactor phase
+- You only need performance benchmarks
+- Tests must run against production systems
+
+## Instructions
+
+1. Identify behaviors, constraints, and edge cases.
+2. Generate failing tests that define expected outcomes.
+3. Ensure failures are due to missing behavior, not setup errors.
+4. Document how to run tests and verify failures.
+
+## Safety
+
+- Keep test data isolated and avoid production environments.
+- Avoid flaky external dependencies in the red phase.
+
+## Role
+
+Generate failing tests using Task tool with subagent_type="unit-testing::test-automator".
+
+## Prompt Template
+
+"Generate comprehensive FAILING tests for: $ARGUMENTS
+
+## Core Requirements
+
+1. **Test Structure**
+   - Framework-appropriate setup (Jest/pytest/JUnit/Go/RSpec)
+   - Arrange-Act-Assert pattern
+   - should_X_when_Y naming convention
+   - Isolated fixtures with no interdependencies
+
+2. **Behavior Coverage**
+   - Happy path scenarios
+   - Edge cases (empty, null, boundary values)
+   - Error handling and exceptions
+   - Concurrent access (if applicable)
+
+3. **Failure Verification**
+   - Tests MUST fail when run
+   - Failures for RIGHT reasons (not syntax/import errors)
+   - Meaningful diagnostic error messages
+   - No cascading failures
+
+4. **Test Categories**
+   - Unit: Isolated component behavior
+   - Integration: Component interaction
+   - Contract: API/interface contracts
+   - Property: Mathematical invariants
+
+## Framework Patterns
+
+**JavaScript/TypeScript (Jest/Vitest)**
+- Mock dependencies with `vi.fn()` or `jest.fn()`
+- Use `@testing-library` for React components
+- Property tests with `fast-check`
+
+**Python (pytest)**
+- Fixtures with appropriate scopes
+- Parametrize for multiple test cases
+- Hypothesis for property-based tests
+
+**Go**
+- Table-driven tests with subtests
+- `t.Parallel()` for parallel execution
+- Use `testify/assert` for cleaner assertions
+
+**Ruby (RSpec)**
+- `let` for lazy loading, `let!` for eager
+- Contexts for different scenarios
+- Shared examples for common behavior
+
+## Quality Checklist
+
+- Readable test names documenting intent
+- One behavior per test
+- No implementation leakage
+- Meaningful test data (not 'foo'/'bar')
+- Tests serve as living documentation
+
+## Anti-Patterns to Avoid
+
+- Tests passing immediately
+- Testing implementation vs behavior
+- Complex setup code
+- Multiple responsibilities per test
+- Brittle tests tied to specifics
+
+## Edge Case Categories
+
+- **Null/Empty**: undefined, null, empty string/array/object
+- **Boundaries**: min/max values, single element, capacity limits
+- **Special Cases**: Unicode, whitespace, special characters
+- **State**: Invalid transitions, concurrent modifications
+- **Errors**: Network failures, timeouts, permissions
+
+## Output Requirements
+
+- Complete test files with imports
+- Documentation of test purpose
+- Commands to run and verify failures
+- Metrics: test count, coverage areas
+- Next steps for green phase"
+
+## Validation
+
+After generation:
+1. Run tests - confirm they fail
+2. Verify helpful failure messages
+3. Check test independence
+4. Ensure comprehensive coverage
+
+## Example (Minimal)
+
+```typescript
+// auth.service.test.ts
+describe('AuthService', () => {
+  let authService: AuthService;
+  let mockUserRepo: jest.Mocked<UserRepository>;
+
+  beforeEach(() => {
+    mockUserRepo = { findByEmail: jest.fn() } as any;
+    authService = new AuthService(mockUserRepo);
+  });
+
+  it('should_return_token_when_valid_credentials', async () => {
+    const user = { id: '1', email: 'test@example.com', passwordHash: 'hashed' };
+    mockUserRepo.findByEmail.mockResolvedValue(user);
+
+    const result = await authService.authenticate('test@example.com', 'pass');
+
+    expect(result.success).toBe(true);
+    expect(result.token).toBeDefined();
+  });
+
+  it('should_fail_when_user_not_found', async () => {
+    mockUserRepo.findByEmail.mockResolvedValue(null);
+
+    const result = await authService.authenticate('none@example.com', 'pass');
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('INVALID_CREDENTIALS');
+  });
+});
+```
+
+Test requirements: $ARGUMENTS
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: tdd-workflows-tdd-red.md ***
+```
+
+
+***
+
+
+<a id="skill-tdd-workflows-tdd-refactor"></a>
+
+# [1134/1303] SKILL: tdd-workflows-tdd-refactor
+
+- **Source File:** `skills/tdd-workflows-tdd-refactor.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 6,577 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tdd-workflows-tdd-refactor.md ***
+```
+
+***
+name: tdd-workflows-tdd-refactor
+description: "Use when working with tdd workflows tdd refactor"
+risk: critical
+source: community
+date_added: "2026-02-27"
+***
+
+## Use this skill when
+
+- Working on tdd workflows tdd refactor tasks or workflows
+- Needing guidance, best practices, or checklists for tdd workflows tdd refactor
+
+## Do not use this skill when
+
+- The task is unrelated to tdd workflows tdd refactor
+- You need a different domain or tool outside this scope
+
+## Instructions
+
+- Clarify goals, constraints, and required inputs.
+- Apply relevant best practices and validate outcomes.
+- Provide actionable steps and verification.
+- If detailed examples are required, open `resources/implementation-playbook.md`.
+
+Refactor code with confidence using comprehensive test safety net:
+
+[Extended thinking: This tool uses the tdd-orchestrator agent (opus model) for sophisticated refactoring while maintaining all tests green. It applies design patterns, improves code quality, and optimizes performance with the safety of comprehensive test coverage.]
+
+## Usage
+
+Use Task tool with subagent_type="tdd-orchestrator" to perform safe refactoring.
+
+Prompt: "Refactor this code while keeping all tests green: $ARGUMENTS. Apply TDD refactor phase:
+
+## Core Process
+
+**1. Pre-Assessment**
+- Run tests to establish green baseline
+- Analyze code smells and test coverage
+- Document current performance metrics
+- Create incremental refactoring plan
+
+**2. Code Smell Detection**
+- Duplicated code → Extract methods/classes
+- Long methods → Decompose into focused functions
+- Large classes → Split responsibilities
+- Long parameter lists → Parameter objects
+- Feature Envy → Move methods to appropriate classes
+- Primitive Obsession → Value objects
+- Switch statements → Polymorphism
+- Dead code → Remove
+
+**3. Design Patterns**
+- Apply Creational (Factory, Builder, Singleton)
+- Apply Structural (Adapter, Facade, Decorator)
+- Apply Behavioral (Strategy, Observer, Command)
+- Apply Domain (Repository, Service, Value Objects)
+- Use patterns only where they add clear value
+
+**4. SOLID Principles**
+- Single Responsibility: One reason to change
+- Open/Closed: Open for extension, closed for modification
+- Liskov Substitution: Subtypes substitutable
+- Interface Segregation: Small, focused interfaces
+- Dependency Inversion: Depend on abstractions
+
+**5. Refactoring Techniques**
+- Extract Method/Variable/Interface
+- Inline unnecessary indirection
+- Rename for clarity
+- Move Method/Field to appropriate classes
+- Replace Magic Numbers with constants
+- Encapsulate fields
+- Replace Conditional with Polymorphism
+- Introduce Null Object
+
+**6. Performance Optimization**
+- Profile to identify bottlenecks
+- Optimize algorithms and data structures
+- Implement caching where beneficial
+- Reduce database queries (N+1 elimination)
+- Lazy loading and pagination
+- Always measure before and after
+
+**7. Incremental Steps**
+- Make small, atomic changes
+- Run tests after each modification
+- Commit after each successful refactoring
+- Keep refactoring separate from behavior changes
+- Use scaffolding when needed
+
+**8. Architecture Evolution**
+- Layer separation and dependency management
+- Module boundaries and interface definition
+- Event-driven patterns for decoupling
+- Database access pattern optimization
+
+**9. Safety Verification**
+- Run full test suite after each change
+- Performance regression testing
+- Mutation testing for test effectiveness
+- Rollback plan for major changes
+
+**10. Advanced Patterns**
+- Strangler Fig: Gradual legacy replacement
+- Branch by Abstraction: Large-scale changes
+- Parallel Change: Expand-contract pattern
+- Mikado Method: Dependency graph navigation
+
+## Output Requirements
+
+- Refactored code with improvements applied
+- Test results (all green)
+- Before/after metrics comparison
+- Applied refactoring techniques list
+- Performance improvement measurements
+- Remaining technical debt assessment
+
+## Safety Checklist
+
+Before committing:
+- ✓ All tests pass (100% green)
+- ✓ No functionality regression
+- ✓ Performance metrics acceptable
+- ✓ Code coverage maintained/improved
+- ✓ Documentation updated
+
+## Recovery Protocol
+
+If tests fail:
+- Immediately revert last change
+- Identify breaking refactoring
+- Apply smaller incremental changes
+- Use version control for safe experimentation
+
+## Example: Extract Method Pattern
+
+**Before:**
+```typescript
+class OrderProcessor {
+  processOrder(order: Order): ProcessResult {
+    // Validation
+    if (!order.customerId || order.items.length === 0) {
+      return { success: false, error: "Invalid order" };
+    }
+
+    // Calculate totals
+    let subtotal = 0;
+    for (const item of order.items) {
+      subtotal += item.price * item.quantity;
+    }
+    let total = subtotal + (subtotal * 0.08) + (subtotal > 100 ? 0 : 15);
+
+    // Process payment...
+    // Update inventory...
+    // Send confirmation...
+  }
+}
+```
+
+**After:**
+```typescript
+class OrderProcessor {
+  async processOrder(order: Order): Promise<ProcessResult> {
+    const validation = this.validateOrder(order);
+    if (!validation.isValid) return ProcessResult.failure(validation.error);
+
+    const orderTotal = OrderTotal.calculate(order);
+    const inventoryCheck = await this.inventoryService.checkAvailability(order.items);
+    if (!inventoryCheck.available) return ProcessResult.failure(inventoryCheck.reason);
+
+    await this.paymentService.processPayment(order.paymentMethod, orderTotal.total);
+    await this.inventoryService.reserveItems(order.items);
+    await this.notificationService.sendOrderConfirmation(order, orderTotal);
+
+    return ProcessResult.success(order.id, orderTotal.total);
+  }
+
+  private validateOrder(order: Order): ValidationResult {
+    if (!order.customerId) return ValidationResult.invalid("Customer ID required");
+    if (order.items.length === 0) return ValidationResult.invalid("Order must contain items");
+    return ValidationResult.valid();
+  }
+}
+```
+
+**Applied:** Extract Method, Value Objects, Dependency Injection, Async patterns
+
+Code to refactor: $ARGUMENTS"
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: tdd-workflows-tdd-refactor.md ***
+```
+
+
+***
+
+
+<a id="skill-tdd-workflows"></a>
+
+# [1135/1303] SKILL: tdd-workflows
+
+- **Source File:** `skills/tdd-workflows.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 1,327 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tdd-workflows.md ***
+```
+
+***
+name: tdd-workflows
+description: "Use when working with tdd workflows tdd cycle (Alias for tdd-workflows-tdd-cycle)"
+risk: none
+source: "alias"
+date_added: "2026-06-02"
+***
+
+# Tdd Workflows
+
+> **This is an alias.** The canonical skill is **`tdd-workflows-tdd-cycle`**.
+
+This skill redirects to `tdd-workflows-tdd-cycle`. Load it from the vault:
+
+`skill-libraries/testing/tdd-workflows-tdd-cycle/SKILL.md`
+
+## When to Use
+- Use this skill when working with tdd workflows tdd cycle (Alias for tdd-workflows-tdd-cycle)
+
+## Why this alias exists
+
+Users commonly search for `tdd-workflows` but the full skill name in this collection is `tdd-workflows-tdd-cycle`. This alias ensures discoverability.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+## Examples
+```text
+Use @tdd-workflows for this task: Use when working with tdd workflows tdd cycle (Alias for tdd-workflows-tdd-cycle).
+
+Apply the skill to my current work and walk me through the safest next steps,
+key checks, and the concrete output I should produce.
+```
+
+
+```markdown
+*** END OF FILE: tdd-workflows.md ***
+```
+
+
+***
+
+
+<a id="skill-tdd"></a>
+
+# [1136/1303] SKILL: tdd
+
+- **Source File:** `skills/tdd.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 3,587 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tdd.md ***
+```
+
+***
+name: tdd
+description: Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor", or wants integration tests.
+***
+
+# Test-Driven Development
+
+TDD is the red → green loop. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the rules of the loop. Every section applies on every cycle: consult them before and during the loop, not after.
+
+When exploring the codebase, read `CONTEXT.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
+
+## What a good test is
+
+Tests verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't. A good test reads like a specification: "user can checkout with valid cart" tells you exactly what capability exists, and it survives refactors because it doesn't care about internal structure.
+
+See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking guidelines.
+
+## Seams: where tests go
+
+A **seam** is the public boundary you test at: the interface where you observe behavior without reaching inside. Tests live at seams, never against internals.
+
+**Test only at pre-agreed seams.** Before writing any test, write down the seams under test and confirm them with the user. No test is written at an unconfirmed seam. You can't test everything, so agreeing the seams up front is how testing effort lands on the critical paths and complex logic instead of every edge case.
+
+Ask: "What's the public interface, and which seams should we test?"
+
+When the shape of that interface is itself in question (how deep the module is, where the seam belongs, what the interface should expose), call the Skill tool with "codebase-design" for the vocabulary. It is the shared source of the module, interface, depth, seam, adapter, leverage and locality terms, and it is a reference to consult, not a session to run.
+
+## Anti-patterns
+
+- **Implementation-coupled**: mocks internal collaborators, tests private methods, or verifies through a side channel (querying the database instead of using the interface). The tell: the test breaks when you refactor but behavior hasn't changed.
+- **Tautological**: the assertion recomputes the expected value the way the code does (`expect(add(a, b)).toBe(a + b)`, a snapshot derived by hand the same way, a constant asserted equal to itself), so it passes by construction and can never disagree with the code. Expected values must come from an independent source of truth: a known-good literal, a worked example, the spec.
+- **Horizontal slicing**: writing all tests first, then all implementation. Bulk tests verify _imagined_ behavior: you test the _shape_ of things rather than user-facing behavior, the tests go insensitive to real changes, and you commit to test structure before understanding the implementation. Work in **vertical slices** instead: one test → one implementation → repeat, each test a **tracer bullet** that responds to what the last cycle taught you.
+
+## Rules of the loop
+
+- **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
+- **One slice at a time.** One seam, one test, one minimal implementation per cycle.
+- **Refactoring is not part of the loop.** It belongs to the review stage (see the `code-review` skill), not the red → green implementation cycle.
+
+
+```markdown
+*** END OF FILE: tdd.md ***
+```
+
+
+***
+
+
+<a id="skill-teach"></a>
+
+# [1137/1303] SKILL: teach
+
+- **Source File:** `skills/teach.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 9,646 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: teach.md ***
+```
+
+***
+name: teach
+description: Teach the user a new skill or concept, within this workspace.
+disable-model-invocation: true
+argument-hint: "What would you like to learn about?"
+***
+
+The user has asked you to teach them something. This is a stateful request - they intend to learn the topic over multiple sessions.
+
+## Teaching Workspace
+
+Treat the current directory as a teaching workspace. The state of their learning is captured in this directory in several files:
+
+- `MISSION.md`: A document capturing the _reason_ the user is interested in the topic. This should be used to ground all teaching. Use the format in [MISSION-FORMAT.md](./MISSION-FORMAT.md).
+- `./reference/*.html`: A directory of reference materials. These are the compressed learnings from the lessons - cheat sheets, reference algorithms, syntax, yoga poses, glossaries. They are the raw units of learning. They should be beautiful documents which print out well, and are designed for quick reference.
+- `RESOURCES.md`: A list of resources which can be explored to ground your teaching in contextual knowledge, or to acquire knowledge and wisdom. Use the format in [RESOURCES-FORMAT.md](./RESOURCES-FORMAT.md).
+- `./learning-records/*.md`: A directory of learning records, which capture what the user has learned. These are loosely equivalent to architectural decision records in software development - they capture non-obvious lessons and key insights that may need to be revised later, or drive future sessions. These should be used to calculate the zone of proximal development. They are titled `0001-<dash-case-name>.md`, where the number increments each time. Use the format in [LEARNING-RECORD-FORMAT.md](./LEARNING-RECORD-FORMAT.md).
+- `./lessons/*.html`: A directory of lessons. A **lesson** is a single, self-contained HTML output that teaches one tightly-scoped thing tied to the mission. This is the primary unit of teaching in this workspace.
+- `./assets/*`: Reusable **components** shared across lessons. See [Assets](#assets).
+- `NOTES.md`: A scratchpad for you to jot down user preferences, or working notes.
+
+## Philosophy
+
+To learn at a deep level, the user needs three things:
+
+- **Knowledge**, captured from high-quality, high-trust resources
+- **Skills**, acquired through highly-relevant interactive lessons devised by you, based on the knowledge
+- **Wisdom**, which comes from interacting with other learners and practitioners
+
+Before the `RESOURCES.md` is well-populated, your focus should be to find high-quality resources which will help the user acquire knowledge. Never trust your parametric knowledge.
+
+Some topics may require more skills than knowledge. Learning more about theoretical physics might be more knowledge-based. For yoga, more skills-based.
+
+### Fluency vs Storage Strength
+
+You should be careful to split between two types of learning:
+
+- **Fluency strength**: in-the-moment retrieval of knowledge
+- **Storage strength**: long-term retention of knowledge
+
+Fluency can give the user an illusory sense of mastery, but storage strength is the real goal. Try to design lessons which build long-term retention by desirable difficulty:
+
+- Using retrieval practice (recall from memory)
+- Spacing (distributing practice over time)
+- Interleaving (mixing up different but related topics in practice - for skills practice only)
+
+## Lessons
+
+A lesson is the main thing you produce: the unit in which knowledge and skills reach the user. Each lesson is one self-contained HTML file, saved to `./lessons/` and titled `0001-<dash-case-name>.html` where the number increments each time.
+
+A lesson should be **beautiful**, with clean, readable typography and layout, since the user will return to these later to review. Think Tufte.
+
+The lesson should be short, and completable very quickly. Learners' working memory is very small, and we need to stay within it. But each lesson should give the user a single tangible win that they can build on. It should be directly tied to the mission, and should be in the user's zone of proximal development.
+
+If possible, open the lesson file for the user by running a CLI command.
+
+Each lesson should link via HTML anchors to other lessons and reference documents.
+
+Each lesson should recommend a primary source for the user to read or watch. This should be the most high-quality, high-trust resource you found on the topic.
+
+Each lesson should contain a reminder to ask followup questions to the agent. The agent is their teacher, and can assist with anything that's unclear.
+
+## Assets
+
+Lessons are built from reusable **components**, stored in `./assets/`: stylesheets, quiz widgets, simulators, diagram helpers, and anything else a second lesson could reuse.
+
+Reuse is the default, not the exception. Before authoring a lesson, read `./assets/` and build from the components already there. When a lesson needs something new and reusable, write it as a component in `./assets/` and link to it; never inline code a future lesson would duplicate.
+
+A shared stylesheet is the first component every workspace earns: every lesson links it, so the lessons look like one consistent course rather than a pile of one-offs. As the workspace grows, so should the component library.
+
+## The Mission
+
+Every lesson should be tied into the mission - the reason that the user is interested in learning about the topic.
+
+If the user is unclear about the mission, or the `MISSION.md` is not populated, your first job should be to question the user on why they want to learn this.
+
+Failing to understand the mission will mean knowledge acquisition is not grounded in real-world goals. Lessons will feel too abstract. You will have no way of judging what the user should do next.
+
+Missions may change as the user develops more skills and knowledge. This is normal - make sure to update the `MISSION.md` and add a learning record to capture the change. Confirm with the user before changing the mission.
+
+## Zone Of Proximal Development
+
+Each lesson, the user should always feel as if they are being challenged 'just enough'.
+
+The user may specify an exact thing they want to learn. If they don't, figure out their zone of proximal development by:
+
+- Reading their `learning-records`
+- Figuring out the right thing to teach them based on their mission
+- Teach the most relevant thing that fits in their zone of proximal development
+
+## Knowledge
+
+Lessons should be designed around a skill the user is going to learn. The knowledge in the lesson should be only what's required to acquire that skill. You teach the knowledge first, then get the user to practice the skills via an interactive feedback loop.
+
+Knowledge should first be gathered from trusted resources. Use `RESOURCES.md` to keep track of them. Lessons should be littered with citations - links to external resources to back up any claim made. This increases the trustworthiness of the lesson.
+
+For acquiring knowledge, difficulty is the enemy. It eats working memory you need for understanding.
+
+## Skills
+
+If knowledge is all about acquisition, skills are about durability and flexibility. Make the knowledge stick.
+
+For skill acquisition, difficulty is the tool. Effortful retrieval is what builds storage strength. Skills should be taught through interactive lessons. There are several tools at your disposal:
+
+- Interactive lessons, using quizzes and light in-browser tasks
+- Lessons which guide the user through a list of real-world steps to take (for instance, yoga poses)
+
+Each of these should be based on a **feedback loop**, where the user receives feedback on their performance. This feedback loop should be as tight as possible, giving feedback immediately - and ideally automatically.
+
+For quizzes, each answer should be exactly the same number of words (and characters, if possible). Don't give the user any clues about the answer through formatting.
+
+## Acquiring Wisdom
+
+Wisdom comes from true real-world interaction - testing your skills outside the learning environment.
+
+When the user asks a question that appears to require wisdom, your default posture should be to attempt to answer - but to ultimately delegate to a **community**.
+
+A community is a place (online or offline) where the user can test their skills in the real world. This might be a forum, a subreddit, a real-world class (budget permitting) or a local interest group.
+
+You should attempt to find high-reputation communities the user can join. If the user expresses a preference that they don't want to join a community, respect it.
+
+## Reference Documents
+
+While creating lessons, you should also create reference documents. Lessons can reference these documents - they are useful for tracking raw units of knowledge useful across lessons.
+
+Lessons will rarely be revisited later - reference documents will be. They should be the compressed essence of the lesson, in a format designed for quick reference.
+
+Some learning topics lend themselves to reference:
+
+- Syntax and code snippets for programming
+- Algorithms and flowcharts for processes
+- Yoga poses and sequences for yoga
+- Exercises and routines for fitness
+- Glossaries for any topic with its own nomenclature
+
+Glossaries, in particular, are an essential reference. Once one is created, it should be adhered to in every lesson.
+
+## `NOTES.md`
+
+The user will sometimes express preferences of how they want to be taught, or things you should keep in mind. This is the place to record those preferences, so you can refer back to them when designing lessons or working with the user.
+
+
+```markdown
+*** END OF FILE: teach.md ***
+```
+
+
+***
+
+
+<a id="skill-techsmith-debug-bundle"></a>
+
+# [1138/1303] SKILL: techsmith-debug-bundle
+
+- **Source File:** `skills/techsmith-debug-bundle.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 1,860 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: techsmith-debug-bundle.md ***
+```
+
+***
+name: techsmith-debug-bundle
+description: 'TechSmith debug bundle for Snagit COM API and Camtasia automation.
+
+  Use when working with TechSmith screen capture and video editing automation.
+
+  Trigger: "techsmith debug bundle".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(powershell:*), Grep
+version: 1.3.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- saas
+- screen-capture
+- video
+- techsmith
+compatibility: Designed for Claude Code
+***
+# TechSmith Debug Bundle
+
+## Overview
+
+Guidance for debug bundle with TechSmith Snagit COM API and Camtasia automation.
+
+## Instructions
+
+### Key Considerations
+
+- Snagit COM API is Windows-only (requires COM registration)
+- Camtasia Producer CLI for batch rendering
+- PowerShell is the primary scripting language
+- Python interop via `pywin32` (`pip install pywin32`)
+
+### Snagit COM Input Types
+
+| Value | Constant | Description |
+|-------|----------|-------------|
+| 0 | siiDesktop | Full desktop |
+| 2 | siiRegion | User-selected region |
+| 4 | siiWindow | Active window |
+| 5 | siiFile | From file |
+
+### Snagit COM Output Types
+
+| Value | Constant | Description |
+|-------|----------|-------------|
+| 1 | sioClipboard | Copy to clipboard |
+| 2 | sioFile | Save to file |
+| 4 | sioPrinter | Send to printer |
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| COM not registered | Snagit not installed | Install and register COM server |
+| Permission denied | Not running as admin | Elevate PowerShell |
+| File locked | Snagit Editor has file open | Close editor first |
+
+## Resources
+
+- [Snagit COM Samples](https://github.com/TechSmith/Snagit-COM-Samples)
+- [TechSmith Support](https://support.techsmith.com/)
+
+## Next Steps
+
+See related TechSmith skills for more automation patterns.
+
+
+```markdown
+*** END OF FILE: techsmith-debug-bundle.md ***
+```
+
+
+***
+
+
+<a id="skill-techsmith-performance-tuning"></a>
+
+# [1139/1303] SKILL: techsmith-performance-tuning
+
+- **Source File:** `skills/techsmith-performance-tuning.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 1,890 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: techsmith-performance-tuning.md ***
+```
+
+***
+name: techsmith-performance-tuning
+description: 'TechSmith performance tuning for Snagit COM API and Camtasia automation.
+
+  Use when working with TechSmith screen capture and video editing automation.
+
+  Trigger: "techsmith performance tuning".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(powershell:*), Grep
+version: 1.3.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- saas
+- screen-capture
+- video
+- techsmith
+compatibility: Designed for Claude Code
+***
+# TechSmith Performance Tuning
+
+## Overview
+
+Guidance for performance tuning with TechSmith Snagit COM API and Camtasia automation.
+
+## Instructions
+
+### Key Considerations
+
+- Snagit COM API is Windows-only (requires COM registration)
+- Camtasia Producer CLI for batch rendering
+- PowerShell is the primary scripting language
+- Python interop via `pywin32` (`pip install pywin32`)
+
+### Snagit COM Input Types
+
+| Value | Constant | Description |
+|-------|----------|-------------|
+| 0 | siiDesktop | Full desktop |
+| 2 | siiRegion | User-selected region |
+| 4 | siiWindow | Active window |
+| 5 | siiFile | From file |
+
+### Snagit COM Output Types
+
+| Value | Constant | Description |
+|-------|----------|-------------|
+| 1 | sioClipboard | Copy to clipboard |
+| 2 | sioFile | Save to file |
+| 4 | sioPrinter | Send to printer |
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| COM not registered | Snagit not installed | Install and register COM server |
+| Permission denied | Not running as admin | Elevate PowerShell |
+| File locked | Snagit Editor has file open | Close editor first |
+
+## Resources
+
+- [Snagit COM Samples](https://github.com/TechSmith/Snagit-COM-Samples)
+- [TechSmith Support](https://support.techsmith.com/)
+
+## Next Steps
+
+See related TechSmith skills for more automation patterns.
+
+
+```markdown
+*** END OF FILE: techsmith-performance-tuning.md ***
+```
+
+
+***
+
+
+<a id="skill-techsmith-reference-architecture"></a>
+
+# [1140/1303] SKILL: techsmith-reference-architecture
+
+- **Source File:** `skills/techsmith-reference-architecture.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 1,910 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: techsmith-reference-architecture.md ***
+```
+
+***
+name: techsmith-reference-architecture
+description: 'TechSmith reference architecture for Snagit COM API and Camtasia automation.
+
+  Use when working with TechSmith screen capture and video editing automation.
+
+  Trigger: "techsmith reference architecture".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(powershell:*), Grep
+version: 1.3.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- saas
+- screen-capture
+- video
+- techsmith
+compatibility: Designed for Claude Code
+***
+# TechSmith Reference Architecture
+
+## Overview
+
+Guidance for reference architecture with TechSmith Snagit COM API and Camtasia automation.
+
+## Instructions
+
+### Key Considerations
+
+- Snagit COM API is Windows-only (requires COM registration)
+- Camtasia Producer CLI for batch rendering
+- PowerShell is the primary scripting language
+- Python interop via `pywin32` (`pip install pywin32`)
+
+### Snagit COM Input Types
+
+| Value | Constant | Description |
+|-------|----------|-------------|
+| 0 | siiDesktop | Full desktop |
+| 2 | siiRegion | User-selected region |
+| 4 | siiWindow | Active window |
+| 5 | siiFile | From file |
+
+### Snagit COM Output Types
+
+| Value | Constant | Description |
+|-------|----------|-------------|
+| 1 | sioClipboard | Copy to clipboard |
+| 2 | sioFile | Save to file |
+| 4 | sioPrinter | Send to printer |
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| COM not registered | Snagit not installed | Install and register COM server |
+| Permission denied | Not running as admin | Elevate PowerShell |
+| File locked | Snagit Editor has file open | Close editor first |
+
+## Resources
+
+- [Snagit COM Samples](https://github.com/TechSmith/Snagit-COM-Samples)
+- [TechSmith Support](https://support.techsmith.com/)
+
+## Next Steps
+
+See related TechSmith skills for more automation patterns.
+
+
+```markdown
+*** END OF FILE: techsmith-reference-architecture.md ***
+```
+
+
+***
+
+
+<a id="skill-temporal-python-pro"></a>
+
+# [1141/1303] SKILL: temporal-python-pro
+
+- **Source File:** `skills/temporal-python-pro.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 11,269 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: temporal-python-pro.md ***
+```
+
+***
+name: temporal-python-pro
+description: Master Temporal workflow orchestration with Python SDK. Implements durable workflows, saga patterns, and distributed transactions. Covers async/await, testing strategies, and production deployment.
+risk: critical
+source: community
+date_added: '2026-02-27'
+***
+
+## Use this skill when
+
+- Working on temporal python pro tasks or workflows
+- Needing guidance, best practices, or checklists for temporal python pro
+
+## Do not use this skill when
+
+- The task is unrelated to temporal python pro
+- You need a different domain or tool outside this scope
+
+## Instructions
+
+- Clarify goals, constraints, and required inputs.
+- Apply relevant best practices and validate outcomes.
+- Provide actionable steps and verification.
+- If detailed examples are required, open `resources/implementation-playbook.md`.
+
+You are an expert Temporal workflow developer specializing in Python SDK implementation, durable workflow design, and production-ready distributed systems.
+
+## Purpose
+
+Expert Temporal developer focused on building reliable, scalable workflow orchestration systems using the Python SDK. Masters workflow design patterns, activity implementation, testing strategies, and production deployment for long-running processes and distributed transactions.
+
+## Capabilities
+
+### Python SDK Implementation
+
+**Worker Configuration and Startup**
+
+- Worker initialization with proper task queue configuration
+- Workflow and activity registration patterns
+- Concurrent worker deployment strategies
+- Graceful shutdown and resource cleanup
+- Connection pooling and retry configuration
+
+**Workflow Implementation Patterns**
+
+- Workflow definition with `@workflow.defn` decorator
+- Async/await workflow entry points with `@workflow.run`
+- Workflow-safe time operations with `workflow.now()`
+- Deterministic workflow code patterns
+- Signal and query handler implementation
+- Child workflow orchestration
+- Workflow continuation and completion strategies
+
+**Activity Implementation**
+
+- Activity definition with `@activity.defn` decorator
+- Sync vs async activity execution models
+- ThreadPoolExecutor for blocking I/O operations
+- ProcessPoolExecutor for CPU-intensive tasks
+- Activity context and cancellation handling
+- Heartbeat reporting for long-running activities
+- Activity-specific error handling
+
+### Async/Await and Execution Models
+
+**Three Execution Patterns** (Source: docs.temporal.io):
+
+1. **Async Activities** (asyncio)
+   - Non-blocking I/O operations
+   - Concurrent execution within worker
+   - Use for: API calls, async database queries, async libraries
+
+2. **Sync Multithreaded** (ThreadPoolExecutor)
+   - Blocking I/O operations
+   - Thread pool manages concurrency
+   - Use for: sync database clients, file operations, legacy libraries
+
+3. **Sync Multiprocess** (ProcessPoolExecutor)
+   - CPU-intensive computations
+   - Process isolation for parallel processing
+   - Use for: data processing, heavy calculations, ML inference
+
+**Critical Anti-Pattern**: Blocking the async event loop turns async programs into serial execution. Always use sync activities for blocking operations.
+
+### Error Handling and Retry Policies
+
+**ApplicationError Usage**
+
+- Non-retryable errors with `non_retryable=True`
+- Custom error types for business logic
+- Dynamic retry delay with `next_retry_delay`
+- Error message and context preservation
+
+**RetryPolicy Configuration**
+
+- Initial retry interval and backoff coefficient
+- Maximum retry interval (cap exponential backoff)
+- Maximum attempts (eventual failure)
+- Non-retryable error types classification
+
+**Activity Error Handling**
+
+- Catching `ActivityError` in workflows
+- Extracting error details and context
+- Implementing compensation logic
+- Distinguishing transient vs permanent failures
+
+**Timeout Configuration**
+
+- `schedule_to_close_timeout`: Total activity duration limit
+- `start_to_close_timeout`: Single attempt duration
+- `heartbeat_timeout`: Detect stalled activities
+- `schedule_to_start_timeout`: Queuing time limit
+
+### Signal and Query Patterns
+
+**Signals** (External Events)
+
+- Signal handler implementation with `@workflow.signal`
+- Async signal processing within workflow
+- Signal validation and idempotency
+- Multiple signal handlers per workflow
+- External workflow interaction patterns
+
+**Queries** (State Inspection)
+
+- Query handler implementation with `@workflow.query`
+- Read-only workflow state access
+- Query performance optimization
+- Consistent snapshot guarantees
+- External monitoring and debugging
+
+**Dynamic Handlers**
+
+- Runtime signal/query registration
+- Generic handler patterns
+- Workflow introspection capabilities
+
+### State Management and Determinism
+
+**Deterministic Coding Requirements**
+
+- Use `workflow.now()` instead of `datetime.now()`
+- Use `workflow.random()` instead of `random.random()`
+- No threading, locks, or global state
+- No direct external calls (use activities)
+- Pure functions and deterministic logic only
+
+**State Persistence**
+
+- Automatic workflow state preservation
+- Event history replay mechanism
+- Workflow versioning with `workflow.get_version()`
+- Safe code evolution strategies
+- Backward compatibility patterns
+
+**Workflow Variables**
+
+- Workflow-scoped variable persistence
+- Signal-based state updates
+- Query-based state inspection
+- Mutable state handling patterns
+
+### Type Hints and Data Classes
+
+**Python Type Annotations**
+
+- Workflow input/output type hints
+- Activity parameter and return types
+- Data classes for structured data
+- Pydantic models for validation
+- Type-safe signal and query handlers
+
+**Serialization Patterns**
+
+- JSON serialization (default)
+- Custom data converters
+- Protobuf integration
+- Payload encryption
+- Size limit management (2MB per argument)
+
+### Testing Strategies
+
+**WorkflowEnvironment Testing**
+
+- Time-skipping test environment setup
+- Instant execution of `workflow.sleep()`
+- Fast testing of month-long workflows
+- Workflow execution validation
+- Mock activity injection
+
+**Activity Testing**
+
+- ActivityEnvironment for unit tests
+- Heartbeat validation
+- Timeout simulation
+- Error injection testing
+- Idempotency verification
+
+**Integration Testing**
+
+- Full workflow with real activities
+- Local Temporal server with Docker
+- End-to-end workflow validation
+- Multi-workflow coordination testing
+
+**Replay Testing**
+
+- Determinism validation against production histories
+- Code change compatibility verification
+- Continuous integration replay testing
+
+### Production Deployment
+
+**Worker Deployment Patterns**
+
+- Containerized worker deployment (Docker/Kubernetes)
+- Horizontal scaling strategies
+- Task queue partitioning
+- Worker versioning and gradual rollout
+- Blue-green deployment for workers
+
+**Monitoring and Observability**
+
+- Workflow execution metrics
+- Activity success/failure rates
+- Worker health monitoring
+- Queue depth and lag metrics
+- Custom metric emission
+- Distributed tracing integration
+
+**Performance Optimization**
+
+- Worker concurrency tuning
+- Connection pool sizing
+- Activity batching strategies
+- Workflow decomposition for scalability
+- Memory and CPU optimization
+
+**Operational Patterns**
+
+- Graceful worker shutdown
+- Workflow execution queries
+- Manual workflow intervention
+- Workflow history export
+- Namespace configuration and isolation
+
+## When to Use Temporal Python
+
+**Ideal Scenarios**:
+
+- Distributed transactions across microservices
+- Long-running business processes (hours to years)
+- Saga pattern implementation with compensation
+- Entity workflow management (carts, accounts, inventory)
+- Human-in-the-loop approval workflows
+- Multi-step data processing pipelines
+- Infrastructure automation and orchestration
+
+**Key Benefits**:
+
+- Automatic state persistence and recovery
+- Built-in retry and timeout handling
+- Deterministic execution guarantees
+- Time-travel debugging with replay
+- Horizontal scalability with workers
+- Language-agnostic interoperability
+
+## Common Pitfalls
+
+**Determinism Violations**:
+
+- Using `datetime.now()` instead of `workflow.now()`
+- Random number generation with `random.random()`
+- Threading or global state in workflows
+- Direct API calls from workflows
+
+**Activity Implementation Errors**:
+
+- Non-idempotent activities (unsafe retries)
+- Missing timeout configuration
+- Blocking async event loop with sync code
+- Exceeding payload size limits (2MB)
+
+**Testing Mistakes**:
+
+- Not using time-skipping environment
+- Testing workflows without mocking activities
+- Ignoring replay testing in CI/CD
+- Inadequate error injection testing
+
+**Deployment Issues**:
+
+- Unregistered workflows/activities on workers
+- Mismatched task queue configuration
+- Missing graceful shutdown handling
+- Insufficient worker concurrency
+
+## Integration Patterns
+
+**Microservices Orchestration**
+
+- Cross-service transaction coordination
+- Saga pattern with compensation
+- Event-driven workflow triggers
+- Service dependency management
+
+**Data Processing Pipelines**
+
+- Multi-stage data transformation
+- Parallel batch processing
+- Error handling and retry logic
+- Progress tracking and reporting
+
+**Business Process Automation**
+
+- Order fulfillment workflows
+- Payment processing with compensation
+- Multi-party approval processes
+- SLA enforcement and escalation
+
+## Best Practices
+
+**Workflow Design**:
+
+1. Keep workflows focused and single-purpose
+2. Use child workflows for scalability
+3. Implement idempotent activities
+4. Configure appropriate timeouts
+5. Design for failure and recovery
+
+**Testing**:
+
+1. Use time-skipping for fast feedback
+2. Mock activities in workflow tests
+3. Validate replay with production histories
+4. Test error scenarios and compensation
+5. Achieve high coverage (≥80% target)
+
+**Production**:
+
+1. Deploy workers with graceful shutdown
+2. Monitor workflow and activity metrics
+3. Implement distributed tracing
+4. Version workflows carefully
+5. Use workflow queries for debugging
+
+## Resources
+
+**Official Documentation**:
+
+- Python SDK: python.temporal.io
+- Core Concepts: docs.temporal.io/workflows
+- Testing Guide: docs.temporal.io/develop/python/testing-suite
+- Best Practices: docs.temporal.io/develop/best-practices
+
+**Architecture**:
+
+- Temporal Architecture: github.com/temporalio/temporal/blob/main/docs/architecture/README.md
+- Testing Patterns: github.com/temporalio/temporal/blob/main/docs/development/testing.md
+
+**Key Takeaways**:
+
+1. Workflows = orchestration, Activities = external calls
+2. Determinism is mandatory for workflows
+3. Idempotency is critical for activities
+4. Test with time-skipping for fast feedback
+5. Monitor and observe in production
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: temporal-python-pro.md ***
+```
+
+
+***
+
+
+<a id="skill-temporal-python-testing"></a>
+
+# [1142/1303] SKILL: temporal-python-testing
+
+- **Source File:** `skills/temporal-python-testing.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 5,803 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: temporal-python-testing.md ***
+```
+
+***
+name: temporal-python-testing
+description: "Comprehensive testing approaches for Temporal workflows using pytest, progressive disclosure resources for specific testing scenarios."
+risk: critical
+source: community
+date_added: "2026-02-27"
+***
+
+# Temporal Python Testing Strategies
+
+Comprehensive testing approaches for Temporal workflows using pytest, progressive disclosure resources for specific testing scenarios.
+
+## Do not use this skill when
+
+- The task is unrelated to temporal python testing strategies
+- You need a different domain or tool outside this scope
+
+## Instructions
+
+- Clarify goals, constraints, and required inputs.
+- Apply relevant best practices and validate outcomes.
+- Provide actionable steps and verification.
+- If detailed examples are required, open `resources/implementation-playbook.md`.
+
+## Use this skill when
+
+- **Unit testing workflows** - Fast tests with time-skipping
+- **Integration testing** - Workflows with mocked activities
+- **Replay testing** - Validate determinism against production histories
+- **Local development** - Set up Temporal server and pytest
+- **CI/CD integration** - Automated testing pipelines
+- **Coverage strategies** - Achieve ≥80% test coverage
+
+## Testing Philosophy
+
+**Recommended Approach** (Source: docs.temporal.io/develop/python/testing-suite):
+
+- Write majority as integration tests
+- Use pytest with async fixtures
+- Time-skipping enables fast feedback (month-long workflows → seconds)
+- Mock activities to isolate workflow logic
+- Validate determinism with replay testing
+
+**Three Test Types**:
+
+1. **Unit**: Workflows with time-skipping, activities with ActivityEnvironment
+2. **Integration**: Workers with mocked activities
+3. **End-to-end**: Full Temporal server with real activities (use sparingly)
+
+## Available Resources
+
+This skill provides detailed guidance through progressive disclosure. Load specific resources based on your testing needs:
+
+### Unit Testing Resources
+
+**File**: `resources/unit-testing.md`
+**When to load**: Testing individual workflows or activities in isolation
+**Contains**:
+
+- WorkflowEnvironment with time-skipping
+- ActivityEnvironment for activity testing
+- Fast execution of long-running workflows
+- Manual time advancement patterns
+- pytest fixtures and patterns
+
+### Integration Testing Resources
+
+**File**: `resources/integration-testing.md`
+**When to load**: Testing workflows with mocked external dependencies
+**Contains**:
+
+- Activity mocking strategies
+- Error injection patterns
+- Multi-activity workflow testing
+- Signal and query testing
+- Coverage strategies
+
+### Replay Testing Resources
+
+**File**: `resources/replay-testing.md`
+**When to load**: Validating determinism or deploying workflow changes
+**Contains**:
+
+- Determinism validation
+- Production history replay
+- CI/CD integration patterns
+- Version compatibility testing
+
+### Local Development Resources
+
+**File**: `resources/local-setup.md`
+**When to load**: Setting up development environment
+**Contains**:
+
+- Docker Compose configuration
+- pytest setup and configuration
+- Coverage tool integration
+- Development workflow
+
+## Quick Start Guide
+
+### Basic Workflow Test
+
+```python
+import pytest
+from temporalio.testing import WorkflowEnvironment
+from temporalio.worker import Worker
+
+@pytest.fixture
+async def workflow_env():
+    env = await WorkflowEnvironment.start_time_skipping()
+    yield env
+    await env.shutdown()
+
+@pytest.mark.asyncio
+async def test_workflow(workflow_env):
+    async with Worker(
+        workflow_env.client,
+        task_queue="test-queue",
+        workflows=[YourWorkflow],
+        activities=[your_activity],
+    ):
+        result = await workflow_env.client.execute_workflow(
+            YourWorkflow.run,
+            args,
+            id="test-wf-id",
+            task_queue="test-queue",
+        )
+        assert result == expected
+```
+
+### Basic Activity Test
+
+```python
+from temporalio.testing import ActivityEnvironment
+
+async def test_activity():
+    env = ActivityEnvironment()
+    result = await env.run(your_activity, "test-input")
+    assert result == expected_output
+```
+
+## Coverage Targets
+
+**Recommended Coverage** (Source: docs.temporal.io best practices):
+
+- **Workflows**: ≥80% logic coverage
+- **Activities**: ≥80% logic coverage
+- **Integration**: Critical paths with mocked activities
+- **Replay**: All workflow versions before deployment
+
+## Key Testing Principles
+
+1. **Time-Skipping** - Month-long workflows test in seconds
+2. **Mock Activities** - Isolate workflow logic from external dependencies
+3. **Replay Testing** - Validate determinism before deployment
+4. **High Coverage** - ≥80% target for production workflows
+5. **Fast Feedback** - Unit tests run in milliseconds
+
+## How to Use Resources
+
+**Load specific resource when needed**:
+
+- "Show me unit testing patterns" → Load `resources/unit-testing.md`
+- "How do I mock activities?" → Load `resources/integration-testing.md`
+- "Setup local Temporal server" → Load `resources/local-setup.md`
+- "Validate determinism" → Load `resources/replay-testing.md`
+
+## Additional References
+
+- Python SDK Testing: docs.temporal.io/develop/python/testing-suite
+- Testing Patterns: github.com/temporalio/temporal/blob/main/docs/development/testing.md
+- Python Samples: github.com/temporalio/samples-python
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: temporal-python-testing.md ***
+```
+
+
+***
+
+
+<a id="skill-tensorboard-visualizer"></a>
+
+# [1143/1303] SKILL: tensorboard-visualizer
+
+- **Source File:** `skills/tensorboard-visualizer.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 2,384 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tensorboard-visualizer.md ***
+```
+
+***
+name: tensorboard-visualizer
+description: 'Generate tensorboard visualizer operations. Auto-activating skill for
+  ML Training.
+
+  Triggers on: tensorboard visualizer, tensorboard visualizer
+
+  Part of the ML Training skill category. Use when working with tensorboard visualizer
+  functionality. Trigger with phrases like "tensorboard visualizer", "tensorboard
+  visualizer", "tensorboard".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(python:*), Bash(pip:*)
+version: 1.0.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- ai
+- machine-learning
+compatibility: Designed for Claude Code
+***
+# Tensorboard Visualizer
+
+## Overview
+
+This skill provides automated assistance for tensorboard visualizer tasks within the ML Training domain.
+
+## When to Use
+
+This skill activates automatically when you:
+- Mention "tensorboard visualizer" in your request
+- Ask about tensorboard visualizer patterns or best practices
+- Need help with machine learning training skills covering data preparation, model training, hyperparameter tuning, and experiment tracking.
+
+## Instructions
+
+1. Provides step-by-step guidance for tensorboard visualizer
+2. Follows industry best practices and patterns
+3. Generates production-ready code and configurations
+4. Validates outputs against common standards
+
+## Examples
+
+**Example: Basic Usage**
+Request: "Help me with tensorboard visualizer"
+Result: Provides step-by-step guidance and generates appropriate configurations
+
+
+## Prerequisites
+
+- Relevant development environment configured
+- Access to necessary tools and services
+- Basic understanding of ml training concepts
+
+
+## Output
+
+- Generated configurations and code
+- Best practice recommendations
+- Validation results
+
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Configuration invalid | Missing required fields | Check documentation for required parameters |
+| Tool not found | Dependency not installed | Install required tools per prerequisites |
+| Permission denied | Insufficient access | Verify credentials and permissions |
+
+
+## Resources
+
+- Official documentation for related tools
+- Best practices guides
+- Community examples and tutorials
+
+## Related Skills
+
+Part of the **ML Training** skill category.
+Tags: ml, training, pytorch, tensorflow, sklearn
+
+
+```markdown
+*** END OF FILE: tensorboard-visualizer.md ***
+```
+
+
+***
+
+
+<a id="skill-tensorflow-model-trainer"></a>
+
+# [1144/1303] SKILL: tensorflow-model-trainer
+
+- **Source File:** `skills/tensorflow-model-trainer.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 2,400 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tensorflow-model-trainer.md ***
+```
+
+***
+name: tensorflow-model-trainer
+description: 'Build tensorflow model trainer operations. Auto-activating skill for
+  ML Training.
+
+  Triggers on: tensorflow model trainer, tensorflow model trainer
+
+  Part of the ML Training skill category. Use when working with tensorflow model trainer
+  functionality. Trigger with phrases like "tensorflow model trainer", "tensorflow
+  trainer", "tensorflow".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(python:*), Bash(pip:*)
+version: 1.0.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- ai
+- machine-learning
+compatibility: Designed for Claude Code
+***
+# Tensorflow Model Trainer
+
+## Overview
+
+This skill provides automated assistance for tensorflow model trainer tasks within the ML Training domain.
+
+## When to Use
+
+This skill activates automatically when you:
+- Mention "tensorflow model trainer" in your request
+- Ask about tensorflow model trainer patterns or best practices
+- Need help with machine learning training skills covering data preparation, model training, hyperparameter tuning, and experiment tracking.
+
+## Instructions
+
+1. Provides step-by-step guidance for tensorflow model trainer
+2. Follows industry best practices and patterns
+3. Generates production-ready code and configurations
+4. Validates outputs against common standards
+
+## Examples
+
+**Example: Basic Usage**
+Request: "Help me with tensorflow model trainer"
+Result: Provides step-by-step guidance and generates appropriate configurations
+
+
+## Prerequisites
+
+- Relevant development environment configured
+- Access to necessary tools and services
+- Basic understanding of ml training concepts
+
+
+## Output
+
+- Generated configurations and code
+- Best practice recommendations
+- Validation results
+
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Configuration invalid | Missing required fields | Check documentation for required parameters |
+| Tool not found | Dependency not installed | Install required tools per prerequisites |
+| Permission denied | Insufficient access | Verify credentials and permissions |
+
+
+## Resources
+
+- Official documentation for related tools
+- Best practices guides
+- Community examples and tutorials
+
+## Related Skills
+
+Part of the **ML Training** skill category.
+Tags: ml, training, pytorch, tensorflow, sklearn
+
+
+```markdown
+*** END OF FILE: tensorflow-model-trainer.md ***
+```
+
+
+***
+
+
+<a id="skill-tensorflow-savedmodel-creator"></a>
+
+# [1145/1303] SKILL: tensorflow-savedmodel-creator
+
+- **Source File:** `skills/tensorflow-savedmodel-creator.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 2,450 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tensorflow-savedmodel-creator.md ***
+```
+
+***
+name: tensorflow-savedmodel-creator
+description: 'Create tensorflow savedmodel creator operations. Auto-activating skill
+  for ML Deployment.
+
+  Triggers on: tensorflow savedmodel creator, tensorflow savedmodel creator
+
+  Part of the ML Deployment skill category. Use when working with tensorflow savedmodel
+  creator functionality. Trigger with phrases like "tensorflow savedmodel creator",
+  "tensorflow creator", "tensorflow".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(cmd:*), Grep
+version: 1.0.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- ai
+- mlops
+compatibility: Designed for Claude Code
+***
+# Tensorflow Savedmodel Creator
+
+## Overview
+
+This skill provides automated assistance for tensorflow savedmodel creator tasks within the ML Deployment domain.
+
+## When to Use
+
+This skill activates automatically when you:
+- Mention "tensorflow savedmodel creator" in your request
+- Ask about tensorflow savedmodel creator patterns or best practices
+- Need help with machine learning deployment skills covering model serving, mlops pipelines, monitoring, and production optimization.
+
+## Instructions
+
+1. Provides step-by-step guidance for tensorflow savedmodel creator
+2. Follows industry best practices and patterns
+3. Generates production-ready code and configurations
+4. Validates outputs against common standards
+
+## Examples
+
+**Example: Basic Usage**
+Request: "Help me with tensorflow savedmodel creator"
+Result: Provides step-by-step guidance and generates appropriate configurations
+
+
+## Prerequisites
+
+- Relevant development environment configured
+- Access to necessary tools and services
+- Basic understanding of ml deployment concepts
+
+
+## Output
+
+- Generated configurations and code
+- Best practice recommendations
+- Validation results
+
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Configuration invalid | Missing required fields | Check documentation for required parameters |
+| Tool not found | Dependency not installed | Install required tools per prerequisites |
+| Permission denied | Insufficient access | Verify credentials and permissions |
+
+
+## Resources
+
+- Official documentation for related tools
+- Best practices guides
+- Community examples and tutorials
+
+## Related Skills
+
+Part of the **ML Deployment** skill category.
+Tags: mlops, serving, inference, monitoring, production
+
+
+```markdown
+*** END OF FILE: tensorflow-savedmodel-creator.md ***
+```
+
+
+***
+
+
+<a id="skill-tensorflow-serving-setup"></a>
+
+# [1146/1303] SKILL: tensorflow-serving-setup
+
+- **Source File:** `skills/tensorflow-serving-setup.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 2,391 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: tensorflow-serving-setup.md ***
+```
+
+***
+name: tensorflow-serving-setup
+description: 'Configure tensorflow serving setup operations. Auto-activating skill
+  for ML Deployment.
+
+  Triggers on: tensorflow serving setup, tensorflow serving setup
+
+  Part of the ML Deployment skill category. Use when working with tensorflow serving
+  setup functionality. Trigger with phrases like "tensorflow serving setup", "tensorflow
+  setup", "tensorflow".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(cmd:*), Grep
+version: 1.0.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- ai
+- mlops
+compatibility: Designed for Claude Code
+***
+# Tensorflow Serving Setup
+
+## Overview
+
+This skill provides automated assistance for tensorflow serving setup tasks within the ML Deployment domain.
+
+## When to Use
+
+This skill activates automatically when you:
+- Mention "tensorflow serving setup" in your request
+- Ask about tensorflow serving setup patterns or best practices
+- Need help with machine learning deployment skills covering model serving, mlops pipelines, monitoring, and production optimization.
+
+## Instructions
+
+1. Provides step-by-step guidance for tensorflow serving setup
+2. Follows industry best practices and patterns
+3. Generates production-ready code and configurations
+4. Validates outputs against common standards
+
+## Examples
+
+**Example: Basic Usage**
+Request: "Help me with tensorflow serving setup"
+Result: Provides step-by-step guidance and generates appropriate configurations
+
+
+## Prerequisites
+
+- Relevant development environment configured
+- Access to necessary tools and services
+- Basic understanding of ml deployment concepts
+
+
+## Output
+
+- Generated configurations and code
+- Best practice recommendations
+- Validation results
+
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Configuration invalid | Missing required fields | Check documentation for required parameters |
+| Tool not found | Dependency not installed | Install required tools per prerequisites |
+| Permission denied | Insufficient access | Verify credentials and permissions |
+
+
+## Resources
+
+- Official documentation for related tools
+- Best practices guides
+- Community examples and tutorials
+
+## Related Skills
+
+Part of the **ML Deployment** skill category.
+Tags: mlops, serving, inference, monitoring, production
+
+
+```markdown
+*** END OF FILE: tensorflow-serving-setup.md ***
+```
+
+
+***
+
+
+<a id="skill-terraform-state-manager"></a>
+
+# [1147/1303] SKILL: terraform-state-manager
+
+- **Source File:** `skills/terraform-state-manager.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 2,388 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: terraform-state-manager.md ***
+```
+
+***
+name: terraform-state-manager
+description: 'Manage terraform state manager operations. Auto-activating skill for
+  DevOps Advanced.
+
+  Triggers on: terraform state manager, terraform state manager
+
+  Part of the DevOps Advanced skill category. Use when working with terraform state
+  manager functionality. Trigger with phrases like "terraform state manager", "terraform
+  manager", "terraform".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(cmd:*), Grep
+version: 1.0.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- devops
+- infrastructure
+compatibility: Designed for Claude Code
+***
+# Terraform State Manager
+
+## Overview
+
+This skill provides automated assistance for terraform state manager tasks within the DevOps Advanced domain.
+
+## When to Use
+
+This skill activates automatically when you:
+- Mention "terraform state manager" in your request
+- Ask about terraform state manager patterns or best practices
+- Need help with advanced devops skills covering kubernetes, terraform, advanced ci/cd, monitoring, and infrastructure as code.
+
+## Instructions
+
+1. Provides step-by-step guidance for terraform state manager
+2. Follows industry best practices and patterns
+3. Generates production-ready code and configurations
+4. Validates outputs against common standards
+
+## Examples
+
+**Example: Basic Usage**
+Request: "Help me with terraform state manager"
+Result: Provides step-by-step guidance and generates appropriate configurations
+
+
+## Prerequisites
+
+- Relevant development environment configured
+- Access to necessary tools and services
+- Basic understanding of devops advanced concepts
+
+
+## Output
+
+- Generated configurations and code
+- Best practice recommendations
+- Validation results
+
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Configuration invalid | Missing required fields | Check documentation for required parameters |
+| Tool not found | Dependency not installed | Install required tools per prerequisites |
+| Permission denied | Insufficient access | Verify credentials and permissions |
+
+
+## Resources
+
+- Official documentation for related tools
+- Best practices guides
+- Community examples and tutorials
+
+## Related Skills
+
+Part of the **DevOps Advanced** skill category.
+Tags: kubernetes, terraform, helm, monitoring, iac
+
+
+```markdown
+*** END OF FILE: terraform-state-manager.md ***
+```
+
+
+***
+
+
+<a id="skill-test-automator"></a>
+
+# [1148/1303] SKILL: test-automator
+
+- **Source File:** `skills/test-automator.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 11,675 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: test-automator.md ***
+```
+
+***
+name: test-automator
+description: Master AI-powered test automation with modern frameworks, self-healing tests, and comprehensive quality engineering. Build scalable testing strategies with advanced CI/CD integration.
+risk: critical
+source: community
+date_added: '2026-02-27'
+***
+
+## Use this skill when
+
+- Working on test automator tasks or workflows
+- Needing guidance, best practices, or checklists for test automator
+
+## Do not use this skill when
+
+- The task is unrelated to test automator
+- You need a different domain or tool outside this scope
+
+## Instructions
+
+- Clarify goals, constraints, and required inputs.
+- Apply relevant best practices and validate outcomes.
+- Provide actionable steps and verification.
+- If detailed examples are required, open `resources/implementation-playbook.md`.
+
+You are an expert test automation engineer specializing in AI-powered testing, modern frameworks, and comprehensive quality engineering strategies.
+
+## Purpose
+Expert test automation engineer focused on building robust, maintainable, and intelligent testing ecosystems. Masters modern testing frameworks, AI-powered test generation, and self-healing test automation to ensure high-quality software delivery at scale. Combines technical expertise with quality engineering principles to optimize testing efficiency and effectiveness.
+
+## Capabilities
+
+### Test-Driven Development (TDD) Excellence
+- Test-first development patterns with red-green-refactor cycle automation
+- Failing test generation and verification for proper TDD flow
+- Minimal implementation guidance for passing tests efficiently
+- Refactoring test support with regression safety validation
+- TDD cycle metrics tracking including cycle time and test growth
+- Integration with TDD orchestrator for large-scale TDD initiatives
+- Chicago School (state-based) and London School (interaction-based) TDD approaches
+- Property-based TDD with automated property discovery and validation
+- BDD integration for behavior-driven test specifications
+- TDD kata automation and practice session facilitation
+- Test triangulation techniques for comprehensive coverage
+- Fast feedback loop optimization with incremental test execution
+- TDD compliance monitoring and team adherence metrics
+- Baby steps methodology support with micro-commit tracking
+- Test naming conventions and intent documentation automation
+
+### AI-Powered Testing Frameworks
+- Self-healing test automation with tools like Testsigma, Testim, and Applitools
+- AI-driven test case generation and maintenance using natural language processing
+- Machine learning for test optimization and failure prediction
+- Visual AI testing for UI validation and regression detection
+- Predictive analytics for test execution optimization
+- Intelligent test data generation and management
+- Smart element locators and dynamic selectors
+
+### Modern Test Automation Frameworks
+- Cross-browser automation with Playwright and Selenium WebDriver
+- Mobile test automation with Appium, XCUITest, and Espresso
+- API testing with Postman, Newman, REST Assured, and Karate
+- Performance testing with K6, JMeter, and Gatling
+- Contract testing with Pact and Spring Cloud Contract
+- Accessibility testing automation with axe-core and Lighthouse
+- Database testing and validation frameworks
+
+### Low-Code/No-Code Testing Platforms
+- Testsigma for natural language test creation and execution
+- TestCraft and Katalon Studio for codeless automation
+- Ghost Inspector for visual regression testing
+- Mabl for intelligent test automation and insights
+- BrowserStack and Sauce Labs cloud testing integration
+- Ranorex and TestComplete for enterprise automation
+- Microsoft Playwright Code Generation and recording
+
+### CI/CD Testing Integration
+- Advanced pipeline integration with Jenkins, GitLab CI, and GitHub Actions
+- Parallel test execution and test suite optimization
+- Dynamic test selection based on code changes
+- Containerized testing environments with Docker and Kubernetes
+- Test result aggregation and reporting across multiple platforms
+- Automated deployment testing and smoke test execution
+- Progressive testing strategies and canary deployments
+
+### Performance and Load Testing
+- Scalable load testing architectures and cloud-based execution
+- Performance monitoring and APM integration during testing
+- Stress testing and capacity planning validation
+- API performance testing and SLA validation
+- Database performance testing and query optimization
+- Mobile app performance testing across devices
+- Real user monitoring (RUM) and synthetic testing
+
+### Test Data Management and Security
+- Dynamic test data generation and synthetic data creation
+- Test data privacy and anonymization strategies
+- Database state management and cleanup automation
+- Environment-specific test data provisioning
+- API mocking and service virtualization
+- Secure credential management and rotation
+- GDPR and compliance considerations in testing
+
+### Quality Engineering Strategy
+- Test pyramid implementation and optimization
+- Risk-based testing and coverage analysis
+- Shift-left testing practices and early quality gates
+- Exploratory testing integration with automation
+- Quality metrics and KPI tracking systems
+- Test automation ROI measurement and reporting
+- Testing strategy for microservices and distributed systems
+
+### Cross-Platform Testing
+- Multi-browser testing across Chrome, Firefox, Safari, and Edge
+- Mobile testing on iOS and Android devices
+- Desktop application testing automation
+- API testing across different environments and versions
+- Cross-platform compatibility validation
+- Responsive web design testing automation
+- Accessibility compliance testing across platforms
+
+### Advanced Testing Techniques
+- Chaos engineering and fault injection testing
+- Security testing integration with SAST and DAST tools
+- Contract-first testing and API specification validation
+- Property-based testing and fuzzing techniques
+- Mutation testing for test quality assessment
+- A/B testing validation and statistical analysis
+- Usability testing automation and user journey validation
+- Test-driven refactoring with automated safety verification
+- Incremental test development with continuous validation
+- Test doubles strategy (mocks, stubs, spies, fakes) for TDD isolation
+- Outside-in TDD for acceptance test-driven development
+- Inside-out TDD for unit-level development patterns
+- Double-loop TDD combining acceptance and unit tests
+- Transformation Priority Premise for TDD implementation guidance
+
+### Test Reporting and Analytics
+- Comprehensive test reporting with Allure, ExtentReports, and TestRail
+- Real-time test execution dashboards and monitoring
+- Test trend analysis and quality metrics visualization
+- Defect correlation and root cause analysis
+- Test coverage analysis and gap identification
+- Performance benchmarking and regression detection
+- Executive reporting and quality scorecards
+- TDD cycle time metrics and red-green-refactor tracking
+- Test-first compliance percentage and trend analysis
+- Test growth rate and code-to-test ratio monitoring
+- Refactoring frequency and safety metrics
+- TDD adoption metrics across teams and projects
+- Failing test verification and false positive detection
+- Test granularity and isolation metrics for TDD health
+
+## Behavioral Traits
+- Focuses on maintainable and scalable test automation solutions
+- Emphasizes fast feedback loops and early defect detection
+- Balances automation investment with manual testing expertise
+- Prioritizes test stability and reliability over excessive coverage
+- Advocates for quality engineering practices across development teams
+- Continuously evaluates and adopts emerging testing technologies
+- Designs tests that serve as living documentation
+- Considers testing from both developer and user perspectives
+- Implements data-driven testing approaches for comprehensive validation
+- Maintains testing environments as production-like infrastructure
+
+## Knowledge Base
+- Modern testing frameworks and tool ecosystems
+- AI and machine learning applications in testing
+- CI/CD pipeline design and optimization strategies
+- Cloud testing platforms and infrastructure management
+- Quality engineering principles and best practices
+- Performance testing methodologies and tools
+- Security testing integration and DevSecOps practices
+- Test data management and privacy considerations
+- Agile and DevOps testing strategies
+- Industry standards and compliance requirements
+- Test-Driven Development methodologies (Chicago and London schools)
+- Red-green-refactor cycle optimization techniques
+- Property-based testing and generative testing strategies
+- TDD kata patterns and practice methodologies
+- Test triangulation and incremental development approaches
+- TDD metrics and team adoption strategies
+- Behavior-Driven Development (BDD) integration with TDD
+- Legacy code refactoring with TDD safety nets
+
+## Response Approach
+1. **Analyze testing requirements** and identify automation opportunities
+2. **Design comprehensive test strategy** with appropriate framework selection
+3. **Implement scalable automation** with maintainable architecture
+4. **Integrate with CI/CD pipelines** for continuous quality gates
+5. **Establish monitoring and reporting** for test insights and metrics
+6. **Plan for maintenance** and continuous improvement
+7. **Validate test effectiveness** through quality metrics and feedback
+8. **Scale testing practices** across teams and projects
+
+### TDD-Specific Response Approach
+1. **Write failing test first** to define expected behavior clearly
+2. **Verify test failure** ensuring it fails for the right reason
+3. **Implement minimal code** to make the test pass efficiently
+4. **Confirm test passes** validating implementation correctness
+5. **Refactor with confidence** using tests as safety net
+6. **Track TDD metrics** monitoring cycle time and test growth
+7. **Iterate incrementally** building features through small TDD cycles
+8. **Integrate with CI/CD** for continuous TDD verification
+
+## Example Interactions
+- "Design a comprehensive test automation strategy for a microservices architecture"
+- "Implement AI-powered visual regression testing for our web application"
+- "Create a scalable API testing framework with contract validation"
+- "Build self-healing UI tests that adapt to application changes"
+- "Set up performance testing pipeline with automated threshold validation"
+- "Implement cross-browser testing with parallel execution in CI/CD"
+- "Create a test data management strategy for multiple environments"
+- "Design chaos engineering tests for system resilience validation"
+- "Generate failing tests for a new feature following TDD principles"
+- "Set up TDD cycle tracking with red-green-refactor metrics"
+- "Implement property-based TDD for algorithmic validation"
+- "Create TDD kata automation for team training sessions"
+- "Build incremental test suite with test-first development patterns"
+- "Design TDD compliance dashboard for team adherence monitoring"
+- "Implement London School TDD with mock-based test isolation"
+- "Set up continuous TDD verification in CI/CD pipeline"
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: test-automator.md ***
+```
+
+
+***
+
+
+<a id="skill-test-data-builder"></a>
+
+# [1149/1303] SKILL: test-data-builder
+
+- **Source File:** `skills/test-data-builder.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 2,250 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: test-data-builder.md ***
+```
+
+***
+name: test-data-builder
+description: 'Test Data Builder - Auto-activating skill for Test Automation.
+
+  Triggers on: test data builder, test data builder
+
+  Part of the Test Automation skill category. Use when writing or running tests. Trigger
+  with phrases like "test data builder", "test builder", "test".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(cmd:*), Grep
+version: 1.0.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- testing
+- automation
+compatibility: Designed for Claude Code
+***
+# Test Data Builder
+
+## Overview
+
+This skill provides automated assistance for test data builder tasks within the Test Automation domain.
+
+## When to Use
+
+This skill activates automatically when you:
+- Mention "test data builder" in your request
+- Ask about test data builder patterns or best practices
+- Need help with test automation skills covering unit testing, integration testing, mocking, and test framework configuration.
+
+## Instructions
+
+1. Provides step-by-step guidance for test data builder
+2. Follows industry best practices and patterns
+3. Generates production-ready code and configurations
+4. Validates outputs against common standards
+
+## Examples
+
+**Example: Basic Usage**
+Request: "Help me with test data builder"
+Result: Provides step-by-step guidance and generates appropriate configurations
+
+
+## Prerequisites
+
+- Relevant development environment configured
+- Access to necessary tools and services
+- Basic understanding of test automation concepts
+
+
+## Output
+
+- Generated configurations and code
+- Best practice recommendations
+- Validation results
+
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Configuration invalid | Missing required fields | Check documentation for required parameters |
+| Tool not found | Dependency not installed | Install required tools per prerequisites |
+| Permission denied | Insufficient access | Verify credentials and permissions |
+
+
+## Resources
+
+- Official documentation for related tools
+- Best practices guides
+- Community examples and tutorials
+
+## Related Skills
+
+Part of the **Test Automation** skill category.
+Tags: testing, jest, pytest, mocking, tdd
+
+
+```markdown
+*** END OF FILE: test-data-builder.md ***
+```
+
+
+***
+
+
+<a id="skill-test-driven-development"></a>
+
+# [1150/1303] SKILL: test-driven-development
+
+- **Source File:** `skills/test-driven-development.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 10,623 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: test-driven-development.md ***
+```
+
+***
+name: test-driven-development
+description: "Use when implementing any feature or bugfix, before writing implementation code"
+risk: critical
+source: community
+date_added: "2026-02-27"
+***
+
+# Test-Driven Development (TDD)
+
+## Overview
+
+Write the test first. Watch it fail. Write minimal code to pass.
+
+**Core principle:** If you didn't watch the test fail, you don't know if it tests the right thing.
+
+**Violating the letter of the rules is violating the spirit of the rules.**
+
+## When to Use
+**Always:**
+- New features
+- Bug fixes
+- Refactoring
+- Behavior changes
+
+**Exceptions (ask your human partner):**
+- Throwaway prototypes
+- Generated code
+- Configuration files
+
+Thinking "skip TDD just this once"? Stop. That's rationalization.
+
+## The Iron Law
+
+```
+NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
+```
+
+Write code before the test? Delete it. Start over.
+
+**No exceptions:**
+- Don't keep it as "reference"
+- Don't "adapt" it while writing tests
+- Don't look at it
+- Delete means delete
+
+Implement fresh from tests. Period.
+
+## Red-Green-Refactor
+
+```dot
+digraph tdd_cycle {
+    rankdir=LR;
+    red [label="RED\nWrite failing test", shape=box, style=filled, fillcolor="#ffcccc"];
+    verify_red [label="Verify fails\ncorrectly", shape=diamond];
+    green [label="GREEN\nMinimal code", shape=box, style=filled, fillcolor="#ccffcc"];
+    verify_green [label="Verify passes\nAll green", shape=diamond];
+    refactor [label="REFACTOR\nClean up", shape=box, style=filled, fillcolor="#ccccff"];
+    next [label="Next", shape=ellipse];
+
+    red -> verify_red;
+    verify_red -> green [label="yes"];
+    verify_red -> red [label="wrong\nfailure"];
+    green -> verify_green;
+    verify_green -> refactor [label="yes"];
+    verify_green -> green [label="no"];
+    refactor -> verify_green [label="stay\ngreen"];
+    verify_green -> next;
+    next -> red;
+}
+```
+
+### RED - Write Failing Test
+
+Write one minimal test showing what should happen.
+
+<Good>
+```typescript
+test('retries failed operations 3 times', async () => {
+  let attempts = 0;
+  const operation = () => {
+    attempts++;
+    if (attempts < 3) throw new Error('fail');
+    return 'success';
+  };
+
+  const result = await retryOperation(operation);
+
+  expect(result).toBe('success');
+  expect(attempts).toBe(3);
+});
+```
+Clear name, tests real behavior, one thing
+</Good>
+
+<Bad>
+```typescript
+test('retry works', async () => {
+  const mock = jest.fn()
+    .mockRejectedValueOnce(new Error())
+    .mockRejectedValueOnce(new Error())
+    .mockResolvedValueOnce('success');
+  await retryOperation(mock);
+  expect(mock).toHaveBeenCalledTimes(3);
+});
+```
+Vague name, tests mock not code
+</Bad>
+
+**Requirements:**
+- One behavior
+- Clear name
+- Real code (no mocks unless unavoidable)
+
+### Verify RED - Watch It Fail
+
+**MANDATORY. Never skip.**
+
+```bash
+npm test path/to/test.test.ts
+```
+
+Confirm:
+- Test fails (not errors)
+- Failure message is expected
+- Fails because feature missing (not typos)
+
+**Test passes?** You're testing existing behavior. Fix test.
+
+**Test errors?** Fix error, re-run until it fails correctly.
+
+### GREEN - Minimal Code
+
+Write simplest code to pass the test.
+
+<Good>
+```typescript
+async function retryOperation<T>(fn: () => Promise<T>): Promise<T> {
+  for (let i = 0; i < 3; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      if (i === 2) throw e;
+    }
+  }
+  throw new Error('unreachable');
+}
+```
+Just enough to pass
+</Good>
+
+<Bad>
+```typescript
+async function retryOperation<T>(
+  fn: () => Promise<T>,
+  options?: {
+    maxRetries?: number;
+    backoff?: 'linear' | 'exponential';
+    onRetry?: (attempt: number) => void;
+  }
+): Promise<T> {
+  // YAGNI
+}
+```
+Over-engineered
+</Bad>
+
+Don't add features, refactor other code, or "improve" beyond the test.
+
+### Verify GREEN - Watch It Pass
+
+**MANDATORY.**
+
+```bash
+npm test path/to/test.test.ts
+```
+
+Confirm:
+- Test passes
+- Other tests still pass
+- Output pristine (no errors, warnings)
+
+**Test fails?** Fix code, not test.
+
+**Other tests fail?** Fix now.
+
+### REFACTOR - Clean Up
+
+After green only:
+- Remove duplication
+- Improve names
+- Extract helpers
+
+Keep tests green. Don't add behavior.
+
+### Repeat
+
+Next failing test for next feature.
+
+## Good Tests
+
+| Quality | Good | Bad |
+|---------|------|-----|
+| **Minimal** | One thing. "and" in name? Split it. | `test('validates email and domain and whitespace')` |
+| **Clear** | Name describes behavior | `test('test1')` |
+| **Shows intent** | Demonstrates desired API | Obscures what code should do |
+
+## Why Order Matters
+
+**"I'll write tests after to verify it works"**
+
+Tests written after code pass immediately. Passing immediately proves nothing:
+- Might test wrong thing
+- Might test implementation, not behavior
+- Might miss edge cases you forgot
+- You never saw it catch the bug
+
+Test-first forces you to see the test fail, proving it actually tests something.
+
+**"I already manually tested all the edge cases"**
+
+Manual testing is ad-hoc. You think you tested everything but:
+- No record of what you tested
+- Can't re-run when code changes
+- Easy to forget cases under pressure
+- "It worked when I tried it" ≠ comprehensive
+
+Automated tests are systematic. They run the same way every time.
+
+**"Deleting X hours of work is wasteful"**
+
+Sunk cost fallacy. The time is already gone. Your choice now:
+- Delete and rewrite with TDD (X more hours, high confidence)
+- Keep it and add tests after (30 min, low confidence, likely bugs)
+
+The "waste" is keeping code you can't trust. Working code without real tests is technical debt.
+
+**"TDD is dogmatic, being pragmatic means adapting"**
+
+TDD IS pragmatic:
+- Finds bugs before commit (faster than debugging after)
+- Prevents regressions (tests catch breaks immediately)
+- Documents behavior (tests show how to use code)
+- Enables refactoring (change freely, tests catch breaks)
+
+"Pragmatic" shortcuts = debugging in production = slower.
+
+**"Tests after achieve the same goals - it's spirit not ritual"**
+
+No. Tests-after answer "What does this do?" Tests-first answer "What should this do?"
+
+Tests-after are biased by your implementation. You test what you built, not what's required. You verify remembered edge cases, not discovered ones.
+
+Tests-first force edge case discovery before implementing. Tests-after verify you remembered everything (you didn't).
+
+30 minutes of tests after ≠ TDD. You get coverage, lose proof tests work.
+
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "Too simple to test" | Simple code breaks. Test takes 30 seconds. |
+| "I'll test after" | Tests passing immediately prove nothing. |
+| "Tests after achieve same goals" | Tests-after = "what does this do?" Tests-first = "what should this do?" |
+| "Already manually tested" | Ad-hoc ≠ systematic. No record, can't re-run. |
+| "Deleting X hours is wasteful" | Sunk cost fallacy. Keeping unverified code is technical debt. |
+| "Keep as reference, write tests first" | You'll adapt it. That's testing after. Delete means delete. |
+| "Need to explore first" | Fine. Throw away exploration, start with TDD. |
+| "Test hard = design unclear" | Listen to test. Hard to test = hard to use. |
+| "TDD will slow me down" | TDD faster than debugging. Pragmatic = test-first. |
+| "Manual test faster" | Manual doesn't prove edge cases. You'll re-test every change. |
+| "Existing code has no tests" | You're improving it. Add tests for existing code. |
+
+## Red Flags - STOP and Start Over
+
+- Code before test
+- Test after implementation
+- Test passes immediately
+- Can't explain why test failed
+- Tests added "later"
+- Rationalizing "just this once"
+- "I already manually tested it"
+- "Tests after achieve the same purpose"
+- "It's about spirit not ritual"
+- "Keep as reference" or "adapt existing code"
+- "Already spent X hours, deleting is wasteful"
+- "TDD is dogmatic, I'm being pragmatic"
+- "This is different because..."
+
+**All of these mean: Delete code. Start over with TDD.**
+
+## Example: Bug Fix
+
+**Bug:** Empty email accepted
+
+**RED**
+```typescript
+test('rejects empty email', async () => {
+  const result = await submitForm({ email: '' });
+  expect(result.error).toBe('Email required');
+});
+```
+
+**Verify RED**
+```bash
+$ npm test
+FAIL: expected 'Email required', got undefined
+```
+
+**GREEN**
+```typescript
+function submitForm(data: FormData) {
+  if (!data.email?.trim()) {
+    return { error: 'Email required' };
+  }
+  // ...
+}
+```
+
+**Verify GREEN**
+```bash
+$ npm test
+PASS
+```
+
+**REFACTOR**
+Extract validation for multiple fields if needed.
+
+## Verification Checklist
+
+Before marking work complete:
+
+- [ ] Every new function/method has a test
+- [ ] Watched each test fail before implementing
+- [ ] Each test failed for expected reason (feature missing, not typo)
+- [ ] Wrote minimal code to pass each test
+- [ ] All tests pass
+- [ ] Output pristine (no errors, warnings)
+- [ ] Tests use real code (mocks only if unavoidable)
+- [ ] Edge cases and errors covered
+
+Can't check all boxes? You skipped TDD. Start over.
+
+## When Stuck
+
+| Problem | Solution |
+|---------|----------|
+| Don't know how to test | Write wished-for API. Write assertion first. Ask your human partner. |
+| Test too complicated | Design too complicated. Simplify interface. |
+| Must mock everything | Code too coupled. Use dependency injection. |
+| Test setup huge | Extract helpers. Still complex? Simplify design. |
+
+## Debugging Integration
+
+Bug found? Write failing test reproducing it. Follow TDD cycle. Test proves fix and prevents regression.
+
+Never fix bugs without a test.
+
+## Testing Anti-Patterns
+
+When adding mocks or test utilities, read @testing-anti-patterns.md to avoid common pitfalls:
+- Testing mock behavior instead of real behavior
+- Adding test-only methods to production classes
+- Mocking without understanding dependencies
+
+## Final Rule
+
+```
+Production code → test exists and failed first
+Otherwise → not TDD
+```
+
+No exceptions without your human partner's permission.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: test-driven-development.md ***
+```
+
+
+***
+
+
+<a id="skill-test-error-states"></a>
+
+# [1151/1303] SKILL: test-error-states
+
+- **Source File:** `skills/test-error-states.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 4,533 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: test-error-states.md ***
+```
+
+***
+name: test-error-states
+description: Force the states a happy-path run never reaches (a failing API, an empty list, a slow request, a timeout, an expired session, a toast that auto-dismisses) and check the UI actually handles them. Use when error handling was written but never run, when a loading or empty state needs verifying, when a bug only happens on a slow connection, or when a timer, poll, debounce or retry needs testing without sleeping.
+license: Apache-2.0
+metadata:
+  version: 2.9.0
+  homepage: https://www.reticle.sh
+  repository: https://github.com/reticlehq/reticle
+***
+
+# The error state has never run
+
+Every app has a `catch` block nobody has executed and an empty state nobody has seen. They are written from imagination, shipped untested, and discovered by a user on a bad day.
+
+**Reticle** can force those conditions in the running app. Not installed? `RETICLE_INSTALL_SOURCE=npx_skill npx @reticlehq/server@latest init`, then the [`install-and-verify`](https://github.com/reticlehq/reticle/blob/main/skills/install-and-verify/SKILL.md) skill.
+
+## Read this before you start: network mocking needs a driven browser
+
+`reticle_network_mock` applies mocks through CDP, and **the always-on SDK cannot do it.** A pooled lease is not enough either: `reticle_lease` returns `{ ok: false, reason: "no-cdp-provider" }`.
+
+Your route is `RETICLE_CDP_URL` pointed at a Chrome started with remote debugging:
+
+```bash
+# macOS — the user runs this once, in their own Chrome
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222
+
+RETICLE_CDP_URL=http://localhost:9222 npx @reticlehq/server@latest mcp
+```
+
+If that is not set up, **say so in one line and offer the clock half of this skill anyway**: `reticle_clock` needs none of it. What you may not do is drive the happy path, watch it pass, and report that error handling works.
+
+## Force a failure
+
+```
+reticle_run({ tool: "reticle_network_mock", sessionId, args: {
+  mocks: [{ urlContains: "/api/deploys", status: 500 }],
+}})
+```
+
+Then drive the flow and **name the recovery you expect before you act**:
+
+```
+reticle_act_and_wait({ sessionId, ref, action: "click", until: { kind: "allOf", predicates: [
+  { kind: "element", query: { testid: "error-banner" } },
+  { kind: "console", level: "error", absent: true },
+]}})
+```
+
+Note the second predicate. A UI that "handles" an error by logging an uncaught exception has not handled it. Clear mocks with `{ clear: true }` when you are done, or every later check runs against a lie.
+
+Worth forcing, in rough order of how often they are broken: `500`, a `4xx` with a real error body, an empty `200` (`[]`, the empty state), a malformed payload, and a request that never resolves (the spinner that spins forever).
+
+## Skip time instead of sleeping
+
+```
+reticle_clock({ sessionId, freeze: true })
+reticle_clock({ sessionId, advanceMs: 5000 })
+reticle_clock({ sessionId, reset: true })
+```
+
+Toasts that auto-dismiss, debounced search, polling, session timeouts, retry backoff. All of these are normally verified by sleeping, which is slow and flaky in equal measure. A timing assertion is a statement about the machine, so it passes on your laptop and fails in CI.
+
+Freeze, advance by exactly the interval, assert the consequence. Same result on a fast laptop and a loaded runner. **Always `reset` when you finish**, or a frozen clock silently breaks everything that runs after you.
+
+## What to assert
+
+The recovery, not the absence of a crash:
+
+1. The error is **shown to the user**: a specific element, not just "the page did not blank".
+2. The app **stayed usable**: retry works, the form still has its input, navigation is not stuck.
+3. **State is honest**: `reticle_state` shows the failure, not a half-applied optimistic update. A UI that rolled back visually while the store kept the optimistic value is the classic bug here, and only the store read finds it.
+4. **No uncaught error** in the console.
+
+## Honesty
+
+Mocking changes the app's world, so a verdict taken under a mock is a statement about the mocked condition and nothing else. Say which mock was active when you report a pass, and clear every mock and reset the clock before handing back. An audit that leaves a `500` pinned on `/api/deploys` breaks the next person's session and looks like a real outage.
+
+***
+
+Capability reference: `curl https://docs.reticle.sh/capabilities.md`. Everything else: `curl https://docs.reticle.sh/llms.txt`.
+
+
+```markdown
+*** END OF FILE: test-error-states.md ***
+```
+
+
+***
+
+
+<a id="skill-test-fixing"></a>
+
+# [1152/1303] SKILL: test-fixing
+
+- **Source File:** `skills/test-fixing.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 3,553 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: test-fixing.md ***
+```
+
+***
+name: test-fixing
+description: "Systematically identify and fix all failing tests using smart grouping strategies. Use when explicitly asks to fix tests (\"fix these tests\", \"make tests pass\"), reports test failures (\"tests are failing\", \"test suite is broken\"), or completes implementation and wants tests passing."
+risk: safe
+source: community
+date_added: "2026-02-27"
+***
+
+# Test Fixing
+
+Systematically identify and fix all failing tests using smart grouping strategies.
+
+## When to Use
+- Explicitly asks to fix tests ("fix these tests", "make tests pass")
+- Reports test failures ("tests are failing", "test suite is broken")
+- Completes implementation and wants tests passing
+- Mentions CI/CD failures due to tests
+
+## Systematic Approach
+
+### 1. Initial Test Run
+
+Run `make test` to identify all failing tests.
+
+Analyze output for:
+
+- Total number of failures
+- Error types and patterns
+- Affected modules/files
+
+### 2. Smart Error Grouping
+
+Group similar failures by:
+
+- **Error type**: ImportError, AttributeError, AssertionError, etc.
+- **Module/file**: Same file causing multiple test failure
+- **Root cause**: Missing dependencies, API changes, refactoring impacts
+
+Prioritize groups by:
+
+- Number of affected tests (highest impact first)
+- Dependency order (fix infrastructure before functionality)
+
+### 3. Systematic Fixing Process
+
+For each group (starting with highest impact):
+
+1. **Identify root cause**
+
+   - Read relevant code
+   - Check recent changes with `git diff`
+   - Understand the error pattern
+
+2. **Implement fix**
+
+   - Use Edit tool for code changes
+   - Follow project conventions (see CLAUDE.md)
+   - Make minimal, focused changes
+
+3. **Verify fix**
+
+   - Run subset of tests for this group
+   - Use pytest markers or file patterns:
+     ```bash
+     uv run pytest tests/path/to/test_file.py -v
+     uv run pytest -k "pattern" -v
+     ```
+   - Ensure group passes before moving on
+
+4. **Move to next group**
+
+### 4. Fix Order Strategy
+
+**Infrastructure first:**
+
+- Import errors
+- Missing dependencies
+- Configuration issues
+
+**Then API changes:**
+
+- Function signature changes
+- Module reorganization
+- Renamed variables/functions
+
+**Finally, logic issues:**
+
+- Assertion failures
+- Business logic bugs
+- Edge case handling
+
+### 5. Final Verification
+
+After all groups fixed:
+
+- Run complete test suite: `make test`
+- Verify no regressions
+- Check test coverage remains intact
+
+## Best Practices
+
+- Fix one group at a time
+- Run focused tests after each fix
+- Use `git diff` to understand recent changes
+- Look for patterns in failures
+- Don't move to next group until current passes
+- Keep changes minimal and focused
+
+## Example Workflow
+
+User: "The tests are failing after my refactor"
+
+1. Run `make test` → 15 failures identified
+2. Group errors:
+   - 8 ImportErrors (module renamed)
+   - 5 AttributeErrors (function signature changed)
+   - 2 AssertionErrors (logic bugs)
+3. Fix ImportErrors first → Run subset → Verify
+4. Fix AttributeErrors → Run subset → Verify
+5. Fix AssertionErrors → Run subset → Verify
+6. Run full suite → All pass ✓
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+
+```markdown
+*** END OF FILE: test-fixing.md ***
+```
+
+
+***
+
+
+<a id="skill-test-framework-migration-skill"></a>
+
+# [1153/1303] SKILL: test-framework-migration-skill
+
+- **Source File:** `skills/test-framework-migration-skill.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 8,883 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: test-framework-migration-skill.md ***
+```
+
+***
+name: test-framework-migration-skill
+description: Migrates and converts test automation scripts between Selenium, Playwright, Puppeteer, and Cypress. Use when the user asks to migrate, convert, or port tests from one framework to another; rewrite tests in a different framework; or switch from Selenium to Playwright, Playwright to...
+risk: critical
+source: https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill
+source_repo: LambdaTest/agent-skills
+source_type: community
+date_added: 2026-07-01
+license: MIT
+license_source: https://github.com/LambdaTest/agent-skills/blob/main/LICENSE
+***
+
+# Test Framework Migration Skill
+## When to Use
+
+Use this skill when you need migrates and converts test automation scripts between Selenium, Playwright, Puppeteer, and Cypress. Use when the user asks to migrate, convert, or port tests from one framework to another; rewrite tests in a different framework; or switch from Selenium to Playwright, Playwright to...
+
+
+You are a senior QA automation architect. You migrate test automation scripts from one framework (Selenium, Playwright, Puppeteer, Cypress) to another by applying API mappings, lifecycle changes, and pattern conversions from the skill reference docs.
+
+## Step 1 — Detect Source Framework
+
+Determine the **source** framework from the user message or from open files:
+
+| Signal in message or code | Source framework |
+|---------------------------|------------------|
+| "Selenium", "WebDriver", "driver.findElement", "By.id", "ChromeDriver" | Selenium |
+| "Playwright", "page.getByRole", "expect(locator).toBeVisible", "@playwright/test" | Playwright |
+| "Puppeteer", "page.$", "page.goto", "puppeteer.launch" | Puppeteer |
+| "Cypress", "cy.get", "cy.visit", "cy.contains", "cy.should" | Cypress |
+
+If ambiguous (e.g. user says "convert my tests" with no file open), ask: "Which framework are your current tests in (Selenium, Playwright, Puppeteer, or Cypress)?"
+
+## Step 2 — Detect Target Framework
+
+Determine the **target** framework from the user message:
+
+| User says... | Target |
+|--------------|--------|
+| "to Playwright", "to playwright" | Playwright |
+| "to Selenium", "to WebDriver" | Selenium |
+| "to Puppeteer" | Puppeteer |
+| "to Cypress" | Cypress |
+
+If the user only names the source (e.g. "convert my Selenium tests"), ask: "Which framework do you want to migrate to (Playwright, Puppeteer, Cypress, or keep Selenium with another language)?"
+
+## Step 3 — Detect Language
+
+| Source → Target | Language note |
+|----------------|---------------|
+| Selenium (Java/Python/C#) → Playwright | Playwright is typically JS/TS; migration usually implies rewriting to TypeScript or JavaScript. Mention this if source is Java/C#/Python. |
+| Selenium (JS) → Playwright | Same language (JS/TS) possible. |
+| Playwright/Puppeteer/Cypress → Selenium | Target can be Java, Python, JS, C#. Prefer same as project or ask. |
+| Playwright ↔ Puppeteer ↔ Cypress | Typically stay in JS/TS. |
+
+For language matrix details (which frameworks support which languages), see [reference/overview.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/reference/overview.md).
+
+## Step 4 — Route to Reference
+
+**Always read** the matching reference file before generating migrated code:
+
+| Source → Target | Reference file |
+|----------------|----------------|
+| Selenium → Playwright | [reference/selenium-to-playwright.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/reference/selenium-to-playwright.md) |
+| Playwright → Selenium | [reference/playwright-to-selenium.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/reference/playwright-to-selenium.md) |
+| Selenium → Puppeteer | [reference/selenium-to-puppeteer.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/reference/selenium-to-puppeteer.md) |
+| Puppeteer → Selenium | [reference/puppeteer-to-selenium.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/reference/puppeteer-to-selenium.md) |
+| Puppeteer → Playwright | [reference/puppeteer-to-playwright.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/reference/puppeteer-to-playwright.md) |
+| Playwright → Puppeteer | [reference/playwright-to-puppeteer.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/reference/playwright-to-puppeteer.md) |
+| Cypress → Playwright | [reference/cypress-to-playwright.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/reference/cypress-to-playwright.md) |
+| Playwright → Cypress | [reference/playwright-to-cypress.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/reference/playwright-to-cypress.md) |
+| Selenium → Cypress | [reference/selenium-to-cypress.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/reference/selenium-to-cypress.md) |
+| Cypress → Selenium | [reference/cypress-to-selenium.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/reference/cypress-to-selenium.md) |
+
+If the pair is not in the table, say so and suggest the closest supported migration (e.g. add WebDriverIO later as a new reference file).
+
+## Step 5 — Apply Mappings
+
+Using the reference doc:
+
+1. **Locators** — Convert using the API mapping table (e.g. `By.id("x")` → `page.getByRole(...)` or `page.locator('#x')`).
+2. **Waits** — Convert wait strategy (explicit wait / auto-wait / cy.should).
+3. **Actions** — Map click, type, select, etc.
+4. **Assertions** — Map to target's assertion style.
+5. **Lifecycle** — Adjust setup/teardown (driver vs page, launch vs connect).
+6. **Cloud (TestMu)** — If user runs on cloud, point to target framework's cloud docs after migration.
+
+After generating migrated code, validate against the "Gotchas" section of the reference to avoid common pitfalls.
+
+## Cross-References for Deep Patterns
+
+| Need | Where to look |
+|------|----------------|
+| Full Playwright patterns, POM, cloud | `playwright-skill` and [playwright-skill/reference/cloud-integration.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/../playwright-skill/reference/cloud-integration.md) |
+| Full Selenium patterns, POM, cloud | `selenium-skill` and [selenium-skill/reference/cloud-integration.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/../selenium-skill/reference/cloud-integration.md) |
+| Full Puppeteer patterns, cloud | `puppeteer-skill` and [puppeteer-skill/reference/cloud-integration.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/../puppeteer-skill/reference/cloud-integration.md) |
+| Full Cypress patterns, cloud | `cypress-skill` and [cypress-skill/reference/cloud-integration.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/../cypress-skill/reference/cloud-integration.md) |
+| TestMu capabilities (all frameworks) | [shared/testmu-cloud-reference.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/../shared/testmu-cloud-reference.md) |
+
+## Validation Workflow
+
+After generating migrated code:
+
+1. Ensure every locator/action/assertion was converted using the reference mapping (no leftover source API).
+2. Ensure lifecycle (setup/teardown) matches target framework.
+3. If target is Playwright: use auto-wait assertions (`expect(locator).toBeVisible()`), not raw `waitForTimeout`.
+4. If target is Cypress: no async/await with `cy` commands; use chain style.
+5. If target is Selenium: use explicit `WebDriverWait`, never `Thread.sleep`.
+
+## Reference Files Summary
+
+| File | When to read |
+|------|--------------|
+| [reference/overview.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/reference/overview.md) | Framework comparison, language matrix, when to migrate |
+| [reference/playbook.md](https://github.com/LambdaTest/agent-skills/tree/main/test-framework-migration-skill/reference/playbook.md) | Full migration workflow, debugging table, CI/CD checklist, best practices |
+| `reference/<source>-to-<target>.md` | Before converting any script for that pair |
+
+## Limitations
+
+- Use this skill only when the task clearly matches its upstream source and local project context.
+- Verify commands, generated code, dependencies, credentials, and external service behavior before applying changes.
+- Do not treat examples as a substitute for environment-specific tests, security review, or user approval for destructive or costly actions.
+
+
+```markdown
+*** END OF FILE: test-framework-migration-skill.md ***
+```
+
+
+***
+
+
+<a id="skill-test-gaps"></a>
+
+# [1154/1303] SKILL: test-gaps
+
+- **Source File:** `skills/test-gaps.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 871 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: test-gaps.md ***
+```
+
+***
+name: test-gaps
+description: Detect missing test coverage and generate test suggestions. Use when the user asks about coverage gaps, untested code, or what tests to write next; also after adding a feature to find what still needs tests.
+argument-hint: "[--path PATH] [--limit N]"
+allowed-tools: Bash(npx *) mcp__plugin_ruflo-core_ruflo__hooks_worker-dispatch Read Grep
+***
+Find test coverage gaps via CLI:
+```bash
+npx @claude-flow/cli@latest hooks coverage-gaps --format table --limit 20
+npx @claude-flow/cli@latest hooks coverage-route --task "add auth tests"
+npx @claude-flow/cli@latest hooks coverage-suggest --path src/
+```
+
+Or dispatch the testgaps worker via MCP:
+`mcp__plugin_ruflo-core_ruflo__hooks_worker-dispatch({ trigger: "testgaps" })`
+
+For continuous detection, use `/loop` with the `loop-worker` skill targeting the `testgaps` worker.
+
+
+```markdown
+*** END OF FILE: test-gaps.md ***
+```
+
+
+***
+
+
+<a id="skill-test-guard"></a>
+
+# [1155/1303] SKILL: test-guard
+
+- **Source File:** `skills/test-guard.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 8,418 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: test-guard.md ***
+```
+
+***
+name: "test-guard"
+description: "Review generated or changed test code against universal testing rules before it ships or is presented for approval."
+risk: "critical"
+source: "community"
+source_repo: "amElnagdy/guard-skills"
+source_type: "community"
+date_added: 2026-07-13
+author: "community"
+tags: []
+tools: []
+***
+
+
+# Test Guard
+
+You are reviewing generated or changed test code before it ships. Enforce the rules below after the first test-writing pass and before the tests are presented, committed, or merged. Be a sharp reviewer, not a pedantic one: flag what wastes maintenance effort or hides real bugs, ignore cosmetic preferences.
+
+These rules exist because coding agents over-generate tests. The common failure modes: mock-heavy unit tests that assert implementation details, near-duplicate test bodies that differ by one value, and tests that re-verify the framework instead of the project's logic. Each looks productive in a diff and costs maintenance forever.
+
+## When to Use
+
+Use this skill when reviewing generated or changed test code before it ships. Activate it reactively after an agent writes, edits, generates, or refactors tests — unit tests, integration tests, e2e tests, or snapshot tests in any framework.
+
+## When this skill activates
+
+- A coding agent has just written new test functions or test files, in any language
+- You are editing existing tests
+- You are reviewing a diff that contains test changes
+- The user asks you to write, add, or review tests
+
+## Adapt to the project first
+
+These rules are universal, but their application is not. Before reviewing:
+
+1. Check the project's own agent instructions (CLAUDE.md, AGENTS.md) and testing docs. Project-specific testing rules win over this skill when they conflict.
+2. Identify the test stack, then read the matching reference for concrete patterns:
+   - Python / pytest → [references/pytest.md](references/pytest.md)
+   - PHP / PHPUnit / Pest / WordPress → [references/phpunit.md](references/phpunit.md)
+   - JavaScript / TypeScript / Jest / Vitest → [references/jest.md](references/jest.md)
+3. If the project calls LLM APIs, uses agent frameworks, or wires up observability/telemetry, also read [references/llm-app-testing.md](references/llm-app-testing.md) — it adds three rules specific to LLM applications.
+4. Map the project's system boundaries: network calls, databases, filesystem, clock and randomness, third-party SDKs, LLM APIs. Existing fixtures and test helpers usually reveal where the project already draws these lines.
+
+## What to do
+
+1. Read the test code: the diff, the new file, or the section being modified.
+2. Check each test against the rules below.
+3. Report violations concisely: rule number, location, why it violates, suggested fix.
+4. If the user explicitly invokes this skill before test writing, apply the rules as you write — don't write violations and then flag them.
+
+When writing new tests, ask for each test: "What specific bug does this catch that no other test in this suite catches?" If you can't answer clearly, don't write it.
+
+## The Nine Rules
+
+### Rule 1: Test behavior, not implementation
+Test what code does from the caller's perspective. Assert return values and observable side effects. Never assert that an internal helper was called with specific arguments — that test breaks on every refactor while catching nothing.
+
+**Violation pattern:** asserting a mock of an internal function was called, where that function is not a system boundary.
+**Fix:** assert the return value or the state change the caller observes.
+
+### Rule 2: Every mock must be justified
+Mock only at system boundaries: network and HTTP calls, LLM APIs, databases, filesystem I/O on external files, clock and randomness, third-party SDKs. Never mock internal classes or helper functions to isolate a "unit" — the seams you create hide the integration bugs worth catching.
+
+When you mock a boundary, assert what the caller *does with the response*, not that the mock received specific arguments.
+
+### Rule 3: One scenario per test, data-driven for variants
+If two or more tests share identical setup and differ only in input/output values, merge them into one data-driven test (`@pytest.mark.parametrize`, PHPUnit `#[DataProvider]`, Jest `test.each`).
+
+**When separate tests ARE correct:** different setup, different assertions, different mock configurations, or genuinely different scenarios that happen to exercise the same function.
+
+### Rule 4: Every test must justify its existence
+Ask: "What bug does this catch that no other test catches?" Delete tests that only catch typos, verify default values of data classes, or test trivial pass-through logic.
+
+**Common unjustified tests:** constructors setting attributes, a function rejecting input the type system already forbids, string formatting of log messages, a constant equaling its literal value.
+
+### Rule 5: Name tests for the scenario
+Pattern: `test_<scenario>_<expected_outcome>`. The name should read like a requirement, not echo the function signature.
+
+| Bad | Good |
+|-----|------|
+| `test_parse_response_missing_field` | `test_malformed_response_falls_back_to_default` |
+| `test_get_language_no_class` | `test_element_without_class_returns_empty_language` |
+| `test_add_tags_single_string` | `test_single_tag_normalizes_to_list` |
+
+### Rule 6: Production regression tests are sacred
+Tests that reproduce a real production bug are always justified. Reference the incident (date, issue ID, or short description) in the name or a comment, and never delete them. They are exempt from Rule 4 — their justification is the incident.
+
+### Rule 7: No tests for framework guarantees
+Don't test that the validation library validates, the ORM commits, the router returns 404, or the test framework's fixtures work. Test *your* logic that sits on top of the framework.
+
+**Violation pattern:** a test that would still pass if you deleted all the project's custom code and kept only framework defaults.
+
+### Rule 8: State and value objects are real, never mocked
+Never mock a data model, DTO, entity, or state object. Construct a real instance. Mocking state hides field-name typos and validation errors — exactly the bugs worth catching. If constructing the real object is painful, that is design feedback, not a reason to mock; add a small builder or factory helper.
+
+### Rule 9: Infrastructure under test gets real infrastructure
+When database queries, schema behavior, or persistence logic *is the subject* of the test, run against a real test database with real migrations applied via fixtures. Mocking the session there tests nothing. Mocking the database is fine when persistence is only a side effect of the behavior under test.
+
+## Reporting format
+
+When flagging violations, use this format:
+
+```
+**Rule N violation** in `tests/path/file.ext::<test_name>`
+- What: <one sentence describing the violation>
+- Fix: <one sentence describing what to do instead>
+```
+
+Group violations by file. If a file has no violations, don't mention it.
+
+## Severity guide
+
+Not all violations are equal. Use judgment:
+
+- **Must fix:** Rules 1, 2, 8 — these hide real bugs or make tests brittle
+- **Should fix:** Rules 3, 4, 5, 7 — these cause bloat and maintenance drag
+- **Sacred:** Rule 6 — never delete, always allow
+- **Worth noting:** Rule 9 — test architecture; flag it, but don't block small changes on it
+
+## References
+
+- [references/pytest.md](references/pytest.md) — Python/pytest patterns: parametrize, fixtures, mock boundaries, real Pydantic instances
+- [references/phpunit.md](references/phpunit.md) — PHP/PHPUnit/Pest patterns, including WordPress and WooCommerce test boundaries
+- [references/jest.md](references/jest.md) — Jest/Vitest patterns: test.each, module mocks, msw, snapshot discipline
+- [references/llm-app-testing.md](references/llm-app-testing.md) — three extra rules for LLM applications: prompt contracts, observability wiring, agent-flow transitions
+
+## What this skill does NOT do
+
+- It does not run tests. Use the project's test runner for that.
+- It does not enforce code style — that's the linter's job.
+- It does not decide *what* to test — only *how* to test it.
+- It does not flag pre-existing violations in files you're not touching, unless asked to audit.
+
+
+```markdown
+*** END OF FILE: test-guard.md ***
+```
+
+
+***
+
+
+<a id="skill-test-naming-enforcer"></a>
+
+# [1156/1303] SKILL: test-naming-enforcer
+
+- **Source File:** `skills/test-naming-enforcer.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 2,284 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: test-naming-enforcer.md ***
+```
+
+***
+name: test-naming-enforcer
+description: 'Test Naming Enforcer - Auto-activating skill for Test Automation.
+
+  Triggers on: test naming enforcer, test naming enforcer
+
+  Part of the Test Automation skill category. Use when writing or running tests. Trigger
+  with phrases like "test naming enforcer", "test enforcer", "test".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(cmd:*), Grep
+version: 1.0.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- testing
+- automation
+compatibility: Designed for Claude Code
+***
+# Test Naming Enforcer
+
+## Overview
+
+This skill provides automated assistance for test naming enforcer tasks within the Test Automation domain.
+
+## When to Use
+
+This skill activates automatically when you:
+- Mention "test naming enforcer" in your request
+- Ask about test naming enforcer patterns or best practices
+- Need help with test automation skills covering unit testing, integration testing, mocking, and test framework configuration.
+
+## Instructions
+
+1. Provides step-by-step guidance for test naming enforcer
+2. Follows industry best practices and patterns
+3. Generates production-ready code and configurations
+4. Validates outputs against common standards
+
+## Examples
+
+**Example: Basic Usage**
+Request: "Help me with test naming enforcer"
+Result: Provides step-by-step guidance and generates appropriate configurations
+
+
+## Prerequisites
+
+- Relevant development environment configured
+- Access to necessary tools and services
+- Basic understanding of test automation concepts
+
+
+## Output
+
+- Generated configurations and code
+- Best practice recommendations
+- Validation results
+
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Configuration invalid | Missing required fields | Check documentation for required parameters |
+| Tool not found | Dependency not installed | Install required tools per prerequisites |
+| Permission denied | Insufficient access | Verify credentials and permissions |
+
+
+## Resources
+
+- Official documentation for related tools
+- Best practices guides
+- Community examples and tutorials
+
+## Related Skills
+
+Part of the **Test Automation** skill category.
+Tags: testing, jest, pytest, mocking, tdd
+
+
+```markdown
+*** END OF FILE: test-naming-enforcer.md ***
+```
+
+
+***
+
+
+<a id="skill-test-organization-helper"></a>
+
+# [1157/1303] SKILL: test-organization-helper
+
+- **Source File:** `skills/test-organization-helper.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 2,326 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: test-organization-helper.md ***
+```
+
+***
+name: test-organization-helper
+description: 'Test Organization Helper - Auto-activating skill for Test Automation.
+
+  Triggers on: test organization helper, test organization helper
+
+  Part of the Test Automation skill category. Use when writing or running tests. Trigger
+  with phrases like "test organization helper", "test helper", "test".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(cmd:*), Grep
+version: 1.0.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- testing
+- automation
+compatibility: Designed for Claude Code
+***
+# Test Organization Helper
+
+## Overview
+
+This skill provides automated assistance for test organization helper tasks within the Test Automation domain.
+
+## When to Use
+
+This skill activates automatically when you:
+- Mention "test organization helper" in your request
+- Ask about test organization helper patterns or best practices
+- Need help with test automation skills covering unit testing, integration testing, mocking, and test framework configuration.
+
+## Instructions
+
+1. Provides step-by-step guidance for test organization helper
+2. Follows industry best practices and patterns
+3. Generates production-ready code and configurations
+4. Validates outputs against common standards
+
+## Examples
+
+**Example: Basic Usage**
+Request: "Help me with test organization helper"
+Result: Provides step-by-step guidance and generates appropriate configurations
+
+
+## Prerequisites
+
+- Relevant development environment configured
+- Access to necessary tools and services
+- Basic understanding of test automation concepts
+
+
+## Output
+
+- Generated configurations and code
+- Best practice recommendations
+- Validation results
+
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Configuration invalid | Missing required fields | Check documentation for required parameters |
+| Tool not found | Dependency not installed | Install required tools per prerequisites |
+| Permission denied | Insufficient access | Verify credentials and permissions |
+
+
+## Resources
+
+- Official documentation for related tools
+- Best practices guides
+- Community examples and tutorials
+
+## Related Skills
+
+Part of the **Test Automation** skill category.
+Tags: testing, jest, pytest, mocking, tdd
+
+
+```markdown
+*** END OF FILE: test-organization-helper.md ***
+```
+
+
+***
+
+
+<a id="skill-test-parallelizer"></a>
+
+# [1158/1303] SKILL: test-parallelizer
+
+- **Source File:** `skills/test-parallelizer.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 2,255 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: test-parallelizer.md ***
+```
+
+***
+name: test-parallelizer
+description: 'Test Parallelizer - Auto-activating skill for Test Automation.
+
+  Triggers on: test parallelizer, test parallelizer
+
+  Part of the Test Automation skill category. Use when writing or running tests. Trigger
+  with phrases like "test parallelizer", "test parallelizer", "test".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(cmd:*), Grep
+version: 1.0.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- testing
+- automation
+compatibility: Designed for Claude Code
+***
+# Test Parallelizer
+
+## Overview
+
+This skill provides automated assistance for test parallelizer tasks within the Test Automation domain.
+
+## When to Use
+
+This skill activates automatically when you:
+- Mention "test parallelizer" in your request
+- Ask about test parallelizer patterns or best practices
+- Need help with test automation skills covering unit testing, integration testing, mocking, and test framework configuration.
+
+## Instructions
+
+1. Provides step-by-step guidance for test parallelizer
+2. Follows industry best practices and patterns
+3. Generates production-ready code and configurations
+4. Validates outputs against common standards
+
+## Examples
+
+**Example: Basic Usage**
+Request: "Help me with test parallelizer"
+Result: Provides step-by-step guidance and generates appropriate configurations
+
+
+## Prerequisites
+
+- Relevant development environment configured
+- Access to necessary tools and services
+- Basic understanding of test automation concepts
+
+
+## Output
+
+- Generated configurations and code
+- Best practice recommendations
+- Validation results
+
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Configuration invalid | Missing required fields | Check documentation for required parameters |
+| Tool not found | Dependency not installed | Install required tools per prerequisites |
+| Permission denied | Insufficient access | Verify credentials and permissions |
+
+
+## Resources
+
+- Official documentation for related tools
+- Best practices guides
+- Community examples and tutorials
+
+## Related Skills
+
+Part of the **Test Automation** skill category.
+Tags: testing, jest, pytest, mocking, tdd
+
+
+```markdown
+*** END OF FILE: test-parallelizer.md ***
+```
+
+
+***
+
+
+<a id="skill-test-retry-config"></a>
+
+# [1159/1303] SKILL: test-retry-config
+
+- **Source File:** `skills/test-retry-config.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 2,249 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: test-retry-config.md ***
+```
+
+***
+name: test-retry-config
+description: 'Test Retry Config - Auto-activating skill for Test Automation.
+
+  Triggers on: test retry config, test retry config
+
+  Part of the Test Automation skill category. Use when writing or running tests. Trigger
+  with phrases like "test retry config", "test config", "test".
+
+  '
+allowed-tools: Read, Write, Edit, Bash(cmd:*), Grep
+version: 1.0.0
+license: MIT
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+tags:
+- testing
+- automation
+compatibility: Designed for Claude Code
+***
+# Test Retry Config
+
+## Overview
+
+This skill provides automated assistance for test retry config tasks within the Test Automation domain.
+
+## When to Use
+
+This skill activates automatically when you:
+- Mention "test retry config" in your request
+- Ask about test retry config patterns or best practices
+- Need help with test automation skills covering unit testing, integration testing, mocking, and test framework configuration.
+
+## Instructions
+
+1. Provides step-by-step guidance for test retry config
+2. Follows industry best practices and patterns
+3. Generates production-ready code and configurations
+4. Validates outputs against common standards
+
+## Examples
+
+**Example: Basic Usage**
+Request: "Help me with test retry config"
+Result: Provides step-by-step guidance and generates appropriate configurations
+
+
+## Prerequisites
+
+- Relevant development environment configured
+- Access to necessary tools and services
+- Basic understanding of test automation concepts
+
+
+## Output
+
+- Generated configurations and code
+- Best practice recommendations
+- Validation results
+
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| Configuration invalid | Missing required fields | Check documentation for required parameters |
+| Tool not found | Dependency not installed | Install required tools per prerequisites |
+| Permission denied | Insufficient access | Verify credentials and permissions |
+
+
+## Resources
+
+- Official documentation for related tools
+- Best practices guides
+- Community examples and tutorials
+
+## Related Skills
+
+Part of the **Test Automation** skill category.
+Tags: testing, jest, pytest, mocking, tdd
+
+
+```markdown
+*** END OF FILE: test-retry-config.md ***
+```
+
+
+***
+
+
+<a id="skill-test-skill"></a>
+
+# [1160/1303] SKILL: test-skill
+
+- **Source File:** `skills/test-skill.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 1,565 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: test-skill.md ***
+```
+
+***
+name: test-skill
+description: |
+  Test skill for E2E validation. Trigger with "run test skill" or "execute test".
+  Use this skill when testing skill activation and tool permissions.
+allowed-tools: Read, Write, Bash
+version: 1.0.0
+license: MIT
+author: Test Author <test@example.com>
+***
+
+# Test Skill
+
+This is a minimal skill used for E2E testing of the Claude Code plugin system.
+
+## Purpose
+
+This skill validates:
+- Skill loading from plugin directory
+- Frontmatter parsing (YAML)
+- Trigger phrase detection
+- Tool permission validation
+- 2025 schema compliance
+
+## Activation
+
+This skill activates when you use phrases like:
+- "run test skill"
+- "execute test"
+- "test skill activation"
+
+## Allowed Tools
+
+- **Read** - Read files for validation
+- **Write** - Write test results
+- **Bash** - Execute test commands
+
+## Implementation
+
+This skill performs basic test operations to validate the plugin system works correctly.
+
+### Test Operations
+
+1. Read test files
+2. Write test results
+3. Execute validation commands
+
+## Expected Behavior
+
+When activated, this skill should:
+- Load successfully from the plugin
+- Parse frontmatter correctly
+- Match trigger phrases
+- Respect tool permissions
+
+## Error Handling
+
+If this skill fails to activate:
+- Check plugin installation
+- Verify SKILL.md frontmatter
+- Validate allowed-tools format
+- Ensure trigger phrases are correct
+
+## Resources
+
+- E2E Test Suite Documentation: `/tests/e2e/README.md`
+- Plugin Structure: `/.claude-plugin/plugin.json`
+
+
+```markdown
+*** END OF FILE: test-skill.md ***
+```
+
+
+***
+
+
+<a id="skill-testing-browser-compatibility"></a>
+
+# [1161/1303] SKILL: testing-browser-compatibility
+
+- **Source File:** `skills/testing-browser-compatibility.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 7,112 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: testing-browser-compatibility.md ***
+```
+
+***
+name: testing-browser-compatibility
+description: 'Test across multiple browsers and devices for cross-browser compatibility.
+
+  Use when ensuring cross-browser or device compatibility with BrowserStack, Sauce
+  Labs, LambdaTest, or Kobiton.
+
+  Trigger with phrases like "test browser compatibility", "check cross-browser", "validate
+  on browsers", "test on real devices", "kobiton test".
+
+  '
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash(npx playwright:*), Bash(npm:*),
+  Bash(curl:*)
+version: 2.20.0
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+license: MIT
+tags:
+- testing
+- cross-browser
+- mobile-testing
+- real-device
+- cloud-testing
+compatibility: Designed for Claude Code
+***
+# Browser Compatibility Tester
+
+## Table of Contents
+
+[Overview](#overview) | [Instructions](#instructions) (Local / Cloud) | [Examples](#examples) | [Error Handling](#error-handling) | [Output](#output) | [Resources](#resources)
+
+## Overview
+
+Test web applications across multiple browsers, rendering engines, and real devices. Validates CSS rendering, JavaScript API support, layout consistency, and interactive behavior across Chromium (Chrome, Edge), Gecko (Firefox), and WebKit (Safari) -- locally with Playwright or on real devices via BrowserStack, Sauce Labs, LambdaTest, or Kobiton.
+
+## Prerequisites
+
+- Playwright installed (`npx playwright install --with-deps`) and application running at a test URL
+- For cloud testing: provider credentials in environment variables (see `${CLAUDE_SKILL_DIR}/references/cloud-providers.md`)
+
+## Instructions
+
+### Mode 1: Local Testing (Playwright)
+
+Default mode. Zero cloud accounts needed.
+
+1. Define the browser matrix from project `browserslist` config or use defaults:
+   - Desktop: Chrome (latest), Firefox (latest), Safari (latest), Edge (latest)
+   - Mobile: iPhone 14 (WebKit), Pixel 7 (Chromium)
+   - Viewports: 375px, 768px, 1280px, 1920px
+
+2. Scan the codebase for compatibility risks:
+   - Grep for modern JS APIs (`IntersectionObserver`, `structuredClone`, `Array.at()`, `Promise.withResolvers()`)
+   - Grep for modern CSS (`container queries`, `has()`, `@layer`, `subgrid`, `color-mix()`)
+   - Cross-reference against caniuse data; flag usage without polyfills or `@supports`
+
+3. Write compatibility-focused tests:
+   - Layout: key elements render at expected positions/sizes per viewport
+   - CSS features: modern features degrade gracefully behind `@supports`
+   - JS APIs: polyfills load in older browsers; form inputs (date, color, range) across engines
+   - Accessibility: run axe-core per browser (`@axe-core/playwright`)
+
+4. Execute and capture results:
+   - `npx playwright test --project=chromium --project=firefox --project=webkit`
+   - Screenshots per browser for visual comparison
+   - Video traces for failing tests
+
+### Mode 2: Cloud Real-Device Testing
+
+Applies when real physical devices, broader OS coverage, or carrier network conditions are required beyond what Playwright emulation can replicate. Read `${CLAUDE_SKILL_DIR}/references/cloud-providers.md` for full auth, API, and capabilities details.
+
+**Provider selection:**
+
+| Need | Provider |
+|------|----------|
+| Broadest browser/OS matrix (3,000+ combos) | BrowserStack |
+| Enterprise CI/CD, Sauce Connect tunnel | Sauce Labs |
+| Auto-healing selectors, smart testing | LambdaTest |
+| Real physical devices, scriptless automation | **Kobiton** |
+
+Never hardcode credentials. Set provider env vars (`BROWSERSTACK_USERNAME`/`ACCESS_KEY`, `SAUCE_USERNAME`/`ACCESS_KEY`, `LT_USERNAME`/`ACCESS_KEY`, `KOBITON_USERNAME`/`API_KEY`).
+
+1. Verify credentials are set for the chosen provider
+2. Query available devices/browsers via provider API
+3. Configure WebDriver or Appium capabilities (see `${CLAUDE_SKILL_DIR}/references/cloud-providers.md`)
+4. Execute tests against cloud grid
+5. Retrieve session artifacts (screenshots, video, logs, network HAR)
+6. Aggregate results into compatibility report (CI/CD patterns: `${CLAUDE_SKILL_DIR}/references/ci-cd-integration.md`)
+
+### Browser-Specific Checks
+
+- **Safari**: date input formatting, scroll behavior, backdrop-filter, PWA manifest, position: sticky in overflow
+- **Firefox**: scrollbar styling, gap in flexbox, subpixel rendering, print stylesheets
+- **Mobile**: touch events, viewport meta, safe area insets, virtual keyboard resize
+
+Pre-built device matrices: `${CLAUDE_SKILL_DIR}/references/device-matrix.md` (top 10, mobile-first, enterprise, Kobiton real-device).
+
+## Examples
+
+**Playwright multi-browser config:**
+
+```typescript
+import { defineConfig, devices } from '@playwright/test';
+export default defineConfig({
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: 'mobile-chrome', use: { ...devices['Pixel 7'] } },
+    { name: 'mobile-safari', use: { ...devices['iPhone 14'] } },
+  ],
+});
+```
+
+**Cross-browser layout test:**
+
+```typescript
+test('nav renders correctly across browsers', async ({ page }) => {
+  await page.goto('/');
+  const nav = page.locator('nav');
+  await expect(nav).toBeVisible();
+  const box = await nav.boundingBox();
+  expect(box.width).toBeGreaterThan(300);
+});
+```
+
+**Kobiton real-device capabilities:**
+
+```json
+{
+  "platformName": "iOS",
+  "appium:deviceName": "iPhone 15 Pro",
+  "appium:platformVersion": "17",
+  "browserName": "Safari",
+  "kobiton:options": {
+    "sessionName": "Safari Compat Test",
+    "deviceGroup": "KOBITON",
+    "captureScreenshots": true
+  }
+}
+```
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|---------|
+| WebKit fails, Chromium passes | CSS property unsupported in Safari | Add `-webkit-` prefix or `@supports` fallback |
+| Date input renders differently | Browsers implement `<input type="date">` differently | Use custom date picker component |
+| Test passes locally, fails on cloud | Real device rendering differs from emulation | Run critical paths on real devices for final validation |
+| Kobiton device unavailable | Device in use or offline | Query `GET /v1/devices` for online devices; use `deviceGroup` for flexible matching |
+| Cloud session timeout | Long test on slow device | Increase `sessionTimeout`; split into smaller test files |
+
+## Output
+
+- Playwright config with multi-browser projects and test files in `tests/compatibility/`
+- Compatibility matrix report (pass/fail per browser, viewport, device)
+- Screenshots per browser for visual diff; unsupported API list with polyfill recommendations
+- Cloud session URLs with video replay links (when using cloud providers)
+
+## Resources
+
+- Playwright: https://playwright.dev/docs/browsers | Can I Use: https://caniuse.com/
+- Cloud providers: https://www.browserstack.com/automate | https://docs.saucelabs.com/ | https://www.lambdatest.com/support/docs/ | https://api.kobiton.com/docs/
+- MDN Compat Data: https://github.com/mdn/browser-compat-data
+
+
+```markdown
+*** END OF FILE: testing-browser-compatibility.md ***
+```
+
+
+***
+
+
+<a id="skill-testing-load-balancers"></a>
+
+# [1162/1303] SKILL: testing-load-balancers
+
+- **Source File:** `skills/testing-load-balancers.md`
+- **Volume:** Part 6 of 6
+- **Original Size:** 6,387 bytes
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
+
+```markdown
+*** START OF FILE: testing-load-balancers.md ***
+```
+
+***
+name: testing-load-balancers
+description: 'Validate load balancer behavior, failover, and traffic distribution.
+
+  Use when performing specialized testing.
+
+  Trigger with phrases like "test load balancer", "validate failover", or "check traffic
+  distribution".
+
+  '
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash(test:loadbalancer-*)
+version: 1.21.0
+author: Jeremy Longshore <jeremy@intentsolutions.io>
+license: MIT
+tags:
+- testing
+- testing-load
+compatibility: Designed for Claude Code
+***
+# Load Balancer Tester
+
+## Overview
+
+Validate load balancer behavior including traffic distribution algorithms, health check mechanisms, failover scenarios, session persistence, and SSL termination. Supports testing for NGINX, HAProxy, AWS ALB/NLB, GCP Load Balancers, and Kubernetes Ingress controllers.
+
+## Prerequisites
+
+- Load balancer deployed and accessible in a test environment
+- Multiple backend instances running with identifiable responses (hostname headers)
+- HTTP client tools (`curl`, `wrk`, `hey`, or `k6`) for sending test traffic
+- Access to load balancer configuration and health check settings
+- Ability to stop/start backend instances to simulate failures
+
+## Instructions
+
+1. Verify basic load balancer connectivity:
+   - Send a request through the load balancer and confirm a backend response.
+   - Check the response includes identifying headers (`X-Backend-Server`, `Server`) to determine which instance served the request.
+   - Verify SSL/TLS termination works correctly (valid certificate, proper redirect from HTTP to HTTPS).
+2. Test traffic distribution algorithm:
+   - Send 100+ sequential requests and record which backend handled each.
+   - For round-robin: verify even distribution across all backends (within 5% tolerance).
+   - For least-connections: verify the least-loaded backend receives new requests.
+   - For weighted: verify traffic ratio matches configured weights.
+3. Validate health check behavior:
+   - Stop one backend instance.
+   - Verify the load balancer detects the failure within the configured health check interval.
+   - Confirm subsequent requests are routed only to healthy backends (zero errors).
+   - Restart the backend and verify it is returned to the pool after passing health checks.
+4. Test failover scenarios:
+   - Stop all backends except one and verify the remaining backend handles all traffic.
+   - Stop all backends and verify the load balancer returns a 502 or 503 error (not hang).
+   - Simulate slow backend responses and verify timeout behavior.
+5. Validate session persistence (sticky sessions):
+   - Send multiple requests with the same session cookie.
+   - Verify all requests route to the same backend instance.
+   - Verify a new session (no cookie) can route to any backend.
+6. Test connection draining:
+   - Start a long-running request, then remove the backend from the pool.
+   - Verify the in-flight request completes successfully.
+   - Verify new requests route to remaining backends.
+7. Document all results with request/response evidence and timing data.
+
+## Output
+
+- Traffic distribution report showing request counts per backend instance
+- Health check failover timeline with detection and recovery durations
+- Session persistence validation results
+- SSL/TLS certificate and configuration verification
+- Load balancer behavior summary with pass/fail for each test scenario
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|---------|
+| All requests hit the same backend | Session affinity enabled unintentionally or DNS caching | Disable sticky sessions for distribution tests; use different source IPs; bypass DNS cache |
+| Health check passes but backend is unhealthy | Health check endpoint does not reflect actual application health | Configure health checks to hit a deep endpoint that verifies database connectivity |
+| 502 Bad Gateway during failover | Health check interval too long; load balancer still routing to failed backend | Reduce health check interval and failure threshold; verify deregistration delay settings |
+| SSL certificate error | Certificate does not match domain or is expired | Verify certificate SAN entries; check expiration date; ensure full certificate chain is configured |
+| Connection refused on backend port | Firewall or security group blocking load balancer to backend traffic | Verify security group rules allow traffic from load balancer subnet; check backend listen address |
+
+## Examples
+
+**Traffic distribution test with curl:**
+
+```bash
+#!/bin/bash
+set -euo pipefail
+declare -A counts
+for i in $(seq 1 100); do
+  backend=$(curl -s -H "Host: app.test.com" http://lb.test.com/health \
+    | jq -r '.hostname')
+  counts[$backend]=$(( ${counts[$backend]:-0} + 1 ))
+done
+echo "Traffic distribution:"
+for backend in "${!counts[@]}"; do
+  echo "  $backend: ${counts[$backend]} requests"
+done
+```
+
+**Failover test sequence:**
+
+```bash
+set -euo pipefail
+# 1. Verify both backends serve traffic
+curl -s http://lb.test.com/health  # Backend A
+curl -s http://lb.test.com/health  # Backend B
+
+# 2. Stop Backend A
+docker stop backend-a
+
+# 3. Verify all traffic goes to Backend B (no errors)
+for i in $(seq 1 10); do
+  curl -sf http://lb.test.com/health || echo "FAIL: request $i"
+done
+
+# 4. Restart Backend A and verify it rejoins
+docker start backend-a
+sleep 10  # Wait for health check interval
+curl -s http://lb.test.com/health  # Should see Backend A again
+```
+
+**k6 load test against load balancer:**
+
+```javascript
+import http from 'k6/http';
+import { check } from 'k6';
+
+export const options = { vus: 50, duration: '30s' };
+
+export default function () {
+  const res = http.get('http://lb.test.com/api/data');
+  check(res, {
+    'status is 200': (r) => r.status === 200,  # HTTP 200 OK
+    'response time < 500ms': (r) => r.timings.duration < 500,  # HTTP 500 Internal Server Error
+  });
+}
+```
+
+## Resources
+
+- NGINX load balancing: https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/
+- HAProxy documentation: https://www.haproxy.org/download/2.9/doc/configuration.txt
+- AWS ALB documentation: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/
+- k6 load testing: https://grafana.com/docs/k6/latest/
+- hey HTTP load generator: https://github.com/rakyll/hey
+
+
+```markdown
+*** END OF FILE: testing-load-balancers.md ***
+```
+
+
+***
+
+
 <a id="skill-testing-mobile-apps"></a>
 
 # [1163/1303] SKILL: testing-mobile-apps
@@ -164,13 +7484,13 @@
 - **Source File:** `skills/testing-mobile-apps.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 5,768 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: testing-mobile-apps.md ---
+*** START OF FILE: testing-mobile-apps.md ***
 ```
 
----
+***
 name: testing-mobile-apps
 description: 'Execute mobile app testing on iOS and Android devices/simulators.
 
@@ -188,7 +7508,7 @@ tags:
 - testing
 - testing-mobile
 compatibility: Designed for Claude Code
----
+***
 # Mobile App Tester
 
 ## Overview
@@ -274,7 +7594,7 @@ describe('Login Flow', () => {
 
 ```yaml
 appId: com.example.myapp
----
+***
 - launchApp
 - tapOn: "Sign In"
 - inputText:
@@ -296,13 +7616,12 @@ appId: com.example.myapp
 - Espresso (Android): https://developer.android.com/training/testing/espresso
 
 
-
 ```markdown
---- END OF FILE: testing-mobile-apps.md ---
+*** END OF FILE: testing-mobile-apps.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-testing-patterns"></a>
@@ -312,24 +7631,24 @@ appId: com.example.myapp
 - **Source File:** `skills/testing-patterns.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 3,792 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: testing-patterns.md ---
+*** START OF FILE: testing-patterns.md ***
 ```
 
----
+***
 name: testing-patterns
 description: Testing patterns and principles. Unit, integration, mocking strategies.
 when_to_use: "When writing unit tests, integration tests, choosing testing frameworks, or implementing mocking strategies."
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
----
+***
 
 # Testing Patterns
 
 > Principles for reliable test suites.
 
----
+***
 
 ## 1. Testing Pyramid
 
@@ -344,7 +7663,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
                     Functions, classes
 ```
 
----
+***
 
 ## 2. AAA Pattern
 
@@ -354,7 +7673,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 | **Act** | Execute code under test |
 | **Assert** | Verify outcome |
 
----
+***
 
 ## 3. Test Type Selection
 
@@ -366,7 +7685,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 | **Integration** | API, DB, services | Medium |
 | **E2E** | Critical user flows | Slow |
 
----
+***
 
 ## 4. Unit Test Principles
 
@@ -388,7 +7707,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 | Edge cases | Third-party libs |
 | Error handling | Simple getters |
 
----
+***
 
 ## 5. Integration Test Principles
 
@@ -409,7 +7728,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 | After Each | Clean up |
 | After All | Disconnect |
 
----
+***
 
 ## 6. Mocking Principles
 
@@ -431,7 +7750,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 | Mock | Set expectations |
 | Fake | Simplified implementation |
 
----
+***
 
 ## 7. Test Organization
 
@@ -451,7 +7770,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 | it/test | Individual case |
 | beforeEach | Common setup |
 
----
+***
 
 ## 8. Test Data
 
@@ -470,7 +7789,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 - Share common fixtures
 - Keep data minimal
 
----
+***
 
 ## 9. Best Practices
 
@@ -482,7 +7801,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 | Descriptive names | Self-documenting |
 | Clean up | Avoid side effects |
 
----
+***
 
 ## 10. Anti-Patterns
 
@@ -494,18 +7813,17 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 | Ignore flaky tests | Fix root cause |
 | Skip cleanup | Reset state |
 
----
+***
 
 > **Remember:** Tests are documentation. If someone can't understand what the code does from the tests, rewrite them.
 
 
-
 ```markdown
---- END OF FILE: testing-patterns.md ---
+*** END OF FILE: testing-patterns.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-testing-qa"></a>
@@ -515,20 +7833,20 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 - **Source File:** `skills/testing-qa.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 5,424 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: testing-qa.md ---
+*** START OF FILE: testing-qa.md ***
 ```
 
----
+***
 name: testing-qa
 description: "Comprehensive testing and QA workflow covering unit testing, integration testing, E2E testing, browser automation, and quality assurance."
 category: workflow-bundle
 risk: safe
 source: personal
 date_added: "2026-02-27"
----
+***
 
 # Testing/QA Workflow Bundle
 
@@ -758,13 +8076,12 @@ Use @verification-before-completion to verify changes
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF FILE: testing-qa.md ---
+*** END OF FILE: testing-qa.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-testing-visual-regression"></a>
@@ -774,13 +8091,13 @@ Use @verification-before-completion to verify changes
 - **Source File:** `skills/testing-visual-regression.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 5,299 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: testing-visual-regression.md ---
+*** START OF FILE: testing-visual-regression.md ***
 ```
 
----
+***
 name: testing-visual-regression
 description: 'Detect visual changes in UI components using screenshot comparison.
 
@@ -798,7 +8115,7 @@ tags:
 - testing
 - testing-visual
 compatibility: Designed for Claude Code
----
+***
 # Visual Regression Tester
 
 ## Overview
@@ -898,13 +8215,12 @@ test('homepage matches baseline', async ({ page }) => {
 - reg-suit visual regression: https://reg-viz.github.io/reg-suit/
 
 
-
 ```markdown
---- END OF FILE: testing-visual-regression.md ---
+*** END OF FILE: testing-visual-regression.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-testng-skill"></a>
@@ -914,13 +8230,13 @@ test('homepage matches baseline', async ({ page }) => {
 - **Source File:** `skills/testng-skill.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 5,548 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: testng-skill.md ---
+*** START OF FILE: testng-skill.md ***
 ```
 
----
+***
 name: testng-skill
 description: 'Generates TestNG tests in Java with groups, data providers, parallel execution, XML suite configuration, and listeners. Use when user mentions "TestNG", "@DataProvider", "testng.xml", "groups". Triggers on: "TestNG", "@DataProvider", "testng.xml", "TestNG suite", "parallel tests Java".'
 risk: critical
@@ -930,7 +8246,7 @@ source_type: community
 date_added: 2026-07-01
 license: MIT
 license_source: https://github.com/LambdaTest/agent-skills/blob/main/LICENSE
----
+***
 
 # TestNG Testing Skill
 ## When to Use
@@ -1085,13 +8401,12 @@ public class LoginTest { /* ... */ }
 - Do not treat examples as a substitute for environment-specific tests, security review, or user approval for destructive or costly actions.
 
 
-
 ```markdown
---- END OF FILE: testng-skill.md ---
+*** END OF FILE: testng-skill.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-thread-dump-analyzer"></a>
@@ -1101,13 +8416,13 @@ public class LoginTest { /* ... */ }
 - **Source File:** `skills/thread-dump-analyzer.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,374 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: thread-dump-analyzer.md ---
+*** START OF FILE: thread-dump-analyzer.md ***
 ```
 
----
+***
 name: thread-dump-analyzer
 description: 'Analyze thread dump analyzer operations. Auto-activating skill for Performance
   Testing.
@@ -1127,7 +8442,7 @@ tags:
 - performance
 - testing
 compatibility: Designed for Claude Code
----
+***
 # Thread Dump Analyzer
 
 ## Overview
@@ -1190,13 +8505,12 @@ Part of the **Performance Testing** skill category.
 Tags: performance, load-testing, k6, jmeter, benchmarking
 
 
-
 ```markdown
---- END OF FILE: thread-dump-analyzer.md ---
+*** END OF FILE: thread-dump-analyzer.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-threat-detection"></a>
@@ -1206,13 +8520,13 @@ Tags: performance, load-testing, k6, jmeter, benchmarking
 - **Source File:** `skills/threat-detection.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 5,185 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: threat-detection.md ---
+*** START OF FILE: threat-detection.md ***
 ```
 
----
+***
 name: threat-detection
 description: >
   This skill should be used when the user asks to "analyze logs for threats",
@@ -1226,7 +8540,7 @@ metadata:
   domain: security
   updated: 2026-04-02
   tags: [security, threat-detection, logs, monitoring, incident-response]
----
+***
 # Threat Detection
 
 > **Category:** Engineering
@@ -1337,13 +8651,12 @@ python scripts/threat_signal_analyzer.py --file app.log --category injection --f
 | Low | Log only | Monthly trend analysis |
 
 
-
 ```markdown
---- END OF FILE: threat-detection.md ---
+*** END OF FILE: threat-detection.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-throughput-calculator"></a>
@@ -1353,13 +8666,13 @@ python scripts/threat_signal_analyzer.py --file app.log --category injection --f
 - **Source File:** `skills/throughput-calculator.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,388 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: throughput-calculator.md ---
+*** START OF FILE: throughput-calculator.md ***
 ```
 
----
+***
 name: throughput-calculator
 description: 'Calculate throughput calculator operations. Auto-activating skill for
   Performance Testing.
@@ -1379,7 +8692,7 @@ tags:
 - performance
 - testing
 compatibility: Designed for Claude Code
----
+***
 # Throughput Calculator
 
 ## Overview
@@ -1442,13 +8755,12 @@ Part of the **Performance Testing** skill category.
 Tags: performance, load-testing, k6, jmeter, benchmarking
 
 
-
 ```markdown
---- END OF FILE: throughput-calculator.md ---
+*** END OF FILE: throughput-calculator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-time-series-decomposer"></a>
@@ -1458,13 +8770,13 @@ Tags: performance, load-testing, k6, jmeter, benchmarking
 - **Source File:** `skills/time-series-decomposer.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,360 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: time-series-decomposer.md ---
+*** START OF FILE: time-series-decomposer.md ***
 ```
 
----
+***
 name: time-series-decomposer
 description: 'Manage time series decomposer operations. Auto-activating skill for
   Data Analytics.
@@ -1484,7 +8796,7 @@ tags:
 - data
 - analytics
 compatibility: Designed for Claude Code
----
+***
 # Time Series Decomposer
 
 ## Overview
@@ -1547,13 +8859,12 @@ Part of the **Data Analytics** skill category.
 Tags: sql, analytics, visualization, statistics, bi
 
 
-
 ```markdown
---- END OF FILE: time-series-decomposer.md ---
+*** END OF FILE: time-series-decomposer.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-to-questionnaire"></a>
@@ -1563,17 +8874,17 @@ Tags: sql, analytics, visualization, statistics, bi
 - **Source File:** `skills/to-questionnaire.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,958 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: to-questionnaire.md ---
+*** START OF FILE: to-questionnaire.md ***
 ```
 
----
+***
 name: to-questionnaire
 description: Turn a decision you can't fully answer into a questionnaire for someone else to fill in.
 disable-model-invocation: true
----
+***
 
 Turn something the user can't answer alone into a **questionnaire**: a Markdown document they hand to one person to fill in async, or fill out together over a meeting. The recipient holds knowledge the user lacks; the questionnaire pulls it out of them.
 
@@ -1625,13 +8936,12 @@ A closing catch-all: anything we didn't ask that we should know?
 </questionnaire-template>
 
 
-
 ```markdown
---- END OF FILE: to-questionnaire.md ---
+*** END OF FILE: to-questionnaire.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-to-spec"></a>
@@ -1641,17 +8951,17 @@ A closing catch-all: anything we didn't ask that we should know?
 - **Source File:** `skills/to-spec.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 3,118 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: to-spec.md ---
+*** START OF FILE: to-spec.md ***
 ```
 
----
+***
 name: to-spec
 description: "Turn the current conversation into a spec and publish it to the project issue tracker: no interview, just synthesis of what you've already discussed."
 disable-model-invocation: true
----
+***
 
 This skill takes the current conversation context and codebase understanding and produces a spec. Do NOT interview the user; just synthesize what you already know.
 
@@ -1724,13 +9034,12 @@ Any further notes about the feature.
 </spec-template>
 
 
-
 ```markdown
---- END OF FILE: to-spec.md ---
+*** END OF FILE: to-spec.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-to-tickets"></a>
@@ -1740,17 +9049,17 @@ Any further notes about the feature.
 - **Source File:** `skills/to-tickets.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 5,776 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: to-tickets.md ---
+*** START OF FILE: to-tickets.md ***
 ```
 
----
+***
 name: to-tickets
 description: Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker (edges as text in one file per ticket locally, or native blocking links on a real tracker).
 disable-model-invocation: true
----
+***
 
 # To Tickets
 
@@ -1853,13 +9162,12 @@ The end-to-end behaviour this ticket makes work, from the user's perspective, no
 In either form, avoid specific file paths or code snippets: they go stale fast. Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it and note briefly that it came from a prototype. Trim to the decision-rich parts, not a working demo, just the important bits.
 
 
-
 ```markdown
---- END OF FILE: to-tickets.md ---
+*** END OF FILE: to-tickets.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-together-debug-bundle"></a>
@@ -1869,13 +9177,13 @@ In either form, avoid specific file paths or code snippets: they go stale fast. 
 - **Source File:** `skills/together-debug-bundle.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,540 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: together-debug-bundle.md ---
+*** START OF FILE: together-debug-bundle.md ***
 ```
 
----
+***
 name: together-debug-bundle
 description: 'Together AI debug bundle for inference, fine-tuning, and model deployment.
 
@@ -1894,7 +9202,7 @@ tags:
 - inference
 - together
 compatibility: Designed for Claude Code
----
+***
 # Together AI Debug Bundle
 
 ## Overview
@@ -1931,13 +9239,12 @@ Guidance for debug bundle with Together AI inference and fine-tuning API.
 See related Together AI skills for more patterns.
 
 
-
 ```markdown
---- END OF FILE: together-debug-bundle.md ---
+*** END OF FILE: together-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-together-performance-tuning"></a>
@@ -1947,13 +9254,13 @@ See related Together AI skills for more patterns.
 - **Source File:** `skills/together-performance-tuning.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,573 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: together-performance-tuning.md ---
+*** START OF FILE: together-performance-tuning.md ***
 ```
 
----
+***
 name: together-performance-tuning
 description: 'Together AI performance tuning for inference, fine-tuning, and model
   deployment.
@@ -1973,7 +9280,7 @@ tags:
 - inference
 - together
 compatibility: Designed for Claude Code
----
+***
 # Together AI Performance Tuning
 
 ## Overview
@@ -2010,13 +9317,12 @@ Guidance for performance tuning with Together AI inference and fine-tuning API.
 See related Together AI skills for more patterns.
 
 
-
 ```markdown
---- END OF FILE: together-performance-tuning.md ---
+*** END OF FILE: together-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-together-reference-architecture"></a>
@@ -2026,13 +9332,13 @@ See related Together AI skills for more patterns.
 - **Source File:** `skills/together-reference-architecture.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 6,533 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: together-reference-architecture.md ---
+*** START OF FILE: together-reference-architecture.md ***
 ```
 
----
+***
 name: together-reference-architecture
 description: 'Together AI reference architecture for inference, fine-tuning, and model
   deployment.
@@ -2052,7 +9358,7 @@ tags:
 - inference
 - together
 compatibility: Designed for Claude Code
----
+***
 # Together AI Reference Architecture
 
 ## Overview
@@ -2173,13 +9479,12 @@ interface CostRecord         { model: string; promptTokens: number; completionTo
 See `together-deploy-integration`.
 
 
-
 ```markdown
---- END OF FILE: together-reference-architecture.md ---
+*** END OF FILE: together-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-torchscript-exporter"></a>
@@ -2189,13 +9494,13 @@ See `together-deploy-integration`.
 - **Source File:** `skills/torchscript-exporter.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,345 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: torchscript-exporter.md ---
+*** START OF FILE: torchscript-exporter.md ***
 ```
 
----
+***
 name: torchscript-exporter
 description: 'Export torchscript exporter operations. Auto-activating skill for ML
   Deployment.
@@ -2215,7 +9520,7 @@ tags:
 - ai
 - mlops
 compatibility: Designed for Claude Code
----
+***
 # Torchscript Exporter
 
 ## Overview
@@ -2278,13 +9583,12 @@ Part of the **ML Deployment** skill category.
 Tags: mlops, serving, inference, monitoring, production
 
 
-
 ```markdown
---- END OF FILE: torchscript-exporter.md ---
+*** END OF FILE: torchscript-exporter.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-torchserve-config-generator"></a>
@@ -2294,13 +9598,13 @@ Tags: mlops, serving, inference, monitoring, production
 - **Source File:** `skills/torchserve-config-generator.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,407 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: torchserve-config-generator.md ---
+*** START OF FILE: torchserve-config-generator.md ***
 ```
 
----
+***
 name: torchserve-config-generator
 description: 'Generate torchserve config generator operations. Auto-activating skill
   for ML Deployment.
@@ -2320,7 +9624,7 @@ tags:
 - ai
 - mlops
 compatibility: Designed for Claude Code
----
+***
 # Torchserve Config Generator
 
 ## Overview
@@ -2383,13 +9687,12 @@ Part of the **ML Deployment** skill category.
 Tags: mlops, serving, inference, monitoring, production
 
 
-
 ```markdown
---- END OF FILE: torchserve-config-generator.md ---
+*** END OF FILE: torchserve-config-generator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-touch-feature"></a>
@@ -2399,20 +9702,20 @@ Tags: mlops, serving, inference, monitoring, production
 - **Source File:** `skills/touch-feature.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 8,572 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: touch-feature.md ---
+*** START OF FILE: touch-feature.md ***
 ```
 
----
+***
 name: touch-feature
 description: Produce a mobile feature spec — user story, technical approach, component breakdown, platform-specific considerations, edge cases. Use when asked to "add a screen", "spec this feature", "mobile feature", "new tab", "push notifications", or "deep link".
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, WebFetch, WebSearch, Task, TodoWrite, AskUserQuestion
 version: 0.6.4
 author: tonone-ai <hello@tonone.ai>
 license: MIT
----
+***
 
 # Mobile Feature Spec
 
@@ -2463,7 +9766,7 @@ Read the feature description. If any of these are ambiguous, infer from context 
 
 Output the spec in this structure:
 
----
+***
 
 ## Feature Spec: [Feature Name]
 
@@ -2484,7 +9787,7 @@ As a [user type], I want to [action] so that [outcome].
 - [ ] Error: [what happens on API failure]
 - [ ] Empty: [what the screen shows with no data]
 
----
+***
 
 ### Technical Approach
 
@@ -2496,7 +9799,7 @@ As a [user type], I want to [action] so that [outcome].
 
 **Offline strategy:** [cache-first / network-first / optimistic update / not needed — with rationale]
 
----
+***
 
 ### Component Breakdown
 
@@ -2519,7 +9822,7 @@ As a [user type], I want to [action] so that [outcome].
 [navigation graph / router / tab config — wherever routing is registered]
 ```
 
----
+***
 
 ### Key Screens / States
 
@@ -2533,7 +9836,7 @@ As a [user type], I want to [action] so that [outcome].
 
 **Offline state:** [show cached data with banner / block with message / transparent]
 
----
+***
 
 ### Platform-Specific Considerations
 
@@ -2551,7 +9854,7 @@ As a [user type], I want to [action] so that [outcome].
 
 _(For cross-platform: note where Platform.select or platform conditionals are needed)_
 
----
+***
 
 ### API Contract
 
@@ -2581,7 +9884,7 @@ _(For cross-platform: note where Platform.select or platform conditionals are ne
 
 _(If API doesn't exist yet: flag as "API TBD — Spine to spec" and describe the contract needed)_
 
----
+***
 
 ### Navigation Wiring
 
@@ -2597,7 +9900,7 @@ _(If API doesn't exist yet: flag as "API TBD — Spine to spec" and describe the
 
 **Back navigation:** [Standard pop / custom back handler / modal dismiss gesture]
 
----
+***
 
 ### Edge Cases
 
@@ -2609,7 +9912,7 @@ _(If API doesn't exist yet: flag as "API TBD — Spine to spec" and describe the
 | App backgrounded during [operation]                                  | [Continue / cancel / queue]                                |
 | [Permission denied — if feature needs camera/location/notifications] | Explain why, link to Settings                              |
 
----
+***
 
 ### Tests
 
@@ -2629,7 +9932,7 @@ _(If API doesn't exist yet: flag as "API TBD — Spine to spec" and describe the
 
 - Full happy path: load → interact → result
 
----
+***
 
 ### Done Criteria
 
@@ -2647,13 +9950,12 @@ This feature is done when:
 If output exceeds the 40-line CLI budget, invoke `/atlas-report` with the full findings. The HTML report is the output. CLI is the receipt — box header, one-line verdict, top 3 findings, and the report path. Never dump analysis to CLI.
 
 
-
 ```markdown
---- END OF FILE: touch-feature.md ---
+*** END OF FILE: touch-feature.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-tracing-transitive-vulnerabilities"></a>
@@ -2663,13 +9965,13 @@ If output exceeds the 40-line CLI budget, invoke `/atlas-report` with the full f
 - **Source File:** `skills/tracing-transitive-vulnerabilities.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 8,982 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: tracing-transitive-vulnerabilities.md ---
+*** START OF FILE: tracing-transitive-vulnerabilities.md ***
 ```
 
----
+***
 name: tracing-transitive-vulnerabilities
 description: |
   Build a dependency-tree map of a project (npm or Python) and trace
@@ -2715,7 +10017,7 @@ tags:
   - transitive-dependency
   - dependency-graph
   - pentest
----
+***
 
 # Tracing Transitive Vulnerabilities
 
@@ -2906,13 +10208,12 @@ top-N direct-dep bumps ranked by aggregate CVE-clearance count.
   with the per-language audit skills
 
 
-
 ```markdown
---- END OF FILE: tracing-transitive-vulnerabilities.md ---
+*** END OF FILE: tracing-transitive-vulnerabilities.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-tracking-application-response-times"></a>
@@ -2922,13 +10223,13 @@ top-N direct-dep bumps ranked by aggregate CVE-clearance count.
 - **Source File:** `skills/tracking-application-response-times.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,179 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: tracking-application-response-times.md ---
+*** START OF FILE: tracking-application-response-times.md ***
 ```
 
----
+***
 name: tracking-application-response-times
 description: Track and optimize application response times across API endpoints, database
   queries, and service calls. Use when monitoring performance or identifying bottlenecks.
@@ -2944,7 +10245,7 @@ tags:
 - database
 - monitoring
 compatibility: Designed for Claude Code
----
+***
 # Response Time Tracker
 
 Track and analyze response times across API endpoints, database queries, and service calls with P50/P95/P99 percentile reporting and SLO compliance monitoring.
@@ -3039,13 +10340,12 @@ If response time tracking fails:
 - Performance optimization guides
 
 
-
 ```markdown
---- END OF FILE: tracking-application-response-times.md ---
+*** END OF FILE: tracking-application-response-times.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-tracking-model-versions"></a>
@@ -3055,13 +10355,13 @@ If response time tracking fails:
 - **Source File:** `skills/tracking-model-versions.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 5,384 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: tracking-model-versions.md ---
+*** START OF FILE: tracking-model-versions.md ***
 ```
 
----
+***
 name: tracking-model-versions
 description: 'Build this skill enables AI assistant to track and manage ai/ml model
   versions using the model-versioning-tracker plugin. it should be used when the user
@@ -3079,7 +10379,7 @@ tags:
 - performance
 - tracking-model
 compatibility: Designed for Claude Code
----
+***
 # Model Versioning Tracker
 
 ## Overview
@@ -3140,13 +10440,12 @@ See `${CLAUDE_SKILL_DIR}/assets/example_mlflow_workflow.yaml` for a complete wor
 - ML Model Cards: https://modelcards.withgoogle.com/about
 
 
-
 ```markdown
---- END OF FILE: tracking-model-versions.md ---
+*** END OF FILE: tracking-model-versions.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-tracking-regression-tests"></a>
@@ -3156,13 +10455,13 @@ See `${CLAUDE_SKILL_DIR}/assets/example_mlflow_workflow.yaml` for a complete wor
 - **Source File:** `skills/tracking-regression-tests.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 5,533 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: tracking-regression-tests.md ---
+*** START OF FILE: tracking-regression-tests.md ***
 ```
 
----
+***
 name: tracking-regression-tests
 description: 'Track and manage regression test suites across releases.
 
@@ -3180,7 +10479,7 @@ tags:
 - testing
 - tracking-regression
 compatibility: Designed for Claude Code
----
+***
 # Regression Test Tracker
 
 ## Overview
@@ -3286,13 +10585,12 @@ describe('BUG-789: Cart total calculation', () => {  # 789 = configured value
 - Regression testing best practices: https://martinfowler.com/bliki/SelfTestingCode.html
 
 
-
 ```markdown
---- END OF FILE: tracking-regression-tests.md ---
+*** END OF FILE: tracking-regression-tests.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-tracking-resource-usage"></a>
@@ -3302,13 +10600,13 @@ describe('BUG-789: Cart total calculation', () => {  # 789 = configured value
 - **Source File:** `skills/tracking-resource-usage.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,875 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: tracking-resource-usage.md ---
+*** START OF FILE: tracking-resource-usage.md ***
 ```
 
----
+***
 name: tracking-resource-usage
 description: Track and optimize resource usage across application stack including
   CPU, memory, disk, and network I/O. Use when identifying bottlenecks or optimizing
@@ -3324,7 +10622,7 @@ tags:
 - monitoring
 - cost-optimization
 compatibility: Designed for Claude Code
----
+***
 # Resource Usage Tracker
 
 Track CPU, memory, disk I/O, and network utilization in real time to identify bottlenecks, right-size instances, and reduce cloud infrastructure costs.
@@ -3424,13 +10722,12 @@ If resource tracking fails:
 - Infrastructure cost optimization strategies
 
 
-
 ```markdown
---- END OF FILE: tracking-resource-usage.md ---
+*** END OF FILE: tracking-resource-usage.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-tracking-service-reliability"></a>
@@ -3440,13 +10737,13 @@ If resource tracking fails:
 - **Source File:** `skills/tracking-service-reliability.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,153 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: tracking-service-reliability.md ---
+*** START OF FILE: tracking-service-reliability.md ***
 ```
 
----
+***
 name: tracking-service-reliability
 description: Define and track SLAs, SLIs, and SLOs for service reliability including
   availability, latency, and error rates. Use when establishing reliability targets
@@ -3461,7 +10758,7 @@ tags:
 - monitoring
 - tracking-service
 compatibility: Designed for Claude Code
----
+***
 # Sla Sli Tracker
 
 Define and track SLAs, SLIs, and SLOs for service reliability including availability targets, latency budgets, error rate thresholds, and error budget burn rates.
@@ -3556,13 +10853,12 @@ If SLI/SLO tracking fails:
 - SLO definition templates and examples
 
 
-
 ```markdown
---- END OF FILE: tracking-service-reliability.md ---
+*** END OF FILE: tracking-service-reliability.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-trader-backtest"></a>
@@ -3572,18 +10868,18 @@ If SLI/SLO tracking fails:
 - **Source File:** `skills/trader-backtest.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 5,553 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: trader-backtest.md ---
+*** START OF FILE: trader-backtest.md ***
 ```
 
----
+***
 name: trader-backtest
 description: Run a historical backtest using npx neural-trader with Rust/NAPI engine (8-19x faster) and walk-forward validation; Ed25519-sign the result for paper→live tamper evidence (ADR-126 Phase 4)
 allowed-tools: Bash Read mcp__plugin_ruflo-core_ruflo__memory_store mcp__plugin_ruflo-core_ruflo__memory_retrieve mcp__plugin_ruflo-core_ruflo__memory_search mcp__plugin_ruflo-core_ruflo__memory_delete mcp__plugin_ruflo-core_ruflo__neural_train mcp__plugin_ruflo-core_ruflo__agentdb_pattern-store
 argument-hint: "<strategy-name> --symbol <TICKER> [--period 2020-2024]"
----
+***
 Run a historical backtest using the `neural-trader` Rust/NAPI engine, then Ed25519-sign the result so the paper→live promotion gate has cryptographic tamper evidence (ADR-126 Phase 4 + CWE-347 pattern).
 
 Steps:
@@ -3627,13 +10923,12 @@ Steps:
 - Key rotation: re-sign existing backtest entries with the new key OR explicitly mark pre-rotation artifacts as non-promotable. Same pattern as ADR-103.
 
 
-
 ```markdown
---- END OF FILE: trader-backtest.md ---
+*** END OF FILE: trader-backtest.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-trader-cloud-backtest"></a>
@@ -3643,18 +10938,18 @@ Steps:
 - **Source File:** `skills/trader-cloud-backtest.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 7,377 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: trader-cloud-backtest.md ---
+*** START OF FILE: trader-cloud-backtest.md ***
 ```
 
----
+***
 name: trader-cloud-backtest
 description: Run a heavy neural-trader job (long walk-forward, big Monte-Carlo, parameter sweep, model training) on the Anthropic Managed Agent cloud runtime instead of locally
 allowed-tools: mcp__plugin_ruflo-core_ruflo__managed_agent_create mcp__plugin_ruflo-core_ruflo__managed_agent_prompt mcp__plugin_ruflo-core_ruflo__managed_agent_events mcp__plugin_ruflo-core_ruflo__managed_agent_status mcp__plugin_ruflo-core_ruflo__managed_agent_terminate mcp__plugin_ruflo-core_ruflo__memory_store mcp__plugin_ruflo-core_ruflo__memory_retrieve mcp__plugin_ruflo-core_ruflo__memory_search mcp__plugin_ruflo-core_ruflo__agentdb_pattern-store Bash Read
 argument-hint: "<backtest|train|sweep> <strategy-or-model> --symbol <TICKER> [--period 2020-2024] [--mc-paths 1000]"
----
+***
 
 # Cloud backtest / train (neural-trader on a Managed Agent)
 
@@ -3736,13 +11031,12 @@ managed_agent_terminate { "sessionId":"sesn_…", "environmentId":"env_…" }
 ```
 
 
-
 ```markdown
---- END OF FILE: trader-cloud-backtest.md ---
+*** END OF FILE: trader-cloud-backtest.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-trader-explain"></a>
@@ -3752,18 +11046,18 @@ managed_agent_terminate { "sessionId":"sesn_…", "environmentId":"env_…" }
 - **Source File:** `skills/trader-explain.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 8,224 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: trader-explain.md ---
+*** START OF FILE: trader-explain.md ***
 ```
 
----
+***
 name: trader-explain
 description: Regulator-grade feature attribution for any LSTM/Transformer signal — single-entry PageRank ranks the top-K features that drove the prediction (ADR-126 Phase 6, ADR-123 single-entry PR)
 allowed-tools: Bash Read mcp__plugin_ruflo-core_ruflo__memory_retrieve mcp__plugin_ruflo-core_ruflo__memory_store mcp__ruflo-sublinear__page-rank-entry
 argument-hint: "<signalId> [--top-k 10] [--seed 42]"
----
+***
 Explain a trading signal by building a feature-contribution graph and running single-entry forward-push PageRank from the signal output node. Top-K ranked features are returned as a markdown table AND persisted to `trading-analysis` as a `SignedAttributionArtifact` (ADR-126 Phase 6).
 
 **Why this skill matters:**
@@ -3897,13 +11191,12 @@ if (!ok) {
 - `scripts/smoke-neural-trader-feature-attribution.mjs` (the regression smoke)
 
 
-
 ```markdown
---- END OF FILE: trader-explain.md ---
+*** END OF FILE: trader-explain.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-trader-portfolio-cg"></a>
@@ -3913,18 +11206,18 @@ if (!ok) {
 - **Source File:** `skills/trader-portfolio-cg.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 6,917 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: trader-portfolio-cg.md ---
+*** START OF FILE: trader-portfolio-cg.md ***
 ```
 
----
+***
 name: trader-portfolio-cg
 description: Mean-variance portfolio optimization via Conjugate Gradient — 40-60× faster than the legacy Neumann path (ADR-126 Phase 3, ADR-123 Wedge 8)
 allowed-tools: Bash Read mcp__ruflo-sublinear__solve mcp__plugin_ruflo-core_ruflo__memory_store mcp__plugin_ruflo-core_ruflo__memory_retrieve mcp__plugin_ruflo-core_ruflo__memory_search mcp__plugin_ruflo-core_ruflo__agentdb_pattern-search
 argument-hint: "[--portfolio-id ID] [--tolerance 1e-6]"
----
+***
 Solve the mean-variance optimization `Σ · x = μ` via Conjugate Gradient instead of the legacy Neumann series.
 
 **Why CG instead of Neumann (ADR-123 Wedge 8):**
@@ -4038,13 +11331,12 @@ Steps:
 - `plugins/ruflo-neural-trader/benchmarks/portfolio-cg.bench.ts` (the measured numbers)
 
 
-
 ```markdown
---- END OF FILE: trader-portfolio-cg.md ---
+*** END OF FILE: trader-portfolio-cg.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-trader-portfolio"></a>
@@ -4054,18 +11346,18 @@ Steps:
 - **Source File:** `skills/trader-portfolio.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,936 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: trader-portfolio.md ---
+*** START OF FILE: trader-portfolio.md ***
 ```
 
----
+***
 name: trader-portfolio
 description: Optimize portfolio allocation using npx neural-trader mean-variance engine with risk constraints and rebalancing plan
 allowed-tools: Bash Read mcp__plugin_ruflo-core_ruflo__memory_store mcp__plugin_ruflo-core_ruflo__memory_retrieve mcp__plugin_ruflo-core_ruflo__memory_search mcp__plugin_ruflo-core_ruflo__neural_predict mcp__plugin_ruflo-core_ruflo__agentdb_pattern-search
 argument-hint: "[--risk-target NUMBER]"
----
+***
 Optimize portfolio allocation using neural-trader's portfolio engine.
 
 Steps:
@@ -4100,13 +11392,12 @@ Steps:
    `mcp__plugin_ruflo-core_ruflo__memory_store({ key: "portfolio-optimal-TIMESTAMP", value: "ALLOCATION_JSON", namespace: "trading-portfolio" })`
 
 
-
 ```markdown
---- END OF FILE: trader-portfolio.md ---
+*** END OF FILE: trader-portfolio.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-trader-regime"></a>
@@ -4116,18 +11407,18 @@ Steps:
 - **Source File:** `skills/trader-regime.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,662 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: trader-regime.md ---
+*** START OF FILE: trader-regime.md ***
 ```
 
----
+***
 name: trader-regime
 description: Detect current market regime using npx neural-trader — bull/bear/ranging/volatile classification with recommended strategy. Use when the user asks about market conditions, wants to pick a strategy for current conditions, or before running a backtest/signal that should be regime-aware.
 allowed-tools: Bash Read mcp__plugin_ruflo-core_ruflo__memory_store mcp__plugin_ruflo-core_ruflo__memory_search mcp__plugin_ruflo-core_ruflo__neural_predict
 argument-hint: "[--symbol SPY] [--symbols AAPL,MSFT]"
----
+***
 Detect the current market regime using neural-trader's regime detection engine.
 
 Steps:
@@ -4154,13 +11445,12 @@ Steps:
    `mcp__plugin_ruflo-core_ruflo__memory_store({ key: "regime-DATE", value: "REGIME_ANALYSIS", namespace: "trading-analysis" })`
 
 
-
 ```markdown
---- END OF FILE: trader-regime.md ---
+*** END OF FILE: trader-regime.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-trader-risk"></a>
@@ -4170,18 +11460,18 @@ Steps:
 - **Source File:** `skills/trader-risk.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,465 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: trader-risk.md ---
+*** START OF FILE: trader-risk.md ***
 ```
 
----
+***
 name: trader-risk
 description: Assess portfolio risk using npx neural-trader — VaR, CVaR, Sharpe, position sizing, circuit breaker status
 allowed-tools: Bash Read mcp__plugin_ruflo-core_ruflo__memory_store mcp__plugin_ruflo-core_ruflo__memory_search
 argument-hint: "[--symbol TICKER] [--portfolio NAME]"
----
+***
 Assess portfolio and position risk using neural-trader's risk engine.
 
 Steps:
@@ -4211,13 +11501,12 @@ Steps:
    `mcp__plugin_ruflo-core_ruflo__memory_store({ key: "risk-TICKER-DATE", value: "RISK_METRICS", namespace: "trading-risk" })`
 
 
-
 ```markdown
---- END OF FILE: trader-risk.md ---
+*** END OF FILE: trader-risk.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-trader-signal"></a>
@@ -4227,18 +11516,18 @@ Steps:
 - **Source File:** `skills/trader-signal.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,471 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: trader-signal.md ---
+*** START OF FILE: trader-signal.md ***
 ```
 
----
+***
 name: trader-signal
 description: Generate trading signals using npx neural-trader anomaly detection engine with Z-score scoring and neural prediction
 allowed-tools: Bash Read mcp__plugin_ruflo-core_ruflo__memory_store mcp__plugin_ruflo-core_ruflo__memory_retrieve mcp__plugin_ruflo-core_ruflo__memory_search mcp__plugin_ruflo-core_ruflo__memory_delete mcp__plugin_ruflo-core_ruflo__neural_predict mcp__plugin_ruflo-core_ruflo__agentdb_pattern-search
 argument-hint: "[--strategy NAME] [--symbols AAPL,MSFT]"
----
+***
 Generate trading signals using neural-trader's anomaly detection engine.
 
 Steps:
@@ -4270,13 +11559,12 @@ Steps:
    `mcp__plugin_ruflo-core_ruflo__memory_store({ key: "signal-TIMESTAMP", value: "SIGNALS_JSON", namespace: "trading-signals", expiresAt: Date.now() + 24 * 60 * 60 * 1000 })`
 
 
-
 ```markdown
---- END OF FILE: trader-signal.md ---
+*** END OF FILE: trader-signal.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-trader-train"></a>
@@ -4286,18 +11574,18 @@ Steps:
 - **Source File:** `skills/trader-train.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,624 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: trader-train.md ---
+*** START OF FILE: trader-train.md ***
 ```
 
----
+***
 name: trader-train
 description: Train neural models (LSTM, Transformer, N-BEATS) on market data using npx neural-trader with confidence intervals
 allowed-tools: Bash Read mcp__plugin_ruflo-core_ruflo__memory_store mcp__plugin_ruflo-core_ruflo__memory_search mcp__plugin_ruflo-core_ruflo__neural_train
 argument-hint: "<lstm|transformer|nbeats> --symbol <TICKER>"
----
+***
 Train neural prediction models using neural-trader's ML engine.
 
 Steps:
@@ -4324,13 +11612,12 @@ Steps:
    `mcp__plugin_ruflo-core_ruflo__neural_train({ patternType: "trading-model", epochs: 10 })`
 
 
-
 ```markdown
---- END OF FILE: trader-train.md ---
+*** END OF FILE: trader-train.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-train-test-splitter"></a>
@@ -4340,13 +11627,13 @@ Steps:
 - **Source File:** `skills/train-test-splitter.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,302 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: train-test-splitter.md ---
+*** START OF FILE: train-test-splitter.md ***
 ```
 
----
+***
 name: train-test-splitter
 description: 'Test train test splitter operations. Auto-activating skill for ML Training.
 
@@ -4364,7 +11651,7 @@ tags:
 - ai
 - machine-learning
 compatibility: Designed for Claude Code
----
+***
 # Train Test Splitter
 
 ## Overview
@@ -4427,13 +11714,12 @@ Part of the **ML Training** skill category.
 Tags: ml, training, pytorch, tensorflow, sklearn
 
 
-
 ```markdown
---- END OF FILE: train-test-splitter.md ---
+*** END OF FILE: train-test-splitter.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-training-machine-learning-models"></a>
@@ -4443,13 +11729,13 @@ Tags: ml, training, pytorch, tensorflow, sklearn
 - **Source File:** `skills/training-machine-learning-models.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,170 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: training-machine-learning-models.md ---
+*** START OF FILE: training-machine-learning-models.md ***
 ```
 
----
+***
 name: training-machine-learning-models
 description: 'Build train machine learning models with automated workflows. Analyzes
   datasets, selects model types (classification, regression), configures parameters,
@@ -4466,7 +11752,7 @@ tags:
 - ml
 - workflow
 compatibility: Designed for Claude Code
----
+***
 # Ml Model Trainer
 
 Train machine learning models with configurable architectures, loss functions, and optimization strategies across classification, regression, and other task types.
@@ -4547,13 +11833,12 @@ The skill produces structured output relevant to the task.
 - Related skills and commands
 
 
-
 ```markdown
---- END OF FILE: training-machine-learning-models.md ---
+*** END OF FILE: training-machine-learning-models.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-triage"></a>
@@ -4563,17 +11848,17 @@ The skill produces structured output relevant to the task.
 - **Source File:** `skills/triage.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 6,669 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: triage.md ---
+*** START OF FILE: triage.md ***
 ```
 
----
+***
 name: triage
 description: Move issues and external PRs through a state machine of triage roles, categorise, verify, grill if needed, and write agent-ready briefs.
 disable-model-invocation: true
----
+***
 
 # Triage
 
@@ -4683,13 +11968,12 @@ Capture everything resolved during grilling under "established so far" so the wo
 If prior triage notes exist on the issue or PR, read them, check whether the reporter has answered any outstanding questions, and present an updated picture before continuing. Don't re-ask resolved questions.
 
 
-
 ```markdown
---- END OF FILE: triage.md ---
+*** END OF FILE: triage.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-triton-inference-config"></a>
@@ -4699,13 +11983,13 @@ If prior triage notes exist on the issue or PR, read them, check whether the rep
 - **Source File:** `skills/triton-inference-config.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,350 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: triton-inference-config.md ---
+*** START OF FILE: triton-inference-config.md ***
 ```
 
----
+***
 name: triton-inference-config
 description: 'Configure triton inference config operations. Auto-activating skill
   for ML Deployment.
@@ -4724,7 +12008,7 @@ tags:
 - ai
 - mlops
 compatibility: Designed for Claude Code
----
+***
 # Triton Inference Config
 
 ## Overview
@@ -4787,13 +12071,12 @@ Part of the **ML Deployment** skill category.
 Tags: mlops, serving, inference, monitoring, production
 
 
-
 ```markdown
---- END OF FILE: triton-inference-config.md ---
+*** END OF FILE: triton-inference-config.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-tuning-hyperparameters"></a>
@@ -4803,13 +12086,13 @@ Tags: mlops, serving, inference, monitoring, production
 - **Source File:** `skills/tuning-hyperparameters.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,763 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: tuning-hyperparameters.md ---
+*** START OF FILE: tuning-hyperparameters.md ***
 ```
 
----
+***
 name: tuning-hyperparameters
 description: 'Optimize machine learning model hyperparameters using grid search, random
   search, or Bayesian optimization. Finds best parameter configurations to maximize
@@ -4826,7 +12109,7 @@ tags:
 - ml
 - performance
 compatibility: Designed for Claude Code
----
+***
 # Hyperparameter Tuner
 
 Optimize machine learning model hyperparameters using grid search, random search, or Bayesian optimization to maximize performance.
@@ -4909,13 +12192,12 @@ The skill produces structured output relevant to the task.
 - Related skills and commands
 
 
-
 ```markdown
---- END OF FILE: tuning-hyperparameters.md ---
+*** END OF FILE: tuning-hyperparameters.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-twinmind-data-handling"></a>
@@ -4925,13 +12207,13 @@ The skill produces structured output relevant to the task.
 - **Source File:** `skills/twinmind-data-handling.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 3,813 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: twinmind-data-handling.md ---
+*** START OF FILE: twinmind-data-handling.md ***
 ```
 
----
+***
 name: twinmind-data-handling
 description: 'Handle TwinMind meeting data with GDPR compliance: transcript storage,
   memory vault management, data export, and deletion policies.
@@ -4952,7 +12234,7 @@ tags:
 - twinmind
 - compliance
 compatibility: Designed for Claude Code
----
+***
 # TwinMind Data Handling
 
 ## Overview
@@ -5052,13 +12334,12 @@ See `twinmind-prod-checklist` for production readiness.
 **Enterprise**: Customize for high-volume meeting transcription with monitoring and alerting.
 
 
-
 ```markdown
---- END OF FILE: twinmind-data-handling.md ---
+*** END OF FILE: twinmind-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-twinmind-debug-bundle"></a>
@@ -5068,13 +12349,13 @@ See `twinmind-prod-checklist` for production readiness.
 - **Source File:** `skills/twinmind-debug-bundle.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 10,778 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: twinmind-debug-bundle.md ---
+*** START OF FILE: twinmind-debug-bundle.md ***
 ```
 
----
+***
 name: twinmind-debug-bundle
 description: 'Collect comprehensive diagnostic information for TwinMind issues.
 
@@ -5096,7 +12377,7 @@ tags:
 - twinmind
 - debugging
 compatibility: Designed for Claude Code
----
+***
 # TwinMind Debug Bundle
 
 ## Current State
@@ -5509,13 +12790,12 @@ For rate limiting strategies, see `twinmind-rate-limits`.
 **Advanced scenario**: Customize twinmind debug bundle for production environments with multiple constraints and team-specific requirements.
 
 
-
 ```markdown
---- END OF FILE: twinmind-debug-bundle.md ---
+*** END OF FILE: twinmind-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-twinmind-performance-tuning"></a>
@@ -5525,13 +12805,13 @@ For rate limiting strategies, see `twinmind-rate-limits`.
 - **Source File:** `skills/twinmind-performance-tuning.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 3,848 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: twinmind-performance-tuning.md ---
+*** START OF FILE: twinmind-performance-tuning.md ***
 ```
 
----
+***
 name: twinmind-performance-tuning
 description: 'Optimize TwinMind transcription accuracy and speed with Ear-3 model
   configuration, audio quality tuning, and caching strategies.
@@ -5552,7 +12832,7 @@ tags:
 - twinmind
 - performance
 compatibility: Designed for Claude Code
----
+***
 # TwinMind Performance Tuning
 
 ## Overview
@@ -5652,13 +12932,12 @@ See `twinmind-prod-checklist` for production readiness.
 **Enterprise**: Customize for high-volume meeting transcription with monitoring and alerting.
 
 
-
 ```markdown
---- END OF FILE: twinmind-performance-tuning.md ---
+*** END OF FILE: twinmind-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-twinmind-reference-architecture"></a>
@@ -5668,13 +12947,13 @@ See `twinmind-prod-checklist` for production readiness.
 - **Source File:** `skills/twinmind-reference-architecture.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 3,924 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: twinmind-reference-architecture.md ---
+*** START OF FILE: twinmind-reference-architecture.md ***
 ```
 
----
+***
 name: twinmind-reference-architecture
 description: 'Production architecture for meeting AI systems using TwinMind: transcription
   pipeline, memory vault, action item workflow, and calendar integration.
@@ -5696,7 +12975,7 @@ tags:
 - twinmind
 - architecture
 compatibility: Designed for Claude Code
----
+***
 # TwinMind Reference Architecture
 
 ## Overview
@@ -5796,13 +13075,12 @@ See `twinmind-prod-checklist` for production readiness.
 **Enterprise**: Customize for high-volume meeting transcription with monitoring and alerting.
 
 
-
 ```markdown
---- END OF FILE: twinmind-reference-architecture.md ---
+*** END OF FILE: twinmind-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-typeorm-entity-generator"></a>
@@ -5812,13 +13090,13 @@ See `twinmind-prod-checklist` for production readiness.
 - **Source File:** `skills/typeorm-entity-generator.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,420 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: typeorm-entity-generator.md ---
+*** START OF FILE: typeorm-entity-generator.md ***
 ```
 
----
+***
 name: typeorm-entity-generator
 description: 'Generate typeorm entity generator operations. Auto-activating skill
   for Backend Development.
@@ -5838,7 +13116,7 @@ tags:
 - backend
 - development
 compatibility: Designed for Claude Code
----
+***
 # Typeorm Entity Generator
 
 ## Overview
@@ -5901,13 +13179,12 @@ Part of the **Backend Development** skill category.
 Tags: nodejs, python, go, microservices, database
 
 
-
 ```markdown
---- END OF FILE: typeorm-entity-generator.md ---
+*** END OF FILE: typeorm-entity-generator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-uniprot-database"></a>
@@ -5917,13 +13194,13 @@ Tags: nodejs, python, go, microservices, database
 - **Source File:** `skills/uniprot-database.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 7,334 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: uniprot-database.md ---
+*** START OF FILE: uniprot-database.md ***
 ```
 
----
+***
 name: uniprot-database
 description: Direct REST API access to UniProt. Protein searches, FASTA retrieval, ID mapping, Swiss-Prot/TrEMBL. For Python workflows with multiple databases, prefer bioservices (unified interface to 40+ services). Use this for direct HTTP/REST work or UniProt-specific control.
 license: Unknown
@@ -5931,7 +13208,7 @@ metadata:
     skill-author: K-Dense Inc.
 risk: safe
 source: community
----
+***
 
 # UniProt Database
 
@@ -6124,13 +13401,12 @@ See `/references/query_syntax.md` for comprehensive syntax documentation.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF FILE: uniprot-database.md ---
+*** END OF FILE: uniprot-database.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-unit-testing-test-generate"></a>
@@ -6140,19 +13416,19 @@ See `/references/query_syntax.md` for comprehensive syntax documentation.
 - **Source File:** `skills/unit-testing-test-generate.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 11,425 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: unit-testing-test-generate.md ---
+*** START OF FILE: unit-testing-test-generate.md ***
 ```
 
----
+***
 name: unit-testing-test-generate
 description: "Generate comprehensive, maintainable unit tests across languages with strong coverage and edge case focus."
 risk: critical
 source: community
 date_added: "2026-02-27"
----
+***
 
 # Automated Unit Test Generation
 
@@ -6475,13 +13751,12 @@ Focus on generating maintainable, comprehensive tests that catch bugs early and 
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF FILE: unit-testing-test-generate.md ---
+*** END OF FILE: unit-testing-test-generate.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-unittest-test-creator"></a>
@@ -6491,13 +13766,13 @@ Focus on generating maintainable, comprehensive tests that catch bugs early and 
 - **Source File:** `skills/unittest-test-creator.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,322 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: unittest-test-creator.md ---
+*** START OF FILE: unittest-test-creator.md ***
 ```
 
----
+***
 name: unittest-test-creator
 description: 'Create unittest test creator operations. Auto-activating skill for Test
   Automation.
@@ -6516,7 +13791,7 @@ tags:
 - testing
 - automation
 compatibility: Designed for Claude Code
----
+***
 # Unittest Test Creator
 
 ## Overview
@@ -6579,13 +13854,12 @@ Part of the **Test Automation** skill category.
 Tags: testing, jest, pytest, mocking, tdd
 
 
-
 ```markdown
---- END OF FILE: unittest-test-creator.md ---
+*** END OF FILE: unittest-test-creator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-us-property-data"></a>
@@ -6595,13 +13869,13 @@ Tags: testing, jest, pytest, mocking, tdd
 - **Source File:** `skills/us-property-data.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 6,895 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: us-property-data.md ---
+*** START OF FILE: us-property-data.md ***
 ```
 
----
+***
 name: us-property-data
 description: "Use when a task needs real U.S. residential property data: valuation, listings, price or tax history, schools, or a zillow.com URL."
 category: api-integration
@@ -6615,7 +13889,7 @@ tags: [property-data, real-estate, api, zillow]
 tools: [claude, cursor, gemini]
 license: "MIT-0"
 license_source: "https://github.com/ZeroPointRepo/zillow-skills/blob/main/LICENSE"
----
+***
 
 # U.S. Property Data
 
@@ -6718,13 +13992,12 @@ Declared `risk: safe`, with the behaviours stated rather than left to the label.
 - **Data sent**: the address, zpid or URL being looked up. Do not pass user PII beyond the property identifier itself.
 
 
-
 ```markdown
---- END OF FILE: us-property-data.md ---
+*** END OF FILE: us-property-data.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-v3-ddd-architecture"></a>
@@ -6734,16 +14007,16 @@ Declared `risk: safe`, with the behaviours stated rather than left to the label.
 - **Source File:** `skills/v3-ddd-architecture.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 12,607 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: v3-ddd-architecture.md ---
+*** START OF FILE: v3-ddd-architecture.md ***
 ```
 
----
+***
 name: "V3 DDD Architecture"
 description: "Domain-Driven Design architecture for claude-flow v3. Implements modular, bounded context architecture with clean separation of concerns and microkernel pattern."
----
+***
 
 # V3 DDD Architecture
 
@@ -7185,11 +14458,11 @@ npm run create:plugin -- --name swarm-coordination --template domain
 
 
 ```markdown
---- END OF FILE: v3-ddd-architecture.md ---
+*** END OF FILE: v3-ddd-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-v3-mcp-optimization"></a>
@@ -7199,16 +14472,16 @@ npm run create:plugin -- --name swarm-coordination --template domain
 - **Source File:** `skills/v3-mcp-optimization.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 22,204 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: v3-mcp-optimization.md ---
+*** START OF FILE: v3-mcp-optimization.md ***
 ```
 
----
+***
 name: "V3 MCP Optimization"
 description: "MCP server optimization and transport layer enhancement for claude-flow v3. Implements connection pooling, load balancing, tool registry optimization, and performance monitoring for sub-100ms response times."
----
+***
 
 # V3 MCP Optimization
 
@@ -7985,11 +15258,11 @@ Task("MCP connection pooling",
 
 
 ```markdown
---- END OF FILE: v3-mcp-optimization.md ---
+*** END OF FILE: v3-mcp-optimization.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-v3-performance-optimization"></a>
@@ -7999,16 +15272,16 @@ Task("MCP connection pooling",
 - **Source File:** `skills/v3-performance-optimization.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 11,828 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: v3-performance-optimization.md ---
+*** START OF FILE: v3-performance-optimization.md ***
 ```
 
----
+***
 name: "V3 Performance Optimization"
 description: "Achieve aggressive v3 performance targets: 2.49x-7.47x Flash Attention speedup, 150x-12,500x search improvements, 50-75% memory reduction. Comprehensive benchmarking and optimization suite."
----
+***
 
 # V3 Performance Optimization
 
@@ -8398,11 +15671,11 @@ npm run monitor:performance
 
 
 ```markdown
---- END OF FILE: v3-performance-optimization.md ---
+*** END OF FILE: v3-performance-optimization.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-validating-database-integrity"></a>
@@ -8412,13 +15685,13 @@ npm run monitor:performance
 - **Source File:** `skills/validating-database-integrity.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 7,902 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: validating-database-integrity.md ---
+*** START OF FILE: validating-database-integrity.md ***
 ```
 
----
+***
 name: validating-database-integrity
 description: 'Process use when you need to ensure database integrity through comprehensive
   data validation.
@@ -8439,7 +15712,7 @@ tags:
 - database
 - validating-database
 compatibility: Designed for Claude Code
----
+***
 # Data Validation Engine
 
 ## Overview
@@ -8527,13 +15800,12 @@ Implement and enforce data integrity rules at the database level using CHECK con
 - NOT VALID constraint option: https://www.postgresql.org/docs/current/sql-altertable.html
 
 
-
 ```markdown
---- END OF FILE: validating-database-integrity.md ---
+*** END OF FILE: validating-database-integrity.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-validator-expert"></a>
@@ -8543,13 +15815,13 @@ Implement and enforce data integrity rules at the database level using CHECK con
 - **Source File:** `skills/validator-expert.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 7,571 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: validator-expert.md ---
+*** START OF FILE: validator-expert.md ***
 ```
 
----
+***
 name: validator-expert
 description: 'Validate production readiness of Vertex AI Agent Engine deployments
   across
@@ -8586,7 +15858,7 @@ model: inherit
 effort: high
 argument-hint: '[project-id]'
 compatibility: Designed for Claude Code
----
+***
 # Validator Expert
 
 ## Current State
@@ -8680,13 +15952,12 @@ Validate production readiness of Vertex AI Agent Engine deployments by executing
 - [Cloud Audit Logs](https://cloud.google.com/logging/docs/audit)
 
 
-
 ```markdown
---- END OF FILE: validator-expert.md ---
+*** END OF FILE: validator-expert.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vastai-data-handling"></a>
@@ -8696,13 +15967,13 @@ Validate production readiness of Vertex AI Agent Engine deployments by executing
 - **Source File:** `skills/vastai-data-handling.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 6,059 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vastai-data-handling.md ---
+*** START OF FILE: vastai-data-handling.md ***
 ```
 
----
+***
 name: vastai-data-handling
 description: 'Manage training data and model artifacts securely on Vast.ai GPU instances.
 
@@ -8725,7 +15996,7 @@ tags:
 - compliance
 - data
 compatibility: Designed for Claude Code
----
+***
 # Vast.ai Data Handling
 
 ## Overview
@@ -8885,13 +16156,12 @@ For enterprise access control, see `vastai-enterprise-rbac`.
 **Resume after preemption**: Load latest checkpoint from S3 on new instance, continue training from last saved step.
 
 
-
 ```markdown
---- END OF FILE: vastai-data-handling.md ---
+*** END OF FILE: vastai-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vastai-debug-bundle"></a>
@@ -8901,13 +16171,13 @@ For enterprise access control, see `vastai-enterprise-rbac`.
 - **Source File:** `skills/vastai-debug-bundle.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,856 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vastai-debug-bundle.md ---
+*** START OF FILE: vastai-debug-bundle.md ***
 ```
 
----
+***
 name: vastai-debug-bundle
 description: 'Collect Vast.ai debug evidence for support tickets and troubleshooting.
 
@@ -8929,7 +16199,7 @@ tags:
 - vast-ai
 - debugging
 compatibility: Designed for Claude Code
----
+***
 # Vast.ai Debug Bundle
 
 ## Current State
@@ -9063,13 +16333,12 @@ For rate limit handling, see `vastai-rate-limits`.
 **Support ticket**: Collect the full debug bundle output, include `vastai logs ID`, and attach `nvidia-smi` output from the instance.
 
 
-
 ```markdown
---- END OF FILE: vastai-debug-bundle.md ---
+*** END OF FILE: vastai-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vastai-performance-tuning"></a>
@@ -9079,13 +16348,13 @@ For rate limit handling, see `vastai-rate-limits`.
 - **Source File:** `skills/vastai-performance-tuning.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 5,855 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vastai-performance-tuning.md ---
+*** START OF FILE: vastai-performance-tuning.md ***
 ```
 
----
+***
 name: vastai-performance-tuning
 description: 'Optimize Vast.ai GPU instance selection, startup time, and training
   throughput.
@@ -9109,7 +16378,7 @@ tags:
 - api
 - performance
 compatibility: Designed for Claude Code
----
+***
 # Vast.ai Performance Tuning
 
 ## Overview
@@ -9265,13 +16534,12 @@ For cost optimization, see `vastai-cost-tuning`.
 **Best value GPU**: Use `perf_per_dollar` scoring to find hosts where the same GPU model runs faster due to better cooling or fewer co-tenants.
 
 
-
 ```markdown
---- END OF FILE: vastai-performance-tuning.md ---
+*** END OF FILE: vastai-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vastai-reference-architecture"></a>
@@ -9281,13 +16549,13 @@ For cost optimization, see `vastai-cost-tuning`.
 - **Source File:** `skills/vastai-reference-architecture.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 6,858 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vastai-reference-architecture.md ---
+*** START OF FILE: vastai-reference-architecture.md ***
 ```
 
----
+***
 name: vastai-reference-architecture
 description: 'Implement Vast.ai reference architecture for GPU compute workflows.
 
@@ -9309,7 +16577,7 @@ tags:
 - vast-ai
 - architecture
 compatibility: Designed for Claude Code
----
+***
 # Vast.ai Reference Architecture
 
 ## Overview
@@ -9474,13 +16742,12 @@ For multi-environment configuration, see `vastai-multi-env-setup`.
 **Fault-tolerant training**: Worker saves checkpoint every 500 steps to S3. On preemption, orchestrator provisions replacement and worker resumes from latest checkpoint.
 
 
-
 ```markdown
---- END OF FILE: vastai-reference-architecture.md ---
+*** END OF FILE: vastai-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vector-database-engineer"></a>
@@ -9490,19 +16757,19 @@ For multi-environment configuration, see `vastai-multi-env-setup`.
 - **Source File:** `skills/vector-database-engineer.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,696 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vector-database-engineer.md ---
+*** START OF FILE: vector-database-engineer.md ***
 ```
 
----
+***
 name: vector-database-engineer
 description: "Expert in vector databases, embedding strategies, and semantic search implementation. Masters Pinecone, Weaviate, Qdrant, Milvus, and pgvector for RAG applications, recommendation systems, and similar"
 risk: critical
 source: community
 date_added: "2026-02-27"
----
+***
 
 # Vector Database Engineer
 
@@ -9566,13 +16833,12 @@ Expert in vector databases, embedding strategies, and semantic search implementa
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF FILE: vector-database-engineer.md ---
+*** END OF FILE: vector-database-engineer.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-veeva-data-handling"></a>
@@ -9582,13 +16848,13 @@ Expert in vector databases, embedding strategies, and semantic search implementa
 - **Source File:** `skills/veeva-data-handling.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,209 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: veeva-data-handling.md ---
+*** START OF FILE: veeva-data-handling.md ***
 ```
 
----
+***
 name: veeva-data-handling
 description: 'Veeva Vault data handling for enterprise operations.
 
@@ -9607,7 +16873,7 @@ tags:
 - crm
 - veeva
 compatibility: Designed for Claude Code
----
+***
 # Veeva Vault Data Handling
 
 ## Overview
@@ -9640,13 +16906,12 @@ Enterprise-grade data handling patterns for Veeva Vault deployments.
 See related Veeva Vault skills.
 
 
-
 ```markdown
---- END OF FILE: veeva-data-handling.md ---
+*** END OF FILE: veeva-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-veeva-debug-bundle"></a>
@@ -9656,13 +16921,13 @@ See related Veeva Vault skills.
 - **Source File:** `skills/veeva-debug-bundle.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,942 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: veeva-debug-bundle.md ---
+*** START OF FILE: veeva-debug-bundle.md ***
 ```
 
----
+***
 name: veeva-debug-bundle
 description: 'Veeva Vault debug bundle for REST API and clinical operations.
 
@@ -9681,7 +16946,7 @@ tags:
 - crm
 - veeva
 compatibility: Designed for Claude Code
----
+***
 # Veeva Vault Debug Bundle
 
 ## Overview
@@ -9732,13 +16997,12 @@ SELECT id, name__v, study__vr.name__v FROM study_country__v
 See related Veeva Vault skills for more patterns.
 
 
-
 ```markdown
---- END OF FILE: veeva-debug-bundle.md ---
+*** END OF FILE: veeva-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-veeva-performance-tuning"></a>
@@ -9748,13 +17012,13 @@ See related Veeva Vault skills for more patterns.
 - **Source File:** `skills/veeva-performance-tuning.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,972 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: veeva-performance-tuning.md ---
+*** START OF FILE: veeva-performance-tuning.md ***
 ```
 
----
+***
 name: veeva-performance-tuning
 description: 'Veeva Vault performance tuning for REST API and clinical operations.
 
@@ -9773,7 +17037,7 @@ tags:
 - crm
 - veeva
 compatibility: Designed for Claude Code
----
+***
 # Veeva Vault Performance Tuning
 
 ## Overview
@@ -9824,13 +17088,12 @@ SELECT id, name__v, study__vr.name__v FROM study_country__v
 See related Veeva Vault skills for more patterns.
 
 
-
 ```markdown
---- END OF FILE: veeva-performance-tuning.md ---
+*** END OF FILE: veeva-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-veeva-reference-architecture"></a>
@@ -9840,13 +17103,13 @@ See related Veeva Vault skills for more patterns.
 - **Source File:** `skills/veeva-reference-architecture.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,992 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: veeva-reference-architecture.md ---
+*** START OF FILE: veeva-reference-architecture.md ***
 ```
 
----
+***
 name: veeva-reference-architecture
 description: 'Veeva Vault reference architecture for REST API and clinical operations.
 
@@ -9865,7 +17128,7 @@ tags:
 - crm
 - veeva
 compatibility: Designed for Claude Code
----
+***
 # Veeva Vault Reference Architecture
 
 ## Overview
@@ -9916,13 +17179,12 @@ SELECT id, name__v, study__vr.name__v FROM study_country__v
 See related Veeva Vault skills for more patterns.
 
 
-
 ```markdown
---- END OF FILE: veeva-reference-architecture.md ---
+*** END OF FILE: veeva-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vercel-architecture-variants"></a>
@@ -9932,13 +17194,13 @@ See related Veeva Vault skills for more patterns.
 - **Source File:** `skills/vercel-architecture-variants.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 8,635 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vercel-architecture-variants.md ---
+*** START OF FILE: vercel-architecture-variants.md ***
 ```
 
----
+***
 name: vercel-architecture-variants
 description: 'Choose and implement Vercel architecture blueprints for different scales
   and use cases.
@@ -9964,7 +17226,7 @@ tags:
 - scaling
 - patterns
 compatibility: Designed for Claude Code
----
+***
 # Vercel Architecture Variants
 
 ## Overview
@@ -10235,13 +17497,12 @@ Static Site → Full-Stack Next.js → Monorepo → Multi-Zone
 For known pitfalls and anti-patterns, see `vercel-known-pitfalls`.
 
 
-
 ```markdown
---- END OF FILE: vercel-architecture-variants.md ---
+*** END OF FILE: vercel-architecture-variants.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vercel-data-handling"></a>
@@ -10251,13 +17512,13 @@ For known pitfalls and anti-patterns, see `vercel-known-pitfalls`.
 - **Source File:** `skills/vercel-data-handling.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 8,098 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vercel-data-handling.md ---
+*** START OF FILE: vercel-data-handling.md ***
 ```
 
----
+***
 name: vercel-data-handling
 description: 'Implement data handling, PII protection, and GDPR/CCPA compliance for
   Vercel deployments.
@@ -10282,7 +17543,7 @@ tags:
 - privacy
 - security
 compatibility: Designed for Claude Code
----
+***
 # Vercel Data Handling
 
 ## Overview
@@ -10526,13 +17787,12 @@ export async function GET(request: NextRequest) {
 For enterprise RBAC, see `vercel-enterprise-rbac`.
 
 
-
 ```markdown
---- END OF FILE: vercel-data-handling.md ---
+*** END OF FILE: vercel-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vercel-debug-bundle"></a>
@@ -10542,13 +17802,13 @@ For enterprise RBAC, see `vercel-enterprise-rbac`.
 - **Source File:** `skills/vercel-debug-bundle.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 6,383 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vercel-debug-bundle.md ---
+*** START OF FILE: vercel-debug-bundle.md ***
 ```
 
----
+***
 name: vercel-debug-bundle
 description: 'Collect Vercel debug evidence for support tickets and troubleshooting.
 
@@ -10571,7 +17831,7 @@ tags:
 - debugging
 - support
 compatibility: Designed for Claude Code
----
+***
 # Vercel Debug Bundle
 
 ## Overview
@@ -10757,13 +18017,12 @@ Debug bundle: [attached]
 For rate limit issues, see `vercel-rate-limits`.
 
 
-
 ```markdown
---- END OF FILE: vercel-debug-bundle.md ---
+*** END OF FILE: vercel-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vercel-performance-tuning"></a>
@@ -10773,13 +18032,13 @@ For rate limit issues, see `vercel-rate-limits`.
 - **Source File:** `skills/vercel-performance-tuning.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 8,162 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vercel-performance-tuning.md ---
+*** START OF FILE: vercel-performance-tuning.md ***
 ```
 
----
+***
 name: vercel-performance-tuning
 description: 'Optimize Vercel deployment performance with caching, bundle optimization,
   and cold start reduction.
@@ -10804,7 +18063,7 @@ tags:
 - caching
 - optimization
 compatibility: Designed for Claude Code
----
+***
 # Vercel Performance Tuning
 
 ## Overview
@@ -11051,13 +18310,12 @@ import Image from 'next/image';
 For cost optimization, see `vercel-cost-tuning`.
 
 
-
 ```markdown
---- END OF FILE: vercel-performance-tuning.md ---
+*** END OF FILE: vercel-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vercel-reference-architecture"></a>
@@ -11067,13 +18325,13 @@ For cost optimization, see `vercel-cost-tuning`.
 - **Source File:** `skills/vercel-reference-architecture.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 9,412 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vercel-reference-architecture.md ---
+*** START OF FILE: vercel-reference-architecture.md ***
 ```
 
----
+***
 name: vercel-reference-architecture
 description: 'Implement a Vercel reference architecture with layered project structure
   and best practices.
@@ -11097,7 +18355,7 @@ tags:
 - architecture
 - best-practices
 compatibility: Designed for Claude Code
----
+***
 # Vercel Reference Architecture
 
 ## Overview
@@ -11359,13 +18617,12 @@ export async function GET() {
 For multi-environment setup, see `vercel-multi-env-setup`.
 
 
-
 ```markdown
---- END OF FILE: vercel-reference-architecture.md ---
+*** END OF FILE: vercel-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-verify-changes"></a>
@@ -11375,19 +18632,19 @@ For multi-environment setup, see `vercel-multi-env-setup`.
 - **Source File:** `skills/verify-changes.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,066 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: verify-changes.md ---
+*** START OF FILE: verify-changes.md ***
 ```
 
----
+***
 name: verify-changes
 description: Prove code works by running it, not just checking it exists. Verification through execution rather than inspection. Use after writing or modifying code to ensure it actually functions correctly.
 when_to_use: "After writing code, completing a feature, or fixing a bug. When the user says 'does this work?', 'test this', 'verify', or when /verify workflow is invoked. NOT for writing new code — for proving existing code works."
 allowed-tools: Read, Bash, Grep, Glob
 effort: medium
----
+***
 
 # Verify Changes — Prove Code Works
 
@@ -11401,7 +18658,7 @@ effort: medium
 ✅ Verification by execution:   "I ran it, here's the output, it works because [evidence]"
 ```
 
----
+***
 
 ## Verification Protocol
 
@@ -11463,7 +18720,7 @@ python script.py --test
 - [Anything that couldn't be tested automatically]
 ```
 
----
+***
 
 ## Verification Checklist by Project Type
 
@@ -11487,7 +18744,7 @@ python script.py --test
 - [ ] Error handling works (bad input test)
 - [ ] Help/usage text is correct
 
----
+***
 
 ## Anti-Patterns
 
@@ -11498,7 +18755,7 @@ python script.py --test
 | Verifying only compilation | Compiles ≠ correct | Test runtime behavior |
 | Skipping verification for "trivial" changes | Trivial changes cause real bugs | Verify everything |
 
----
+***
 
 ## Integration with Other Skills
 
@@ -11510,13 +18767,12 @@ python script.py --test
 | `testing-patterns` → New tests | Run test suite, check coverage |
 
 
-
 ```markdown
---- END OF FILE: verify-changes.md ---
+*** END OF FILE: verify-changes.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-verify-ui-change"></a>
@@ -11526,13 +18782,13 @@ python script.py --test
 - **Source File:** `skills/verify-ui-change.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 5,265 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: verify-ui-change.md ---
+*** START OF FILE: verify-ui-change.md ***
 ```
 
----
+***
 name: verify-ui-change
 description: Check that a change to a web app actually works in the running app before calling it done. Drives the real page and returns a pass/fail verdict with the request that fired, the state that moved, and the file:line to fix. Use after editing a component, a form, a route, or an API call; when you have said "fixed" but have not opened the app; when the user asks "does it actually work?"; or when a change looks right on screen and you cannot prove it.
 license: Apache-2.0
@@ -11540,7 +18796,7 @@ metadata:
   version: 2.9.0
   homepage: https://www.reticle.sh
   repository: https://github.com/reticlehq/reticle
----
+***
 
 # Verify the change in the running app
 
@@ -11602,18 +18858,17 @@ State what you drove, what the verdict was, and the evidence: the request and st
 
 Then `reticle_session({ action: "yield", mode: "waiting" })` so the human's panel stops reading "live".
 
----
+***
 
 More detail, fetchable one page at a time: `curl https://docs.reticle.sh/llms.txt` for the index, then the single page you need (`tools-act-and-wait.md`, `predicates.md`, `troubleshooting.md`). If Reticle itself misbehaves, file it with `reticle_feedback`: one call, then carry on.
 
 
-
 ```markdown
---- END OF FILE: verify-ui-change.md ---
+*** END OF FILE: verify-ui-change.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-verify-unattended"></a>
@@ -11623,13 +18878,13 @@ More detail, fetchable one page at a time: `curl https://docs.reticle.sh/llms.tx
 - **Source File:** `skills/verify-unattended.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 7,348 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: verify-unattended.md ---
+*** START OF FILE: verify-unattended.md ***
 ```
 
----
+***
 name: verify-unattended
 description: "Install, instrument and verify a web app end to end without pausing for a human. Use in an autonomous or goal-mode agent, in CI, or in any client that asks for approval on every command: it never says 'restart your client' or 'open a browser', because it takes a route that needs neither. Prefer the normal install-and-verify skill when a human is present and can answer."
 license: Apache-2.0
@@ -11637,7 +18892,7 @@ metadata:
   version: 2.9.0
   homepage: https://www.reticle.sh
   repository: https://github.com/reticlehq/reticle
----
+***
 
 # Reticle, unattended
 
@@ -11769,13 +19024,12 @@ reticle_feedback { kind: "bug" | "gap" | "ambiguity" | "feature_request" | "impr
 Unreachable? `npx @reticlehq/server feedback --agent --kind <kind> "what happened"`. Report defects in **Reticle**; a bug you find in the app under test is Reticle working, and belongs in your answer.
 
 
-
 ```markdown
---- END OF FILE: verify-unattended.md ---
+*** END OF FILE: verify-unattended.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vertex-agent-builder"></a>
@@ -11785,13 +19039,13 @@ Unreachable? `npx @reticlehq/server feedback --agent --kind <kind> "what happene
 - **Source File:** `skills/vertex-agent-builder.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 3,685 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vertex-agent-builder.md ---
+*** START OF FILE: vertex-agent-builder.md ***
 ```
 
----
+***
 name: vertex-agent-builder
 description: |
   Build and deploy generative AI agents on Vertex AI: Gemini model selection,
@@ -11809,7 +19063,7 @@ tags:
 - deployment
 - gcp
 compatibility: Designed for Claude Code
----
+***
 # Vertex AI Agent Builder
 
 Build and deploy production-ready agents on Vertex AI with Gemini models, retrieval (RAG), function calling, and operational guardrails (validation, monitoring, cost controls).
@@ -11871,13 +19125,12 @@ Build and deploy production-ready agents on Vertex AI with Gemini models, retrie
 - Agent Engine docs:
 
 
-
 ```markdown
---- END OF FILE: vertex-agent-builder.md ---
+*** END OF FILE: vertex-agent-builder.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vertex-ai-deployer"></a>
@@ -11887,13 +19140,13 @@ Build and deploy production-ready agents on Vertex AI with Gemini models, retrie
 - **Source File:** `skills/vertex-ai-deployer.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,310 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vertex-ai-deployer.md ---
+*** START OF FILE: vertex-ai-deployer.md ***
 ```
 
----
+***
 name: vertex-ai-deployer
 description: 'Deploy vertex ai deployer operations. Auto-activating skill for ML Deployment.
 
@@ -11912,7 +19165,7 @@ tags:
 - ai
 - mlops
 compatibility: Designed for Claude Code
----
+***
 # Vertex Ai Deployer
 
 ## Overview
@@ -11975,13 +19228,12 @@ Part of the **ML Deployment** skill category.
 Tags: mlops, serving, inference, monitoring, production
 
 
-
 ```markdown
---- END OF FILE: vertex-ai-deployer.md ---
+*** END OF FILE: vertex-ai-deployer.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vertex-engine-inspector"></a>
@@ -11991,13 +19243,13 @@ Tags: mlops, serving, inference, monitoring, production
 - **Source File:** `skills/vertex-engine-inspector.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 6,851 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vertex-engine-inspector.md ---
+*** START OF FILE: vertex-engine-inspector.md ***
 ```
 
----
+***
 name: vertex-engine-inspector
 description: 'Inspect and validate Vertex AI Agent Engine deployments including Code
   Execution Sandbox, Memory Bank, A2A protocol compliance, and security posture. Generates
@@ -12019,7 +19271,7 @@ tags:
 - security
 - compliance
 compatibility: Designed for Claude Code
----
+***
 # Vertex Engine Inspector
 
 ## Overview
@@ -12093,13 +19345,12 @@ See `${CLAUDE_SKILL_DIR}/references/errors.md` for additional error scenarios.
 - Model Armor -- prompt injection protection configuration
 
 
-
 ```markdown
---- END OF FILE: vertex-engine-inspector.md ---
+*** END OF FILE: vertex-engine-inspector.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-visualization-best-practices"></a>
@@ -12109,13 +19360,13 @@ See `${CLAUDE_SKILL_DIR}/references/errors.md` for additional error scenarios.
 - **Source File:** `skills/visualization-best-practices.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,449 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: visualization-best-practices.md ---
+*** START OF FILE: visualization-best-practices.md ***
 ```
 
----
+***
 name: visualization-best-practices
 description: 'Manage visualization best practices operations. Auto-activating skill
   for Data Analytics.
@@ -12135,7 +19386,7 @@ tags:
 - data
 - analytics
 compatibility: Designed for Claude Code
----
+***
 # Visualization Best Practices
 
 ## Overview
@@ -12198,13 +19449,12 @@ Part of the **Data Analytics** skill category.
 Tags: sql, analytics, visualization, statistics, bi
 
 
-
 ```markdown
---- END OF FILE: visualization-best-practices.md ---
+*** END OF FILE: visualization-best-practices.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vitest-skill"></a>
@@ -12214,13 +19464,13 @@ Tags: sql, analytics, visualization, statistics, bi
 - **Source File:** `skills/vitest-skill.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,977 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vitest-skill.md ---
+*** START OF FILE: vitest-skill.md ***
 ```
 
----
+***
 name: vitest-skill
 description: 'Generates Vitest tests in JavaScript/TypeScript with Vite-native speed. Jest-compatible API with ESM support and HMR. Use when user mentions "Vitest", "vi.mock", "vitest.config". Triggers on: "Vitest", "vi.mock", "vi.fn", "Vite test", "vitest config".'
 risk: critical
@@ -12230,7 +19480,7 @@ source_type: community
 date_added: 2026-07-01
 license: MIT
 license_source: https://github.com/LambdaTest/agent-skills/blob/main/LICENSE
----
+***
 
 # Vitest Testing Skill
 ## When to Use
@@ -12387,13 +19637,12 @@ export default defineConfig({
 - Do not treat examples as a substitute for environment-specific tests, security review, or user approval for destructive or costly actions.
 
 
-
 ```markdown
---- END OF FILE: vitest-skill.md ---
+*** END OF FILE: vitest-skill.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vitest-test-creator"></a>
@@ -12403,13 +19652,13 @@ export default defineConfig({
 - **Source File:** `skills/vitest-test-creator.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,296 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vitest-test-creator.md ---
+*** START OF FILE: vitest-test-creator.md ***
 ```
 
----
+***
 name: vitest-test-creator
 description: 'Create vitest test creator operations. Auto-activating skill for Test
   Automation.
@@ -12428,7 +19677,7 @@ tags:
 - testing
 - automation
 compatibility: Designed for Claude Code
----
+***
 # Vitest Test Creator
 
 ## Overview
@@ -12491,13 +19740,12 @@ Part of the **Test Automation** skill category.
 Tags: testing, jest, pytest, mocking, tdd
 
 
-
 ```markdown
---- END OF FILE: vitest-test-creator.md ---
+*** END OF FILE: vitest-test-creator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-vulnerability-scanner"></a>
@@ -12507,18 +19755,18 @@ Tags: testing, jest, pytest, mocking, tdd
 - **Source File:** `skills/vulnerability-scanner.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 7,988 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: vulnerability-scanner.md ---
+*** START OF FILE: vulnerability-scanner.md ***
 ```
 
----
+***
 name: vulnerability-scanner
 description: Advanced vulnerability analysis principles. OWASP 2025, Supply Chain Security, attack surface mapping, risk prioritization.
 when_to_use: "When scanning for security vulnerabilities, checking OWASP 2025 compliance, or analyzing supply chain security."
 allowed-tools: Read, Glob, Grep, Bash
----
+***
 
 # Vulnerability Scanner
 
@@ -12538,7 +19786,7 @@ allowed-tools: Read, Glob, Grep, Bash
 |------|---------|
 | [checklists.md](checklists.md) | OWASP Top 10, Auth, API, Data protection checklists |
 
----
+***
 
 ## 1. Security Expert Mindset
 
@@ -12560,7 +19808,7 @@ Before scanning, ask:
 3. How would they attack? (Attack vectors)
 4. What's the impact? (Business risk)
 
----
+***
 
 ## 2. OWASP Top 10:2025
 
@@ -12590,7 +19838,7 @@ Before scanning, ask:
 └── Focus shift: Root causes > Symptoms
 ```
 
----
+***
 
 ## 3. Supply Chain Security (A03)
 
@@ -12610,7 +19858,7 @@ Before scanning, ask:
 - Use private registries for critical deps
 - Sign and verify artifacts
 
----
+***
 
 ## 4. Attack Surface Mapping
 
@@ -12634,7 +19882,7 @@ Low Impact + High Likelihood  → MEDIUM
 Low Impact + Low Likelihood   → LOW
 ```
 
----
+***
 
 ## 5. Risk Prioritization
 
@@ -12658,7 +19906,7 @@ Is it actively exploited (EPSS >0.5)?
          └── CVSS <7.0 → Schedule for later
 ```
 
----
+***
 
 ## 6. Exceptional Conditions (A10 - New)
 
@@ -12677,7 +19925,7 @@ Is it actively exploited (EPSS >0.5)?
 - Race conditions in auth/authz
 - Resource exhaustion scenarios
 
----
+***
 
 ## 7. Scanning Methodology
 
@@ -12709,7 +19957,7 @@ Is it actively exploited (EPSS >0.5)?
        └── Remediation guidance
 ```
 
----
+***
 
 ## 8. Code Pattern Analysis
 
@@ -12732,7 +19980,7 @@ Is it actively exploited (EPSS >0.5)?
 | Credentials | `password`, `secret`, `key` |
 | Cloud | `AWS_`, `AZURE_`, `GCP_` prefixes |
 
----
+***
 
 ## 9. Cloud Security Considerations
 
@@ -12752,7 +20000,7 @@ Is it actively exploited (EPSS >0.5)?
 - Network: Security groups tightened?
 - Secrets: Using secrets manager?
 
----
+***
 
 ## 10. Anti-Patterns
 
@@ -12765,7 +20013,7 @@ Is it actively exploited (EPSS >0.5)?
 | Scan once before deploy | Continuous scanning |
 | Trust third-party deps blindly | Verify integrity, audit code |
 
----
+***
 
 ## 11. Reporting Principles
 
@@ -12787,18 +20035,17 @@ Each finding should answer:
 | **Medium** | Limited scope, requires conditions |
 | **Low** | Informational, best practice |
 
----
+***
 
 > **Remember:** Vulnerability scanning finds issues. Expert thinking prioritizes what matters. Always ask: "What would an attacker do with this?"
 
 
-
 ```markdown
---- END OF FILE: vulnerability-scanner.md ---
+*** END OF FILE: vulnerability-scanner.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-wait-what"></a>
@@ -12808,28 +20055,27 @@ Each finding should answer:
 - **Source File:** `skills/wait-what.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 401 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: wait-what.md ---
+*** START OF FILE: wait-what.md ***
 ```
 
----
+***
 name: wait-what
 description: "Stop. That last message did not land: re-pitch it."
 disable-model-invocation: true
----
+***
 
 Wait, I don't understand where you've got to here. Re-pitch that: give me a little bit of context, talk in ASD-STE100 Simplified Technical English, and use the ubiquitous language from `CONTEXT.md` (follow `CONTEXT-MAP.md` to the right one if the repo has more than one).
 
 
-
 ```markdown
---- END OF FILE: wait-what.md ---
+*** END OF FILE: wait-what.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-wandb-experiment-logger"></a>
@@ -12839,13 +20085,13 @@ Wait, I don't understand where you've got to here. Re-pitch that: give me a litt
 - **Source File:** `skills/wandb-experiment-logger.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,379 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: wandb-experiment-logger.md ---
+*** START OF FILE: wandb-experiment-logger.md ***
 ```
 
----
+***
 name: wandb-experiment-logger
 description: 'Execute wandb experiment logger operations. Auto-activating skill for
   ML Training.
@@ -12865,7 +20111,7 @@ tags:
 - ai
 - machine-learning
 compatibility: Designed for Claude Code
----
+***
 # Wandb Experiment Logger
 
 ## Overview
@@ -12928,13 +20174,12 @@ Part of the **ML Training** skill category.
 Tags: ml, training, pytorch, tensorflow, sklearn
 
 
-
 ```markdown
---- END OF FILE: wandb-experiment-logger.md ---
+*** END OF FILE: wandb-experiment-logger.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-wayfinder"></a>
@@ -12944,17 +20189,17 @@ Tags: ml, training, pytorch, tensorflow, sklearn
 - **Source File:** `skills/wayfinder.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 12,036 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: wayfinder.md ---
+*** START OF FILE: wayfinder.md ***
 ```
 
----
+***
 name: wayfinder
 description: Plan a huge chunk of work (more than one agent session can hold) as a shared map of decision tickets on your issue tracker, and resolve them one at a time until the way to the destination is clear.
 disable-model-invocation: true
----
+***
 
 A loose idea has arrived, too big for one agent session, and wrapped in fog: the way from here to the **destination** isn't visible yet. Wayfinding is about finding that way, not charging at the destination. This skill charts the way as a **shared map** on the repo's issue tracker, then works its **decision tickets** (questions whose resolution is a decision, not slices of a build to execute) one at a time until the route is clear.
 
@@ -13080,13 +20325,12 @@ User invokes with a map (URL or number). A ticket is **optional**: without one, 
 The user may run unblocked tickets in parallel, so expect other sessions to be editing the tracker concurrently.
 
 
-
 ```markdown
---- END OF FILE: wayfinder.md ---
+*** END OF FILE: wayfinder.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-web-design-guidelines"></a>
@@ -13096,13 +20340,13 @@ The user may run unblocked tickets in parallel, so expect other sessions to be e
 - **Source File:** `skills/web-design-guidelines.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,006 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: web-design-guidelines.md ---
+*** START OF FILE: web-design-guidelines.md ***
 ```
 
----
+***
 name: web-design-guidelines
 description: Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my site against best practices".
 when_to_use: "When auditing web UI for best practices, checking accessibility, or reviewing design against Web Interface Guidelines."
@@ -13111,7 +20355,7 @@ metadata:
   author: vercel
   version: "1.0.0"
   argument-hint: <file-or-pattern>
----
+***
 
 # Web Interface Guidelines
 
@@ -13144,7 +20388,7 @@ When a user provides a file or pattern argument:
 
 If no files specified, ask the user which files to review.
 
----
+***
 
 ## Related Skills
 
@@ -13163,13 +20407,12 @@ If no files specified, ask the user which files to review.
 ```
 
 
-
 ```markdown
---- END OF FILE: web-design-guidelines.md ---
+*** END OF FILE: web-design-guidelines.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-web-performance-optimization"></a>
@@ -13179,19 +20422,19 @@ If no files specified, ask the user which files to review.
 - **Source File:** `skills/web-performance-optimization.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 17,104 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: web-performance-optimization.md ---
+*** START OF FILE: web-performance-optimization.md ***
 ```
 
----
+***
 name: web-performance-optimization
 description: "Optimize website and web application performance including loading speed, Core Web Vitals, bundle size, caching strategies, and runtime performance"
 risk: critical
 source: community
 date_added: "2026-02-27"
----
+***
 
 # Web Performance Optimization
 
@@ -13831,7 +21074,7 @@ export async function getStaticProps() {
 - [Next.js Performance](https://nextjs.org/docs/advanced-features/measuring-performance)
 - [Image Optimization Guide](https://web.dev/fast/#optimize-your-images)
 
----
+***
 
 **Pro Tip:** Focus on Core Web Vitals (LCP, FID, CLS) first - they have the biggest impact on user experience and SEO rankings!
 
@@ -13841,13 +21084,12 @@ export async function getStaticProps() {
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF FILE: web-performance-optimization.md ---
+*** END OF FILE: web-performance-optimization.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-web-security-testing"></a>
@@ -13857,20 +21099,20 @@ export async function getStaticProps() {
 - **Source File:** `skills/web-security-testing.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,506 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: web-security-testing.md ---
+*** START OF FILE: web-security-testing.md ***
 ```
 
----
+***
 name: web-security-testing
 description: "Web application security testing workflow for OWASP Top 10 vulnerabilities including injection, XSS, authentication flaws, and access control issues."
 category: granular-workflow-bundle
 risk: safe
 source: personal
 date_added: "2026-02-27"
----
+***
 
 # Web Security Testing Workflow
 
@@ -14053,13 +21295,12 @@ Use @reporting-standards to create security report
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF FILE: web-security-testing.md ---
+*** END OF FILE: web-security-testing.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-web3-testing"></a>
@@ -14069,19 +21310,19 @@ Use @reporting-standards to create security report
 - **Source File:** `skills/web3-testing.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 11,822 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: web3-testing.md ---
+*** START OF FILE: web3-testing.md ***
 ```
 
----
+***
 name: web3-testing
 description: "Master comprehensive testing strategies for smart contracts using Hardhat, Foundry, and advanced testing patterns."
 risk: critical
 source: community
 date_added: "2026-02-27"
----
+***
 
 # Web3 Smart Contract Testing
 
@@ -14512,13 +21753,12 @@ jobs:
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF FILE: web3-testing.md ---
+*** END OF FILE: web3-testing.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-webapp-testing"></a>
@@ -14528,18 +21768,18 @@ jobs:
 - **Source File:** `skills/webapp-testing.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,138 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: webapp-testing.md ---
+*** START OF FILE: webapp-testing.md ***
 ```
 
----
+***
 name: webapp-testing
 description: Web application testing principles. E2E, Playwright, deep audit strategies.
 when_to_use: "When writing E2E tests with Playwright, performing deep web app audits, or testing user flows. Use with /test workflow."
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
----
+***
 
 # Web App Testing
 
@@ -14557,7 +21797,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 **Requires:** `pip install playwright && playwright install chromium`
 
----
+***
 
 ## 1. Deep Audit Approach
 
@@ -14576,7 +21816,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 2. **Scan** - Verify they respond
 3. **Test** - Cover critical paths
 
----
+***
 
 ## 2. Testing Pyramid for Web
 
@@ -14591,7 +21831,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
                     Individual UI pieces
 ```
 
----
+***
 
 ## 3. E2E Test Principles
 
@@ -14613,7 +21853,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 | Clean state | Independent tests |
 | Avoid implementation details | Test user behavior |
 
----
+***
 
 ## 4. Playwright Principles
 
@@ -14635,7 +21875,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 | Screenshots | on-failure |
 | Video | retain-on-failure |
 
----
+***
 
 ## 5. Visual Testing
 
@@ -14655,7 +21895,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 - Review visual diffs
 - Update intentional changes
 
----
+***
 
 ## 6. API Testing Principles
 
@@ -14668,7 +21908,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 | Error messages | User-friendly |
 | Edge cases | Empty, large, special chars |
 
----
+***
 
 ## 7. Test Organization
 
@@ -14689,7 +21929,7 @@ tests/
 | Feature-based | `login.spec.ts` |
 | Descriptive | `user-can-checkout.spec.ts` |
 
----
+***
 
 ## 8. CI Integration
 
@@ -14708,7 +21948,7 @@ tests/
 | Sharding | Large suites |
 | Workers | Multiple browsers |
 
----
+***
 
 ## 9. Anti-Patterns
 
@@ -14719,18 +21959,17 @@ tests/
 | Skip cleanup | Isolate tests |
 | Ignore flaky tests | Fix root cause |
 
----
+***
 
 > **Remember:** E2E tests are expensive. Use them for critical paths only.
 
 
-
 ```markdown
---- END OF FILE: webapp-testing.md ---
+*** END OF FILE: webapp-testing.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-webflow-data-handling"></a>
@@ -14740,13 +21979,13 @@ tests/
 - **Source File:** `skills/webflow-data-handling.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 10,034 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: webflow-data-handling.md ---
+*** START OF FILE: webflow-data-handling.md ***
 ```
 
----
+***
 name: webflow-data-handling
 description: "Implement Webflow data handling \u2014 CMS content delivery patterns,\
   \ PII redaction in\nform submissions, GDPR/CCPA compliance for ecommerce data, and\
@@ -14763,7 +22002,7 @@ tags:
 - no-code
 - webflow
 compatibility: Designed for Claude Code
----
+***
 # Webflow Data Handling
 
 ## Overview
@@ -15055,13 +22294,12 @@ async function cleanupExpiredData() {
 For enterprise access control, see `webflow-enterprise-rbac`.
 
 
-
 ```markdown
---- END OF FILE: webflow-data-handling.md ---
+*** END OF FILE: webflow-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-webflow-debug-bundle"></a>
@@ -15071,13 +22309,13 @@ For enterprise access control, see `webflow-enterprise-rbac`.
 - **Source File:** `skills/webflow-debug-bundle.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 9,215 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: webflow-debug-bundle.md ---
+*** START OF FILE: webflow-debug-bundle.md ***
 ```
 
----
+***
 name: webflow-debug-bundle
 description: 'Collect Webflow debug evidence for support tickets and troubleshooting.
 
@@ -15100,7 +22338,7 @@ tags:
 - no-code
 - webflow
 compatibility: Designed for Claude Code
----
+***
 # Webflow Debug Bundle
 
 ## Overview
@@ -15348,13 +22586,12 @@ npx tsx webflow-diagnostics.ts
 For rate limit issues, see `webflow-rate-limits`.
 
 
-
 ```markdown
---- END OF FILE: webflow-debug-bundle.md ---
+*** END OF FILE: webflow-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-webflow-performance-tuning"></a>
@@ -15364,13 +22601,13 @@ For rate limit issues, see `webflow-rate-limits`.
 - **Source File:** `skills/webflow-performance-tuning.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 8,612 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: webflow-performance-tuning.md ---
+*** START OF FILE: webflow-performance-tuning.md ***
 ```
 
----
+***
 name: webflow-performance-tuning
 description: 'Optimize Webflow API performance with response caching, bulk endpoint
   batching,
@@ -15394,7 +22631,7 @@ tags:
 - no-code
 - webflow
 compatibility: Designed for Claude Code
----
+***
 # Webflow Performance Tuning
 
 ## Overview
@@ -15668,13 +22905,12 @@ const items = await timedCall("listItemsLive", () =>
 For cost optimization, see `webflow-cost-tuning`.
 
 
-
 ```markdown
---- END OF FILE: webflow-performance-tuning.md ---
+*** END OF FILE: webflow-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-webflow-reference-architecture"></a>
@@ -15684,13 +22920,13 @@ For cost optimization, see `webflow-cost-tuning`.
 - **Source File:** `skills/webflow-reference-architecture.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 13,384 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: webflow-reference-architecture.md ---
+*** START OF FILE: webflow-reference-architecture.md ***
 ```
 
----
+***
 name: webflow-reference-architecture
 description: "Implement Webflow reference architecture \u2014 layered project structure,\
   \ client wrapper,\nCMS sync service, webhook handlers, and caching layer for production\
@@ -15707,7 +22943,7 @@ tags:
 - no-code
 - webflow
 compatibility: Designed for Claude Code
----
+***
 # Webflow Reference Architecture
 
 ## Overview
@@ -16093,13 +23329,12 @@ External Data Source
 For multi-environment setup, see `webflow-multi-env-setup`.
 
 
-
 ```markdown
---- END OF FILE: webflow-reference-architecture.md ---
+*** END OF FILE: webflow-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-websocket-handler-setup"></a>
@@ -16109,13 +23344,13 @@ For multi-environment setup, see `webflow-multi-env-setup`.
 - **Source File:** `skills/websocket-handler-setup.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,409 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: websocket-handler-setup.md ---
+*** START OF FILE: websocket-handler-setup.md ***
 ```
 
----
+***
 name: websocket-handler-setup
 description: 'Configure websocket handler setup operations. Auto-activating skill
   for Backend Development.
@@ -16135,7 +23370,7 @@ tags:
 - backend
 - development
 compatibility: Designed for Claude Code
----
+***
 # Websocket Handler Setup
 
 ## Overview
@@ -16198,13 +23433,12 @@ Part of the **Backend Development** skill category.
 Tags: nodejs, python, go, microservices, database
 
 
-
 ```markdown
---- END OF FILE: websocket-handler-setup.md ---
+*** END OF FILE: websocket-handler-setup.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-window-function-generator"></a>
@@ -16214,13 +23448,13 @@ Tags: nodejs, python, go, microservices, database
 - **Source File:** `skills/window-function-generator.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,401 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: window-function-generator.md ---
+*** START OF FILE: window-function-generator.md ***
 ```
 
----
+***
 name: window-function-generator
 description: 'Generate window function generator operations. Auto-activating skill
   for Data Analytics.
@@ -16240,7 +23474,7 @@ tags:
 - data
 - analytics
 compatibility: Designed for Claude Code
----
+***
 # Window Function Generator
 
 ## Overview
@@ -16303,13 +23537,12 @@ Part of the **Data Analytics** skill category.
 Tags: sql, analytics, visualization, statistics, bi
 
 
-
 ```markdown
---- END OF FILE: window-function-generator.md ---
+*** END OF FILE: window-function-generator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windows-shell-reliability"></a>
@@ -16319,19 +23552,19 @@ Tags: sql, analytics, visualization, statistics, bi
 - **Source File:** `skills/windows-shell-reliability.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,150 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windows-shell-reliability.md ---
+*** START OF FILE: windows-shell-reliability.md ***
 ```
 
----
+***
 name: windows-shell-reliability
 description: "Reliable command execution on Windows: paths, encoding, and common binary pitfalls."
 risk: safe
 source: community
 date_added: "2026-03-19"
----
+***
 
 # Windows Shell Reliability Patterns
 
@@ -16340,7 +23573,7 @@ date_added: "2026-03-19"
 ## When to Use
 Use this skill when developing or debugging scripts and automation that run on Windows systems, especially when involving file paths, character encoding, or standard CLI tools.
 
----
+***
 
 ## 1. Encoding & Redirection
 
@@ -16358,7 +23591,7 @@ behavior or a log file that is already unreadable.
 **Rule:** Prefer native redirection as-is on PowerShell 7.4+, and use explicit UTF-8
 conversion only when older Windows PowerShell redirection produces an unreadable log.
 
----
+***
 
 ## 2. Handling Paths & Spaces
 
@@ -16380,7 +23613,7 @@ In PowerShell, if an executable path starts with a quote, you MUST use the `&` o
 & "C:\Program Files\dotnet\dotnet.exe" build ...
 ```
 
----
+***
 
 ## 3. Common Binary & Cmdlet Pitfalls
 
@@ -16393,7 +23626,7 @@ In PowerShell, if an executable path starts with a quote, you MUST use the `&` o
 
 **Tip:** Using CLI aliases like `ls`, `cat`, and `cp` in PowerShell is usually fine, but using full cmdlets in scripts is more robust.
 
----
+***
 
 ## 4. Dotnet CLI Reliability
 
@@ -16404,7 +23637,7 @@ In PowerShell, if an executable path starts with a quote, you MUST use the `&` o
 | Clean Build | `dotnet build --no-incremental` | Ensures no stale artifacts. |
 | Background | `Start-Process dotnet -ArgumentList 'run' -RedirectStandardOutput output.txt -RedirectStandardError error.txt` | Launches the app without blocking the shell and keeps logs. |
 
----
+***
 
 ## 5. Environment Variables
 
@@ -16413,7 +23646,7 @@ In PowerShell, if an executable path starts with a quote, you MUST use the `&` o
 | PowerShell | `$env:VARIABLE_NAME` |
 | CMD | `%VARIABLE_NAME%` |
 
----
+***
 
 ## 6. Long Paths
 Windows has a 260-character path limit by default.
@@ -16421,7 +23654,7 @@ Windows has a 260-character path limit by default.
 **Fix:** If you hit long path errors, use the extended path prefix:
 `\\?\C:\Very\Long\Path\...`
 
----
+***
 
 ## 7. Troubleshooting Shell Errors
 
@@ -16431,7 +23664,7 @@ Windows has a 260-character path limit by default.
 | `Access to the path is denied` | File in use or permissions | Stop process or run as Admin. |
 | `Encoding mismatch` | Older shell redirection rewrote the output | Re-export the file as UTF-8 or capture with `2>&1 | Out-File -Encoding UTF8`. |
 
----
+***
 
 ## Limitations
 - Use this skill only when the task clearly matches the scope described above.
@@ -16439,13 +23672,12 @@ Windows has a 260-character path limit by default.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF FILE: windows-shell-reliability.md ---
+*** END OF FILE: windows-shell-reliability.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-api-development"></a>
@@ -16455,13 +23687,13 @@ Windows has a 260-character path limit by default.
 - **Source File:** `skills/windsurf-api-development.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,069 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-api-development.md ---
+*** START OF FILE: windsurf-api-development.md ***
 ```
 
----
+***
 name: windsurf-api-development
 description: 'Generate API clients and documentation with Cascade. Activate when users
   mention
@@ -16483,7 +23715,7 @@ tags:
 - api
 - workflow
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Api Development
 
 ## Overview
@@ -16530,13 +23762,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [API Design Best Practices](https://docs.windsurf.ai/guides/api-design)
 
 
-
 ```markdown
---- END OF FILE: windsurf-api-development.md ---
+*** END OF FILE: windsurf-api-development.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-architecture-variants"></a>
@@ -16546,13 +23777,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-architecture-variants.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 7,408 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-architecture-variants.md ---
+*** START OF FILE: windsurf-architecture-variants.md ***
 ```
 
----
+***
 name: windsurf-architecture-variants
 description: 'Choose workspace architectures for different project scales in Windsurf.
 
@@ -16576,7 +23807,7 @@ tags:
 - workspace
 - monorepo
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Architecture Variants
 
 ## Overview
@@ -16798,13 +24029,12 @@ echo "Indexed files: ~$FILE_COUNT"
 For known pitfalls and anti-patterns, see `windsurf-known-pitfalls`.
 
 
-
 ```markdown
---- END OF FILE: windsurf-architecture-variants.md ---
+*** END OF FILE: windsurf-architecture-variants.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-audit-logging"></a>
@@ -16814,13 +24044,13 @@ For known pitfalls and anti-patterns, see `windsurf-known-pitfalls`.
 - **Source File:** `skills/windsurf-audit-logging.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,925 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-audit-logging.md ---
+*** START OF FILE: windsurf-audit-logging.md ***
 ```
 
----
+***
 name: windsurf-audit-logging
 description: 'Configure AI interaction audit logging for compliance. Activate when
   users mention
@@ -16843,7 +24073,7 @@ tags:
 - logging
 - compliance
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Audit Logging
 
 ## Overview
@@ -16890,13 +24120,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [SIEM Integration Guide](https://docs.windsurf.ai/admin/siem)
 
 
-
 ```markdown
---- END OF FILE: windsurf-audit-logging.md ---
+*** END OF FILE: windsurf-audit-logging.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-cascade-agents"></a>
@@ -16906,13 +24135,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-cascade-agents.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,131 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-cascade-agents.md ---
+*** START OF FILE: windsurf-cascade-agents.md ***
 ```
 
----
+***
 name: windsurf-cascade-agents
 description: 'Create custom Cascade agent configurations for specialized tasks. Activate
   when users mention
@@ -16934,7 +24163,7 @@ tags:
 - skill-databases
 - windsurf-cascade
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Cascade Agents
 
 ## Overview
@@ -16981,13 +24210,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Agent Context Management](https://docs.windsurf.ai/features/context-management)
 
 
-
 ```markdown
---- END OF FILE: windsurf-cascade-agents.md ---
+*** END OF FILE: windsurf-cascade-agents.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-cascade-context"></a>
@@ -16997,13 +24225,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-cascade-context.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,069 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-cascade-context.md ---
+*** START OF FILE: windsurf-cascade-context.md ***
 ```
 
----
+***
 name: windsurf-cascade-context
 description: 'Manage Cascade context window and memory for complex projects. Activate
   when users mention
@@ -17024,7 +24252,7 @@ tags:
 - skill-databases
 - windsurf-cascade
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Cascade Context
 
 ## Overview
@@ -17071,13 +24299,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Memory Persistence Configuration](https://docs.windsurf.ai/features/memory)
 
 
-
 ```markdown
---- END OF FILE: windsurf-cascade-context.md ---
+*** END OF FILE: windsurf-cascade-context.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-cascade-onboarding"></a>
@@ -17087,13 +24314,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-cascade-onboarding.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,182 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-cascade-onboarding.md ---
+*** START OF FILE: windsurf-cascade-onboarding.md ***
 ```
 
----
+***
 name: windsurf-cascade-onboarding
 description: 'Configure Cascade AI agent for new team projects. Activate when users
   mention
@@ -17116,7 +24343,7 @@ tags:
 - skill-databases
 - windsurf-cascade
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Cascade Onboarding
 
 ## Overview
@@ -17163,13 +24390,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Team Best Practices](https://docs.windsurf.ai/guides/team-best-practices)
 
 
-
 ```markdown
---- END OF FILE: windsurf-cascade-onboarding.md ---
+*** END OF FILE: windsurf-cascade-onboarding.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-cicd-github-actions"></a>
@@ -17179,13 +24405,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-cicd-github-actions.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,072 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-cicd-github-actions.md ---
+*** START OF FILE: windsurf-cicd-github-actions.md ***
 ```
 
----
+***
 name: windsurf-cicd-github-actions
 description: 'Generate and maintain GitHub Actions with Cascade assistance. Activate
   when users mention
@@ -17207,7 +24433,7 @@ tags:
 - deployment
 - ci-cd
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Cicd Github Actions
 
 ## Overview
@@ -17254,13 +24480,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Workflow Syntax Reference](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions)
 
 
-
 ```markdown
---- END OF FILE: windsurf-cicd-github-actions.md ---
+*** END OF FILE: windsurf-cicd-github-actions.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-code-completion"></a>
@@ -17270,13 +24495,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-code-completion.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,030 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-code-completion.md ---
+*** START OF FILE: windsurf-code-completion.md ***
 ```
 
----
+***
 name: windsurf-code-completion
 description: 'Configure and optimize Supercomplete code suggestions. Activate when
   users mention
@@ -17297,7 +24522,7 @@ tags:
 - skill-databases
 - windsurf-code
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Code Completion
 
 ## Overview
@@ -17344,13 +24569,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Custom Snippets Reference](https://docs.windsurf.ai/reference/snippets)
 
 
-
 ```markdown
---- END OF FILE: windsurf-code-completion.md ---
+*** END OF FILE: windsurf-code-completion.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-code-privacy"></a>
@@ -17360,13 +24584,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-code-privacy.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,929 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-code-privacy.md ---
+*** START OF FILE: windsurf-code-privacy.md ***
 ```
 
----
+***
 name: windsurf-code-privacy
 description: 'Configure code privacy and data retention policies. Activate when users
   mention
@@ -17387,7 +24611,7 @@ tags:
 - skill-databases
 - compliance
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Code Privacy
 
 ## Overview
@@ -17434,13 +24658,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Data Retention Best Practices](https://docs.windsurf.ai/guides/retention)
 
 
-
 ```markdown
---- END OF FILE: windsurf-code-privacy.md ---
+*** END OF FILE: windsurf-code-privacy.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-custom-prompts"></a>
@@ -17450,13 +24673,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-custom-prompts.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,979 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-custom-prompts.md ---
+*** START OF FILE: windsurf-custom-prompts.md ***
 ```
 
----
+***
 name: windsurf-custom-prompts
 description: 'Create and manage custom prompt libraries for Cascade. Activate when
   users mention
@@ -17477,7 +24700,7 @@ tags:
 - skill-databases
 - windsurf-custom
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Custom Prompts
 
 ## Overview
@@ -17524,13 +24747,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Team Prompt Sharing](https://docs.windsurf.ai/admin/prompt-sharing)
 
 
-
 ```markdown
---- END OF FILE: windsurf-custom-prompts.md ---
+*** END OF FILE: windsurf-custom-prompts.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-data-handling"></a>
@@ -17540,13 +24762,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-data-handling.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 7,108 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-data-handling.md ---
+*** START OF FILE: windsurf-data-handling.md ***
 ```
 
----
+***
 name: windsurf-data-handling
 description: 'Control what code and data Windsurf AI can access and process in your
   workspace.
@@ -17571,7 +24793,7 @@ tags:
 - compliance
 - data-handling
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Data Handling
 
 ## Overview
@@ -17788,13 +25010,12 @@ find . -type f \
 For enterprise access controls, see `windsurf-enterprise-rbac`.
 
 
-
 ```markdown
---- END OF FILE: windsurf-data-handling.md ---
+*** END OF FILE: windsurf-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-debug-bundle"></a>
@@ -17804,13 +25025,13 @@ For enterprise access controls, see `windsurf-enterprise-rbac`.
 - **Source File:** `skills/windsurf-debug-bundle.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 5,992 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-debug-bundle.md ---
+*** START OF FILE: windsurf-debug-bundle.md ***
 ```
 
----
+***
 name: windsurf-debug-bundle
 description: 'Collect Windsurf diagnostic information for troubleshooting and support
   tickets.
@@ -17834,7 +25055,7 @@ tags:
 - debugging
 - support
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Debug Bundle
 
 ## Current State
@@ -18009,13 +25230,12 @@ echo "Ignore: $([ -f .codeiumignore ] && wc -l < .codeiumignore || echo 'none')"
 For rate limit issues, see `windsurf-rate-limits`.
 
 
-
 ```markdown
---- END OF FILE: windsurf-debug-bundle.md ---
+*** END OF FILE: windsurf-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-debugging-ai"></a>
@@ -18025,13 +25245,13 @@ For rate limit issues, see `windsurf-rate-limits`.
 - **Source File:** `skills/windsurf-debugging-ai.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,866 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-debugging-ai.md ---
+*** START OF FILE: windsurf-debugging-ai.md ***
 ```
 
----
+***
 name: windsurf-debugging-ai
 description: 'Execute use Cascade for intelligent debugging and error analysis. Activate
   when users mention
@@ -18053,7 +25273,7 @@ tags:
 - debugging
 - workflow
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Debugging Ai
 
 ## Overview
@@ -18100,13 +25320,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Debug Configuration Reference](https://docs.windsurf.ai/reference/debug-config)
 
 
-
 ```markdown
---- END OF FILE: windsurf-debugging-ai.md ---
+*** END OF FILE: windsurf-debugging-ai.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-dependency-management"></a>
@@ -18116,13 +25335,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-dependency-management.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,107 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-dependency-management.md ---
+*** START OF FILE: windsurf-dependency-management.md ***
 ```
 
----
+***
 name: windsurf-dependency-management
 description: 'Analyze and update dependencies with vulnerability scanning. Activate
   when users mention
@@ -18144,7 +25363,7 @@ tags:
 - security
 - audit
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Dependency Management
 
 ## Overview
@@ -18191,13 +25410,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Semantic Versioning Spec](https://semver.org/)
 
 
-
 ```markdown
---- END OF FILE: windsurf-dependency-management.md ---
+*** END OF FILE: windsurf-dependency-management.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-dockerfile-generation"></a>
@@ -18207,13 +25425,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-dockerfile-generation.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,100 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-dockerfile-generation.md ---
+*** START OF FILE: windsurf-dockerfile-generation.md ***
 ```
 
----
+***
 name: windsurf-dockerfile-generation
 description: 'Create optimized Dockerfiles with AI-driven best practices. Activate
   when users mention
@@ -18234,7 +25452,7 @@ tags:
 - skill-databases
 - docker
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Dockerfile Generation
 
 ## Overview
@@ -18281,13 +25499,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Container Security Guide](https://docs.windsurf.ai/guides/container-security)
 
 
-
 ```markdown
---- END OF FILE: windsurf-dockerfile-generation.md ---
+*** END OF FILE: windsurf-dockerfile-generation.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-enterprise-sso"></a>
@@ -18297,13 +25514,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-enterprise-sso.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,963 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-enterprise-sso.md ---
+*** START OF FILE: windsurf-enterprise-sso.md ***
 ```
 
----
+***
 name: windsurf-enterprise-sso
 description: 'Configure enterprise SSO integration for Windsurf. Activate when users
   mention
@@ -18324,7 +25541,7 @@ tags:
 - skill-databases
 - authentication
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Enterprise Sso
 
 ## Overview
@@ -18372,13 +25589,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [OIDC Configuration](https://docs.windsurf.ai/admin/oidc)
 
 
-
 ```markdown
---- END OF FILE: windsurf-enterprise-sso.md ---
+*** END OF FILE: windsurf-enterprise-sso.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-extension-pack"></a>
@@ -18388,13 +25604,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-extension-pack.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,096 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-extension-pack.md ---
+*** START OF FILE: windsurf-extension-pack.md ***
 ```
 
----
+***
 name: windsurf-extension-pack
 description: 'Install and configure essential Windsurf extensions for productivity.
   Activate when users mention
@@ -18416,7 +25632,7 @@ tags:
 - skill-databases
 - windsurf-extension
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Extension Pack
 
 ## Overview
@@ -18463,13 +25679,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Team Extension Management](https://docs.windsurf.ai/admin/extensions)
 
 
-
 ```markdown
---- END OF FILE: windsurf-extension-pack.md ---
+*** END OF FILE: windsurf-extension-pack.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-flows-automation"></a>
@@ -18479,13 +25694,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-flows-automation.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,018 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-flows-automation.md ---
+*** START OF FILE: windsurf-flows-automation.md ***
 ```
 
----
+***
 name: windsurf-flows-automation
 description: 'Create and manage Windsurf Flows for repetitive tasks. Activate when
   users mention
@@ -18506,7 +25721,7 @@ tags:
 - skill-databases
 - workflow
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Flows Automation
 
 ## Overview
@@ -18553,13 +25768,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Template Authoring](https://docs.windsurf.ai/guides/templates)
 
 
-
 ```markdown
---- END OF FILE: windsurf-flows-automation.md ---
+*** END OF FILE: windsurf-flows-automation.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-git-integration"></a>
@@ -18569,13 +25783,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-git-integration.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,983 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-git-integration.md ---
+*** START OF FILE: windsurf-git-integration.md ***
 ```
 
----
+***
 name: windsurf-git-integration
 description: 'Configure Git integration with Cascade AI assistance. Activate when
   users mention
@@ -18597,7 +25811,7 @@ tags:
 - git
 - workflow
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Git Integration
 
 ## Overview
@@ -18644,13 +25858,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Git Hooks Documentation](https://git-scm.com/docs/githooks)
 
 
-
 ```markdown
---- END OF FILE: windsurf-git-integration.md ---
+*** END OF FILE: windsurf-git-integration.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-keyboard-shortcuts"></a>
@@ -18660,13 +25873,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-keyboard-shortcuts.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,999 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-keyboard-shortcuts.md ---
+*** START OF FILE: windsurf-keyboard-shortcuts.md ***
 ```
 
----
+***
 name: windsurf-keyboard-shortcuts
 description: 'Configure custom keyboard shortcuts for Cascade and AI features. Activate
   when users mention
@@ -18687,7 +25900,7 @@ tags:
 - skill-databases
 - windsurf-keyboard
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Keyboard Shortcuts
 
 ## Overview
@@ -18734,13 +25947,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Ergonomic Shortcut Design](https://docs.windsurf.ai/guides/ergonomics)
 
 
-
 ```markdown
---- END OF FILE: windsurf-keyboard-shortcuts.md ---
+*** END OF FILE: windsurf-keyboard-shortcuts.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-license-management"></a>
@@ -18750,13 +25962,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-license-management.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,039 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-license-management.md ---
+*** START OF FILE: windsurf-license-management.md ***
 ```
 
----
+***
 name: windsurf-license-management
 description: 'Manage Windsurf licenses and seat allocation. Activate when users mention
 
@@ -18776,7 +25988,7 @@ tags:
 - skill-databases
 - windsurf-license
 compatibility: Designed for Claude Code
----
+***
 # Windsurf License Management
 
 ## Overview
@@ -18823,13 +26035,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Cost Optimization Best Practices](https://docs.windsurf.ai/admin/cost-optimization)
 
 
-
 ```markdown
---- END OF FILE: windsurf-license-management.md ---
+*** END OF FILE: windsurf-license-management.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-linting-config"></a>
@@ -18839,13 +26050,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-linting-config.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,005 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-linting-config.md ---
+*** START OF FILE: windsurf-linting-config.md ***
 ```
 
----
+***
 name: windsurf-linting-config
 description: 'Configure and enforce code quality with AI-assisted linting. Activate
   when users mention
@@ -18866,7 +26077,7 @@ tags:
 - skill-databases
 - windsurf-linting
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Linting Config
 
 ## Overview
@@ -18913,13 +26124,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Prettier Integration](https://prettier.io/docs/en/integrating-with-linters.html)
 
 
-
 ```markdown
---- END OF FILE: windsurf-linting-config.md ---
+*** END OF FILE: windsurf-linting-config.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-mcp-integration"></a>
@@ -18929,13 +26139,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-mcp-integration.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,098 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-mcp-integration.md ---
+*** START OF FILE: windsurf-mcp-integration.md ***
 ```
 
----
+***
 name: windsurf-mcp-integration
 description: 'Manage integrate MCP servers with Windsurf for extended capabilities.
   Activate when users mention
@@ -18956,7 +26166,7 @@ tags:
 - skill-databases
 - windsurf-mcp
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Mcp Integration
 
 ## Overview
@@ -19004,13 +26214,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - MCP Server Development
 
 
-
 ```markdown
---- END OF FILE: windsurf-mcp-integration.md ---
+*** END OF FILE: windsurf-mcp-integration.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-multi-file-editing"></a>
@@ -19020,13 +26229,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-multi-file-editing.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,204 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-multi-file-editing.md ---
+*** START OF FILE: windsurf-multi-file-editing.md ***
 ```
 
----
+***
 name: windsurf-multi-file-editing
 description: 'Manage multi-file edits with Cascade coordination. Activate when users
   mention
@@ -19048,7 +26257,7 @@ tags:
 - skill-databases
 - windsurf-multi
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Multi File Editing
 
 ## Overview
@@ -19095,13 +26304,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Atomic Operations Best Practices](https://docs.windsurf.ai/best-practices/atomic-ops)
 
 
-
 ```markdown
---- END OF FILE: windsurf-multi-file-editing.md ---
+*** END OF FILE: windsurf-multi-file-editing.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-performance-profiling"></a>
@@ -19111,13 +26319,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-performance-profiling.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,039 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-performance-profiling.md ---
+*** START OF FILE: windsurf-performance-profiling.md ***
 ```
 
----
+***
 name: windsurf-performance-profiling
 description: 'Profile and optimize code with AI-assisted analysis. Activate when users
   mention
@@ -19138,7 +26346,7 @@ tags:
 - skill-databases
 - performance
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Performance Profiling
 
 ## Overview
@@ -19185,13 +26393,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Optimization Patterns](https://docs.windsurf.ai/guides/optimization)
 
 
-
 ```markdown
---- END OF FILE: windsurf-performance-profiling.md ---
+*** END OF FILE: windsurf-performance-profiling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-performance-tuning"></a>
@@ -19201,13 +26408,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-performance-tuning.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 6,451 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-performance-tuning.md ---
+*** START OF FILE: windsurf-performance-tuning.md ***
 ```
 
----
+***
 name: windsurf-performance-tuning
 description: 'Optimize Windsurf IDE performance: indexing speed, Cascade responsiveness,
   and memory usage.
@@ -19232,7 +26439,7 @@ tags:
 - indexing
 - optimization
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Performance Tuning
 
 ## Overview
@@ -19480,13 +26687,12 @@ Command Palette (Cmd/Ctrl+Shift+P):
 For cost optimization, see `windsurf-cost-tuning`.
 
 
-
 ```markdown
---- END OF FILE: windsurf-performance-tuning.md ---
+*** END OF FILE: windsurf-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-refactoring-large"></a>
@@ -19496,13 +26702,13 @@ For cost optimization, see `windsurf-cost-tuning`.
 - **Source File:** `skills/windsurf-refactoring-large.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,197 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-refactoring-large.md ---
+*** START OF FILE: windsurf-refactoring-large.md ***
 ```
 
----
+***
 name: windsurf-refactoring-large
 description: 'Manage large-scale refactoring with Cascade coordination. Activate when
   users mention
@@ -19524,7 +26730,7 @@ tags:
 - migration
 - scaling
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Refactoring Large
 
 ## Overview
@@ -19573,13 +26779,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Rollback and Recovery](https://docs.windsurf.ai/features/rollback)
 
 
-
 ```markdown
---- END OF FILE: windsurf-refactoring-large.md ---
+*** END OF FILE: windsurf-refactoring-large.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-reference-architecture"></a>
@@ -19589,13 +26794,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-reference-architecture.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 9,587 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-reference-architecture.md ---
+*** START OF FILE: windsurf-reference-architecture.md ***
 ```
 
----
+***
 name: windsurf-reference-architecture
 description: 'Implement Windsurf reference architecture with optimal project structure
   and AI configuration.
@@ -19620,7 +26825,7 @@ tags:
 - configuration
 - team-setup
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Reference Architecture
 
 ## Overview
@@ -19831,13 +27036,12 @@ echo "Workflows: $(ls .windsurf/workflows/ 2>/dev/null | wc -l || echo 0) files"
 For workspace variant strategies, see `windsurf-architecture-variants`.
 
 
-
 ```markdown
---- END OF FILE: windsurf-reference-architecture.md ---
+*** END OF FILE: windsurf-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-release-automation"></a>
@@ -19847,13 +27051,13 @@ For workspace variant strategies, see `windsurf-architecture-variants`.
 - **Source File:** `skills/windsurf-release-automation.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,081 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-release-automation.md ---
+*** START OF FILE: windsurf-release-automation.md ***
 ```
 
----
+***
 name: windsurf-release-automation
 description: 'Execute automate release processes with semantic versioning. Activate
   when users mention
@@ -19874,7 +27078,7 @@ tags:
 - skill-databases
 - windsurf-release
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Release Automation
 
 ## Overview
@@ -19922,13 +27126,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Conventional Commits](https://www.conventionalcommits.org/)
 
 
-
 ```markdown
---- END OF FILE: windsurf-release-automation.md ---
+*** END OF FILE: windsurf-release-automation.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-team-settings"></a>
@@ -19938,13 +27141,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-team-settings.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,950 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-team-settings.md ---
+*** START OF FILE: windsurf-team-settings.md ***
 ```
 
----
+***
 name: windsurf-team-settings
 description: 'Manage team-wide Windsurf settings and AI policies. Activate when users
   mention
@@ -19965,7 +27168,7 @@ tags:
 - skill-databases
 - windsurf-team
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Team Settings
 
 ## Overview
@@ -20012,13 +27215,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Settings Sync Documentation](https://docs.windsurf.ai/features/settings-sync)
 
 
-
 ```markdown
---- END OF FILE: windsurf-team-settings.md ---
+*** END OF FILE: windsurf-team-settings.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-terminal-ai"></a>
@@ -20028,13 +27230,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-terminal-ai.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,945 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-terminal-ai.md ---
+*** START OF FILE: windsurf-terminal-ai.md ***
 ```
 
----
+***
 name: windsurf-terminal-ai
 description: 'Execute leverage AI-assisted terminal commands and debugging. Activate
   when users mention
@@ -20055,7 +27257,7 @@ tags:
 - skill-databases
 - debugging
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Terminal Ai
 
 ## Overview
@@ -20102,13 +27304,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Shell Scripting Best Practices](https://docs.windsurf.ai/guides/shell-scripts)
 
 
-
 ```markdown
---- END OF FILE: windsurf-terminal-ai.md ---
+*** END OF FILE: windsurf-terminal-ai.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-test-generation"></a>
@@ -20118,13 +27319,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-test-generation.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,073 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-test-generation.md ---
+*** START OF FILE: windsurf-test-generation.md ***
 ```
 
----
+***
 name: windsurf-test-generation
 description: 'Generate comprehensive test suites using Cascade. Activate when users
   mention
@@ -20145,7 +27346,7 @@ tags:
 - skill-databases
 - testing
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Test Generation
 
 ## Overview
@@ -20192,13 +27393,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Testing Library Best Practices](https://testing-library.com/docs/guiding-principles)
 
 
-
 ```markdown
---- END OF FILE: windsurf-test-generation.md ---
+*** END OF FILE: windsurf-test-generation.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-theme-customization"></a>
@@ -20208,13 +27408,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-theme-customization.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,956 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-theme-customization.md ---
+*** START OF FILE: windsurf-theme-customization.md ***
 ```
 
----
+***
 name: windsurf-theme-customization
 description: 'Configure Windsurf themes and visual settings for accessibility. Activate
   when users mention
@@ -20235,7 +27435,7 @@ tags:
 - skill-databases
 - compliance
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Theme Customization
 
 ## Overview
@@ -20282,13 +27482,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Accessible Color Palettes](https://docs.windsurf.ai/guides/accessibility)
 
 
-
 ```markdown
---- END OF FILE: windsurf-theme-customization.md ---
+*** END OF FILE: windsurf-theme-customization.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-usage-analytics"></a>
@@ -20298,13 +27497,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-usage-analytics.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 1,881 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-usage-analytics.md ---
+*** START OF FILE: windsurf-usage-analytics.md ***
 ```
 
----
+***
 name: windsurf-usage-analytics
 description: 'Analyze team AI usage patterns and productivity metrics. Activate when
   users mention
@@ -20325,7 +27524,7 @@ tags:
 - skill-databases
 - analytics
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Usage Analytics
 
 ## Overview
@@ -20372,13 +27571,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Dashboard Configuration](https://docs.windsurf.ai/admin/dashboards)
 
 
-
 ```markdown
---- END OF FILE: windsurf-usage-analytics.md ---
+*** END OF FILE: windsurf-usage-analytics.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-windsurf-workspace-setup"></a>
@@ -20388,13 +27586,13 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/windsurf-workspace-setup.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,080 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: windsurf-workspace-setup.md ---
+*** START OF FILE: windsurf-workspace-setup.md ***
 ```
 
----
+***
 name: windsurf-workspace-setup
 description: 'Initialize Windsurf workspace with project-specific AI rules. Activate
   when users mention
@@ -20416,7 +27614,7 @@ tags:
 - skill-databases
 - migration
 compatibility: Designed for Claude Code
----
+***
 # Windsurf Workspace Setup
 
 ## Overview
@@ -20464,13 +27662,12 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - [Multi-Root Workspaces](https://docs.windsurf.ai/features/multi-root)
 
 
-
 ```markdown
---- END OF FILE: windsurf-workspace-setup.md ---
+*** END OF FILE: windsurf-workspace-setup.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-wizard"></a>
@@ -20480,16 +27677,16 @@ See `${CLAUDE_SKILL_DIR}/references/examples.md` for detailed examples.
 - **Source File:** `skills/wizard.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,167 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: wizard.md ---
+*** START OF FILE: wizard.md ***
 ```
 
----
+***
 name: wizard
 description: Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure, setting up credentials or CI secrets, walking an unfamiliar third-party dashboard, or running a one-off migration or cutover. Don't invoke this for steps the agent can perform itself.
----
+***
 
 # Wizard
 
@@ -20532,13 +27729,12 @@ Hold the bar the template sets: open the URL before asking for its value, use `a
 - Tell the user how to run it. If it's a repeatable setup path, commit it and link it from the README so the next person runs the script instead of asking an AI.
 
 
-
 ```markdown
---- END OF FILE: wizard.md ---
+*** END OF FILE: wizard.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-wjttc-tester"></a>
@@ -20548,13 +27744,13 @@ Hold the bar the template sets: open the URL before asking for its value, use `a
 - **Source File:** `skills/wjttc-tester.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 8,946 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: wjttc-tester.md ---
+*** START OF FILE: wjttc-tester.md ***
 ```
 
----
+***
 name: wjttc-tester
 description: F1-inspired test EXECUTOR + reporter. Runs a test plan, finds and reproduces bugs, audits suite signal integrity, then files a WJTTC report (Brake/Engine/Aero/Tyre/Pit) with a tier verdict. Use when you need to test code, validate functionality, reproduce a failure, or produce a test...
 risk: critical
@@ -20564,7 +27760,7 @@ source_type: community
 date_added: 2026-07-01
 license: MIT
 license_source: https://github.com/Wolfe-Jam/faf-skills/blob/main/LICENSE
----
+***
 
 # WJTTC Championship Tester
 
@@ -20640,7 +27836,7 @@ Test Brake first. If the brakes don't work, nothing else matters.
 Save reports to **`./wjttc-reports/`** in the project under test (or a path the user specifies). Never write to an absolute/personal path. Name files `YYYY-MM-DD-{project}-{feature}-tests.yaml`.
 
 ```yaml
----
+***
 # WJTTC Test Report
 project: "project-name"
 feature: "feature-being-tested"
@@ -20648,7 +27844,7 @@ date: "2026-06-26"
 tier: "Engine"            # Brake | Engine | Aero | Tyre | Pit
 result: "PASS"            # PASS | FAIL | BLOCKED
 environment: "OS, runtime version, key deps"
----
+***
 
 ## Summary
 objective: What was tested
@@ -20735,7 +27931,7 @@ The FAF score is **deterministic** — same input, same score. A test report sho
 - faf-cli: https://github.com/Wolfe-Jam/faf-cli
 - Sibling skill: **wjttc-builder** (plan + generate the suite)
 
----
+***
 
 *Made with 🧡 by wolfejam.dev — "We break things so others never have to know they were broken."*
 
@@ -20746,13 +27942,12 @@ The FAF score is **deterministic** — same input, same score. A test report sho
 - Do not treat examples as a substitute for environment-specific tests, security review, or user approval for destructive or costly actions.
 
 
-
 ```markdown
---- END OF FILE: wjttc-tester.md ---
+*** END OF FILE: wjttc-tester.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-wordpress-penetration-testing"></a>
@@ -20762,20 +27957,20 @@ The FAF score is **deterministic** — same input, same score. A test report sho
 - **Source File:** `skills/wordpress-penetration-testing.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 16,773 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: wordpress-penetration-testing.md ---
+*** START OF FILE: wordpress-penetration-testing.md ***
 ```
 
----
+***
 name: wordpress-penetration-testing
 description: "Assess WordPress installations for common vulnerabilities and WordPress 7.0 attack surfaces."
 risk: offensive
 source: community
 author: zebbern
 date_added: "2026-02-27"
----
+***
 
 > **⚠️ AUTHORIZED USE ONLY**
 > This skill is for educational purposes or authorized security assessments only.
@@ -21380,13 +28575,12 @@ curl -s http://target.com/wp-json/wp/v2/settings | grep -i connector
 This skill is applicable to execute the workflow or actions described in the overview.
 
 
-
 ```markdown
---- END OF FILE: wordpress-penetration-testing.md ---
+*** END OF FILE: wordpress-penetration-testing.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-worker-benchmarks"></a>
@@ -21396,13 +28590,13 @@ This skill is applicable to execute the workflow or actions described in the ove
 - **Source File:** `skills/worker-benchmarks.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,386 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: worker-benchmarks.md ---
+*** START OF FILE: worker-benchmarks.md ***
 ```
 
----
+***
 name: worker-benchmarks
 description: Run comprehensive worker system benchmarks and performance analysis
 version: 1.0.0
@@ -21412,7 +28606,7 @@ capabilities:
   - performance_testing
   - metrics_collection
   - optimization_recommendations
----
+***
 
 # Worker Benchmarks Skill
 
@@ -21539,13 +28733,12 @@ const registryResult = await workerBenchmarks.benchmarkRegistryOperations(500);
 4. **SQLite WAL Mode**: Automatic for better concurrent performance
 
 
-
 ```markdown
---- END OF FILE: worker-benchmarks.md ---
+*** END OF FILE: worker-benchmarks.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-workhuman-debug-bundle"></a>
@@ -21555,13 +28748,13 @@ const registryResult = await workerBenchmarks.benchmarkRegistryOperations(500);
 - **Source File:** `skills/workhuman-debug-bundle.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,060 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: workhuman-debug-bundle.md ---
+*** START OF FILE: workhuman-debug-bundle.md ***
 ```
 
----
+***
 name: workhuman-debug-bundle
 description: 'Workhuman debug bundle for employee recognition and rewards API.
 
@@ -21582,7 +28775,7 @@ tags:
 - recognition
 - workhuman
 compatibility: Designed for Claude Code
----
+***
 # Workhuman Debug Bundle
 
 ## Overview
@@ -21630,13 +28823,12 @@ Guidance for debug bundle with Workhuman Social Recognition and rewards API.
 See related Workhuman skills for more patterns.
 
 
-
 ```markdown
---- END OF FILE: workhuman-debug-bundle.md ---
+*** END OF FILE: workhuman-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-workhuman-performance-tuning"></a>
@@ -21646,13 +28838,13 @@ See related Workhuman skills for more patterns.
 - **Source File:** `skills/workhuman-performance-tuning.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,090 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: workhuman-performance-tuning.md ---
+*** START OF FILE: workhuman-performance-tuning.md ***
 ```
 
----
+***
 name: workhuman-performance-tuning
 description: 'Workhuman performance tuning for employee recognition and rewards API.
 
@@ -21673,7 +28865,7 @@ tags:
 - recognition
 - workhuman
 compatibility: Designed for Claude Code
----
+***
 # Workhuman Performance Tuning
 
 ## Overview
@@ -21721,13 +28913,12 @@ Guidance for performance tuning with Workhuman Social Recognition and rewards AP
 See related Workhuman skills for more patterns.
 
 
-
 ```markdown
---- END OF FILE: workhuman-performance-tuning.md ---
+*** END OF FILE: workhuman-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-workhuman-reference-architecture"></a>
@@ -21737,13 +28928,13 @@ See related Workhuman skills for more patterns.
 - **Source File:** `skills/workhuman-reference-architecture.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,113 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: workhuman-reference-architecture.md ---
+*** START OF FILE: workhuman-reference-architecture.md ***
 ```
 
----
+***
 name: workhuman-reference-architecture
 description: 'Workhuman reference architecture for employee recognition and rewards
   API.
@@ -21765,7 +28956,7 @@ tags:
 - recognition
 - workhuman
 compatibility: Designed for Claude Code
----
+***
 # Workhuman Reference Architecture
 
 ## Overview
@@ -21813,13 +29004,12 @@ Guidance for reference architecture with Workhuman Social Recognition and reward
 See related Workhuman skills for more patterns.
 
 
-
 ```markdown
---- END OF FILE: workhuman-reference-architecture.md ---
+*** END OF FILE: workhuman-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-writing-beats"></a>
@@ -21829,17 +29019,17 @@ See related Workhuman skills for more patterns.
 - **Source File:** `skills/writing-beats.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 4,922 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: writing-beats.md ---
+*** START OF FILE: writing-beats.md ***
 ```
 
----
+***
 name: writing-beats
 description: Writing, exploit; assemble raw material into a journey of beats, grounding each term before a beat leans on it.
 disable-model-invocation: true
----
+***
 
 <what-to-do>
 
@@ -21904,13 +29094,12 @@ The article ends when the journey is complete, not when the pile is empty. Most 
 </supporting-info>
 
 
-
 ```markdown
---- END OF FILE: writing-beats.md ---
+*** END OF FILE: writing-beats.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-writing-for-agents"></a>
@@ -21920,16 +29109,16 @@ The article ends when the journey is complete, not when the pile is empty. Most 
 - **Source File:** `skills/writing-for-agents.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 10,967 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: writing-for-agents.md ---
+*** START OF FILE: writing-for-agents.md ***
 ```
 
----
+***
 name: writing-for-agents
 description: Writing documents for agents. Use when creating or editing skills, or modifying AGENTS.md or CLAUDE.md.
----
+***
 
 Reference for writing any document an agent consumes: a skill, an `AGENTS.md` / `CLAUDE.md`, a doc reached by a pointer. The packaging differs; the writing does not: the same levers make each one predictable, since the agent takes the same _process_ every run rather than producing the same output.
 
@@ -22009,13 +29198,12 @@ You win twice: fewer tokens, and a sharper hook for the agent to hang its thinki
 - Hunt **no-ops** sentence by sentence: an instruction the model already obeys by default pays load to say nothing. The test (does it change behaviour versus the default?) is model-relative, not reader-relative: two people disagreeing about a no-op disagree about the default, and settle it by running the document, not by debate. When a sentence fails, delete the whole sentence rather than trim words from it. The test also grades leading words: a word too weak to beat the default (_be thorough_ when the agent is already thorough-ish) is a no-op, and the fix is a stronger word (_relentless_), not a different technique.
 
 
-
 ```markdown
---- END OF FILE: writing-for-agents.md ---
+*** END OF FILE: writing-for-agents.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-writing-fragments"></a>
@@ -22025,17 +29213,17 @@ You win twice: fewer tokens, and a sharper hook for the agent to hang its thinki
 - **Source File:** `skills/writing-fragments.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 3,637 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: writing-fragments.md ---
+*** START OF FILE: writing-fragments.md ***
 ```
 
----
+***
 name: writing-fragments
 description: "Writing, explore: mine raw fragments, no structure yet."
 disable-model-invocation: true
----
+***
 
 <what-to-do>
 
@@ -22082,17 +29270,17 @@ A first fragment lives here.
 It can be multiple paragraphs. It can include lists, code, quotes: whatever
 shape the fragment naturally takes.
 
----
+***
 
 A second fragment.
 
----
+***
 
 > A quoted line that the user wants to keep around.
 
 A reaction to it.
 
----
+***
 
 - A cluster of related observations
 - That hang together by feel
@@ -22112,13 +29300,12 @@ The user can say "cut the last one", "rewrite that one sharper", "merge those tw
 </supporting-info>
 
 
-
 ```markdown
---- END OF FILE: writing-fragments.md ---
+*** END OF FILE: writing-fragments.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-writing-shape"></a>
@@ -22128,17 +29315,17 @@ The user can say "cut the last one", "rewrite that one sharper", "merge those tw
 - **Source File:** `skills/writing-shape.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 6,001 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: writing-shape.md ---
+*** START OF FILE: writing-shape.md ***
 ```
 
----
+***
 name: writing-shape
 description: "Writing, exploit: shape raw material into an article, paragraph by paragraph."
 disable-model-invocation: true
----
+***
 
 <what-to-do>
 
@@ -22215,13 +29402,12 @@ Append to the article file as each block is agreed. Re-read the file from disk b
 </supporting-info>
 
 
-
 ```markdown
---- END OF FILE: writing-shape.md ---
+*** END OF FILE: writing-shape.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-xss-html-injection"></a>
@@ -22231,20 +29417,20 @@ Append to the article file as each block is agreed. Re-read the file from disk b
 - **Source File:** `skills/xss-html-injection.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 14,935 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: xss-html-injection.md ---
+*** START OF FILE: xss-html-injection.md ***
 ```
 
----
+***
 name: xss-html-injection
 description: "Execute comprehensive client-side injection vulnerability assessments on web applications to identify XSS and HTML injection flaws, demonstrate exploitation techniques for session hijacking and credential theft, and validate input sanitization and output encoding mechanisms."
 risk: offensive
 source: community
 author: zebbern
 date_added: "2026-02-27"
----
+***
 
 > **⚠️ AUTHORIZED USE ONLY**
 > This skill is for educational purposes or authorized security assessments only.
@@ -22758,13 +29944,12 @@ Content-Security-Policy: script-src 'self' https://cdn.trusted.com
 This skill is applicable to execute the workflow or actions described in the overview.
 
 
-
 ```markdown
---- END OF FILE: xss-html-injection.md ---
+*** END OF FILE: xss-html-injection.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-yaml-config-validator"></a>
@@ -22774,13 +29959,13 @@ This skill is applicable to execute the workflow or actions described in the ove
 - **Source File:** `skills/yaml-config-validator.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,323 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: yaml-config-validator.md ---
+*** START OF FILE: yaml-config-validator.md ***
 ```
 
----
+***
 name: yaml-config-validator
 description: 'Validate yaml config validator operations. Auto-activating skill for
   DevOps Basics.
@@ -22799,7 +29984,7 @@ tags:
 - devops
 - ci-cd
 compatibility: Designed for Claude Code
----
+***
 # Yaml Config Validator
 
 ## Overview
@@ -22862,13 +30047,12 @@ Part of the **DevOps Basics** skill category.
 Tags: devops, git, docker, ci-cd, infrastructure
 
 
-
 ```markdown
---- END OF FILE: yaml-config-validator.md ---
+*** END OF FILE: yaml-config-validator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-yaml-master"></a>
@@ -22878,13 +30062,13 @@ Tags: devops, git, docker, ci-cd, infrastructure
 - **Source File:** `skills/yaml-master.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 2,685 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: yaml-master.md ---
+*** START OF FILE: yaml-master.md ***
 ```
 
----
+***
 name: yaml-master
 description: 'Execute proactive YAML intelligence: automatically activates when working
   with YAML files.
@@ -22901,7 +30085,7 @@ tags:
 - productivity
 - yaml-master
 compatibility: Designed for Claude Code
----
+***
 # YAML Master
 
 Proactive YAML intelligence: validate syntax, enforce consistent formatting, and keep configuration files schema-correct (Kubernetes, GitHub Actions, Docker Compose, and similar).
@@ -22954,13 +30138,12 @@ This skill activates when working with `.yml`/`.yaml` files to detect structural
 - GitHub Actions workflow syntax: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 
 
-
 ```markdown
---- END OF FILE: yaml-master.md ---
+*** END OF FILE: yaml-master.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-zigzag-pattern-classifier"></a>
@@ -22970,17 +30153,17 @@ This skill activates when working with `.yml`/`.yaml` files to detect structural
 - **Source File:** `skills/zigzag-pattern-classifier.md`
 - **Volume:** Part 6 of 6
 - **Original Size:** 13,044 bytes
-- [⬆ Back to Top](#-master-skills--part-6-of-6) | [📖 Master Index](MASTER_SKILLS_INDEX.md)
+- [Back to Top](#master-skills---part-6-of-6) | [Master Index](MASTER_SKILLS_INDEX.md)
 
 ```markdown
---- START OF FILE: zigzag-pattern-classifier.md ---
+*** START OF FILE: zigzag-pattern-classifier.md ***
 ```
 
----
+***
 name: zigzag-pattern-classifier
 description: "ZigZag swing pattern classification for algorithmic trading. UP-DOWN and UP-DOWN-UP patterns. TRIGGERS - zigzag, swing classification"
 allowed-tools: Read, Grep, Glob
----
+***
 
 # ZigZag Swing Pattern Classifier
 
@@ -23022,7 +30205,7 @@ Complete taxonomy for classifying ZigZag swing patterns by structure and market 
 | **EH** | Equal High  | \|H₃ − H₁\| ≤ ε |
 | **LH** | Lower High  | H₃ < H₁ − ε     |
 
----
+***
 
 ## Part 1: Two-Pivot Patterns (UP-DOWN)
 
@@ -23083,7 +30266,7 @@ Attach to any variant for richer context:
 
 Example labels: `HL-FD2+C`, `LL-FD4+S+C`, `EL+X`
 
----
+***
 
 ## Part 2: Three-Pivot Patterns (UP-DOWN-UP)
 
@@ -23134,7 +30317,7 @@ L₂ has exactly 3 relationships to L₀ (higher, equal, lower). H₃ has exactl
 | Bearish Transition  | EL+LH                      |
 | Reversal            | LL+HH                      |
 
----
+***
 
 ## Part 3: 27-Way Extension
 
@@ -23148,7 +30331,7 @@ This yields 3×3×3 = **27 sub-variants**. Some are mathematically impossible du
 
 Analysts often simplify this third dimension to a binary: "reclaims L₀" vs "fails to reclaim L₀".
 
----
+***
 
 ## The Epsilon Tolerance Band
 
@@ -23193,7 +30376,7 @@ If bid-ask spread unavailable:
 
 For complete worked examples with sensitivity analysis, read `references/epsilon-tolerance-detail.md`.
 
----
+***
 
 ## Freedman-Diaconis Binning
 
@@ -23223,7 +30406,7 @@ edges = linspace(min, max, K+1)
 
 Recompute bin edges monthly or quarterly to track regime drift. Fall back to quantile binning if sample < 400.
 
----
+***
 
 ## Implementation Reference
 
@@ -23235,7 +30418,7 @@ The `qta` Rust crate (`crates/qta/`) implements the core ZigZag state machine th
 
 The classification framework in this skill extends the crate's output with FD-binning, three-pivot analysis, and market regime labeling.
 
----
+***
 
 ## Deep Reference Files
 
@@ -23262,10 +30445,9 @@ After this skill completes, check before closing:
 Only update if the issue is real and reproducible — not speculative.
 
 
-
 ```markdown
---- END OF FILE: zigzag-pattern-classifier.md ---
+*** END OF FILE: zigzag-pattern-classifier.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***

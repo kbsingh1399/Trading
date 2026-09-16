@@ -1,14 +1,14 @@
 ---
-name: master_skills_volume_3
-description: Master Quantitative Trading and Autonomous Agent Engineering Methodologies (Volume 3 of 6, covering 217 skills from drive-automation-session to jmeter-test-plan-creator).
+name: master-skills-volume-3
+description: "Master Quantitative Trading and Autonomous Agent Engineering Methodologies Volume 3 of 6."
 ---
 
-# 📚 MASTER TRADING SKILLS — VOLUME 3 OF 6
+# MASTER TRADING SKILLS - VOLUME 3 OF 6
 
 > Comprehensive specialized engineering and quantitative trading methodologies.
 > Volume 3 contains 217 unabridged skills (`drive-automation-session` to `jmeter-test-plan-creator`).
 
-## 📑 VOLUME TABLE OF CONTENTS
+## VOLUME TABLE OF CONTENTS
 
 | # | Skill Name | Anchor Link | Bytes |
 |---|---|---|---|
@@ -241,13 +241,13 @@ description: Master Quantitative Trading and Autonomous Agent Engineering Method
 
 - **Source File:** `skills/drive-automation-session.md`
 - **Original Size:** 24,260 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: drive-automation-session.md ---
+*** START OF SKILL: drive-automation-session.md ***
 ```
 
----
+***
 name: drive-automation-session
 description: >-
   Drive an already-reserved Kobiton device from a natural-language intent.
@@ -280,7 +280,7 @@ compatibility: >-
   required, not a fallback. An authenticated Kobiton MCP connection is
   additionally useful for device selection.
 tags: [mobile, testing, appium, natural-language, intent, automation, kobiton]
----
+***
 
 # Drive from Intent
 
@@ -615,13 +615,12 @@ The only hard programmatic stop is `MAX_ITERS=100` (override per session), which
 - The skill writes nothing to `tools/*.yaml` and does not add any MCP tool. It only consumes existing MCP tools (`reserveDevice`, `getSession`, `terminateSession`, etc.).
 
 
-
 ```markdown
---- END OF SKILL: drive-automation-session.md ---
+*** END OF SKILL: drive-automation-session.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-drive-desktop-app"></a>
@@ -630,13 +629,13 @@ The only hard programmatic stop is `MAX_ITERS=100` (override per session), which
 
 - **Source File:** `skills/drive-desktop-app.md`
 - **Original Size:** 5,163 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: drive-desktop-app.md ---
+*** START OF SKILL: drive-desktop-app.md ***
 ```
 
----
+***
 name: drive-desktop-app
 description: Drive and verify an Electron or Tauri desktop app from the inside, including the main-process and Rust IPC calls a browser tool cannot see. Use when a desktop app needs testing, when a feature works in the browser but not in the packaged app, when an IPC or invoke call needs proving, when a desktop screenshot or visual diff is wanted, or when you need a headless run of a desktop UI in CI.
 license: Apache-2.0
@@ -644,7 +643,7 @@ metadata:
   version: 2.9.0
   homepage: https://www.reticle.sh
   repository: https://github.com/reticlehq/reticle
----
+***
 
 # Drive a desktop app and prove what happened
 
@@ -718,18 +717,17 @@ If IPC calls never appear while the app works fine: on Electron, the shim's `req
 
 `unknown` is not a pass on the desktop either. And do not weaken an IPC assertion to make a red verdict green: a desktop false green is the exact failure this wiring exists to remove.
 
----
+***
 
 Full desktop reference: `curl https://docs.reticle.sh/desktop.md`. Everything else: `curl https://docs.reticle.sh/llms.txt`.
 
 
-
 ```markdown
---- END OF SKILL: drive-desktop-app.md ---
+*** END OF SKILL: drive-desktop-app.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-e2e-testing-patterns"></a>
@@ -738,19 +736,19 @@ Full desktop reference: `curl https://docs.reticle.sh/desktop.md`. Everything el
 
 - **Source File:** `skills/e2e-testing-patterns.md`
 - **Original Size:** 1,738 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: e2e-testing-patterns.md ---
+*** START OF SKILL: e2e-testing-patterns.md ***
 ```
 
----
+***
 name: e2e-testing-patterns
 description: "Build reliable, fast, and maintainable end-to-end test suites that provide confidence to ship code quickly and catch regressions before users do."
 risk: safe
 source: community
 date_added: "2026-02-27"
----
+***
 
 # E2E Testing Patterns
 
@@ -795,13 +793,12 @@ Build reliable, fast, and maintainable end-to-end test suites that provide confi
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: e2e-testing-patterns.md ---
+*** END OF SKILL: e2e-testing-patterns.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-e2e-testing"></a>
@@ -810,18 +807,18 @@ Build reliable, fast, and maintainable end-to-end test suites that provide confi
 
 - **Source File:** `skills/e2e-testing.md`
 - **Original Size:** 8,497 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: e2e-testing.md ---
+*** START OF SKILL: e2e-testing.md ***
 ```
 
----
+***
 name: e2e-testing
 description: Playwright E2E testing patterns, Page Object Model, configuration, CI/CD integration, artifact management, and flaky test strategies. Use when writing Playwright tests, structuring page objects, or fixing flaky E2E runs in CI.
 metadata:
   origin: ECC
----
+***
 
 # E2E Testing Patterns
 
@@ -1145,13 +1142,12 @@ test('trade execution', async ({ page }) => {
 ```
 
 
-
 ```markdown
---- END OF SKILL: e2e-testing.md ---
+*** END OF SKILL: e2e-testing.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-early-stopping-callback"></a>
@@ -1160,13 +1156,13 @@ test('trade execution', async ({ page }) => {
 
 - **Source File:** `skills/early-stopping-callback.md`
 - **Original Size:** 2,380 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: early-stopping-callback.md ---
+*** START OF SKILL: early-stopping-callback.md ***
 ```
 
----
+***
 name: early-stopping-callback
 description: 'Manage early stopping callback operations. Auto-activating skill for
   ML Training.
@@ -1186,7 +1182,7 @@ tags:
 - ai
 - machine-learning
 compatibility: Designed for Claude Code
----
+***
 # Early Stopping Callback
 
 ## Overview
@@ -1249,13 +1245,12 @@ Part of the **ML Training** skill category.
 Tags: ml, training, pytorch, tensorflow, sklearn
 
 
-
 ```markdown
---- END OF SKILL: early-stopping-callback.md ---
+*** END OF SKILL: early-stopping-callback.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-elevenlabs-debug-bundle"></a>
@@ -1264,13 +1259,13 @@ Tags: ml, training, pytorch, tensorflow, sklearn
 
 - **Source File:** `skills/elevenlabs-debug-bundle.md`
 - **Original Size:** 5,598 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: elevenlabs-debug-bundle.md ---
+*** START OF SKILL: elevenlabs-debug-bundle.md ***
 ```
 
----
+***
 name: elevenlabs-debug-bundle
 description: |
   Collect ElevenLabs debug evidence for support tickets and troubleshooting.
@@ -1292,7 +1287,7 @@ tags:
 - debugging
 - support
 compatibility: Designed for Claude Code
----
+***
 # ElevenLabs Debug Bundle
 
 ## Overview
@@ -1406,13 +1401,12 @@ Worked runs for a healthy account, a `401` bad key, and the full JSON report: [r
 For rate limit issues, see `elevenlabs-rate-limits`. For common errors, see `elevenlabs-common-errors`.
 
 
-
 ```markdown
---- END OF SKILL: elevenlabs-debug-bundle.md ---
+*** END OF SKILL: elevenlabs-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-elevenlabs-performance-tuning"></a>
@@ -1421,13 +1415,13 @@ For rate limit issues, see `elevenlabs-rate-limits`. For common errors, see `ele
 
 - **Source File:** `skills/elevenlabs-performance-tuning.md`
 - **Original Size:** 8,281 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: elevenlabs-performance-tuning.md ---
+*** START OF SKILL: elevenlabs-performance-tuning.md ***
 ```
 
----
+***
 name: elevenlabs-performance-tuning
 description: |
   Optimize ElevenLabs TTS latency with model selection, streaming, caching, and
@@ -1448,7 +1442,7 @@ tags:
 - performance
 - optimization
 compatibility: Designed for Claude Code
----
+***
 # ElevenLabs Performance Tuning
 
 ## Overview
@@ -1602,13 +1596,12 @@ Full, runnable versions of every snippet above are in [the implementation walkth
 For cost optimization once latency is tuned, see the `elevenlabs-cost-tuning` skill, which covers character-usage budgeting, model-tier cost tradeoffs, and cache-hit-rate targets.
 
 
-
 ```markdown
---- END OF SKILL: elevenlabs-performance-tuning.md ---
+*** END OF SKILL: elevenlabs-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-elevenlabs-reference-architecture"></a>
@@ -1617,13 +1610,13 @@ For cost optimization once latency is tuned, see the `elevenlabs-cost-tuning` sk
 
 - **Source File:** `skills/elevenlabs-reference-architecture.md`
 - **Original Size:** 6,473 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: elevenlabs-reference-architecture.md ---
+*** START OF SKILL: elevenlabs-reference-architecture.md ***
 ```
 
----
+***
 name: elevenlabs-reference-architecture
 description: |
   Implement an ElevenLabs reference architecture for production TTS/voice
@@ -1644,7 +1637,7 @@ tags:
 - architecture
 - patterns
 compatibility: Designed for Claude Code
----
+***
 # ElevenLabs Reference Architecture
 
 ## Overview
@@ -1776,13 +1769,12 @@ Start with `elevenlabs-install-auth` for setup, then apply this architecture. Us
 `elevenlabs-core-workflow-a` and `elevenlabs-core-workflow-b` for feature implementation.
 
 
-
 ```markdown
---- END OF SKILL: elevenlabs-reference-architecture.md ---
+*** END OF SKILL: elevenlabs-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-embedding-strategies"></a>
@@ -1791,20 +1783,20 @@ Start with `elevenlabs-install-auth` for setup, then apply this architecture. Us
 
 - **Source File:** `skills/embedding-strategies.md`
 - **Original Size:** 15,728 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: embedding-strategies.md ---
+*** START OF SKILL: embedding-strategies.md ***
 ```
 
----
+***
 name: embedding-strategies
 description: Guide to selecting and optimizing embedding models for vector search applications.
 metadata:
   aas-risk: critical
   aas-source: community
   aas-date-added: '2026-02-27'
----
+***
 
 # Embedding Strategies
 
@@ -2299,13 +2291,12 @@ def compute_embedding_similarity(
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: embedding-strategies.md ---
+*** END OF SKILL: embedding-strategies.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-encrypting-and-decrypting-data"></a>
@@ -2314,13 +2305,13 @@ def compute_embedding_similarity(
 
 - **Source File:** `skills/encrypting-and-decrypting-data.md`
 - **Original Size:** 4,543 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: encrypting-and-decrypting-data.md ---
+*** START OF SKILL: encrypting-and-decrypting-data.md ***
 ```
 
----
+***
 name: encrypting-and-decrypting-data
 description: Validate encryption implementations and cryptographic practices. Use
   when reviewing data security measures. Trigger with 'check encryption', 'validate
@@ -2333,7 +2324,7 @@ tags:
 - security
 - encrypting-decrypting
 compatibility: Designed for Claude Code
----
+***
 # Encryption Tool
 
 Validate encryption implementations, audit cryptographic algorithm choices, and verify key management practices across codebases and configuration files.
@@ -2431,13 +2422,12 @@ If security scanning fails:
 - Vulnerability remediation best practices
 
 
-
 ```markdown
---- END OF SKILL: encrypting-and-decrypting-data.md ---
+*** END OF SKILL: encrypting-and-decrypting-data.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-engineering-features-for-machine-learning"></a>
@@ -2446,13 +2436,13 @@ If security scanning fails:
 
 - **Source File:** `skills/engineering-features-for-machine-learning.md`
 - **Original Size:** 4,306 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: engineering-features-for-machine-learning.md ---
+*** START OF SKILL: engineering-features-for-machine-learning.md ***
 ```
 
----
+***
 name: engineering-features-for-machine-learning
 description: 'Execute create, select, and transform features to improve machine learning
   model performance. Handles feature scaling, encoding, and importance analysis. Use
@@ -2470,7 +2460,7 @@ tags:
 - performance
 - scaling
 compatibility: Designed for Claude Code
----
+***
 # Feature Engineering Toolkit
 
 Create, select, and transform features to improve ML model performance, handling scaling, encoding, interaction terms, and importance analysis.
@@ -2552,13 +2542,12 @@ The skill produces structured output relevant to the task.
 - Related skills and commands
 
 
-
 ```markdown
---- END OF SKILL: engineering-features-for-machine-learning.md ---
+*** END OF SKILL: engineering-features-for-machine-learning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-error-debugging-error-analysis"></a>
@@ -2567,19 +2556,19 @@ The skill produces structured output relevant to the task.
 
 - **Source File:** `skills/error-debugging-error-analysis.md`
 - **Original Size:** 2,548 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: error-debugging-error-analysis.md ---
+*** START OF SKILL: error-debugging-error-analysis.md ***
 ```
 
----
+***
 name: error-debugging-error-analysis
 description: "You are an expert error analysis specialist with deep expertise in debugging distributed systems, analyzing production incidents, and implementing comprehensive observability solutions."
 risk: safe
 source: community
 date_added: "2026-02-27"
----
+***
 
 # Error Analysis and Resolution
 
@@ -2630,13 +2619,12 @@ The analysis scope may include specific error messages, stack traces, log files,
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: error-debugging-error-analysis.md ---
+*** END OF SKILL: error-debugging-error-analysis.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-error-debugging-error-trace"></a>
@@ -2645,19 +2633,19 @@ The analysis scope may include specific error messages, stack traces, log files,
 
 - **Source File:** `skills/error-debugging-error-trace.md`
 - **Original Size:** 2,170 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: error-debugging-error-trace.md ---
+*** START OF SKILL: error-debugging-error-trace.md ***
 ```
 
----
+***
 name: error-debugging-error-trace
 description: "You are an error tracking and observability expert specializing in implementing comprehensive error monitoring solutions. Set up error tracking systems, configure alerts, implement structured logging, and ensure teams can quickly identify and resolve production issues."
 risk: safe
 source: community
 date_added: "2026-02-27"
----
+***
 
 # Error Tracking and Monitoring
 
@@ -2704,13 +2692,12 @@ $ARGUMENTS
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: error-debugging-error-trace.md ---
+*** END OF SKILL: error-debugging-error-trace.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-error-debugging-multi-agent-review"></a>
@@ -2719,19 +2706,19 @@ $ARGUMENTS
 
 - **Source File:** `skills/error-debugging-multi-agent-review.md`
 - **Original Size:** 7,314 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: error-debugging-multi-agent-review.md ---
+*** START OF SKILL: error-debugging-multi-agent-review.md ***
 ```
 
----
+***
 name: error-debugging-multi-agent-review
 description: "Use when working with error debugging multi agent review"
 risk: safe
 source: community
 date_added: "2026-02-27"
----
+***
 
 # Multi-Agent Code Review Orchestration Tool
 
@@ -2951,13 +2938,12 @@ Target for review: $ARGUMENTS
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: error-debugging-multi-agent-review.md ---
+*** END OF SKILL: error-debugging-multi-agent-review.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-error-diagnostics-smart-debug"></a>
@@ -2966,19 +2952,19 @@ Target for review: $ARGUMENTS
 
 - **Source File:** `skills/error-diagnostics-smart-debug.md`
 - **Original Size:** 6,657 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: error-diagnostics-smart-debug.md ---
+*** START OF SKILL: error-diagnostics-smart-debug.md ***
 ```
 
----
+***
 name: error-diagnostics-smart-debug
 description: "Use when working with error diagnostics smart debug"
 risk: unknown
 source: community
 date_added: "2026-02-27"
----
+***
 
 ## Use this skill when
 
@@ -3169,7 +3155,7 @@ Provide structured report:
 
 Focus on actionable insights. Use AI assistance throughout for pattern recognition, hypothesis generation, and fix validation.
 
----
+***
 
 Issue to debug: $ARGUMENTS
 
@@ -3179,13 +3165,12 @@ Issue to debug: $ARGUMENTS
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: error-diagnostics-smart-debug.md ---
+*** END OF SKILL: error-diagnostics-smart-debug.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-error-handler-middleware"></a>
@@ -3194,13 +3179,13 @@ Issue to debug: $ARGUMENTS
 
 - **Source File:** `skills/error-handler-middleware.md`
 - **Original Size:** 2,415 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: error-handler-middleware.md ---
+*** START OF SKILL: error-handler-middleware.md ***
 ```
 
----
+***
 name: error-handler-middleware
 description: 'Manage error handler middleware operations. Auto-activating skill for
   Backend Development.
@@ -3220,7 +3205,7 @@ tags:
 - backend
 - development
 compatibility: Designed for Claude Code
----
+***
 # Error Handler Middleware
 
 ## Overview
@@ -3283,13 +3268,12 @@ Part of the **Backend Development** skill category.
 Tags: nodejs, python, go, microservices, database
 
 
-
 ```markdown
---- END OF SKILL: error-handler-middleware.md ---
+*** END OF SKILL: error-handler-middleware.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-eval-harness"></a>
@@ -3298,19 +3282,19 @@ Tags: nodejs, python, go, microservices, database
 
 - **Source File:** `skills/eval-harness.md`
 - **Original Size:** 6,863 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: eval-harness.md ---
+*** START OF SKILL: eval-harness.md ***
 ```
 
----
+***
 name: eval-harness
 description: Formal evaluation framework for Claude Code sessions implementing eval-driven development (EDD) principles. Use when a Claude Code workflow needs a formal eval before it is trusted or changed.
 metadata:
   origin: ECC
 tools: Read, Write, Edit, Bash, Grep, Glob
----
+***
 
 # Eval Harness Skill
 
@@ -3577,13 +3561,12 @@ Recommended thresholds:
 - `docs/releases/<version>/eval-summary.md` release snapshot
 
 
-
 ```markdown
---- END OF SKILL: eval-harness.md ---
+*** END OF SKILL: eval-harness.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-evaluating-machine-learning-models"></a>
@@ -3592,13 +3575,13 @@ Recommended thresholds:
 
 - **Source File:** `skills/evaluating-machine-learning-models.md`
 - **Original Size:** 3,754 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: evaluating-machine-learning-models.md ---
+*** START OF SKILL: evaluating-machine-learning-models.md ***
 ```
 
----
+***
 name: evaluating-machine-learning-models
 description: 'Build this skill allows AI assistant to evaluate machine learning models
   using a comprehensive suite of metrics. it should be used when the user requests
@@ -3617,7 +3600,7 @@ tags:
 - ml
 - performance
 compatibility: Designed for Claude Code
----
+***
 # Model Evaluation Suite
 
 Evaluate machine learning models using a comprehensive suite of metrics including accuracy, precision, recall, F1-score, and custom KPIs.
@@ -3701,13 +3684,12 @@ The skill produces structured output relevant to the task.
 - Related skills and commands
 
 
-
 ```markdown
---- END OF SKILL: evaluating-machine-learning-models.md ---
+*** END OF SKILL: evaluating-machine-learning-models.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-evaluation"></a>
@@ -3716,19 +3698,19 @@ The skill produces structured output relevant to the task.
 
 - **Source File:** `skills/evaluation.md`
 - **Original Size:** 11,283 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: evaluation.md ---
+*** START OF SKILL: evaluation.md ***
 ```
 
----
+***
 name: evaluation
 description: "Build evaluation frameworks for agent systems. Use when testing agent performance systematically, validating context engineering choices, or measuring improvements over time."
 risk: safe
 source: "https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering/tree/main/skills/evaluation"
 date_added: "2026-02-27"
----
+***
 
 ## When to Use This Skill
 
@@ -3952,7 +3934,7 @@ External resources:
 - Agent evaluation research papers
 - Production monitoring practices
 
----
+***
 
 ## Skill Metadata
 
@@ -3967,13 +3949,12 @@ External resources:
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: evaluation.md ---
+*** END OF SKILL: evaluation.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-event-sourcing-architect"></a>
@@ -3982,20 +3963,20 @@ External resources:
 
 - **Source File:** `skills/event-sourcing-architect.md`
 - **Original Size:** 3,054 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: event-sourcing-architect.md ---
+*** START OF SKILL: event-sourcing-architect.md ***
 ```
 
----
+***
 name: event-sourcing-architect
 description: Expert in event sourcing, CQRS, and event-driven architecture patterns. Masters event store design, projection building, saga orchestration, and eventual consistency patterns. Use PROACTIVELY for event-sourced systems, audit trail requirements, or complex domain modeling with temporal queries.
 metadata:
   aas-risk: critical
   aas-source: community
   aas-date-added: '2026-02-27'
----
+***
 
 # Event Sourcing Architect
 
@@ -4062,13 +4043,12 @@ Works well with: `saga-orchestration`, `architecture-patterns`, `dbos-*`
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: event-sourcing-architect.md ---
+*** END OF SKILL: event-sourcing-architect.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-event-store-design"></a>
@@ -4077,20 +4057,20 @@ Works well with: `saga-orchestration`, `architecture-patterns`, `dbos-*`
 
 - **Source File:** `skills/event-store-design.md`
 - **Original Size:** 16,819 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: event-store-design.md ---
+*** START OF SKILL: event-store-design.md ***
 ```
 
----
+***
 name: event-store-design
 description: Design and implement event stores for event-sourced systems. Use when building event sourcing infrastructure, choosing event store technologies, or implementing event persistence patterns.
 metadata:
   aas-risk: critical
   aas-source: community
   aas-date-added: '2026-02-27'
----
+***
 
 # Event Store Design
 
@@ -4543,13 +4523,12 @@ Capacity: On-demand or provisioned based on throughput needs
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: event-store-design.md ---
+*** END OF SKILL: event-store-design.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-evernote-data-handling"></a>
@@ -4558,13 +4537,13 @@ Capacity: On-demand or provisioned based on throughput needs
 
 - **Source File:** `skills/evernote-data-handling.md`
 - **Original Size:** 4,558 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: evernote-data-handling.md ---
+*** START OF SKILL: evernote-data-handling.md ***
 ```
 
----
+***
 name: evernote-data-handling
 description: 'Best practices for handling Evernote data.
 
@@ -4586,7 +4565,7 @@ tags:
 - evernote
 - evernote-data
 compatibility: Designed for Claude Code
----
+***
 # Evernote Data Handling
 
 ## Overview
@@ -4689,13 +4668,12 @@ For enterprise features, see `evernote-enterprise-rbac`.
 **Markdown export**: Convert all notes in a notebook to Markdown files, preserving folder structure from notebook stacks, and saving attachments to an `assets/` directory.
 
 
-
 ```markdown
---- END OF SKILL: evernote-data-handling.md ---
+*** END OF SKILL: evernote-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-evernote-debug-bundle"></a>
@@ -4704,13 +4682,13 @@ For enterprise features, see `evernote-enterprise-rbac`.
 
 - **Source File:** `skills/evernote-debug-bundle.md`
 - **Original Size:** 4,881 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: evernote-debug-bundle.md ---
+*** START OF SKILL: evernote-debug-bundle.md ***
 ```
 
----
+***
 name: evernote-debug-bundle
 description: 'Debug Evernote API issues with diagnostic tools and techniques.
 
@@ -4733,7 +4711,7 @@ tags:
 - api
 - debugging
 compatibility: Designed for Claude Code
----
+***
 # Evernote Debug Bundle
 
 ## Current State
@@ -4851,13 +4829,12 @@ For rate limit handling, see `evernote-rate-limits`.
 **ENML debugging**: Pipe note content through the ENML validator to find missing DOCTYPE, forbidden `<script>` tags, or unclosed elements. Use auto-fix mode to correct issues automatically.
 
 
-
 ```markdown
---- END OF SKILL: evernote-debug-bundle.md ---
+*** END OF SKILL: evernote-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-evernote-performance-tuning"></a>
@@ -4866,13 +4843,13 @@ For rate limit handling, see `evernote-rate-limits`.
 
 - **Source File:** `skills/evernote-performance-tuning.md`
 - **Original Size:** 4,713 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: evernote-performance-tuning.md ---
+*** START OF SKILL: evernote-performance-tuning.md ***
 ```
 
----
+***
 name: evernote-performance-tuning
 description: 'Optimize Evernote integration performance.
 
@@ -4896,7 +4873,7 @@ tags:
 - performance
 - scaling
 compatibility: Designed for Claude Code
----
+***
 # Evernote Performance Tuning
 
 ## Overview
@@ -5003,13 +4980,12 @@ For cost optimization, see `evernote-cost-tuning`.
 **Lazy content loading**: Show note titles from cached metadata. Fetch full ENML content only when user clicks to read. Reduces average response time from 500ms to 50ms for list views.
 
 
-
 ```markdown
---- END OF SKILL: evernote-performance-tuning.md ---
+*** END OF SKILL: evernote-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-evernote-reference-architecture"></a>
@@ -5018,13 +4994,13 @@ For cost optimization, see `evernote-cost-tuning`.
 
 - **Source File:** `skills/evernote-reference-architecture.md`
 - **Original Size:** 4,757 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: evernote-reference-architecture.md ---
+*** START OF SKILL: evernote-reference-architecture.md ***
 ```
 
----
+***
 name: evernote-reference-architecture
 description: 'Reference architecture for Evernote integrations.
 
@@ -5046,7 +5022,7 @@ tags:
 - evernote
 - scaling
 compatibility: Designed for Claude Code
----
+***
 # Evernote Reference Architecture
 
 ## Overview
@@ -5151,13 +5127,12 @@ For multi-environment setup, see `evernote-multi-env-setup`.
 **Team dashboard**: Aggregate notes from multiple Evernote Business users into a shared dashboard. Use the sync architecture to keep data fresh. Cache notebook/tag lookups for sub-100ms response times.
 
 
-
 ```markdown
---- END OF SKILL: evernote-reference-architecture.md ---
+*** END OF SKILL: evernote-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-evolutionary-metric-ranking"></a>
@@ -5166,17 +5141,17 @@ For multi-environment setup, see `evernote-multi-env-setup`.
 
 - **Source File:** `skills/evolutionary-metric-ranking.md`
 - **Original Size:** 22,854 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: evolutionary-metric-ranking.md ---
+*** START OF SKILL: evolutionary-metric-ranking.md ***
 ```
 
----
+***
 name: evolutionary-metric-ranking
 description: Multi-objective evolutionary optimization for per-metric percentile cutoffs and intersection-based config selection.
 allowed-tools: Read, Grep, Glob, Bash
----
+***
 
 # Evolutionary Metric Ranking
 
@@ -5184,7 +5159,7 @@ Methodology for systematically zooming into high-quality configurations across m
 
 **Companion skills**: `rangebar-eval-metrics` (metric definitions) | `adaptive-wfo-epoch` (WFO integration) | `backtesting-py-oracle` (SQL validation)
 
----
+***
 
 > **Self-Evolving Skill**: This skill improves through use. If instructions are wrong, parameters drifted, or a workaround was needed — fix this file immediately, don't defer. Only update for real, reproducible issues.
 
@@ -5199,7 +5174,7 @@ Use this skill when:
 - Performing forensic analysis on optimization results (universal champions, feature themes)
 - Designing a metric registry for pluggable evaluation systems
 
----
+***
 
 ## Core Principles
 
@@ -5297,7 +5272,7 @@ After optimization, perform forensic analysis to extract actionable insights:
 4. **Tightening curve** - intersection size vs uniform cutoff (100% -> 5%)
 5. **Metric discrimination power** - which metric kills the most configs at each tightening step
 
----
+***
 
 ## Architecture Pattern
 
@@ -5355,7 +5330,7 @@ This enables:
 - CI/CD integration via environment configuration
 - Mise task integration via `[env]` blocks
 
----
+***
 
 ## Evolutionary Optimizer Design
 
@@ -5470,7 +5445,7 @@ def objective(trial):
 
 **Use when**: You want to see the full trade-off landscape between two competing objectives.
 
----
+***
 
 ## Forensic Analysis Protocol
 
@@ -5529,7 +5504,7 @@ Tighten uniformly and at each step identify which metric was the "tightest kille
 
 This reveals the binding constraint hierarchy.
 
----
+***
 
 ## Implementation Checklist
 
@@ -5552,7 +5527,7 @@ When implementing this methodology in a new domain:
 15. [ ] Document binding constraint sequence
 16. [ ] Record feature themes in survivors
 
----
+***
 
 ## Anti-Patterns
 
@@ -5568,7 +5543,7 @@ When implementing this methodology in a new domain:
 | Unseeded optimizer        | Non-reproducible results                               | Always seed sampler (seed=42)             | MEDIUM   |
 | Missing forensic analysis | Raw numbers without insight                            | Run full forensic protocol (P8)           | MEDIUM   |
 
----
+***
 
 ## References
 
@@ -5593,7 +5568,7 @@ When implementing this methodology in a new domain:
 pip install scipy numpy optuna>=4.7
 ```
 
----
+***
 
 ## TodoWrite Task Templates
 
@@ -5639,7 +5614,7 @@ pip install scipy numpy optuna>=4.7
 8. [Verify] Document findings in structured summary table
 ```
 
----
+***
 
 ## Post-Change Checklist (Self-Maintenance)
 
@@ -5652,7 +5627,7 @@ After modifying this skill:
 5. [ ] Implementation checklist is complete and ordered
 6. [ ] Plugin README updated if description changed
 
----
+***
 
 ## Troubleshooting
 
@@ -5680,13 +5655,12 @@ After this skill completes, reflect before closing the task:
 ## Do NOT defer. The next invocation inherits whatever you leave behind
 
 
-
 ```markdown
---- END OF SKILL: evolutionary-metric-ranking.md ---
+*** END OF SKILL: evolutionary-metric-ranking.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-exa-architecture-variants"></a>
@@ -5695,13 +5669,13 @@ After this skill completes, reflect before closing the task:
 
 - **Source File:** `skills/exa-architecture-variants.md`
 - **Original Size:** 6,909 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: exa-architecture-variants.md ---
+*** START OF SKILL: exa-architecture-variants.md ***
 ```
 
----
+***
 name: exa-architecture-variants
 description: 'Choose and implement Exa architecture patterns at different scales:
   direct search, cached search, and RAG pipeline.
@@ -5726,7 +5700,7 @@ tags:
 - rag
 - scaling
 compatibility: Designed for Claude Code
----
+***
 # Exa Architecture Variants
 
 ## Overview
@@ -5939,13 +5913,12 @@ class ExaRAGPipeline {
 For reference architecture details, see `exa-reference-architecture`.
 
 
-
 ```markdown
---- END OF SKILL: exa-architecture-variants.md ---
+*** END OF SKILL: exa-architecture-variants.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-exa-data-handling"></a>
@@ -5954,13 +5927,13 @@ For reference architecture details, see `exa-reference-architecture`.
 
 - **Source File:** `skills/exa-data-handling.md`
 - **Original Size:** 7,049 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: exa-data-handling.md ---
+*** START OF SKILL: exa-data-handling.md ***
 ```
 
----
+***
 name: exa-data-handling
 description: 'Implement Exa search result processing, content extraction, caching,
   and RAG context management.
@@ -5985,7 +5958,7 @@ tags:
 - rag
 - caching
 compatibility: Designed for Claude Code
----
+***
 # Exa Data Handling
 
 ## Overview
@@ -6209,13 +6182,12 @@ async function ragSearch(query: string, tokenBudget = 4000) {
 For rate limit handling, see `exa-rate-limits`. For cost optimization, see `exa-cost-tuning`.
 
 
-
 ```markdown
---- END OF SKILL: exa-data-handling.md ---
+*** END OF SKILL: exa-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-exa-debug-bundle"></a>
@@ -6224,13 +6196,13 @@ For rate limit handling, see `exa-rate-limits`. For cost optimization, see `exa-
 
 - **Source File:** `skills/exa-debug-bundle.md`
 - **Original Size:** 6,055 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: exa-debug-bundle.md ---
+*** START OF SKILL: exa-debug-bundle.md ***
 ```
 
----
+***
 name: exa-debug-bundle
 description: 'Collect Exa debug evidence for support tickets and troubleshooting.
 
@@ -6252,7 +6224,7 @@ tags:
 - exa
 - debugging
 compatibility: Designed for Claude Code
----
+***
 # Exa Debug Bundle
 
 ## Current State
@@ -6416,13 +6388,12 @@ echo "Include the requestId from any error responses when contacting hello@exa.a
 For rate limit issues, see `exa-rate-limits`. For common error solutions, see `exa-common-errors`.
 
 
-
 ```markdown
---- END OF SKILL: exa-debug-bundle.md ---
+*** END OF SKILL: exa-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-exa-performance-tuning"></a>
@@ -6431,13 +6402,13 @@ For rate limit issues, see `exa-rate-limits`. For common error solutions, see `e
 
 - **Source File:** `skills/exa-performance-tuning.md`
 - **Original Size:** 6,130 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: exa-performance-tuning.md ---
+*** START OF SKILL: exa-performance-tuning.md ***
 ```
 
----
+***
 name: exa-performance-tuning
 description: 'Optimize Exa API performance with search type selection, caching, and
   parallelization.
@@ -6462,7 +6433,7 @@ tags:
 - performance
 - optimization
 compatibility: Designed for Claude Code
----
+***
 # Exa Performance Tuning
 
 ## Overview
@@ -6630,13 +6601,12 @@ async function normalizedSearch(query: string, opts: any) {
 For cost optimization, see `exa-cost-tuning`. For reliability, see `exa-reliability-patterns`.
 
 
-
 ```markdown
---- END OF SKILL: exa-performance-tuning.md ---
+*** END OF SKILL: exa-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-exa-reference-architecture"></a>
@@ -6645,13 +6615,13 @@ For cost optimization, see `exa-cost-tuning`. For reliability, see `exa-reliabil
 
 - **Source File:** `skills/exa-reference-architecture.md`
 - **Original Size:** 9,127 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: exa-reference-architecture.md ---
+*** START OF SKILL: exa-reference-architecture.md ***
 ```
 
----
+***
 name: exa-reference-architecture
 description: 'Implement Exa reference architecture for search pipelines, RAG, and
   content discovery.
@@ -6675,7 +6645,7 @@ tags:
 - architecture
 - rag
 compatibility: Designed for Claude Code
----
+***
 # Exa Reference Architecture
 
 ## Overview
@@ -6911,13 +6881,12 @@ export async function discoverCompetitors(companyUrl: string) {
 For architecture variants at different scales, see `exa-architecture-variants`.
 
 
-
 ```markdown
---- END OF SKILL: exa-reference-architecture.md ---
+*** END OF SKILL: exa-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-explaining-machine-learning-models"></a>
@@ -6926,13 +6895,13 @@ For architecture variants at different scales, see `exa-architecture-variants`.
 
 - **Source File:** `skills/explaining-machine-learning-models.md`
 - **Original Size:** 4,278 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: explaining-machine-learning-models.md ---
+*** START OF SKILL: explaining-machine-learning-models.md ***
 ```
 
----
+***
 name: explaining-machine-learning-models
 description: 'Build this skill enables AI assistant to provide interpretability and
   explainability for machine learning models. it is triggered when the user requests
@@ -6950,7 +6919,7 @@ tags:
 - ml
 - explaining-machine
 compatibility: Designed for Claude Code
----
+***
 # Model Explainability Tool
 
 Interpret machine learning model predictions using SHAP, LIME, and feature importance analysis to explain model behavior.
@@ -7036,13 +7005,12 @@ The skill produces structured output relevant to the task.
 - Related skills and commands
 
 
-
 ```markdown
---- END OF SKILL: explaining-machine-learning-models.md ---
+*** END OF SKILL: explaining-machine-learning-models.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-exploring-blockchain-data"></a>
@@ -7051,13 +7019,13 @@ The skill produces structured output relevant to the task.
 
 - **Source File:** `skills/exploring-blockchain-data.md`
 - **Original Size:** 7,841 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: exploring-blockchain-data.md ---
+*** START OF SKILL: exploring-blockchain-data.md ***
 ```
 
----
+***
 name: exploring-blockchain-data
 description: 'Process query and analyze blockchain data including blocks, transactions,
   and smart contracts.
@@ -7076,7 +7044,7 @@ tags:
 - crypto
 - exploring-blockchain
 compatibility: Designed for Claude Code
----
+***
 # Exploring Blockchain Data
 
 ## Overview
@@ -7167,13 +7135,12 @@ Resolves the USDC contract, fetches the wallet balance with proper decimal handl
 - [4byte.directory](https://www.4byte.directory/) -- function signature database for decoding unverified contract interactions
 
 
-
 ```markdown
---- END OF SKILL: exploring-blockchain-data.md ---
+*** END OF SKILL: exploring-blockchain-data.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-express-route-generator"></a>
@@ -7182,13 +7149,13 @@ Resolves the USDC contract, fetches the wallet balance with proper decimal handl
 
 - **Source File:** `skills/express-route-generator.md`
 - **Original Size:** 2,408 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: express-route-generator.md ---
+*** START OF SKILL: express-route-generator.md ***
 ```
 
----
+***
 name: express-route-generator
 description: 'Generate express route generator operations. Auto-activating skill for
   Backend Development.
@@ -7208,7 +7175,7 @@ tags:
 - backend
 - development
 compatibility: Designed for Claude Code
----
+***
 # Express Route Generator
 
 ## Overview
@@ -7271,13 +7238,12 @@ Part of the **Backend Development** skill category.
 Tags: nodejs, python, go, microservices, database
 
 
-
 ```markdown
---- END OF SKILL: express-route-generator.md ---
+*** END OF SKILL: express-route-generator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-factory-pattern-creator"></a>
@@ -7286,13 +7252,13 @@ Tags: nodejs, python, go, microservices, database
 
 - **Source File:** `skills/factory-pattern-creator.md`
 - **Original Size:** 2,371 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: factory-pattern-creator.md ---
+*** START OF SKILL: factory-pattern-creator.md ***
 ```
 
----
+***
 name: factory-pattern-creator
 description: 'Create factory pattern creator operations. Auto-activating skill for
   Test Automation.
@@ -7312,7 +7278,7 @@ tags:
 - testing
 - automation
 compatibility: Designed for Claude Code
----
+***
 # Factory Pattern Creator
 
 ## Overview
@@ -7375,13 +7341,12 @@ Part of the **Test Automation** skill category.
 Tags: testing, jest, pytest, mocking, tdd
 
 
-
 ```markdown
---- END OF SKILL: factory-pattern-creator.md ---
+*** END OF SKILL: factory-pattern-creator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-false-green-tests"></a>
@@ -7390,13 +7355,13 @@ Tags: testing, jest, pytest, mocking, tdd
 
 - **Source File:** `skills/false-green-tests.md`
 - **Original Size:** 4,410 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: false-green-tests.md ---
+*** START OF SKILL: false-green-tests.md ***
 ```
 
----
+***
 name: false-green-tests
 description: "Find out why the tests pass but the app is broken. Catches false greens: a green suite over a feature that does not work, a mocked API standing in for a real one, an assertion that holds no matter what the app does, a click handler wired to nothing. Use when the suite is green and the user says it is broken, when a test never fails, when coverage looks fine but bugs still ship, or before trusting a passing run you did not watch."
 license: Apache-2.0
@@ -7404,7 +7369,7 @@ metadata:
   version: 2.9.0
   homepage: https://www.reticle.sh
   repository: https://github.com/reticlehq/reticle
----
+***
 
 # The suite is green and the app is broken
 
@@ -7462,18 +7427,17 @@ A false green is confirmed when the app **contradicts** the test, not when you f
 
 For every false green you confirm, the test that missed it is still there and will miss it again. Rewrite its assertion to name a consequence the app must produce (a request with a status, a signal, a state path) rather than an absence. **Never weaken a check to make a verdict green**; that is how the false green got in.
 
----
+***
 
 Index of everything, one page at a time: `curl https://docs.reticle.sh/llms.txt`. Found a case Reticle could not see? `reticle_feedback` with `kind: "gap"`: that is the signal that decides what gets built.
 
 
-
 ```markdown
---- END OF SKILL: false-green-tests.md ---
+*** END OF SKILL: false-green-tests.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fastapi-ml-endpoint"></a>
@@ -7482,13 +7446,13 @@ Index of everything, one page at a time: `curl https://docs.reticle.sh/llms.txt`
 
 - **Source File:** `skills/fastapi-ml-endpoint.md`
 - **Original Size:** 2,324 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fastapi-ml-endpoint.md ---
+*** START OF SKILL: fastapi-ml-endpoint.md ***
 ```
 
----
+***
 name: fastapi-ml-endpoint
 description: 'Configure fastapi ml endpoint operations. Auto-activating skill for
   ML Deployment.
@@ -7508,7 +7472,7 @@ tags:
 - ai
 - mlops
 compatibility: Designed for Claude Code
----
+***
 # Fastapi Ml Endpoint
 
 ## Overview
@@ -7571,13 +7535,12 @@ Part of the **ML Deployment** skill category.
 Tags: mlops, serving, inference, monitoring, production
 
 
-
 ```markdown
---- END OF SKILL: fastapi-ml-endpoint.md ---
+*** END OF SKILL: fastapi-ml-endpoint.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fastapi-pro"></a>
@@ -7586,20 +7549,20 @@ Tags: mlops, serving, inference, monitoring, production
 
 - **Source File:** `skills/fastapi-pro.md`
 - **Original Size:** 6,980 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fastapi-pro.md ---
+*** START OF SKILL: fastapi-pro.md ***
 ```
 
----
+***
 name: fastapi-pro
 description: Build high-performance async APIs with FastAPI, SQLAlchemy 2.0, and Pydantic V2. Master microservices, WebSockets, and modern Python async patterns.
 metadata:
   aas-risk: critical
   aas-source: community
   aas-date-added: '2026-02-27'
----
+***
 
 ## Use this skill when
 
@@ -7790,13 +7753,12 @@ Expert FastAPI developer specializing in high-performance, async-first API devel
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: fastapi-pro.md ---
+*** END OF SKILL: fastapi-pro.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fastapi-router-creator"></a>
@@ -7805,13 +7767,13 @@ Expert FastAPI developer specializing in high-performance, async-first API devel
 
 - **Source File:** `skills/fastapi-router-creator.md`
 - **Original Size:** 2,385 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fastapi-router-creator.md ---
+*** START OF SKILL: fastapi-router-creator.md ***
 ```
 
----
+***
 name: fastapi-router-creator
 description: 'Create fastapi router creator operations. Auto-activating skill for
   Backend Development.
@@ -7831,7 +7793,7 @@ tags:
 - backend
 - development
 compatibility: Designed for Claude Code
----
+***
 # Fastapi Router Creator
 
 ## Overview
@@ -7894,13 +7856,12 @@ Part of the **Backend Development** skill category.
 Tags: nodejs, python, go, microservices, database
 
 
-
 ```markdown
---- END OF SKILL: fastapi-router-creator.md ---
+*** END OF SKILL: fastapi-router-creator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fastapi-templates"></a>
@@ -7909,20 +7870,20 @@ Tags: nodejs, python, go, microservices, database
 
 - **Source File:** `skills/fastapi-templates.md`
 - **Original Size:** 1,644 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fastapi-templates.md ---
+*** START OF SKILL: fastapi-templates.md ***
 ```
 
----
+***
 name: fastapi-templates
 description: Create production-ready FastAPI projects with async patterns, dependency injection, and comprehensive error handling. Use when building new FastAPI applications or setting up backend API projects.
 metadata:
   aas-risk: critical
   aas-source: community
   aas-date-added: '2026-02-27'
----
+***
 
 # FastAPI Project Templates
 
@@ -7958,13 +7919,12 @@ Production-ready FastAPI project structures with async patterns, dependency inje
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: fastapi-templates.md ---
+*** END OF SKILL: fastapi-templates.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fastify-plugin-creator"></a>
@@ -7973,13 +7933,13 @@ Production-ready FastAPI project structures with async patterns, dependency inje
 
 - **Source File:** `skills/fastify-plugin-creator.md`
 - **Original Size:** 2,392 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fastify-plugin-creator.md ---
+*** START OF SKILL: fastify-plugin-creator.md ***
 ```
 
----
+***
 name: fastify-plugin-creator
 description: 'Create fastify plugin creator operations. Auto-activating skill for
   Backend Development.
@@ -7999,7 +7959,7 @@ tags:
 - backend
 - development
 compatibility: Designed for Claude Code
----
+***
 # Fastify Plugin Creator
 
 ## Overview
@@ -8062,13 +8022,12 @@ Part of the **Backend Development** skill category.
 Tags: nodejs, python, go, microservices, database
 
 
-
 ```markdown
---- END OF SKILL: fastify-plugin-creator.md ---
+*** END OF SKILL: fastify-plugin-creator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fathom-debug-bundle"></a>
@@ -8077,13 +8036,13 @@ Tags: nodejs, python, go, microservices, database
 
 - **Source File:** `skills/fathom-debug-bundle.md`
 - **Original Size:** 4,342 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fathom-debug-bundle.md ---
+*** START OF SKILL: fathom-debug-bundle.md ***
 ```
 
----
+***
 name: fathom-debug-bundle
 description: 'Collect Fathom API diagnostics for support cases.
 
@@ -8100,7 +8059,7 @@ tags:
 - ai-notes
 - fathom
 compatibility: Designed for Claude Code
----
+***
 # Fathom Debug Bundle
 
 ## Overview
@@ -8200,13 +8159,12 @@ checkFathom();
 See `fathom-common-errors` for transcript sync and webhook troubleshooting patterns.
 
 
-
 ```markdown
---- END OF SKILL: fathom-debug-bundle.md ---
+*** END OF SKILL: fathom-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fathom-performance-tuning"></a>
@@ -8215,13 +8173,13 @@ See `fathom-common-errors` for transcript sync and webhook troubleshooting patte
 
 - **Source File:** `skills/fathom-performance-tuning.md`
 - **Original Size:** 4,297 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fathom-performance-tuning.md ---
+*** START OF SKILL: fathom-performance-tuning.md ***
 ```
 
----
+***
 name: fathom-performance-tuning
 description: 'Optimize Fathom API performance with caching and batch processing.
 
@@ -8238,7 +8196,7 @@ tags:
 - ai-notes
 - fathom
 compatibility: Designed for Claude Code
----
+***
 # Fathom Performance Tuning
 
 ## Overview
@@ -8341,13 +8299,12 @@ function trackDownload(startMs: number, cached: boolean, rateLimited: boolean) {
 See `fathom-reference-architecture`.
 
 
-
 ```markdown
---- END OF SKILL: fathom-performance-tuning.md ---
+*** END OF SKILL: fathom-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fathom-reference-architecture"></a>
@@ -8356,13 +8313,13 @@ See `fathom-reference-architecture`.
 
 - **Source File:** `skills/fathom-reference-architecture.md`
 - **Original Size:** 2,929 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fathom-reference-architecture.md ---
+*** START OF SKILL: fathom-reference-architecture.md ***
 ```
 
----
+***
 name: fathom-reference-architecture
 description: 'Reference architecture for Fathom meeting intelligence integrations.
 
@@ -8380,7 +8337,7 @@ tags:
 - ai-notes
 - fathom
 compatibility: Designed for Claude Code
----
+***
 # Fathom Reference Architecture
 
 ## Architecture
@@ -8442,13 +8399,12 @@ fathom-platform/
 This completes the Fathom skill pack. Start with `fathom-install-auth`.
 
 
-
 ```markdown
---- END OF SKILL: fathom-reference-architecture.md ---
+*** END OF SKILL: fathom-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-feature-engineering-helper"></a>
@@ -8457,13 +8413,13 @@ This completes the Fathom skill pack. Start with `fathom-install-auth`.
 
 - **Source File:** `skills/feature-engineering-helper.md`
 - **Original Size:** 2,426 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: feature-engineering-helper.md ---
+*** START OF SKILL: feature-engineering-helper.md ***
 ```
 
----
+***
 name: feature-engineering-helper
 description: 'Configure with feature engineering helper operations. Auto-activating
   skill for ML Training.
@@ -8483,7 +8439,7 @@ tags:
 - ai
 - machine-learning
 compatibility: Designed for Claude Code
----
+***
 # Feature Engineering Helper
 
 ## Overview
@@ -8546,13 +8502,12 @@ Part of the **ML Training** skill category.
 Tags: ml, training, pytorch, tensorflow, sklearn
 
 
-
 ```markdown
---- END OF SKILL: feature-engineering-helper.md ---
+*** END OF SKILL: feature-engineering-helper.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-feature-importance-analyzer"></a>
@@ -8561,13 +8516,13 @@ Tags: ml, training, pytorch, tensorflow, sklearn
 
 - **Source File:** `skills/feature-importance-analyzer.md`
 - **Original Size:** 2,449 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: feature-importance-analyzer.md ---
+*** START OF SKILL: feature-importance-analyzer.md ***
 ```
 
----
+***
 name: feature-importance-analyzer
 description: 'Analyze feature importance analyzer operations. Auto-activating skill
   for ML Training.
@@ -8587,7 +8542,7 @@ tags:
 - ai
 - machine-learning
 compatibility: Designed for Claude Code
----
+***
 # Feature Importance Analyzer
 
 ## Overview
@@ -8650,13 +8605,12 @@ Part of the **ML Training** skill category.
 Tags: ml, training, pytorch, tensorflow, sklearn
 
 
-
 ```markdown
---- END OF SKILL: feature-importance-analyzer.md ---
+*** END OF SKILL: feature-importance-analyzer.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-feature-store-connector"></a>
@@ -8665,13 +8619,13 @@ Tags: ml, training, pytorch, tensorflow, sklearn
 
 - **Source File:** `skills/feature-store-connector.md`
 - **Original Size:** 2,375 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: feature-store-connector.md ---
+*** START OF SKILL: feature-store-connector.md ***
 ```
 
----
+***
 name: feature-store-connector
 description: 'Execute feature store connector operations. Auto-activating skill for
   ML Deployment.
@@ -8691,7 +8645,7 @@ tags:
 - ai
 - mlops
 compatibility: Designed for Claude Code
----
+***
 # Feature Store Connector
 
 ## Overview
@@ -8754,13 +8708,12 @@ Part of the **ML Deployment** skill category.
 Tags: mlops, serving, inference, monitoring, production
 
 
-
 ```markdown
---- END OF SKILL: feature-store-connector.md ---
+*** END OF SKILL: feature-store-connector.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-feature-tracking"></a>
@@ -8769,13 +8722,13 @@ Tags: mlops, serving, inference, monitoring, production
 
 - **Source File:** `skills/feature-tracking.md`
 - **Original Size:** 10,472 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: feature-tracking.md ---
+*** START OF SKILL: feature-tracking.md ***
 ```
 
----
+***
 name: feature-tracking
 description: "Maintain durable feature-level memory across AI coding sessions with lightweight Markdown tracks for status, source-of-truth docs, decisions, risks, and changes."
 category: project-management
@@ -8789,7 +8742,7 @@ tags: [feature-tracking, project-memory, documentation, ai-agents, session-hando
 tools: [claude, cursor, gemini, codex]
 license: MIT
 license_source: "https://github.com/JunsW/feature-track/blob/main/LICENSE"
----
+***
 
 # Feature Tracking
 
@@ -8999,13 +8952,12 @@ Agent workflow:
 - [Feature Track specification](https://github.com/JunsW/feature-track/blob/main/spec/feature-track-spec.md)
 
 
-
 ```markdown
---- END OF SKILL: feature-tracking.md ---
+*** END OF SKILL: feature-tracking.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-federation-status"></a>
@@ -9014,18 +8966,18 @@ Agent workflow:
 
 - **Source File:** `skills/federation-status.md`
 - **Original Size:** 883 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: federation-status.md ---
+*** START OF SKILL: federation-status.md ***
 ```
 
----
+***
 name: federation-status
 description: Show federation health — peers, sessions, trust levels, and message metrics. Use when the user asks "is federation healthy?", "show peers", "federation status", or wants to inspect cross-installation agent connectivity.
 allowed-tools: Bash(npx *) mcp__plugin_ruflo-core_ruflo__memory_search Read
 argument-hint: ""
----
+***
 Show the current state of the federation.
 
 Steps:
@@ -9037,13 +8989,12 @@ Search memory for federation history:
 `mcp__plugin_ruflo-core_ruflo__memory_search({ query: "federation peer trust", namespace: "federation" })`
 
 
-
 ```markdown
---- END OF SKILL: federation-status.md ---
+*** END OF SKILL: federation-status.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-figma-architecture-variants"></a>
@@ -9052,13 +9003,13 @@ Search memory for federation history:
 
 - **Source File:** `skills/figma-architecture-variants.md`
 - **Original Size:** 9,480 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: figma-architecture-variants.md ---
+*** START OF SKILL: figma-architecture-variants.md ***
 ```
 
----
+***
 name: figma-architecture-variants
 description: 'Choose between Figma integration architectures: CLI script, webhook
   service, or plugin.
@@ -9080,7 +9031,7 @@ tags:
 - saas
 - figma
 compatibility: Designed for Claude Code
----
+***
 # Figma Architecture Variants
 
 ## Overview
@@ -9143,7 +9094,7 @@ Developer runs script
 **Pros:** Zero infrastructure, runs in CI, easy to debug
 **Cons:** Not real-time, manual trigger, no webhook support
 
----
+***
 
 ### Variant B: Webhook Service (Event-Driven)
 
@@ -9187,7 +9138,7 @@ app.listen(process.env.PORT || 3000);
 **Pros:** Real-time, event-driven, no polling waste
 **Cons:** Requires hosting, HTTPS endpoint, webhook management
 
----
+***
 
 ### Variant C: Figma Plugin (In-Editor)
 
@@ -9318,13 +9269,12 @@ Per-variant scaffolds: `references/variant-a-cli-script-simplest.md`, `reference
 For common anti-patterns, see `figma-known-pitfalls`.
 
 
-
 ```markdown
---- END OF SKILL: figma-architecture-variants.md ---
+*** END OF SKILL: figma-architecture-variants.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-figma-data-handling"></a>
@@ -9333,13 +9283,13 @@ For common anti-patterns, see `figma-known-pitfalls`.
 
 - **Source File:** `skills/figma-data-handling.md`
 - **Original Size:** 8,240 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: figma-data-handling.md ---
+*** START OF SKILL: figma-data-handling.md ***
 ```
 
----
+***
 name: figma-data-handling
 description: 'Handle Figma API data correctly: comments, versions, user data, and
   privacy compliance.
@@ -9361,7 +9311,7 @@ tags:
 - saas
 - figma
 compatibility: Designed for Claude Code
----
+***
 # Figma Data Handling
 
 ## Overview
@@ -9616,13 +9566,12 @@ PII rules for what you may persist from these payloads (user handles, avatars, e
 For enterprise access control, see `figma-enterprise-rbac`.
 
 
-
 ```markdown
---- END OF SKILL: figma-data-handling.md ---
+*** END OF SKILL: figma-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-figma-debug-bundle"></a>
@@ -9631,13 +9580,13 @@ For enterprise access control, see `figma-enterprise-rbac`.
 
 - **Source File:** `skills/figma-debug-bundle.md`
 - **Original Size:** 5,348 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: figma-debug-bundle.md ---
+*** START OF SKILL: figma-debug-bundle.md ***
 ```
 
----
+***
 name: figma-debug-bundle
 description: 'Collect Figma API diagnostic evidence for support tickets and troubleshooting.
 
@@ -9658,7 +9607,7 @@ tags:
 - saas
 - figma
 compatibility: Designed for Claude Code
----
+***
 # Figma Debug Bundle
 
 ## Overview
@@ -9802,13 +9751,12 @@ cat figma-debug-*/summary.txt
 For rate limit issues, see `figma-rate-limits`.
 
 
-
 ```markdown
---- END OF SKILL: figma-debug-bundle.md ---
+*** END OF SKILL: figma-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-figma-performance-tuning"></a>
@@ -9817,13 +9765,13 @@ For rate limit issues, see `figma-rate-limits`.
 
 - **Source File:** `skills/figma-performance-tuning.md`
 - **Original Size:** 6,973 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: figma-performance-tuning.md ---
+*** START OF SKILL: figma-performance-tuning.md ***
 ```
 
----
+***
 name: figma-performance-tuning
 description: 'Optimize Figma REST API performance with caching, partial fetches, and
   connection reuse.
@@ -9845,7 +9793,7 @@ tags:
 - saas
 - figma
 compatibility: Designed for Claude Code
----
+***
 # Figma Performance Tuning
 
 ## Overview
@@ -10058,13 +10006,12 @@ Batching and connection reuse details: `references/batch-node-fetches.md`, `refe
 For cost optimization, see `figma-cost-tuning`.
 
 
-
 ```markdown
---- END OF SKILL: figma-performance-tuning.md ---
+*** END OF SKILL: figma-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-figma-reference-architecture"></a>
@@ -10073,13 +10020,13 @@ For cost optimization, see `figma-cost-tuning`.
 
 - **Source File:** `skills/figma-reference-architecture.md`
 - **Original Size:** 9,423 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: figma-reference-architecture.md ---
+*** START OF SKILL: figma-reference-architecture.md ***
 ```
 
----
+***
 name: figma-reference-architecture
 description: 'Reference architecture for production Figma API integrations.
 
@@ -10100,7 +10047,7 @@ tags:
 - saas
 - figma
 compatibility: Designed for Claude Code
----
+***
 # Figma Reference Architecture
 
 ## Overview
@@ -10312,13 +10259,12 @@ Component contracts and the config schema: `references/key-components.md`, `refe
 For multi-environment setup, see `figma-multi-env-setup`.
 
 
-
 ```markdown
---- END OF SKILL: figma-reference-architecture.md ---
+*** END OF SKILL: figma-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-file-format-converter"></a>
@@ -10327,13 +10273,13 @@ For multi-environment setup, see `figma-multi-env-setup`.
 
 - **Source File:** `skills/file-format-converter.md`
 - **Original Size:** 2,356 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: file-format-converter.md ---
+*** START OF SKILL: file-format-converter.md ***
 ```
 
----
+***
 name: file-format-converter
 description: 'Convert file format converter operations. Auto-activating skill for
   Data Pipelines.
@@ -10353,7 +10299,7 @@ tags:
 - data
 - data-engineering
 compatibility: Designed for Claude Code
----
+***
 # File Format Converter
 
 ## Overview
@@ -10416,13 +10362,12 @@ Part of the **Data Pipelines** skill category.
 Tags: etl, airflow, spark, streaming, data-engineering
 
 
-
 ```markdown
---- END OF SKILL: file-format-converter.md ---
+*** END OF SKILL: file-format-converter.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fingerprinting-server-software"></a>
@@ -10431,13 +10376,13 @@ Tags: etl, airflow, spark, streaming, data-engineering
 
 - **Source File:** `skills/fingerprinting-server-software.md`
 - **Original Size:** 7,516 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fingerprinting-server-software.md ---
+*** START OF SKILL: fingerprinting-server-software.md ***
 ```
 
----
+***
 name: fingerprinting-server-software
 description: |
   Identify the server software, framework, and component versions a
@@ -10471,7 +10416,7 @@ tags:
   - fingerprinting
   - reconnaissance
   - pentest
----
+***
 
 # Fingerprinting Server Software
 
@@ -10630,13 +10575,12 @@ JSON / JSONL / Markdown. Exit codes: 0 clean, 1 high/critical, 2 error.
   authorization pattern
 
 
-
 ```markdown
---- END OF SKILL: fingerprinting-server-software.md ---
+*** END OF SKILL: fingerprinting-server-software.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-finta-debug-bundle"></a>
@@ -10645,13 +10589,13 @@ JSON / JSONL / Markdown. Exit codes: 0 clean, 1 high/critical, 2 error.
 
 - **Source File:** `skills/finta-debug-bundle.md`
 - **Original Size:** 4,063 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: finta-debug-bundle.md ---
+*** START OF SKILL: finta-debug-bundle.md ***
 ```
 
----
+***
 name: finta-debug-bundle
 description: 'Collect Finta diagnostic information for support.
 
@@ -10668,7 +10612,7 @@ tags:
 - investor-management
 - finta
 compatibility: Designed for Claude Code
----
+***
 # Finta Debug Bundle
 
 ## Overview
@@ -10767,13 +10711,12 @@ checkFinta();
 See `finta-common-errors` for fundraising CRM sync and investor pipeline troubleshooting patterns.
 
 
-
 ```markdown
---- END OF SKILL: finta-debug-bundle.md ---
+*** END OF SKILL: finta-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-finta-performance-tuning"></a>
@@ -10782,13 +10725,13 @@ See `finta-common-errors` for fundraising CRM sync and investor pipeline trouble
 
 - **Source File:** `skills/finta-performance-tuning.md`
 - **Original Size:** 4,203 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: finta-performance-tuning.md ---
+*** START OF SKILL: finta-performance-tuning.md ***
 ```
 
----
+***
 name: finta-performance-tuning
 description: 'Optimize Finta fundraise workflow efficiency.
 
@@ -10805,7 +10748,7 @@ tags:
 - investor-management
 - finta
 compatibility: Designed for Claude Code
----
+***
 # Finta Performance Tuning
 
 ## Overview
@@ -10907,13 +10850,12 @@ function track(startMs: number, cached: boolean, error?: boolean) {
 See `finta-reference-architecture`.
 
 
-
 ```markdown
---- END OF SKILL: finta-performance-tuning.md ---
+*** END OF SKILL: finta-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-finta-reference-architecture"></a>
@@ -10922,13 +10864,13 @@ See `finta-reference-architecture`.
 
 - **Source File:** `skills/finta-reference-architecture.md`
 - **Original Size:** 5,648 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: finta-reference-architecture.md ---
+*** START OF SKILL: finta-reference-architecture.md ***
 ```
 
----
+***
 name: finta-reference-architecture
 description: 'Reference architecture for fundraising operations with Finta CRM.
 
@@ -10945,7 +10887,7 @@ tags:
 - investor-management
 - finta
 compatibility: Designed for Claude Code
----
+***
 # Finta Reference Architecture
 
 ## Overview
@@ -11053,13 +10995,12 @@ interface Document  { id: string; name: string; type: 'pitch-deck' | 'financials
 See `finta-deploy-integration`.
 
 
-
 ```markdown
---- END OF SKILL: finta-reference-architecture.md ---
+*** END OF SKILL: finta-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-firecrawl-architecture-variants"></a>
@@ -11068,13 +11009,13 @@ See `finta-deploy-integration`.
 
 - **Source File:** `skills/firecrawl-architecture-variants.md`
 - **Original Size:** 8,040 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: firecrawl-architecture-variants.md ---
+*** START OF SKILL: firecrawl-architecture-variants.md ***
 ```
 
----
+***
 name: firecrawl-architecture-variants
 description: 'Choose and implement Firecrawl architecture patterns for different scales
   and use cases.
@@ -11099,7 +11040,7 @@ tags:
 - scaling
 - microservices
 compatibility: Designed for Claude Code
----
+***
 # Firecrawl Architecture Variants
 
 ## Overview
@@ -11324,13 +11265,12 @@ Need real-time, user-facing response?
 For common pitfalls, see `firecrawl-known-pitfalls`.
 
 
-
 ```markdown
---- END OF SKILL: firecrawl-architecture-variants.md ---
+*** END OF SKILL: firecrawl-architecture-variants.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-firecrawl-data-handling"></a>
@@ -11339,13 +11279,13 @@ For common pitfalls, see `firecrawl-known-pitfalls`.
 
 - **Source File:** `skills/firecrawl-data-handling.md`
 - **Original Size:** 7,640 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: firecrawl-data-handling.md ---
+*** START OF SKILL: firecrawl-data-handling.md ***
 ```
 
----
+***
 name: firecrawl-data-handling
 description: 'Process, validate, and store Firecrawl scraped content with deduplication
   and chunking.
@@ -11369,7 +11309,7 @@ tags:
 - firecrawl
 - compliance
 compatibility: Designed for Claude Code
----
+***
 # Firecrawl Data Handling
 
 ## Overview
@@ -11614,13 +11554,12 @@ for (const doc of docs) {
 For access control, see `firecrawl-enterprise-rbac`.
 
 
-
 ```markdown
---- END OF SKILL: firecrawl-data-handling.md ---
+*** END OF SKILL: firecrawl-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-firecrawl-debug-bundle"></a>
@@ -11629,13 +11568,13 @@ For access control, see `firecrawl-enterprise-rbac`.
 
 - **Source File:** `skills/firecrawl-debug-bundle.md`
 - **Original Size:** 5,924 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: firecrawl-debug-bundle.md ---
+*** START OF SKILL: firecrawl-debug-bundle.md ***
 ```
 
----
+***
 name: firecrawl-debug-bundle
 description: 'Collect Firecrawl debug evidence for support tickets and troubleshooting.
 
@@ -11657,7 +11596,7 @@ tags:
 - firecrawl
 - debugging
 compatibility: Designed for Claude Code
----
+***
 # Firecrawl Debug Bundle
 
 ## Current State
@@ -11815,13 +11754,12 @@ rm -rf "$BUNDLE_DIR"
 For rate limit issues, see `firecrawl-rate-limits`.
 
 
-
 ```markdown
---- END OF SKILL: firecrawl-debug-bundle.md ---
+*** END OF SKILL: firecrawl-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-firecrawl-performance-tuning"></a>
@@ -11830,13 +11768,13 @@ For rate limit issues, see `firecrawl-rate-limits`.
 
 - **Source File:** `skills/firecrawl-performance-tuning.md`
 - **Original Size:** 6,544 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: firecrawl-performance-tuning.md ---
+*** START OF SKILL: firecrawl-performance-tuning.md ***
 ```
 
----
+***
 name: firecrawl-performance-tuning
 description: 'Optimize Firecrawl scraping performance with caching, batch scraping,
   and format selection.
@@ -11860,7 +11798,7 @@ tags:
 - api
 - performance
 compatibility: Designed for Claude Code
----
+***
 # Firecrawl Performance Tuning
 
 ## Overview
@@ -12052,13 +11990,12 @@ for (const formats of [["markdown"], ["markdown", "html"], ["markdown", "html", 
 For cost optimization, see `firecrawl-cost-tuning`.
 
 
-
 ```markdown
---- END OF SKILL: firecrawl-performance-tuning.md ---
+*** END OF SKILL: firecrawl-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-firecrawl-reference-architecture"></a>
@@ -12067,13 +12004,13 @@ For cost optimization, see `firecrawl-cost-tuning`.
 
 - **Source File:** `skills/firecrawl-reference-architecture.md`
 - **Original Size:** 9,336 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: firecrawl-reference-architecture.md ---
+*** START OF SKILL: firecrawl-reference-architecture.md ***
 ```
 
----
+***
 name: firecrawl-reference-architecture
 description: 'Implement Firecrawl reference architecture with scrape/crawl/map/extract
   pipelines.
@@ -12096,7 +12033,7 @@ tags:
 - firecrawl
 - firecrawl-reference
 compatibility: Designed for Claude Code
----
+***
 # Firecrawl Reference Architecture
 
 ## Overview
@@ -12341,13 +12278,12 @@ for (const page of pages) {
 For multi-environment setup, see `firecrawl-multi-env-setup`.
 
 
-
 ```markdown
---- END OF SKILL: firecrawl-reference-architecture.md ---
+*** END OF SKILL: firecrawl-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fireflies-data-handling"></a>
@@ -12356,13 +12292,13 @@ For multi-environment setup, see `firecrawl-multi-env-setup`.
 
 - **Source File:** `skills/fireflies-data-handling.md`
 - **Original Size:** 9,428 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fireflies-data-handling.md ---
+*** START OF SKILL: fireflies-data-handling.md ***
 ```
 
----
+***
 name: fireflies-data-handling
 description: 'Handle Fireflies.ai transcript data: export formats, PII redaction,
   retention policies, and compliance.
@@ -12385,7 +12321,7 @@ tags:
 - fireflies
 - compliance
 compatibility: Designed for Claude Code
----
+***
 # Fireflies.ai Data Handling
 
 ## Overview
@@ -12665,13 +12601,12 @@ async function handleDataSubjectDeletion(email: string) {
 For enterprise access control, see `fireflies-enterprise-rbac`.
 
 
-
 ```markdown
---- END OF SKILL: fireflies-data-handling.md ---
+*** END OF SKILL: fireflies-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fireflies-debug-bundle"></a>
@@ -12680,13 +12615,13 @@ For enterprise access control, see `fireflies-enterprise-rbac`.
 
 - **Source File:** `skills/fireflies-debug-bundle.md`
 - **Original Size:** 6,270 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fireflies-debug-bundle.md ---
+*** START OF SKILL: fireflies-debug-bundle.md ***
 ```
 
----
+***
 name: fireflies-debug-bundle
 description: 'Collect Fireflies.ai debug evidence for support tickets and troubleshooting.
 
@@ -12708,7 +12643,7 @@ tags:
 - fireflies
 - debugging
 compatibility: Designed for Claude Code
----
+***
 # Fireflies.ai Debug Bundle
 
 ## Current State
@@ -12868,13 +12803,12 @@ curl -s -X POST https://api.fireflies.ai/graphql \
 For rate limit issues, see `fireflies-rate-limits`.
 
 
-
 ```markdown
---- END OF SKILL: fireflies-debug-bundle.md ---
+*** END OF SKILL: fireflies-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fireflies-performance-tuning"></a>
@@ -12883,13 +12817,13 @@ For rate limit issues, see `fireflies-rate-limits`.
 
 - **Source File:** `skills/fireflies-performance-tuning.md`
 - **Original Size:** 6,792 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fireflies-performance-tuning.md ---
+*** START OF SKILL: fireflies-performance-tuning.md ***
 ```
 
----
+***
 name: fireflies-performance-tuning
 description: 'Optimize Fireflies.ai GraphQL query performance with field selection,
   caching, and batching.
@@ -12913,7 +12847,7 @@ tags:
 - api
 - performance
 compatibility: Designed for Claude Code
----
+***
 # Fireflies.ai Performance Tuning
 
 ## Overview
@@ -13123,13 +13057,12 @@ async function getAllTranscripts(batchSize = 50) {
 For cost optimization, see `fireflies-cost-tuning`.
 
 
-
 ```markdown
---- END OF SKILL: fireflies-performance-tuning.md ---
+*** END OF SKILL: fireflies-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fireflies-reference-architecture"></a>
@@ -13138,13 +13071,13 @@ For cost optimization, see `fireflies-cost-tuning`.
 
 - **Source File:** `skills/fireflies-reference-architecture.md`
 - **Original Size:** 10,465 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fireflies-reference-architecture.md ---
+*** START OF SKILL: fireflies-reference-architecture.md ***
 ```
 
----
+***
 name: fireflies-reference-architecture
 description: 'Design meeting intelligence architecture with Fireflies.ai GraphQL API,
   webhooks, and CRM sync.
@@ -13167,7 +13100,7 @@ tags:
 - fireflies
 - architecture
 compatibility: Designed for Claude Code
----
+***
 # Fireflies.ai Reference Architecture
 
 ## Overview
@@ -13452,13 +13385,12 @@ meeting-intelligence/
 For multi-environment deployment, see `fireflies-multi-env-setup`.
 
 
-
 ```markdown
---- END OF SKILL: fireflies-reference-architecture.md ---
+*** END OF SKILL: fireflies-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fix-what-i-pointed-at"></a>
@@ -13467,13 +13399,13 @@ For multi-environment deployment, see `fireflies-multi-env-setup`.
 
 - **Source File:** `skills/fix-what-i-pointed-at.md`
 - **Original Size:** 3,536 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fix-what-i-pointed-at.md ---
+*** START OF SKILL: fix-what-i-pointed-at.md ***
 ```
 
----
+***
 name: fix-what-i-pointed-at
 description: Pick up the bugs a human flagged by pointing at them in the running app, each arriving with the element, the note they typed, and the source file and line. Use when the user says they marked or flagged something, when starting a session on an app someone has been clicking through, when a designer or PM has left feedback in the UI, or when the user describes a problem as "that button there" without saying which file.
 license: Apache-2.0
@@ -13481,7 +13413,7 @@ metadata:
   version: 2.9.0
   homepage: https://www.reticle.sh
   repository: https://github.com/reticlehq/reticle
----
+***
 
 # The human pointed at the bug. Go fix it.
 
@@ -13534,18 +13466,17 @@ Say so against that mark and leave it unresolved. A mark silently dropped is wor
 
 They pointed at "that button". Report on "the Pay button on checkout", with what you changed and the evidence it now works. Marks come from people who are looking at the screen, not at the repo, so a report full of file paths and no user-facing language answers the wrong question.
 
----
+***
 
 Everything else: `curl https://docs.reticle.sh/llms.txt`. If a mark arrived without a usable source pointer, that is worth a `reticle_feedback` with `kind: "gap"`.
 
 
-
 ```markdown
---- END OF SKILL: fix-what-i-pointed-at.md ---
+*** END OF SKILL: fix-what-i-pointed-at.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fixing-metadata"></a>
@@ -13554,13 +13485,13 @@ Everything else: `curl https://docs.reticle.sh/llms.txt`. If a mark arrived with
 
 - **Source File:** `skills/fixing-metadata.md`
 - **Original Size:** 5,433 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fixing-metadata.md ---
+*** START OF SKILL: fixing-metadata.md ***
 ```
 
----
+***
 name: fixing-metadata
 description: Audit and fix HTML metadata including page titles, meta descriptions, canonical URLs, Open Graph tags, Twitter cards, favicons, JSON-LD structured data, and robots directives. Use when adding SEO metadata, fixing social share previews, reviewing Open Graph tags, setting up canonical...
 risk: critical
@@ -13570,7 +13501,7 @@ source_type: community
 date_added: 2026-07-01
 license: MIT
 license_source: https://github.com/ibelick/ui-skills/blob/main/LICENSE
----
+***
 
 
 ## When to Use
@@ -13686,13 +13617,12 @@ Reference these guidelines when:
 - Do not treat examples as a substitute for environment-specific tests, security review, or user approval for destructive or costly actions.
 
 
-
 ```markdown
---- END OF SKILL: fixing-metadata.md ---
+*** END OF SKILL: fixing-metadata.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fixing-motion-performance"></a>
@@ -13701,13 +13631,13 @@ Reference these guidelines when:
 
 - **Source File:** `skills/fixing-motion-performance.md`
 - **Original Size:** 6,641 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fixing-motion-performance.md ---
+*** START OF SKILL: fixing-motion-performance.md ***
 ```
 
----
+***
 name: fixing-motion-performance
 description: Audit and fix animation performance issues including layout thrashing, compositor properties, scroll-linked motion, and blur effects. Use when animations stutter, transitions jank, or reviewing CSS/JS animation performance.
 risk: critical
@@ -13717,7 +13647,7 @@ source_type: community
 date_added: 2026-07-01
 license: MIT
 license_source: https://github.com/ibelick/ui-skills/blob/main/LICENSE
----
+***
 
 # fixing-motion-performance
 ## When to Use
@@ -13877,13 +13807,12 @@ requestAnimationFrame(() => { el.style.transition = 'transform 0.3s'; el.style.t
 - Do not treat examples as a substitute for environment-specific tests, security review, or user approval for destructive or costly actions.
 
 
-
 ```markdown
---- END OF SKILL: fixing-motion-performance.md ---
+*** END OF SKILL: fixing-motion-performance.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fixture-generator"></a>
@@ -13892,13 +13821,13 @@ requestAnimationFrame(() => { el.style.transition = 'transform 0.3s'; el.style.t
 
 - **Source File:** `skills/fixture-generator.md`
 - **Original Size:** 2,303 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fixture-generator.md ---
+*** START OF SKILL: fixture-generator.md ***
 ```
 
----
+***
 name: fixture-generator
 description: 'Generate fixture generator operations. Auto-activating skill for Test
   Automation.
@@ -13918,7 +13847,7 @@ tags:
 - testing
 - automation
 compatibility: Designed for Claude Code
----
+***
 # Fixture Generator
 
 ## Overview
@@ -13981,13 +13910,12 @@ Part of the **Test Automation** skill category.
 Tags: testing, jest, pytest, mocking, tdd
 
 
-
 ```markdown
---- END OF SKILL: fixture-generator.md ---
+*** END OF SKILL: fixture-generator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-flaky-test-detector"></a>
@@ -13996,13 +13924,13 @@ Tags: testing, jest, pytest, mocking, tdd
 
 - **Source File:** `skills/flaky-test-detector.md`
 - **Original Size:** 2,295 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: flaky-test-detector.md ---
+*** START OF SKILL: flaky-test-detector.md ***
 ```
 
----
+***
 name: flaky-test-detector
 description: 'Detect flaky test detector operations. Auto-activating skill for Test
   Automation.
@@ -14021,7 +13949,7 @@ tags:
 - testing
 - automation
 compatibility: Designed for Claude Code
----
+***
 # Flaky Test Detector
 
 ## Overview
@@ -14084,13 +14012,12 @@ Part of the **Test Automation** skill category.
 Tags: testing, jest, pytest, mocking, tdd
 
 
-
 ```markdown
---- END OF SKILL: flaky-test-detector.md ---
+*** END OF SKILL: flaky-test-detector.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-flame-graph-generator"></a>
@@ -14099,13 +14026,13 @@ Tags: testing, jest, pytest, mocking, tdd
 
 - **Source File:** `skills/flame-graph-generator.md`
 - **Original Size:** 2,376 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: flame-graph-generator.md ---
+*** START OF SKILL: flame-graph-generator.md ***
 ```
 
----
+***
 name: flame-graph-generator
 description: 'Generate flame graph generator operations. Auto-activating skill for
   Performance Testing.
@@ -14125,7 +14052,7 @@ tags:
 - performance
 - testing
 compatibility: Designed for Claude Code
----
+***
 # Flame Graph Generator
 
 ## Overview
@@ -14188,13 +14115,12 @@ Part of the **Performance Testing** skill category.
 Tags: performance, load-testing, k6, jmeter, benchmarking
 
 
-
 ```markdown
---- END OF SKILL: flame-graph-generator.md ---
+*** END OF SKILL: flame-graph-generator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-flask-blueprint-creator"></a>
@@ -14203,13 +14129,13 @@ Tags: performance, load-testing, k6, jmeter, benchmarking
 
 - **Source File:** `skills/flask-blueprint-creator.md`
 - **Original Size:** 2,400 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: flask-blueprint-creator.md ---
+*** START OF SKILL: flask-blueprint-creator.md ***
 ```
 
----
+***
 name: flask-blueprint-creator
 description: 'Create flask blueprint creator operations. Auto-activating skill for
   Backend Development.
@@ -14229,7 +14155,7 @@ tags:
 - backend
 - development
 compatibility: Designed for Claude Code
----
+***
 # Flask Blueprint Creator
 
 ## Overview
@@ -14292,13 +14218,12 @@ Part of the **Backend Development** skill category.
 Tags: nodejs, python, go, microservices, database
 
 
-
 ```markdown
---- END OF SKILL: flask-blueprint-creator.md ---
+*** END OF SKILL: flask-blueprint-creator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-flask-ml-api-creator"></a>
@@ -14307,13 +14232,13 @@ Tags: nodejs, python, go, microservices, database
 
 - **Source File:** `skills/flask-ml-api-creator.md`
 - **Original Size:** 2,327 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: flask-ml-api-creator.md ---
+*** START OF SKILL: flask-ml-api-creator.md ***
 ```
 
----
+***
 name: flask-ml-api-creator
 description: 'Create flask ml api creator operations. Auto-activating skill for ML
   Deployment.
@@ -14333,7 +14258,7 @@ tags:
 - ai
 - mlops
 compatibility: Designed for Claude Code
----
+***
 # Flask Ml Api Creator
 
 ## Overview
@@ -14396,13 +14321,12 @@ Part of the **ML Deployment** skill category.
 Tags: mlops, serving, inference, monitoring, production
 
 
-
 ```markdown
---- END OF SKILL: flask-ml-api-creator.md ---
+*** END OF SKILL: flask-ml-api-creator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-flexport-data-handling"></a>
@@ -14411,13 +14335,13 @@ Tags: mlops, serving, inference, monitoring, production
 
 - **Source File:** `skills/flexport-data-handling.md`
 - **Original Size:** 5,756 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: flexport-data-handling.md ---
+*** START OF SKILL: flexport-data-handling.md ***
 ```
 
----
+***
 name: flexport-data-handling
 description: 'Implement data handling for Flexport supply chain data including PII
   redaction,
@@ -14437,7 +14361,7 @@ tags:
 - logistics
 - flexport
 compatibility: Designed for Claude Code
----
+***
 # Flexport Data Handling
 
 ## Overview
@@ -14549,13 +14473,12 @@ function validateShipment(s: FlexportShipment): string[] {
 See `flexport-security-basics`.
 
 
-
 ```markdown
---- END OF SKILL: flexport-data-handling.md ---
+*** END OF SKILL: flexport-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-flexport-debug-bundle"></a>
@@ -14564,13 +14487,13 @@ See `flexport-security-basics`.
 
 - **Source File:** `skills/flexport-debug-bundle.md`
 - **Original Size:** 3,736 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: flexport-debug-bundle.md ---
+*** START OF SKILL: flexport-debug-bundle.md ***
 ```
 
----
+***
 name: flexport-debug-bundle
 description: 'Collect Flexport API debug evidence for support tickets and troubleshooting.
 
@@ -14590,7 +14513,7 @@ tags:
 - logistics
 - flexport
 compatibility: Designed for Claude Code
----
+***
 # Flexport Debug Bundle
 
 ## Overview
@@ -14686,13 +14609,12 @@ echo "Review contents before sharing: tar -tzf $BUNDLE.tar.gz"
 For rate limit issues, see `flexport-rate-limits`.
 
 
-
 ```markdown
---- END OF SKILL: flexport-debug-bundle.md ---
+*** END OF SKILL: flexport-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-flexport-performance-tuning"></a>
@@ -14701,13 +14623,13 @@ For rate limit issues, see `flexport-rate-limits`.
 
 - **Source File:** `skills/flexport-performance-tuning.md`
 - **Original Size:** 3,335 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: flexport-performance-tuning.md ---
+*** START OF SKILL: flexport-performance-tuning.md ***
 ```
 
----
+***
 name: flexport-performance-tuning
 description: 'Optimize Flexport API performance with pagination tuning, response caching,
 
@@ -14726,7 +14648,7 @@ tags:
 - logistics
 - flexport
 compatibility: Designed for Claude Code
----
+***
 # Flexport Performance Tuning
 
 ## Overview
@@ -14828,13 +14750,12 @@ async function handleWebhook(event: any) {
 For cost optimization, see `flexport-cost-tuning`.
 
 
-
 ```markdown
---- END OF SKILL: flexport-performance-tuning.md ---
+*** END OF SKILL: flexport-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-flexport-reference-architecture"></a>
@@ -14843,13 +14764,13 @@ For cost optimization, see `flexport-cost-tuning`.
 
 - **Source File:** `skills/flexport-reference-architecture.md`
 - **Original Size:** 5,100 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: flexport-reference-architecture.md ---
+*** START OF SKILL: flexport-reference-architecture.md ***
 ```
 
----
+***
 name: flexport-reference-architecture
 description: 'Implement Flexport reference architecture for supply chain integrations
 
@@ -14868,7 +14789,7 @@ tags:
 - logistics
 - flexport
 compatibility: Designed for Claude Code
----
+***
 # Flexport Reference Architecture
 
 ## Overview
@@ -14961,13 +14882,12 @@ Flexport API ──webhook──> Ingest ──queue──> Core ──cache─�
 For multi-environment setup, see `flexport-multi-env-setup`.
 
 
-
 ```markdown
---- END OF SKILL: flexport-reference-architecture.md ---
+*** END OF SKILL: flexport-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-flink-job-creator"></a>
@@ -14976,13 +14896,13 @@ For multi-environment setup, see `flexport-multi-env-setup`.
 
 - **Source File:** `skills/flink-job-creator.md`
 - **Original Size:** 2,304 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: flink-job-creator.md ---
+*** START OF SKILL: flink-job-creator.md ***
 ```
 
----
+***
 name: flink-job-creator
 description: 'Create flink job creator operations. Auto-activating skill for Data
   Pipelines.
@@ -15001,7 +14921,7 @@ tags:
 - data
 - data-engineering
 compatibility: Designed for Claude Code
----
+***
 # Flink Job Creator
 
 ## Overview
@@ -15064,13 +14984,12 @@ Part of the **Data Pipelines** skill category.
 Tags: etl, airflow, spark, streaming, data-engineering
 
 
-
 ```markdown
---- END OF SKILL: flink-job-creator.md ---
+*** END OF SKILL: flink-job-creator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-flow-nexus-neural"></a>
@@ -15079,13 +14998,13 @@ Tags: etl, airflow, spark, streaming, data-engineering
 
 - **Source File:** `skills/flow-nexus-neural.md`
 - **Original Size:** 17,061 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: flow-nexus-neural.md ---
+*** START OF SKILL: flow-nexus-neural.md ***
 ```
 
----
+***
 name: flow-nexus-neural
 description: Train and deploy neural networks in distributed E2B sandboxes with Flow Nexus
 version: 1.0.0
@@ -15099,7 +15018,7 @@ tags:
   - e2b-sandboxes
 requires_auth: true
 mcp_server: flow-nexus
----
+***
 
 # Flow Nexus Neural Networks
 
@@ -15820,18 +15739,17 @@ await mcp__flow-nexus__neural_cluster_terminate({
 - Template Marketplace: https:/$flow-nexus.ruv.io$templates
 - API Reference: https:/$flow-nexus.ruv.io$api
 
----
+***
 
 **Note**: Distributed training requires authentication. Register at https:/$flow-nexus.ruv.io or use `npx flow-nexus@latest register`.
 
 
-
 ```markdown
---- END OF SKILL: flow-nexus-neural.md ---
+*** END OF SKILL: flow-nexus-neural.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-flyio-debug-bundle"></a>
@@ -15840,13 +15758,13 @@ await mcp__flow-nexus__neural_cluster_terminate({
 
 - **Source File:** `skills/flyio-debug-bundle.md`
 - **Original Size:** 4,356 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: flyio-debug-bundle.md ---
+*** START OF SKILL: flyio-debug-bundle.md ***
 ```
 
----
+***
 name: flyio-debug-bundle
 description: 'Collect Fly.io debug evidence for support tickets including machine
   status,
@@ -15865,7 +15783,7 @@ tags:
 - edge-compute
 - flyio
 compatibility: Designed for Claude Code
----
+***
 # Fly.io Debug Bundle
 
 ## Overview
@@ -15961,13 +15879,12 @@ checkFlyio();
 See `flyio-common-errors`.
 
 
-
 ```markdown
---- END OF SKILL: flyio-debug-bundle.md ---
+*** END OF SKILL: flyio-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-flyio-performance-tuning"></a>
@@ -15976,13 +15893,13 @@ See `flyio-common-errors`.
 
 - **Source File:** `skills/flyio-performance-tuning.md`
 - **Original Size:** 3,177 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: flyio-performance-tuning.md ---
+*** START OF SKILL: flyio-performance-tuning.md ***
 ```
 
----
+***
 name: flyio-performance-tuning
 description: 'Optimize Fly.io application performance with auto-stop/start tuning,
 
@@ -16001,7 +15918,7 @@ tags:
 - edge-compute
 - flyio
 compatibility: Designed for Claude Code
----
+***
 # Fly.io Performance Tuning
 
 ## Overview
@@ -16088,13 +16005,12 @@ const pooledUrl = process.env.DATABASE_URL?.replace(':5432/', ':5433/');
 For cost optimization, see `flyio-cost-tuning`.
 
 
-
 ```markdown
---- END OF SKILL: flyio-performance-tuning.md ---
+*** END OF SKILL: flyio-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-flyio-reference-architecture"></a>
@@ -16103,13 +16019,13 @@ For cost optimization, see `flyio-cost-tuning`.
 
 - **Source File:** `skills/flyio-reference-architecture.md`
 - **Original Size:** 4,268 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: flyio-reference-architecture.md ---
+*** START OF SKILL: flyio-reference-architecture.md ***
 ```
 
----
+***
 name: flyio-reference-architecture
 description: 'Implement Fly.io reference architecture with multi-region apps, Postgres,
 
@@ -16127,7 +16043,7 @@ tags:
 - edge-compute
 - flyio
 compatibility: Designed for Claude Code
----
+***
 # Fly.io Reference Architecture
 
 ## Overview
@@ -16237,13 +16153,12 @@ primary_region = "iad"
 - [Private Networking](https://fly.io/docs/networking/private-networking/)
 
 
-
 ```markdown
---- END OF SKILL: flyio-reference-architecture.md ---
+*** END OF SKILL: flyio-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fondo-debug-bundle"></a>
@@ -16252,13 +16167,13 @@ primary_region = "iad"
 
 - **Source File:** `skills/fondo-debug-bundle.md`
 - **Original Size:** 4,292 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fondo-debug-bundle.md ---
+*** START OF SKILL: fondo-debug-bundle.md ***
 ```
 
----
+***
 name: fondo-debug-bundle
 description: 'Collect diagnostic information for Fondo support including integration
   status,
@@ -16277,7 +16192,7 @@ tags:
 - accounting
 - fondo
 compatibility: Designed for Claude Code
----
+***
 # Fondo Debug Bundle
 
 ## Overview
@@ -16375,13 +16290,12 @@ checkFondo();
 See `fondo-common-errors`.
 
 
-
 ```markdown
---- END OF SKILL: fondo-debug-bundle.md ---
+*** END OF SKILL: fondo-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fondo-performance-tuning"></a>
@@ -16390,13 +16304,13 @@ See `fondo-common-errors`.
 
 - **Source File:** `skills/fondo-performance-tuning.md`
 - **Original Size:** 2,540 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fondo-performance-tuning.md ---
+*** START OF SKILL: fondo-performance-tuning.md ***
 ```
 
----
+***
 name: fondo-performance-tuning
 description: 'Optimize Fondo workflows including faster month-end close, efficient
 
@@ -16414,7 +16328,7 @@ tags:
 - accounting
 - fondo
 compatibility: Designed for Claude Code
----
+***
 # Fondo Performance Tuning
 
 ## Overview
@@ -16487,13 +16401,12 @@ async function getCachedExport(reportType: string, dateRange: string) {
 For cost optimization, see `fondo-cost-tuning`.
 
 
-
 ```markdown
---- END OF SKILL: fondo-performance-tuning.md ---
+*** END OF SKILL: fondo-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fondo-reference-architecture"></a>
@@ -16502,13 +16415,13 @@ For cost optimization, see `fondo-cost-tuning`.
 
 - **Source File:** `skills/fondo-reference-architecture.md`
 - **Original Size:** 4,607 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fondo-reference-architecture.md ---
+*** START OF SKILL: fondo-reference-architecture.md ***
 ```
 
----
+***
 name: fondo-reference-architecture
 description: 'Reference architecture for startup financial operations using Fondo
   as the
@@ -16527,7 +16440,7 @@ tags:
 - accounting
 - fondo
 compatibility: Designed for Claude Code
----
+***
 # Fondo Reference Architecture
 
 ## Overview
@@ -16596,13 +16509,12 @@ Reference architecture for a startup's financial operations with Fondo at the ce
 Start with `fondo-install-auth` to set up your Fondo account.
 
 
-
 ```markdown
---- END OF SKILL: fondo-reference-architecture.md ---
+*** END OF SKILL: fondo-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-food-database-query"></a>
@@ -16611,18 +16523,18 @@ Start with `fondo-install-auth` to set up your Fondo account.
 
 - **Source File:** `skills/food-database-query.md`
 - **Original Size:** 17,374 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: food-database-query.md ---
+*** START OF SKILL: food-database-query.md ***
 ```
 
----
+***
 name: food-database-query
 description: Food Database Query
 risk: critical
 source: community
----
+***
 
 # 食物数据库查询技能
 
@@ -16631,7 +16543,7 @@ source: community
 **创建日期**: 2026-01-06
 **版本**: v1.0
 
----
+***
 
 ## When to Use
 - 需要查询食物营养成分、比较食物差异或做营养计算时使用。
@@ -16650,7 +16562,7 @@ source: community
 - ✅ 分类浏览和搜索
 - ✅ 份量转换和估算
 
----
+***
 
 ## 数据源
 
@@ -16664,7 +16576,7 @@ source: community
 - **分类**: 10大类,30+子类
 - **支持**: 按分类浏览和筛选
 
----
+***
 
 ## 功能模块
 
@@ -16772,7 +16684,7 @@ def search_foods(criteria):
 - 按GI值排序
 - 按健康标签筛选
 
----
+***
 
 ### 2. 食物比较 (Food Comparison)
 
@@ -16825,7 +16737,7 @@ def compare_foods(food1, food2):
 
 **示例**: `/nutrition compare 三文鱼 鸡胸肉 营养素`
 
----
+***
 
 ### 3. 食物推荐 (Food Recommendation)
 
@@ -16903,7 +16815,7 @@ def recommend_by_nutrient(nutrient, min_value=None, max_value=None):
 - 富含叶酸
 - 富含维生素B12
 
----
+***
 
 ### 4. 自动营养计算 (Auto Nutrition Calculation)
 
@@ -16987,7 +16899,7 @@ def calculate_nutrition(food, portion_grams):
 - 燕麦生:100g → 煮熟:约300g (3倍重量)
 - 维生素保留: 煮熟保留60-80%
 
----
+***
 
 ### 5. 智能搜索 (Smart Search)
 
@@ -17035,7 +16947,7 @@ def fuzzy_search(name, max_distance=2):
     return sorted(matches, key=lambda x: x[1])
 ```
 
----
+***
 
 ## 数据结构
 
@@ -17150,7 +17062,7 @@ def fuzzy_search(name, max_distance=2):
 }
 ```
 
----
+***
 
 ## RDA参考值
 
@@ -17205,7 +17117,7 @@ RDA_FEMALE = {
 }
 ```
 
----
+***
 
 ## 集成功能
 
@@ -17227,7 +17139,7 @@ RDA_FEMALE = {
 2. **增肌**: 高蛋白食物推荐
 3. **减脂**: 低卡路里高蛋白食物
 
----
+***
 
 ## 使用示例
 
@@ -17336,7 +17248,7 @@ RDA_FEMALE = {
 - ✅ 抗炎需求
 ```
 
----
+***
 
 ## 扩展计划
 
@@ -17358,7 +17270,7 @@ RDA_FEMALE = {
 - ⏳ 集成条形码扫描
 - ⏳ AI食物识别
 
----
+***
 
 ## 质量保证
 
@@ -17373,7 +17285,7 @@ RDA_FEMALE = {
 - 边界条件测试
 - 性能测试
 
----
+***
 
 ## 注意事项
 
@@ -17389,7 +17301,7 @@ RDA_FEMALE = {
 3. **适量原则**: 即使健康食物也需适量
 4. **专业指导**: 特殊需求咨询营养师
 
----
+***
 
 ## 技术实现
 
@@ -17404,7 +17316,7 @@ RDA_FEMALE = {
 - 缓存常用查询
 - 模糊搜索优化
 
----
+***
 
 **技能版本**: v1.0
 **最后更新**: 2026-01-06
@@ -17416,13 +17328,12 @@ RDA_FEMALE = {
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: food-database-query.md ---
+*** END OF SKILL: food-database-query.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-forecast-generator"></a>
@@ -17431,13 +17342,13 @@ RDA_FEMALE = {
 
 - **Source File:** `skills/forecast-generator.md`
 - **Original Size:** 2,321 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: forecast-generator.md ---
+*** START OF SKILL: forecast-generator.md ***
 ```
 
----
+***
 name: forecast-generator
 description: 'Generate forecast generator operations. Auto-activating skill for Data
   Analytics.
@@ -17457,7 +17368,7 @@ tags:
 - data
 - analytics
 compatibility: Designed for Claude Code
----
+***
 # Forecast Generator
 
 ## Overview
@@ -17520,13 +17431,12 @@ Part of the **Data Analytics** skill category.
 Tags: sql, analytics, visualization, statistics, bi
 
 
-
 ```markdown
---- END OF SKILL: forecast-generator.md ---
+*** END OF SKILL: forecast-generator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-forecasting-time-series-data"></a>
@@ -17535,13 +17445,13 @@ Tags: sql, analytics, visualization, statistics, bi
 
 - **Source File:** `skills/forecasting-time-series-data.md`
 - **Original Size:** 3,850 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: forecasting-time-series-data.md ---
+*** START OF SKILL: forecasting-time-series-data.md ***
 ```
 
----
+***
 name: forecasting-time-series-data
 description: 'Process this skill enables AI assistant to forecast future values based
   on historical time series data. it analyzes time-dependent data to identify trends,
@@ -17558,7 +17468,7 @@ tags:
 - ai
 - forecasting-time
 compatibility: Designed for Claude Code
----
+***
 # Time Series Forecaster
 
 Forecast future values from historical time series data using ARIMA, Prophet, and other models with trend, seasonality, and confidence interval analysis.
@@ -17641,13 +17551,12 @@ The skill produces structured output relevant to the task.
 - Related skills and commands
 
 
-
 ```markdown
---- END OF SKILL: forecasting-time-series-data.md ---
+*** END OF SKILL: forecasting-time-series-data.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-forensics-data-collector"></a>
@@ -17656,13 +17565,13 @@ The skill produces structured output relevant to the task.
 
 - **Source File:** `skills/forensics-data-collector.md`
 - **Original Size:** 2,427 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: forensics-data-collector.md ---
+*** START OF SKILL: forensics-data-collector.md ***
 ```
 
----
+***
 name: forensics-data-collector
 description: 'Process forensics data collector operations. Auto-activating skill for
   Security Advanced.
@@ -17682,7 +17591,7 @@ tags:
 - security
 - compliance
 compatibility: Designed for Claude Code
----
+***
 # Forensics Data Collector
 
 ## Overview
@@ -17745,13 +17654,12 @@ Part of the **Security Advanced** skill category.
 Tags: pentesting, compliance, soc2, gdpr, threat-modeling
 
 
-
 ```markdown
---- END OF SKILL: forensics-data-collector.md ---
+*** END OF SKILL: forensics-data-collector.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fp-async"></a>
@@ -17760,13 +17668,13 @@ Tags: pentesting, compliance, soc2, gdpr, threat-modeling
 
 - **Source File:** `skills/fp-async.md`
 - **Original Size:** 25,376 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fp-async.md ---
+*** START OF SKILL: fp-async.md ***
 ```
 
----
+***
 name: fp-async
 description: Practical async patterns using TaskEither - clean pipelines instead of try/catch hell, with real API examples
 risk: critical
@@ -17782,7 +17690,7 @@ tags:
   - promises
   - api
   - fetch
----
+***
 
 # Practical Async Patterns with fp-ts
 
@@ -17800,7 +17708,7 @@ Stop writing nested try/catch blocks. Stop losing error context. Start building 
 // "An async operation that either fails with Error or succeeds with User"
 ```
 
----
+***
 
 ## 1. Wrapping Promises Safely
 
@@ -17894,7 +17802,7 @@ const mustBePositive = TE.fromPredicate(
 )
 ```
 
----
+***
 
 ## 2. Chaining Async Operations
 
@@ -18019,7 +17927,7 @@ const processOrder = (orderId: string) =>
   )
 ```
 
----
+***
 
 ## 3. Parallel vs Sequential Execution
 
@@ -18145,7 +18053,7 @@ const createUserAndProfile = (userData: UserData) =>
   )
 ```
 
----
+***
 
 ## 4. Error Recovery Patterns
 
@@ -18277,7 +18185,7 @@ const getUserWithDefault = (userId: string) =>
   ) // TaskEither<Error, User> - error channel still exists but always succeeds
 ```
 
----
+***
 
 ## 5. Real API Examples
 
@@ -18497,7 +18405,7 @@ const loadConfig = () =>
   )
 ```
 
----
+***
 
 ## 6. Handling Results
 
@@ -18565,7 +18473,7 @@ app.get('/users/:id', async (req, res) => {
 })
 ```
 
----
+***
 
 ## 7. Common Patterns Reference
 
@@ -18638,7 +18546,7 @@ const fromBoolean = TE.fromPredicate(
 )
 ```
 
----
+***
 
 ## Quick Reference Card
 
@@ -18659,7 +18567,7 @@ const fromBoolean = TE.fromPredicate(
 | Log without changing | `TE.tap(fn)` |
 | Filter with error | `TE.filterOrElse(pred, toError)` |
 
----
+***
 
 ## Before/After Summary
 
@@ -18744,13 +18652,12 @@ const getData = (id: string) =>
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: fp-async.md ---
+*** END OF SKILL: fp-async.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fp-backend"></a>
@@ -18759,13 +18666,13 @@ const getData = (id: string) =>
 
 - **Source File:** `skills/fp-backend.md`
 - **Original Size:** 35,130 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fp-backend.md ---
+*** START OF SKILL: fp-backend.md ***
 ```
 
----
+***
 name: fp-backend
 description: Functional programming patterns for Node.js/Deno backend development using fp-ts, ReaderTaskEither, and functional dependency injection
 risk: critical
@@ -18781,7 +18688,7 @@ tags:
   - deno
   - dependency-injection
   - reader-task-either
----
+***
 
 # fp-ts Backend Patterns
 
@@ -20111,13 +20018,12 @@ export const myOperation = (
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: fp-backend.md ---
+*** END OF SKILL: fp-backend.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fp-data-transforms"></a>
@@ -20126,13 +20032,13 @@ export const myOperation = (
 
 - **Source File:** `skills/fp-data-transforms.md`
 - **Original Size:** 38,451 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fp-data-transforms.md ---
+*** START OF SKILL: fp-data-transforms.md ***
 ```
 
----
+***
 name: fp-data-transforms
 description: Everyday data transformations using functional patterns - arrays, objects, grouping, aggregation, and null-safe access
 risk: critical
@@ -20149,7 +20055,7 @@ tags:
   - grouping
   - aggregation
   - null-safety
----
+***
 
 # Practical Data Transformations
 
@@ -20160,7 +20066,7 @@ This skill covers the data transformations you do every day: working with arrays
 - The task involves reshaping API responses, null-safe access, aggregation, or normalization.
 - You want practical functional patterns for everyday data work instead of low-level loops.
 
----
+***
 
 ## Table of Contents
 
@@ -20172,7 +20078,7 @@ This skill covers the data transformations you do every day: working with arrays
 6. [Real-World Examples](#6-real-world-examples)
 7. [When to Use What](#7-when-to-use-what)
 
----
+***
 
 ## 1. Array Operations
 
@@ -20392,7 +20298,7 @@ const uniqueTags = pipe(
 );
 ```
 
----
+***
 
 ## 2. Object Transformations
 
@@ -20667,7 +20573,7 @@ const newState = updatePath(state, ['user', 'profile', 'settings', 'theme'], 'da
 
 **Honest assessment**: The spread nesting is verbose but explicit. For deeply nested updates, consider using a library like `immer` or fp-ts lenses. The verbosity of the functional approach is the price of immutability.
 
----
+***
 
 ## 3. Data Normalization
 
@@ -20904,7 +20810,7 @@ const toDisplayUsers = (apiUsers: ApiUser[]): DisplayUser[] =>
   apiUsers.map(toDisplayUser);
 ```
 
----
+***
 
 ## 4. Grouping and Aggregation
 
@@ -21133,7 +21039,7 @@ const calculateInvoiceTotal = (invoice: Invoice) => {
 };
 ```
 
----
+***
 
 ## 5. Null-Safe Access
 
@@ -21315,7 +21221,7 @@ const getDisplayName = (profile: Profile): string =>
   );
 ```
 
----
+***
 
 ## 6. Real-World Examples
 
@@ -21556,7 +21462,7 @@ const getDbConfig = (config: AppConfig) => ({
 });
 ```
 
----
+***
 
 ## 7. When to Use What
 
@@ -21628,7 +21534,7 @@ const result = items
   .map(item => item.name.toUpperCase());
 ```
 
----
+***
 
 ## Summary
 
@@ -21662,13 +21568,12 @@ const result = items
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: fp-data-transforms.md ---
+*** END OF SKILL: fp-data-transforms.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fp-refactor"></a>
@@ -21677,13 +21582,13 @@ const result = items
 
 - **Source File:** `skills/fp-refactor.md`
 - **Original Size:** 47,921 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fp-refactor.md ---
+*** START OF SKILL: fp-refactor.md ***
 ```
 
----
+***
 name: fp-refactor
 description: Comprehensive guide for refactoring imperative TypeScript code to fp-ts functional patterns
 risk: critical
@@ -21700,7 +21605,7 @@ tags:
   - option
   - task
   - reader
----
+***
 
 # Refactoring Imperative Code to fp-ts
 
@@ -21723,7 +21628,7 @@ This skill provides comprehensive patterns and strategies for migrating existing
 8. [Gradual Adoption Strategies](#8-gradual-adoption-strategies)
 9. [When NOT to Refactor](#9-when-not-to-refactor)
 
----
+***
 
 ## 1. Converting try-catch to Either/TaskEither
 
@@ -21969,7 +21874,7 @@ const tryCatchAsync = <A>(f: () => Promise<A>): TE.TaskEither<Error, A> =>
   TE.tryCatch(f, (e) => (e instanceof Error ? e : new Error(String(e))));
 ```
 
----
+***
 
 ## 2. Converting null checks to Option
 
@@ -22163,7 +22068,7 @@ const getUser = (id: string): E.Either<Error, User> =>
   );
 ```
 
----
+***
 
 ## 3. Converting callbacks to Task
 
@@ -22320,7 +22225,7 @@ const readFileLegacy = (path: string): TE.TaskEither<Error, string> =>
   fromCallback((cb) => fs.readFile(path, 'utf-8', cb));
 ```
 
----
+***
 
 ## 4. Converting class-based DI to Reader
 
@@ -22564,7 +22469,7 @@ describe('updateEmail', () => {
 });
 ```
 
----
+***
 
 ## 5. Converting imperative loops to functional operations
 
@@ -22808,7 +22713,7 @@ const range = (start: number, end: number): readonly number[] =>
   RA.unfold(start, (n) => (n <= end ? O.some([n, n + 1]) : O.none));
 ```
 
----
+***
 
 ## 6. Migrating Promise chains to TaskEither
 
@@ -23009,7 +22914,7 @@ const withFallbacks = <E, A>(
   tasks.reduce((acc, task) => pipe(acc, TE.orElse(() => task)));
 ```
 
----
+***
 
 ## 7. Common Pitfalls
 
@@ -23145,7 +23050,7 @@ const processUser = (input: string): User =>
   );
 ```
 
----
+***
 
 ## 8. Gradual Adoption Strategies
 
@@ -23286,7 +23191,7 @@ describe('UserService', () => {
 });
 ```
 
----
+***
 
 ## 9. When NOT to Refactor
 
@@ -23432,7 +23337,7 @@ describe('UserService', () => {
 });
 ```
 
----
+***
 
 ## Quick Reference: Imperative to fp-ts Mapping
 
@@ -23457,7 +23362,7 @@ describe('UserService', () => {
 | `for...of` | `A.map()`, `A.reduce()` |
 | `while` | Recursion, `unfold()` |
 
----
+***
 
 ## Summary
 
@@ -23478,13 +23383,12 @@ The goal is more maintainable, type-safe code—not functional programming for i
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: fp-refactor.md ---
+*** END OF SKILL: fp-refactor.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-framer-debug-bundle"></a>
@@ -23493,13 +23397,13 @@ The goal is more maintainable, type-safe code—not functional programming for i
 
 - **Source File:** `skills/framer-debug-bundle.md`
 - **Original Size:** 2,331 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: framer-debug-bundle.md ---
+*** START OF SKILL: framer-debug-bundle.md ***
 ```
 
----
+***
 name: framer-debug-bundle
 description: 'Collect Framer debug evidence for support tickets and troubleshooting.
 
@@ -23520,7 +23424,7 @@ tags:
 - saas
 - framer
 compatibility: Designed for Claude Code
----
+***
 # Framer Debug Bundle
 
 ## Overview
@@ -23583,13 +23487,12 @@ echo "Bundle: $BUNDLE.tar.gz"
 For rate limit issues, see `framer-rate-limits`.
 
 
-
 ```markdown
---- END OF SKILL: framer-debug-bundle.md ---
+*** END OF SKILL: framer-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-framer-performance-tuning"></a>
@@ -23598,13 +23501,13 @@ For rate limit issues, see `framer-rate-limits`.
 
 - **Source File:** `skills/framer-performance-tuning.md`
 - **Original Size:** 3,210 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: framer-performance-tuning.md ---
+*** START OF SKILL: framer-performance-tuning.md ***
 ```
 
----
+***
 name: framer-performance-tuning
 description: 'Optimize Framer API performance with caching, batching, and connection
   pooling.
@@ -23626,7 +23529,7 @@ tags:
 - saas
 - framer
 compatibility: Designed for Claude Code
----
+***
 # Framer Performance Tuning
 
 ## Overview
@@ -23722,13 +23625,12 @@ function optimizeImageUrl(url: string, width = 800): string {
 For cost optimization, see `framer-cost-tuning`.
 
 
-
 ```markdown
---- END OF SKILL: framer-performance-tuning.md ---
+*** END OF SKILL: framer-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-framer-reference-architecture"></a>
@@ -23737,13 +23639,13 @@ For cost optimization, see `framer-cost-tuning`.
 
 - **Source File:** `skills/framer-reference-architecture.md`
 - **Original Size:** 5,265 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: framer-reference-architecture.md ---
+*** START OF SKILL: framer-reference-architecture.md ***
 ```
 
----
+***
 name: framer-reference-architecture
 description: 'Implement Framer reference architecture with best-practice project layout.
 
@@ -23764,7 +23666,7 @@ tags:
 - saas
 - framer
 compatibility: Designed for Claude Code
----
+***
 # Framer Reference Architecture
 
 ## Overview
@@ -23859,13 +23761,12 @@ framer-integration/
 Start with `framer-install-auth` to set up your development environment.
 
 
-
 ```markdown
---- END OF SKILL: framer-reference-architecture.md ---
+*** END OF SKILL: framer-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-freshie-inventory"></a>
@@ -23874,13 +23775,13 @@ Start with `framer-install-auth` to set up your development environment.
 
 - **Source File:** `skills/freshie-inventory.md`
 - **Original Size:** 15,144 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: freshie-inventory.md ---
+*** START OF SKILL: freshie-inventory.md ***
 ```
 
----
+***
 name: freshie-inventory
 description: "Manage the freshie ecosystem inventory database \u2014 a CMDB tracking\
   \ all plugins,\nskills, packs, and compliance grades across 51 SQLite tables. Use\
@@ -23904,7 +23805,7 @@ tags:
 - ecosystem
 - sqlite
 compatibility: Designed for Claude Code
----
+***
 # Freshie Inventory Manager
 
 Interactive command center for the freshie ecosystem inventory database.
@@ -23975,7 +23876,7 @@ a clear intent (e.g., "freshie status"), skip the menu and route directly.
 Based on selection, follow the matching workflow below. Every workflow ends with
 Step 3 (Email Report).
 
----
+***
 
 ## Workflow A: Dashboard
 
@@ -24010,7 +23911,7 @@ Staleness: {Fresh (<3d) | Stale (3-7d) | CRITICAL (>7d)}
 
 If Critical (>7 days), recommend a discovery scan.
 
----
+***
 
 ## Workflow B: Discovery Scan
 
@@ -24025,7 +23926,7 @@ compared to the previous run."
 
 The subagent handles the long-running scan in isolation and returns the delta report.
 
----
+***
 
 ## Workflow C: Compliance Check
 
@@ -24040,7 +23941,7 @@ Then summarize: grade distribution with percentages, and list all D/F grade skil
 
 The subagent runs the full validation pipeline and returns a structured summary.
 
----
+***
 
 ## Workflow D: Remediation
 
@@ -24074,7 +23975,7 @@ python3 freshie/scripts/batch-remediate.py --all --execute
 
 1. After execution, run Workflow C (Compliance Check) to measure improvement.
 
----
+***
 
 ## Workflow E: Query
 
@@ -24105,7 +24006,7 @@ Results shown. What next?
   - Back to menu  — Return to main menu
 ```
 
----
+***
 
 ## Workflow F: Compare Runs
 
@@ -24123,7 +24024,7 @@ Use the "Historical Trends" queries from [common-queries.md](references/common-q
 - New skills added since previous run
 - Skills removed since previous run
 
----
+***
 
 ## Workflow G: Export Data
 
@@ -24153,7 +24054,7 @@ sqlite3 -header -csv freshie/inventory.sqlite "{query}" > freshie/exports/{filen
 
 Report file paths and row counts.
 
----
+***
 
 ## Workflow H: Anomaly Scan
 
@@ -24170,7 +24071,7 @@ Prompt: "Run anomaly detection on the freshie inventory DB. Check:
 Report all findings grouped by severity."
 ```
 
----
+***
 
 ## Workflow I: Pack Coverage
 
@@ -24181,7 +24082,7 @@ sqlite3 freshie/inventory.sqlite "SELECT name, skill_count, category FROM packs 
 Also flag packs below minimum viable (< 3 skills) and show grade distribution within packs.
 Use pack coverage queries from [common-queries.md](references/common-queries.md).
 
----
+***
 
 ## Workflow J: Full Audit
 
@@ -24194,7 +24095,7 @@ This is the power workflow — runs everything end-to-end:
 
 Launch steps 1-3 as parallel subagents, then compile the report when all complete.
 
----
+***
 
 ## Workflow K: Report Only
 
@@ -24228,7 +24129,7 @@ Recommendations:
 ================================================================
 ```
 
----
+***
 
 ### Step 3: Email PDF Report
 
@@ -24301,13 +24202,12 @@ See [examples.md](references/examples.md) for detailed input/output examples cov
 - `/email` skill — email sending with attachments
 
 
-
 ```markdown
---- END OF SKILL: freshie-inventory.md ---
+*** END OF SKILL: freshie-inventory.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-frontend-architecture"></a>
@@ -24316,25 +24216,25 @@ See [examples.md](references/examples.md) for detailed input/output examples cov
 
 - **Source File:** `skills/frontend-architecture.md`
 - **Original Size:** 8,250 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: frontend-architecture.md ---
+*** START OF SKILL: frontend-architecture.md ***
 ```
 
----
+***
 name: frontend-architecture
 description: How to organize frontend code — separation of concerns (UI / logic / data / type), file responsibility, state tiers, API services, schema validation, and framework conventions for React/Next and Vue. Structural rules, not visual design.
 when_to_use: "When structuring a frontend codebase or reviewing how frontend code is organized — where logic, API calls, state, types, and validation should live; component vs hook/composable boundaries; Next.js server/client split; Vue Composition API. NOT for visual design (use frontend-design) and NOT for React/Next performance rules (use nextjs-react-expert)."
 allowed-tools: Read, Write, Edit, Glob, Grep
----
+***
 
 # Frontend Architecture
 
 > How to organize frontend code so it scales. Separation of concerns over file-type folders.
 > Applies to React/Next and Vue. For directory layout, follow [app-builder](../app-builder/scaffolding.md). For visual design, see [frontend-design](../frontend-design/SKILL.md). For React/Next performance, see [nextjs-react-expert](../nextjs-react-expert/SKILL.md).
 
----
+***
 
 ## 1. Separation of Concerns — the core rule
 
@@ -24350,7 +24250,7 @@ Split code into four layers by responsibility. A unit of code does ONE of these,
 
 > **Directory layout** (top-level folders) follows the project's scaffolding skill — do not invent a competing structure here. This skill is about *which layer code belongs to*, not where the folders sit.
 
----
+***
 
 ## 2. File Responsibility & Size
 
@@ -24366,7 +24266,7 @@ One clear responsibility per file. Size is a **signal, not a hard limit** — a 
 
 Split a file when it mixes UI + API + business logic + validation + state. Don't split a coherent file just to hit a number.
 
----
+***
 
 ## 3. Components render UI; logic goes elsewhere
 
@@ -24391,7 +24291,7 @@ function ProductList() {
 - Custom hooks must start with `use`.
 - A component calling an API directly is acceptable only for the smallest one-off cases.
 
----
+***
 
 ## 4. Next.js — Server Components by default
 
@@ -24405,7 +24305,7 @@ In the App Router, `page.tsx` and `layout.tsx` are Server Components. Reach for 
 
 Keep client components small. Don't `"use client"` a whole page for one interactive button — extract the button into its own client component and keep the page a Server Component.
 
----
+***
 
 ## 5. Vue — Composition API + composables
 
@@ -24417,7 +24317,7 @@ For full production apps, prefer the Composition API with `<script setup>` Singl
 
 Use a composable for reusable pure logic; use a component when reusing both logic and layout.
 
----
+***
 
 ## 6. State — start local, escalate only when needed
 
@@ -24431,7 +24331,7 @@ Use a composable for reusable pure logic; use a component when reusing both logi
 
 Don't reach for global state (or Redux) on day one of a small app. Server state belongs in a query library, not a global store.
 
----
+***
 
 ## 7. API in service files
 
@@ -24452,7 +24352,7 @@ export function useUsers() {
 
 Always handle loading, error, and empty states explicitly.
 
----
+***
 
 ## 8. Forms validate against a schema
 
@@ -24463,7 +24363,7 @@ Don't inline long validation inside a component.
 
 Keep schemas in `*.schema.ts` next to the form they validate.
 
----
+***
 
 ## 9. Naming
 
@@ -24476,7 +24376,7 @@ Descriptive, not cryptic. Context from the folder is allowed, but lean explicit.
 | `booking.api.ts` | `api.ts` (bare) |
 | `booking.schema.ts` | `data.ts` |
 
----
+***
 
 ## 10. Props
 
@@ -24490,7 +24390,7 @@ type ProductCardProps = { product: Product; onSelect?: (p: Product) => void }
 <ProductCard id={id} name={name} price={price} image={image} discount={discount} stock={stock} />
 ```
 
----
+***
 
 ## 11. Anti "god component"
 
@@ -24514,7 +24414,7 @@ Page
  └─ Modal / Form
 ```
 
----
+***
 
 ## 12. Tailwind class hygiene
 
@@ -24531,7 +24431,7 @@ const cardClassName = cn(
 )
 ```
 
----
+***
 
 ## 13. TypeScript
 
@@ -24541,7 +24441,7 @@ const cardClassName = cn(
 - Prefer union types over enums when a union suffices.
 - Validate external data with schemas (zod) — types alone don't guard runtime input.
 
----
+***
 
 ## 14. Minimum testing
 
@@ -24554,7 +24454,7 @@ Don't test everything up front; do cover:
 
 Colocate (`useBooking.test.ts` next to `useBooking.ts`) or keep `tests/unit` + `tests/e2e` — pick one and stay consistent.
 
----
+***
 
 ## 15. Accessibility floor
 
@@ -24563,18 +24463,17 @@ Colocate (`useBooking.test.ts` next to `useBooking.ts`) or keep `tests/unit` + `
 - Modals support keyboard escape + focus trap.
 - Forms surface errors clearly.
 
----
+***
 
 > **Remember:** one file = one responsibility · UI doesn't own logic · logic → hook/composable · API → service · validation → schema · types separate · Next is server-first · Vue is composable-first. Directory structure comes from the scaffolding skill, not from here.
 
 
-
 ```markdown
---- END OF SKILL: frontend-architecture.md ---
+*** END OF SKILL: frontend-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-frontend-data-contracts"></a>
@@ -24583,13 +24482,13 @@ Colocate (`useBooking.test.ts` next to `useBooking.ts`) or keep `tests/unit` + `
 
 - **Source File:** `skills/frontend-data-contracts.md`
 - **Original Size:** 15,130 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: frontend-data-contracts.md ---
+*** START OF SKILL: frontend-data-contracts.md ***
 ```
 
----
+***
 name: frontend-data-contracts
 description: A portable, framework-agnostic discipline for type safety at the network edge of any React or React Native app. Establishes one typed API client as the single fetch boundary, a parse-don't-validate rule that turns wire JSON into trusted domain types before it enters the app, a single...
 risk: critical
@@ -24599,7 +24498,7 @@ source_type: community
 date_added: 2026-07-01
 license: MIT
 license_source: https://github.com/stareezy-1/frontend-architecture-skill/blob/main/LICENSE
----
+***
 
 # Frontend Data Contracts (typed network boundary)
 ## When to Use
@@ -24617,7 +24516,7 @@ The goal: the moment data crosses from the network into the app, it stops being 
 JSON and becomes a **trusted, typed domain value** — or it becomes a **single, typed error**.
 There is exactly one place this transformation happens, and nothing untyped escapes it.
 
----
+***
 
 ## 0. The five core ideas
 
@@ -24627,7 +24526,7 @@ There is exactly one place this transformation happens, and nothing untyped esca
 4. **One normalized error type.** Server error envelope, non-2xx status, malformed body, network failure, and abort all become a single `ApiError` with a machine code, status, and optional per-field errors. Callers handle one shape.
 5. **Identifiers are branded.** Domain IDs are nominal types (`InvoiceId`, `CustomerId`) so the compiler rejects passing one where another is expected — the most common silent bug in data-heavy UIs.
 
----
+***
 
 ## 1. Directory layout
 
@@ -24646,7 +24545,7 @@ src/shared/api-client/
 Domain entity types and their **schemas** live with their feature module
 (`modules/{feature}/types/`) or a shared contract package; the client is generic over `T`.
 
----
+***
 
 ## 2. One client, the only fetch boundary
 
@@ -24690,7 +24589,7 @@ const res = await fetch(`/api/invoices/${id}`); // untyped, unhandled errors, no
 - The client is **framework-free**: no toasts, no router, no React. Side effects (toasts, redirects) live in the query layer's `onError` (see §6).
 - Pass `AbortSignal` through `RequestOptions` so the query layer can cancel (wired by TanStack Query).
 
----
+***
 
 ## 3. Parse, don't validate (the boundary transform)
 
@@ -24725,7 +24624,7 @@ the stack trace is useless. Components downstream never write `invoice?.total ??
 > Validation library is your choice — **Zod**, **Valibot**, **ArkType**, **io-ts**. The rule is
 > constant: a parse step converts `unknown` wire data into a typed domain value at one boundary.
 
----
+***
 
 ## 4. One response envelope
 
@@ -24758,7 +24657,7 @@ The parse step handles every shape: `204 No Content` → `undefined`; `{ error }
 with no well-formed envelope → synthesize an error; `{ data }` → return `data`. The caller only
 ever sees a typed payload or a throw.
 
----
+***
 
 ## 5. Branded (nominal) identifiers
 
@@ -24788,7 +24687,7 @@ loadInvoice(invoiceId); // ✅
 Brand IDs at the parse boundary (§3) so every ID in the app is already nominal. The runtime cost is
 zero — brands erase at compile time.
 
----
+***
 
 ## 6. One normalized error type
 
@@ -24855,7 +24754,7 @@ if (error.hasFieldErrors) {
 - Never show `error.message` (a server/dev string) directly to users — resolve `messageKey` through i18n.
 - A 2xx with an unparseable body is a **contract violation** → throw `INVALID_RESPONSE`, don't silently return `undefined`.
 
----
+***
 
 ## 7. Library adapters
 
@@ -24871,7 +24770,7 @@ The discipline is constant; the data-fetching library only changes where `onErro
 For **React Native**, the client is unchanged — `fetch` and `AbortController` exist in RN. Only
 `credentials: "include"` (cookie auth) may need swapping for a token header depending on your auth.
 
----
+***
 
 ## 8. Conventions checklist (enforce in review)
 
@@ -24886,7 +24785,7 @@ For **React Native**, the client is unchanged — `fetch` and `AbortController` 
 - [ ] `AbortSignal` flows through `RequestOptions` for cancellation.
 - [ ] A 2xx with a malformed body throws a contract-violation error, not `undefined`.
 
----
+***
 
 ## 9. How to apply this skill
 
@@ -24904,7 +24803,7 @@ fails loudly at the edge with a typed error, instead of leaking `undefined` down
 **Reviewing the data layer:** run the checklist in §8. The highest-value catches are raw `fetch` in
 components (boundary bypass) and `throw new Error(string)` from the data layer (untyped failures).
 
----
+***
 
 ## Publishing / installing this skill
 
@@ -24922,13 +24821,12 @@ This skill follows the Anthropic `SKILL.md` format and is portable across agents
 - Do not treat examples as a substitute for environment-specific tests, security review, or user approval for destructive or costly actions.
 
 
-
 ```markdown
---- END OF SKILL: frontend-data-contracts.md ---
+*** END OF SKILL: frontend-data-contracts.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-frontend-design"></a>
@@ -24937,18 +24835,18 @@ This skill follows the Anthropic `SKILL.md` format and is portable across agents
 
 - **Source File:** `skills/frontend-design.md`
 - **Original Size:** 89,636 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: frontend-design.md ---
+*** START OF SKILL: frontend-design.md ***
 ```
 
----
+***
 name: frontend-design
 description: Anti-slop frontend design for web UI — landing pages, portfolios, marketing/product sites, and redesigns. Reads the brief, infers the right direction, and ships interfaces that don't look templated. Real design systems when applicable, audit-first on redesigns, strict pre-flight check. NOT for mobile apps.
 when_to_use: "When designing or building web UI — components, layouts, color, typography, landing pages, or redesigns. NOT for mobile apps (use mobile-design)."
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
----
+***
 
 > **Style variants & tools** — read the matching file only when the brief calls for it:
 >
@@ -24968,7 +24866,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 > Landing pages, portfolios, and redesigns. Not dashboards, not data tables, not multi-step product UI.
 > Every rule below is **contextual**. None of it fires automatically. First read the brief, then pull only what fits.
 
----
+***
 
 ## 0. BRIEF INFERENCE (Read the Room Before Anything Else)
 
@@ -24998,7 +24896,7 @@ If you can confidently infer from context, **do not ask**. Just declare the desi
 ### 0.D Anti-Default Discipline
 Do not default to: AI-purple gradients, centered hero over dark mesh, three equal feature cards, generic glassmorphism on everything, infinite-loop micro-animations everywhere, Inter + slate-900. These are the LLM defaults. Reach past them deliberately based on the design read.
 
----
+***
 
 ## 1. THE THREE DIALS (Core Configuration)
 
@@ -25037,7 +24935,7 @@ After the design read, set three dials. Every layout, motion, and density decisi
 ### 1.C How the Dials Drive Output
 Use these (or user-overridden values) as global variables. Cross-references throughout this document refer to these exact variable names - never invent aliases like `LAYOUT_VARIANCE` or `ANIM_LEVEL`.
 
----
+***
 
 ## 2. BRIEF → DESIGN SYSTEM MAP
 
@@ -25077,7 +24975,7 @@ For these directions, there is **no single official package**. Build with native
 | Kinetic typography | Native CSS animations, scroll-driven animations, GSAP for hijacks. No library. |
 | **Apple Liquid Glass** | Apple documents this for Apple platforms only. **There is no official `liquid-glass.css`.** Web implementations are approximations using `backdrop-filter` + layered borders + highlights. Label clearly as approximation. |
 
----
+***
 
 ## 3. DEFAULT ARCHITECTURE & CONVENTIONS
 
@@ -25116,7 +25014,7 @@ Discouraged by default in code, markup, and visible text. Replace symbols with i
 ### 3.F Dependency Verification (mandatory)
 Before importing ANY 3rd-party library, check `package.json`. If the package is missing, output the install command first. **Never** assume a library exists.
 
----
+***
 
 ## 4. DESIGN ENGINEERING DIRECTIVES (Bias Correction)
 
@@ -25307,7 +25205,7 @@ The page has ONE theme. Sections do not invert.
 * Default behaviour: pick light, dark, or auto (`prefers-color-scheme`) at the page level and lock it. Section-level background tints within the same theme family are fine (`bg-zinc-950` next to `bg-zinc-900`); flipping to `bg-amber-50` in the middle of a `bg-zinc-950` page is broken.
 * When using a design system with built-in theming (Radix Themes, shadcn/ui with `<Theme>`), set the theme ONCE in `layout.tsx` or the page root. Do not let individual sections override.
 
----
+***
 
 ## 5. CONTEXT-AWARE PROACTIVITY
 
@@ -25474,7 +25372,7 @@ Use this for: feature lists, testimonial grids, logo walls, anything that just n
 * **Layout Transitions:** Use Motion's `layout` and `layoutId` props for visible state changes (re-ordering lists, expanding modals, shared elements between routes). Do not wrap static content in `layout` props "for safety" - it costs measurement work.
 * **Staggered Orchestration:** Use `staggerChildren` (Motion) or CSS cascade (`animation-delay: calc(var(--index) * 100ms)`) for reveal moments where sequence matters. For `staggerChildren`, parent (`variants`) and children MUST share the same Client Component tree.
 
----
+***
 
 ## 6. PERFORMANCE & ACCESSIBILITY GUARDRAILS
 
@@ -25507,7 +25405,7 @@ Use this for: feature lists, testimonial grids, logo walls, anything that just n
 ### 6.F Z-Index Restraint
 NEVER spam arbitrary `z-50` or `z-10`. Use z-index strictly for systemic layer contexts (sticky navbars, modals, overlays, grain). Document the z-index scale in a project constants file.
 
----
+***
 
 ## 7. DIAL DEFINITIONS (Technical Reference)
 
@@ -25527,7 +25425,7 @@ NEVER spam arbitrary `z-50` or `z-10`. Use z-index strictly for systemic layer c
 * **4-7 (Daily App):** Standard web app spacing (`py-16` to `py-24`).
 * **8-10 (Cockpit):** Tight paddings. No card boxes; 1px lines separate data. Mandatory: `font-mono` for all numbers.
 
----
+***
 
 ## 8. DARK MODE PROTOCOL
 
@@ -25550,7 +25448,7 @@ Respect `prefers-color-scheme` unless the brand insists. Add a manual toggle if 
 ### 8.D Test in Both Modes Before Finishing
 Open the page in both modes during development. Do not ship a page you've only seen in one mode.
 
----
+***
 
 ## 9. AI TELLS (Forbidden Patterns)
 
@@ -25660,7 +25558,7 @@ If your output contains a single `—` or `–` anywhere visible to the user, th
 
 This rule is non-negotiable. The agent has historically ignored em-dash limits when phrased as "use sparingly." The phrasing here is binary: zero em-dashes.
 
----
+***
 
 ## 10. REFERENCE VOCABULARY (Pattern Names the Agent Should Know)
 
@@ -25738,7 +25636,7 @@ This is a vocabulary, not a library. The agent should KNOW these pattern names t
 * **Three.js / WebGL** - for canvas backgrounds and 3D scenes. Same isolation rule.
 * **NEVER mix GSAP / Three.js with Motion in the same component tree.** They fight over the same frames.
 
----
+***
 
 ## 11. REDESIGN PROTOCOL
 
@@ -25790,7 +25688,7 @@ Never modify without explicit user approval:
 * Brand logo or wordmark.
 * Existing legal / consent / cookie copy.
 
----
+***
 
 ## 12. THE BLOCK LIBRARY (Contract - Implementations Land Here Iteratively)
 
@@ -25822,7 +25720,7 @@ The Reference Vocabulary (Section 10) names patterns. The Block Library implemen
 
 ### 12.B Required Frontmatter
 ```yaml
----
+***
 name: asymmetric-split-hero
 category: hero
 dial_compatibility:
@@ -25832,7 +25730,7 @@ dial_compatibility:
 when_to_use: "Landing pages with one strong asset and one strong message. Default hero for SaaS, agency, premium consumer."
 not_for: "Editorial / manifesto launches where the message IS the design."
 stack: ["react", "next", "tailwind", "motion"]
----
+***
 ```
 
 ### 12.C Required Body Sections
@@ -25851,7 +25749,7 @@ stack: ["react", "next", "tailwind", "motion"]
 * Every block must pass the Pre-Flight Check (Section 14).
 * Blocks that depend on a design system from Section 2.A live under `blocks/<category>/<name>--<system>.md` (e.g. `feature/bento-grid--material.md`).
 
----
+***
 
 ## 13. OUT OF SCOPE
 
@@ -25865,7 +25763,7 @@ This skill is NOT for:
 
 If the brief is one of the above, **say so explicitly**, point to the right tool, and only apply this skill's marketing-page / about-page / landing-page parts to the surfaces where they apply.
 
----
+***
 
 ## 14. FINAL PRE-FLIGHT CHECK
 
@@ -25938,7 +25836,7 @@ Run this matrix before outputting code. This is the last filter.
 
 If a single checkbox cannot be honestly ticked, the page is not done. Fix it before delivering.
 
----
+***
 
 # APPENDICES - Real Source-Backed Reference Material
 
@@ -26068,7 +25966,7 @@ npm install bootstrap
 - https://developer.apple.com/documentation/TechnologyOverviews/adopting-liquid-glass
 - https://developer.apple.com/documentation/SwiftUI/Material
 
----
+***
 
 ## Appendix C - Apple Liquid Glass: Honest Web Approximation
 
@@ -26161,18 +26059,17 @@ But that is **web glassmorphism / frosted-glass approximation**, not official Ap
 
 **Important:** `prefers-reduced-transparency` has uneven browser support; test it. Always provide enough contrast even without blur.
 
----
+***
 
 **End of appendices.** Install commands above are reality anchors. The Apple Liquid Glass skeleton is a labeled approximation, not an Apple-issued package. For canonical docs per design system, consult the system's official docs (links in Section 2 plus Appendix B).
 
 
-
 ```markdown
---- END OF SKILL: frontend-design.md ---
+*** END OF SKILL: frontend-design.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fsharp-testing"></a>
@@ -26181,18 +26078,18 @@ But that is **web glassmorphism / frosted-glass approximation**, not official Ap
 
 - **Source File:** `skills/fsharp-testing.md`
 - **Original Size:** 8,222 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fsharp-testing.md ---
+*** START OF SKILL: fsharp-testing.md ***
 ```
 
----
+***
 name: fsharp-testing
 description: F# testing patterns with xUnit, FsUnit, Unquote, FsCheck property-based testing, integration tests, and test organization best practices. Use when writing F# tests with xUnit, FsUnit, Unquote, or FsCheck.
 metadata:
   origin: ECC
----
+***
 
 # F# Testing Patterns
 
@@ -26470,13 +26367,12 @@ dotnet watch test --project tests/MyApp.Tests/
 ```
 
 
-
 ```markdown
---- END OF SKILL: fsharp-testing.md ---
+*** END OF SKILL: fsharp-testing.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-full-stack-orchestration-full-stack-feature"></a>
@@ -26485,19 +26381,19 @@ dotnet watch test --project tests/MyApp.Tests/
 
 - **Source File:** `skills/full-stack-orchestration-full-stack-feature.md`
 - **Original Size:** 10,897 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: full-stack-orchestration-full-stack-feature.md ---
+*** START OF SKILL: full-stack-orchestration-full-stack-feature.md ***
 ```
 
----
+***
 name: full-stack-orchestration-full-stack-feature
 description: "Use when working with full stack orchestration full stack feature"
 risk: critical
 source: community
 date_added: "2026-02-27"
----
+***
 
 ## Use this skill when
 
@@ -26636,13 +26532,12 @@ Feature to implement: $ARGUMENTS
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: full-stack-orchestration-full-stack-feature.md ---
+*** END OF SKILL: full-stack-orchestration-full-stack-feature.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-funnel-analysis-builder"></a>
@@ -26651,13 +26546,13 @@ Feature to implement: $ARGUMENTS
 
 - **Source File:** `skills/funnel-analysis-builder.md`
 - **Original Size:** 2,372 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: funnel-analysis-builder.md ---
+*** START OF SKILL: funnel-analysis-builder.md ***
 ```
 
----
+***
 name: funnel-analysis-builder
 description: 'Build funnel analysis builder operations. Auto-activating skill for
   Data Analytics.
@@ -26677,7 +26572,7 @@ tags:
 - data
 - analytics
 compatibility: Designed for Claude Code
----
+***
 # Funnel Analysis Builder
 
 ## Overview
@@ -26740,13 +26635,12 @@ Part of the **Data Analytics** skill category.
 Tags: sql, analytics, visualization, statistics, bi
 
 
-
 ```markdown
---- END OF SKILL: funnel-analysis-builder.md ---
+*** END OF SKILL: funnel-analysis-builder.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-fuzzing-apis"></a>
@@ -26755,13 +26649,13 @@ Tags: sql, analytics, visualization, statistics, bi
 
 - **Source File:** `skills/fuzzing-apis.md`
 - **Original Size:** 6,588 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: fuzzing-apis.md ---
+*** START OF SKILL: fuzzing-apis.md ***
 ```
 
----
+***
 name: fuzzing-apis
 description: 'Configure perform API fuzzing to discover edge cases, crashes, and security
   vulnerabilities.
@@ -26781,7 +26675,7 @@ tags:
 - api
 - security
 compatibility: Designed for Claude Code
----
+***
 # API Fuzzer
 
 ## Overview
@@ -26909,13 +26803,12 @@ test('POST /api/users handles arbitrary input without crashing', async () => {
 - OWASP Fuzzing: https://owasp.org/www-community/Fuzzing
 
 
-
 ```markdown
---- END OF SKILL: fuzzing-apis.md ---
+*** END OF SKILL: fuzzing-apis.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-ga4-data-api-query"></a>
@@ -26924,13 +26817,13 @@ test('POST /api/users handles arbitrary input without crashing', async () => {
 
 - **Source File:** `skills/ga4-data-api-query.md`
 - **Original Size:** 9,880 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: ga4-data-api-query.md ---
+*** START OF SKILL: ga4-data-api-query.md ***
 ```
 
----
+***
 name: ga4-data-api-query
 description: |
   Build a runReport request against the GA4 Data API v1 — pick valid metric/dimension
@@ -26943,7 +26836,7 @@ license: MIT
 author: Jeremy Longshore <jeremy@intentsolutions.io>
 tags: [saas, analytics, google-analytics, ga4, data-api]
 compatibility: Designed for Claude Code
----
+***
 
 # GA4 Data API v1 — runReport
 
@@ -27167,13 +27060,12 @@ A successful `runReport` response contains dimension and metric values in `rows`
 - `ga4-bigquery-export` — when you've outgrown the Data API
 
 
-
 ```markdown
---- END OF SKILL: ga4-data-api-query.md ---
+*** END OF SKILL: ga4-data-api-query.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-gaia-architecture-comparison"></a>
@@ -27182,18 +27074,18 @@ A successful `runReport` response contains dimension and metric values in `rows`
 
 - **Source File:** `skills/gaia-architecture-comparison.md`
 - **Original Size:** 5,286 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: gaia-architecture-comparison.md ---
+*** START OF SKILL: gaia-architecture-comparison.md ***
 ```
 
----
+***
 name: gaia-architecture-comparison
 description: Side-by-side comparison of ruflo vs HAL vs other GAIA harnesses — capability gaps, design decisions, and improvement roadmap
 argument-hint: "[--focus=tools|routing|memory|cost]"
 allowed-tools: Bash Read mcp__plugin_ruflo-core_ruflo__memory_search mcp__plugin_ruflo-core_ruflo__memory_store
----
+***
 
 # GAIA Architecture Comparison Skill
 
@@ -27317,13 +27209,12 @@ npx @claude-flow/cli@latest memory store \
 ```
 
 
-
 ```markdown
---- END OF SKILL: gaia-architecture-comparison.md ---
+*** END OF SKILL: gaia-architecture-comparison.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-gaia-debugging"></a>
@@ -27332,18 +27223,18 @@ npx @claude-flow/cli@latest memory store \
 
 - **Source File:** `skills/gaia-debugging.md`
 - **Original Size:** 4,559 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: gaia-debugging.md ---
+*** START OF SKILL: gaia-debugging.md ***
 ```
 
----
+***
 name: gaia-debugging
 description: Diagnose why a GAIA question failed — extract trace, classify failure mode, and propose a fix. Use when a GAIA benchmark run reports a failed/incorrect task_id and you need to root-cause it before resubmitting.
 argument-hint: "<task_id> [--results=<path>]"
 allowed-tools: Bash Read mcp__plugin_ruflo-core_ruflo__memory_search mcp__plugin_ruflo-core_ruflo__memory_store mcp__plugin_ruflo-core_ruflo__agentdb_pattern_search mcp__plugin_ruflo-core_ruflo__agentdb_pattern_store
----
+***
 
 # GAIA Debugging Skill
 
@@ -27456,13 +27347,12 @@ npx @claude-flow/cli@latest memory search \
 ```
 
 
-
 ```markdown
---- END OF SKILL: gaia-debugging.md ---
+*** END OF SKILL: gaia-debugging.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-game-development"></a>
@@ -27471,30 +27361,30 @@ npx @claude-flow/cli@latest memory search \
 
 - **Source File:** `skills/game-development.md`
 - **Original Size:** 4,980 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: game-development.md ---
+*** START OF SKILL: game-development.md ***
 ```
 
----
+***
 name: game-development
 description: Game development orchestrator. Routes to platform-specific skills based on project needs.
 when_to_use: "When building games with Unity, Godot, Unreal, Phaser, or any game engine. Routes to platform-specific sub-skills."
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
----
+***
 
 # Game Development
 
 > **Orchestrator skill** that provides core principles and routes to specialized sub-skills.
 
----
+***
 
 ## When to Use This Skill
 
 You are working on a game development project. This skill teaches the PRINCIPLES of game development and directs you to the right sub-skill based on context.
 
----
+***
 
 ## Sub-Skill Routing
 
@@ -27523,7 +27413,7 @@ You are working on a game development project. This skill teaches the PRINCIPLES
 | Visual style, asset pipeline, animation | `game-development/game-art` |
 | Sound design, music, adaptive audio | `game-development/game-audio` |
 
----
+***
 
 ## Core Principles (All Platforms)
 
@@ -27542,7 +27432,7 @@ RENDER → Draw the frame (interpolated)
 - Rendering: As fast as possible
 - Interpolate between states for smooth visuals
 
----
+***
 
 ### 2. Pattern Selection Matrix
 
@@ -27557,7 +27447,7 @@ RENDER → Draw the frame (interpolated)
 
 **Decision Rule:** Start with State Machine. Add ECS only when performance demands.
 
----
+***
 
 ### 3. Input Abstraction
 
@@ -27570,7 +27460,7 @@ Abstract input into ACTIONS, not raw keys:
 
 **Why:** Enables multi-platform, rebindable controls.
 
----
+***
 
 ### 4. Performance Budget (60 FPS = 16.67ms)
 
@@ -27590,7 +27480,7 @@ Abstract input into ACTIONS, not raw keys:
 4. LOD (detail by distance)
 5. Culling (skip invisible)
 
----
+***
 
 ### 5. AI Selection by Complexity
 
@@ -27601,7 +27491,7 @@ Abstract input into ACTIONS, not raw keys:
 | **GOAP** | High | Emergent, planning-based |
 | **Utility AI** | High | Scoring-based decisions |
 
----
+***
 
 ### 6. Collision Strategy
 
@@ -27612,7 +27502,7 @@ Abstract input into ACTIONS, not raw keys:
 | **Spatial Hash** | Many similar-sized objects |
 | **Quadtree** | Large worlds, varying sizes |
 
----
+***
 
 ## Anti-Patterns (Universal)
 
@@ -27624,7 +27514,7 @@ Abstract input into ACTIONS, not raw keys:
 | Optimize without profiling | Profile first |
 | Mix input with logic | Abstract input layer |
 
----
+***
 
 ## Routing Examples
 
@@ -27642,18 +27532,17 @@ Abstract input into ACTIONS, not raw keys:
 → `game-development/3d-games` for rendering
 → `game-development/multiplayer` for networking
 
----
+***
 
 > **Remember:** Great games come from iteration, not perfection. Prototype fast, then polish.
 
 
-
 ```markdown
---- END OF SKILL: game-development.md ---
+*** END OF SKILL: game-development.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-gamma-data-handling"></a>
@@ -27662,13 +27551,13 @@ Abstract input into ACTIONS, not raw keys:
 
 - **Source File:** `skills/gamma-data-handling.md`
 - **Original Size:** 8,169 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: gamma-data-handling.md ---
+*** START OF SKILL: gamma-data-handling.md ***
 ```
 
----
+***
 name: gamma-data-handling
 description: 'Handle data privacy, retention, and compliance for Gamma integrations.
 
@@ -27691,7 +27580,7 @@ tags:
 - workflow
 - compliance
 compatibility: Designed for Claude Code
----
+***
 # Gamma Data Handling
 
 ## Overview
@@ -27933,13 +27822,12 @@ async function handleGdprRequest(
 Proceed to `gamma-enterprise-rbac` for access control.
 
 
-
 ```markdown
---- END OF SKILL: gamma-data-handling.md ---
+*** END OF SKILL: gamma-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-gamma-debug-bundle"></a>
@@ -27948,13 +27836,13 @@ Proceed to `gamma-enterprise-rbac` for access control.
 
 - **Source File:** `skills/gamma-debug-bundle.md`
 - **Original Size:** 8,870 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: gamma-debug-bundle.md ---
+*** START OF SKILL: gamma-debug-bundle.md ***
 ```
 
----
+***
 name: gamma-debug-bundle
 description: 'Comprehensive debugging toolkit for Gamma integration issues.
 
@@ -27978,7 +27866,7 @@ tags:
 - debugging
 - tracing
 compatibility: Designed for Claude Code
----
+***
 # Gamma Debug Bundle
 
 ## Current State
@@ -28257,13 +28145,12 @@ export function createDebugGammaClient(apiKey: string) {
 Proceed to `gamma-rate-limits` for rate limit management.
 
 
-
 ```markdown
---- END OF SKILL: gamma-debug-bundle.md ---
+*** END OF SKILL: gamma-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-gamma-performance-tuning"></a>
@@ -28272,13 +28159,13 @@ Proceed to `gamma-rate-limits` for rate limit management.
 
 - **Source File:** `skills/gamma-performance-tuning.md`
 - **Original Size:** 8,027 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: gamma-performance-tuning.md ---
+*** START OF SKILL: gamma-performance-tuning.md ***
 ```
 
----
+***
 name: gamma-performance-tuning
 description: 'Optimize Gamma API performance and reduce latency.
 
@@ -28301,7 +28188,7 @@ tags:
 - api
 - performance
 compatibility: Designed for Claude Code
----
+***
 # Gamma Performance Tuning
 
 ## Overview
@@ -28546,13 +28433,12 @@ export function createOptimizedClient(apiKey: string) {
 Proceed to `gamma-cost-tuning` for credit optimization.
 
 
-
 ```markdown
---- END OF SKILL: gamma-performance-tuning.md ---
+*** END OF SKILL: gamma-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-gamma-reference-architecture"></a>
@@ -28561,13 +28447,13 @@ Proceed to `gamma-cost-tuning` for credit optimization.
 
 - **Source File:** `skills/gamma-reference-architecture.md`
 - **Original Size:** 11,793 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: gamma-reference-architecture.md ---
+*** START OF SKILL: gamma-reference-architecture.md ***
 ```
 
----
+***
 name: gamma-reference-architecture
 description: 'Reference architecture for enterprise Gamma integrations.
 
@@ -28589,7 +28475,7 @@ tags:
 - gamma
 - gamma-reference
 compatibility: Designed for Claude Code
----
+***
 # Gamma Reference Architecture
 
 ## Overview
@@ -28803,13 +28689,12 @@ const worker = new Worker('presentations', async (job) => {
 Proceed to `gamma-multi-env-setup` for environment configuration.
 
 
-
 ```markdown
---- END OF SKILL: gamma-reference-architecture.md ---
+*** END OF SKILL: gamma-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-gatling-scenario-creator"></a>
@@ -28818,13 +28703,13 @@ Proceed to `gamma-multi-env-setup` for environment configuration.
 
 - **Source File:** `skills/gatling-scenario-creator.md`
 - **Original Size:** 2,412 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: gatling-scenario-creator.md ---
+*** START OF SKILL: gatling-scenario-creator.md ***
 ```
 
----
+***
 name: gatling-scenario-creator
 description: 'Create gatling scenario creator operations. Auto-activating skill for
   Performance Testing.
@@ -28844,7 +28729,7 @@ tags:
 - performance
 - testing
 compatibility: Designed for Claude Code
----
+***
 # Gatling Scenario Creator
 
 ## Overview
@@ -28907,13 +28792,12 @@ Part of the **Performance Testing** skill category.
 Tags: performance, load-testing, k6, jmeter, benchmarking
 
 
-
 ```markdown
---- END OF SKILL: gatling-scenario-creator.md ---
+*** END OF SKILL: gatling-scenario-creator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-gc-log-analyzer"></a>
@@ -28922,13 +28806,13 @@ Tags: performance, load-testing, k6, jmeter, benchmarking
 
 - **Source File:** `skills/gc-log-analyzer.md`
 - **Original Size:** 2,305 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: gc-log-analyzer.md ---
+*** START OF SKILL: gc-log-analyzer.md ***
 ```
 
----
+***
 name: gc-log-analyzer
 description: 'Analyze gc log analyzer operations. Auto-activating skill for Performance
   Testing.
@@ -28948,7 +28832,7 @@ tags:
 - performance
 - testing
 compatibility: Designed for Claude Code
----
+***
 # Gc Log Analyzer
 
 ## Overview
@@ -29011,13 +28895,12 @@ Part of the **Performance Testing** skill category.
 Tags: performance, load-testing, k6, jmeter, benchmarking
 
 
-
 ```markdown
---- END OF SKILL: gc-log-analyzer.md ---
+*** END OF SKILL: gc-log-analyzer.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-gcp-examples-expert"></a>
@@ -29026,13 +28909,13 @@ Tags: performance, load-testing, k6, jmeter, benchmarking
 
 - **Source File:** `skills/gcp-examples-expert.md`
 - **Original Size:** 6,292 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: gcp-examples-expert.md ---
+*** START OF SKILL: gcp-examples-expert.md ***
 ```
 
----
+***
 name: gcp-examples-expert
 description: 'Generate production-ready Google Cloud code examples from official repositories
   including ADK samples, Genkit templates, Vertex AI notebooks, and Gemini patterns.
@@ -29051,7 +28934,7 @@ tags:
 - gcp
 - gcp-examples
 compatibility: Designed for Claude Code
----
+***
 # GCP Examples Expert
 
 ## Overview
@@ -29122,13 +29005,12 @@ See `${CLAUDE_SKILL_DIR}/references/example-interactions.md` for detailed intera
 - [GoogleCloudPlatform/agentsmithy](https://github.com/GoogleCloudPlatform/agentsmithy) -- multi-agent orchestration
 
 
-
 ```markdown
---- END OF SKILL: gcp-examples-expert.md ---
+*** END OF SKILL: gcp-examples-expert.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-gdpr-data-handling"></a>
@@ -29137,19 +29019,19 @@ See `${CLAUDE_SKILL_DIR}/references/example-interactions.md` for detailed intera
 
 - **Source File:** `skills/gdpr-data-handling.md`
 - **Original Size:** 1,444 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: gdpr-data-handling.md ---
+*** START OF SKILL: gdpr-data-handling.md ***
 ```
 
----
+***
 name: gdpr-data-handling
 description: "Practical implementation guide for GDPR-compliant data processing, consent management, and privacy controls."
 risk: safe
 source: community
 date_added: "2026-02-27"
----
+***
 
 # GDPR Data Handling
 
@@ -29186,13 +29068,12 @@ Practical implementation guide for GDPR-compliant data processing, consent manag
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: gdpr-data-handling.md ---
+*** END OF SKILL: gdpr-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-generating-database-seed-data"></a>
@@ -29201,13 +29082,13 @@ Practical implementation guide for GDPR-compliant data processing, consent manag
 
 - **Source File:** `skills/generating-database-seed-data.md`
 - **Original Size:** 7,687 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: generating-database-seed-data.md ---
+*** START OF SKILL: generating-database-seed-data.md ***
 ```
 
----
+***
 name: generating-database-seed-data
 description: 'Process this skill enables AI assistant to generate realistic test data
   and database seed scripts for development and testing environments. it uses faker
@@ -29225,7 +29106,7 @@ tags:
 - testing
 - database-seed
 compatibility: Designed for Claude Code
----
+***
 # Data Seeder Generator
 
 ## Overview
@@ -29310,13 +29191,12 @@ Generate realistic database seed scripts that populate development and testing e
 - PostgreSQL COPY command: https://www.postgresql.org/docs/current/sql-copy.html
 
 
-
 ```markdown
---- END OF SKILL: generating-database-seed-data.md ---
+*** END OF SKILL: generating-database-seed-data.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-generating-executive-summary"></a>
@@ -29325,13 +29205,13 @@ Generate realistic database seed scripts that populate development and testing e
 
 - **Source File:** `skills/generating-executive-summary.md`
 - **Original Size:** 9,220 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: generating-executive-summary.md ---
+*** START OF SKILL: generating-executive-summary.md ***
 ```
 
----
+***
 name: generating-executive-summary
 description: |
   Compose an exec-readable summary from a unified findings JSONL
@@ -29370,7 +29250,7 @@ tags:
   - executive-summary
   - risk-score
   - pentest
----
+***
 
 # Generating Executive Summary
 
@@ -29594,13 +29474,12 @@ Operational Finding includes:
   composing + mapping skills, post-delivery follow-up cadence
 
 
-
 ```markdown
---- END OF SKILL: generating-executive-summary.md ---
+*** END OF SKILL: generating-executive-summary.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-generating-orm-code"></a>
@@ -29609,13 +29488,13 @@ Operational Finding includes:
 
 - **Source File:** `skills/generating-orm-code.md`
 - **Original Size:** 6,886 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: generating-orm-code.md ---
+*** START OF SKILL: generating-orm-code.md ***
 ```
 
----
+***
 name: generating-orm-code
 description: 'Execute use when you need to work with ORM code generation.
 
@@ -29635,7 +29514,7 @@ tags:
 - database
 - orm-code
 compatibility: Designed for Claude Code
----
+***
 # ORM Code Generator
 
 ## Overview
@@ -29719,13 +29598,12 @@ Generate type-safe ORM model classes, migration files, and repository patterns f
 - Django inspectdb command: https://docs.djangoproject.com/en/5.0/howto/legacy-databases/
 
 
-
 ```markdown
---- END OF SKILL: generating-orm-code.md ---
+*** END OF SKILL: generating-orm-code.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-generating-python-installer"></a>
@@ -29734,16 +29612,16 @@ Generate type-safe ORM model classes, migration files, and repository patterns f
 
 - **Source File:** `skills/generating-python-installer.md`
 - **Original Size:** 31,147 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: generating-python-installer.md ---
+*** START OF SKILL: generating-python-installer.md ***
 ```
 
----
+***
 name: generating-python-installer
 description: "Commercial-grade Python installer expert for Windows: Nuitka extreme compilation, dist slimming, DLL footprint analysis, and Inno Setup packaging to ship the smallest, fastest installers. Use when a Python app must ship as a minimal, fast-starting Windows installer; not for basic script-to-exe conversion. 中文触发：Nuitka 极限优化、Python 商业打包、极限编译 Python、dist 瘦身、DLL 分析、最小安装包、最快启动、商业级打包风格"
----
+***
 
 # Generating Python Installer (Commercial-Grade)
 
@@ -29774,13 +29652,13 @@ This skill targets advanced size/startup optimization — not basic one-file "sc
 - "我的 exe 有 400 MB，怎么瘦身到一半" → analyze DLLs, switch to `opencv-python-headless`, drop `opengl32sw`, apply `dist` slimming.
 - "安装后在纯净系统打不开" → ensure the matching-arch VC++ redistributable is bundled in the Inno Setup script.
 
----
+***
 
 ## 核心理念
 
 坚持 **"Nuitka 文件夹模式(dist) + Inno Setup 封装"** 方案。拒绝单文件版，拒绝黑窗。
 
----
+***
 
 ## 实战参考案例（生产级 PySide2 桌面应用，323 MB，含 OpenCV / Playwright）
 
@@ -29814,7 +29692,7 @@ This skill targets advanced size/startup optimization — not basic one-file "sc
 | PyQt/PySide | 200-400 MB | **120-250 MB** | 323 MB (含 OpenCV 等) |
 | 含 numpy/pandas | 300-600 MB | **180-350 MB** | - |
 
----
+***
 
 ## 核心工作流 (Workflow) - WARNING: 严格执行
 
@@ -29863,7 +29741,7 @@ This skill targets advanced size/startup optimization — not basic one-file "sc
 **步骤 3：生成代码**
 用户确认后，输出包含 **完整元数据** 和 **卸载图标修复** 的代码。
 
----
+***
 
 ## Nuitka 极限优化编译（基于 参考项目经验）
 
@@ -30334,7 +30212,7 @@ if __name__ == "__main__":
 python analyze_dlls.py dist/你的软件名.dist
 ```
 
----
+***
 
 ## 完整优化工作流
 
@@ -30381,7 +30259,7 @@ pip install opencv-python-headless
 Remove-Item "opengl32sw.dll" -Force
 ```
 
----
+***
 
 ## VC++ 运行库处理方案
 
@@ -30406,7 +30284,7 @@ Filename: "{tmp}\vc_redist.x86.exe"; Parameters: "/quiet /norestart"; StatusMsg:
 
 > 下载地址：[Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
 
----
+***
 
 ## Inno Setup 脚本模板（商业终极版）
 
@@ -30487,7 +30365,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}"; Flags: nowait postinstall skipifsilent
 ```
 
----
+***
 
 ## 占位符说明
 
@@ -30503,7 +30381,7 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}
 | `{{ICON_PATH}}` | 图标文件路径 | `D:\project\icon.ico` |
 | `{{GENERATE_RANDOM_GUID}}` | **需生成唯一GUID** | 使用 Inno Setup "Tools > Generate GUID" |
 
----
+***
 
 ## 常见问题 (FAQ)
 
@@ -30530,7 +30408,7 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}
 - 购买 EV 代码签名证书（可立即获得信任）
 - 普通代码签名证书需要积累安装量后逐渐获得信任
 
----
+***
 
 ## 实战问题处理记录（更新 2026-02-07）
 
@@ -30541,7 +30419,7 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}
 - **`--disable-console` 已废弃**：改用 `--windows-console-mode=disable`。
 - **dist 出现 `_nuitka_temp.exe`**：在 [Files] 中排除它。
 
----
+***
 
 ## 优化效果预期
 
@@ -30557,18 +30435,17 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}
 
 > WARNING: **不建议使用 UPX 压缩**，虽然能进一步减小体积，但极易触发杀毒软件误报。
 
----
+***
 
 **基于 参考项目实战经验优化，助你打造商业级安装包！**
 
 
-
 ```markdown
---- END OF SKILL: generating-python-installer.md ---
+*** END OF SKILL: generating-python-installer.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-generating-stored-procedures"></a>
@@ -30577,13 +30454,13 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}
 
 - **Source File:** `skills/generating-stored-procedures.md`
 - **Original Size:** 7,384 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: generating-stored-procedures.md ---
+*** START OF SKILL: generating-stored-procedures.md ***
 ```
 
----
+***
 name: generating-stored-procedures
 description: 'Use when you need to generate, validate, or deploy stored procedures
   for PostgreSQL, MySQL, or SQL Server.
@@ -30608,7 +30485,7 @@ tags:
 - postgresql
 - mysql
 compatibility: Designed for Claude Code
----
+***
 # Stored Procedure Generator
 
 Generate production-ready stored procedures for PostgreSQL, MySQL, and SQL Server with proper error handling, transaction management, and security best practices.
@@ -30866,13 +30743,12 @@ Claude: I'll create an audit trigger that:
 Use when you need to generate, validate, or deploy stored procedures for PostgreSQL, MySQL, or SQL Server.
 
 
-
 ```markdown
---- END OF SKILL: generating-stored-procedures.md ---
+*** END OF SKILL: generating-stored-procedures.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-generating-test-data"></a>
@@ -30881,13 +30757,13 @@ Use when you need to generate, validate, or deploy stored procedures for Postgre
 
 - **Source File:** `skills/generating-test-data.md`
 - **Original Size:** 6,241 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: generating-test-data.md ---
+*** START OF SKILL: generating-test-data.md ***
 ```
 
----
+***
 name: generating-test-data
 description: 'Generate realistic test data including edge cases and boundary conditions.
 
@@ -30906,7 +30782,7 @@ tags:
 - database
 - test-data
 compatibility: Designed for Claude Code
----
+***
 # Test Data Generator
 
 ## Overview
@@ -31041,13 +30917,12 @@ export const edgeCases = {
 - Test data management patterns: https://martinfowler.com/bliki/ObjectMother.html
 
 
-
 ```markdown
---- END OF SKILL: generating-test-data.md ---
+*** END OF SKILL: generating-test-data.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-generating-test-doubles"></a>
@@ -31056,13 +30931,13 @@ export const edgeCases = {
 
 - **Source File:** `skills/generating-test-doubles.md`
 - **Original Size:** 5,349 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: generating-test-doubles.md ---
+*** START OF SKILL: generating-test-doubles.md ***
 ```
 
----
+***
 name: generating-test-doubles
 description: 'Generate mocks, stubs, spies, and fakes for dependency isolation.
 
@@ -31079,7 +30954,7 @@ tags:
 - testing
 - test-doubles
 compatibility: Designed for Claude Code
----
+***
 # Test Doubles Generator
 
 ## Overview
@@ -31178,13 +31053,12 @@ func (f *FakeStore) Get(key string) (string, error) {
 - Martin Fowler, "Mocks Aren't Stubs": https://martinfowler.com/articles/mocksArentStubs.html
 
 
-
 ```markdown
---- END OF SKILL: generating-test-doubles.md ---
+*** END OF SKILL: generating-test-doubles.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-generating-test-reports"></a>
@@ -31193,13 +31067,13 @@ func (f *FakeStore) Get(key string) (string, error) {
 
 - **Source File:** `skills/generating-test-reports.md`
 - **Original Size:** 4,789 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: generating-test-reports.md ---
+*** START OF SKILL: generating-test-reports.md ***
 ```
 
----
+***
 name: generating-test-reports
 description: 'Generate comprehensive test reports with metrics, coverage, and visualizations.
 
@@ -31217,7 +31091,7 @@ tags:
 - testing
 - test-reports
 compatibility: Designed for Claude Code
----
+***
 # Test Report Generator
 
 ## Overview
@@ -31311,13 +31185,12 @@ cat test-report.md >> "$GITHUB_STEP_SUMMARY"
 - GitHub Actions job summaries: https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary
 
 
-
 ```markdown
---- END OF SKILL: generating-test-reports.md ---
+*** END OF SKILL: generating-test-reports.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-generating-unit-tests"></a>
@@ -31326,13 +31199,13 @@ cat test-report.md >> "$GITHUB_STEP_SUMMARY"
 
 - **Source File:** `skills/generating-unit-tests.md`
 - **Original Size:** 5,840 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: generating-unit-tests.md ---
+*** START OF SKILL: generating-unit-tests.md ***
 ```
 
----
+***
 name: generating-unit-tests
 description: 'Test automatically generate comprehensive unit tests from source code
   covering happy paths, edge cases, and error conditions.
@@ -31351,7 +31224,7 @@ tags:
 - testing
 - unit-tests
 compatibility: Designed for Claude Code
----
+***
 # Unit Test Generator
 
 ## Overview
@@ -31465,13 +31338,12 @@ class TestValidateEmail:
 - AAA pattern (Arrange-Act-Assert):
 
 
-
 ```markdown
---- END OF SKILL: generating-unit-tests.md ---
+*** END OF SKILL: generating-unit-tests.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-genkit-production-expert"></a>
@@ -31480,13 +31352,13 @@ class TestValidateEmail:
 
 - **Source File:** `skills/genkit-production-expert.md`
 - **Original Size:** 6,112 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: genkit-production-expert.md ---
+*** START OF SKILL: genkit-production-expert.md ***
 ```
 
----
+***
 name: genkit-production-expert
 description: 'Build production Firebase Genkit applications including RAG systems,
   multi-step flows, and tool calling for Node.js/Python/Go. Deploy to Firebase Functions
@@ -31505,7 +31377,7 @@ tags:
 - monitoring
 - python
 compatibility: Designed for Claude Code
----
+***
 # Genkit Production Expert
 
 ## Overview
@@ -31577,13 +31449,12 @@ See `${CLAUDE_SKILL_DIR}/references/workflow-examples.md` for complete code exam
 - Context caching and token optimization strategies for cost management
 
 
-
 ```markdown
---- END OF SKILL: genkit-production-expert.md ---
+*** END OF SKILL: genkit-production-expert.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-geo-fundamentals"></a>
@@ -31592,24 +31463,24 @@ See `${CLAUDE_SKILL_DIR}/references/workflow-examples.md` for complete code exam
 
 - **Source File:** `skills/geo-fundamentals.md`
 - **Original Size:** 3,732 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: geo-fundamentals.md ---
+*** START OF SKILL: geo-fundamentals.md ***
 ```
 
----
+***
 name: geo-fundamentals
 description: Generative Engine Optimization for AI search engines (ChatGPT, Claude, Perplexity).
 when_to_use: "When optimizing content for AI search engines like ChatGPT, Claude, or Perplexity. Generative Engine Optimization."
 allowed-tools: Read, Glob, Grep
----
+***
 
 # GEO Fundamentals
 
 > Optimization for AI-powered search engines.
 
----
+***
 
 ## 1. What is GEO?
 
@@ -31628,7 +31499,7 @@ allowed-tools: Read, Glob, Grep
 | Metrics | Rankings, CTR | Citation rate |
 | Focus | Keywords | Entities, data |
 
----
+***
 
 ## 2. AI Engine Landscape
 
@@ -31639,7 +31510,7 @@ allowed-tools: Read, Glob, Grep
 | **Claude** | Contextual | Long-form content |
 | **Gemini** | Sources section | SEO crossover |
 
----
+***
 
 ## 3. RAG Retrieval Factors
 
@@ -31653,7 +31524,7 @@ How AI engines select content to cite:
 | Freshness | ~10% |
 | Source diversity | ~15% |
 
----
+***
 
 ## 4. Content That Gets Cited
 
@@ -31666,7 +31537,7 @@ How AI engines select content to cite:
 | **Comparison tables** | Structured info |
 | **FAQ sections** | Direct answers |
 
----
+***
 
 ## 5. GEO Content Checklist
 
@@ -31689,7 +31560,7 @@ How AI engines select content to cite:
 - [ ] Fast loading (< 2.5s)
 - [ ] Clean HTML structure
 
----
+***
 
 ## 6. Entity Building
 
@@ -31700,7 +31571,7 @@ How AI engines select content to cite:
 | Consistent info across web | Entity consolidation |
 | Industry mentions | Authority signals |
 
----
+***
 
 ## 7. AI Crawler Access
 
@@ -31721,7 +31592,7 @@ How AI engines select content to cite:
 | Block GPTBot | Don't want OpenAI training |
 | Selective | Allow some, block others |
 
----
+***
 
 ## 8. Measurement
 
@@ -31732,7 +31603,7 @@ How AI engines select content to cite:
 | Competitor citations | Compare share |
 | AI-referred traffic | UTM parameters |
 
----
+***
 
 ## 9. Anti-Patterns
 
@@ -31743,11 +31614,11 @@ How AI engines select content to cite:
 | Skip author info | Show credentials |
 | Thin content | Comprehensive coverage |
 
----
+***
 
 > **Remember:** AI cites content that's clear, authoritative, and easy to extract. Be the best answer.
 
----
+***
 
 ## Script
 
@@ -31757,13 +31628,12 @@ How AI engines select content to cite:
 
 
 
-
 ```markdown
---- END OF SKILL: geo-fundamentals.md ---
+*** END OF SKILL: geo-fundamentals.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-gin-middleware-creator"></a>
@@ -31772,13 +31642,13 @@ How AI engines select content to cite:
 
 - **Source File:** `skills/gin-middleware-creator.md`
 - **Original Size:** 2,384 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: gin-middleware-creator.md ---
+*** START OF SKILL: gin-middleware-creator.md ***
 ```
 
----
+***
 name: gin-middleware-creator
 description: 'Create gin middleware creator operations. Auto-activating skill for
   Backend Development.
@@ -31798,7 +31668,7 @@ tags:
 - backend
 - development
 compatibility: Designed for Claude Code
----
+***
 # Gin Middleware Creator
 
 ## Overview
@@ -31861,13 +31731,12 @@ Part of the **Backend Development** skill category.
 Tags: nodejs, python, go, microservices, database
 
 
-
 ```markdown
---- END OF SKILL: gin-middleware-creator.md ---
+*** END OF SKILL: gin-middleware-creator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-git-guardrails-claude-code"></a>
@@ -31876,16 +31745,16 @@ Tags: nodejs, python, go, microservices, database
 
 - **Source File:** `skills/git-guardrails-claude-code.md`
 - **Original Size:** 2,408 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: git-guardrails-claude-code.md ---
+*** START OF SKILL: git-guardrails-claude-code.md ***
 ```
 
----
+***
 name: git-guardrails-claude-code
 description: Set up Claude Code hooks to block dangerous git commands (push, reset --hard, clean, branch -D, etc.) before they execute. Use when user wants to prevent destructive git operations, add git safety hooks, or block git push/reset in Claude Code.
----
+***
 
 # Setup Git Guardrails
 
@@ -31979,13 +31848,12 @@ echo '{"tool_input":{"command":"git push origin main"}}' | <path-to-script>
 Should exit with code 2 and print a BLOCKED message to stderr.
 
 
-
 ```markdown
---- END OF SKILL: git-guardrails-claude-code.md ---
+*** END OF SKILL: git-guardrails-claude-code.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-github-actions-debugger"></a>
@@ -31994,13 +31862,13 @@ Should exit with code 2 and print a BLOCKED message to stderr.
 
 - **Source File:** `skills/github-actions-debugger.md`
 - **Original Size:** 5,621 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: github-actions-debugger.md ---
+*** START OF SKILL: github-actions-debugger.md ***
 ```
 
----
+***
 name: github-actions-debugger
 description: "Specialized skill for diagnosing, analyzing, and fixing failing GitHub Actions workflows by parsing run logs and pipeline definitions."
 category: devops
@@ -32011,7 +31879,7 @@ date_added: "2026-06-25"
 author: Owais
 tags: [github-actions, ci-cd, devops, debugging, workflows]
 tools: [claude, cursor, gemini, antigravity]
----
+***
 
 # GitHub Actions Pipeline Debugger
 
@@ -32101,13 +31969,12 @@ Error: API Key is required for deployment. Process exited with code 1.
 - `@cicd-automation-workflow-automate` - For creating new CI/CD pipelines from scratch.
 
 
-
 ```markdown
---- END OF SKILL: github-actions-debugger.md ---
+*** END OF SKILL: github-actions-debugger.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-glean-data-handling"></a>
@@ -32116,13 +31983,13 @@ Error: API Key is required for deployment. Process exited with code 1.
 
 - **Source File:** `skills/glean-data-handling.md`
 - **Original Size:** 5,589 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: glean-data-handling.md ---
+*** START OF SKILL: glean-data-handling.md ***
 ```
 
----
+***
 name: glean-data-handling
 description: 'PII filtering: strip emails, phone numbers, SSNs from document body
   before indexing.
@@ -32139,7 +32006,7 @@ tags:
 - enterprise-search
 - glean
 compatibility: Designed for Claude Code
----
+***
 # Glean Data Handling
 
 ## Overview
@@ -32250,13 +32117,12 @@ function validateDocument(doc: GleanDocument): string[] {
 See `glean-security-basics`.
 
 
-
 ```markdown
---- END OF SKILL: glean-data-handling.md ---
+*** END OF SKILL: glean-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-glean-debug-bundle"></a>
@@ -32265,13 +32131,13 @@ See `glean-security-basics`.
 
 - **Source File:** `skills/glean-debug-bundle.md`
 - **Original Size:** 7,015 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: glean-debug-bundle.md ---
+*** START OF SKILL: glean-debug-bundle.md ***
 ```
 
----
+***
 name: glean-debug-bundle
 description: 'Collect Glean diagnostic information for support including datasource
   config, indexing status, and search quality metrics.
@@ -32288,7 +32154,7 @@ tags:
 - enterprise-search
 - glean
 compatibility: Designed for Claude Code
----
+***
 # Glean Debug Bundle
 
 ## Overview
@@ -32439,13 +32305,12 @@ async function checkGleanHealth(): Promise<{
 See `glean-rate-limits`.
 
 
-
 ```markdown
---- END OF SKILL: glean-debug-bundle.md ---
+*** END OF SKILL: glean-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-glean-performance-tuning"></a>
@@ -32454,13 +32319,13 @@ See `glean-rate-limits`.
 
 - **Source File:** `skills/glean-performance-tuning.md`
 - **Original Size:** 4,569 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: glean-performance-tuning.md ---
+*** START OF SKILL: glean-performance-tuning.md ***
 ```
 
----
+***
 name: glean-performance-tuning
 description: 'Optimize Glean search relevance and indexing throughput with batch sizing,
 
@@ -32478,7 +32343,7 @@ tags:
 - enterprise-search
 - glean
 compatibility: Designed for Claude Code
----
+***
 # Glean Performance Tuning
 
 ## Overview
@@ -32585,13 +32450,12 @@ function trackSearch(startMs: number, cached: boolean) {
 See `glean-reference-architecture`.
 
 
-
 ```markdown
---- END OF SKILL: glean-performance-tuning.md ---
+*** END OF SKILL: glean-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-glean-reference-architecture"></a>
@@ -32600,13 +32464,13 @@ See `glean-reference-architecture`.
 
 - **Source File:** `skills/glean-reference-architecture.md`
 - **Original Size:** 6,180 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: glean-reference-architecture.md ---
+*** START OF SKILL: glean-reference-architecture.md ***
 ```
 
----
+***
 name: glean-reference-architecture
 description: 'Enterprise architecture: Source Systems to Connectors (Cloud Run/Lambda,
   event-driven or scheduled) to Glean Indexing API to Glean Search Index to Client
@@ -32624,7 +32488,7 @@ tags:
 - enterprise-search
 - glean
 compatibility: Designed for Claude Code
----
+***
 # Glean Reference Architecture
 
 ## Overview
@@ -32741,13 +32605,12 @@ interface IndexReport     { datasource: string; totalIndexed: number; failures: 
 See `glean-deploy-integration`.
 
 
-
 ```markdown
---- END OF SKILL: glean-reference-architecture.md ---
+*** END OF SKILL: glean-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-go-handler-generator"></a>
@@ -32756,13 +32619,13 @@ See `glean-deploy-integration`.
 
 - **Source File:** `skills/go-handler-generator.md`
 - **Original Size:** 2,362 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: go-handler-generator.md ---
+*** START OF SKILL: go-handler-generator.md ***
 ```
 
----
+***
 name: go-handler-generator
 description: 'Generate go handler generator operations. Auto-activating skill for
   Backend Development.
@@ -32782,7 +32645,7 @@ tags:
 - backend
 - development
 compatibility: Designed for Claude Code
----
+***
 # Go Handler Generator
 
 ## Overview
@@ -32845,13 +32708,12 @@ Part of the **Backend Development** skill category.
 Tags: nodejs, python, go, microservices, database
 
 
-
 ```markdown
---- END OF SKILL: go-handler-generator.md ---
+*** END OF SKILL: go-handler-generator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-go-test-generator"></a>
@@ -32860,13 +32722,13 @@ Tags: nodejs, python, go, microservices, database
 
 - **Source File:** `skills/go-test-generator.md`
 - **Original Size:** 2,270 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: go-test-generator.md ---
+*** START OF SKILL: go-test-generator.md ***
 ```
 
----
+***
 name: go-test-generator
 description: 'Generate go test generator operations. Auto-activating skill for Test
   Automation.
@@ -32885,7 +32747,7 @@ tags:
 - testing
 - automation
 compatibility: Designed for Claude Code
----
+***
 # Go Test Generator
 
 ## Overview
@@ -32948,13 +32810,12 @@ Part of the **Test Automation** skill category.
 Tags: testing, jest, pytest, mocking, tdd
 
 
-
 ```markdown
---- END OF SKILL: go-test-generator.md ---
+*** END OF SKILL: go-test-generator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-goal-loop"></a>
@@ -32963,13 +32824,13 @@ Tags: testing, jest, pytest, mocking, tdd
 
 - **Source File:** `skills/goal-loop.md`
 - **Original Size:** 10,551 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: goal-loop.md ---
+*** START OF SKILL: goal-loop.md ***
 ```
 
----
+***
 name: goal-loop
 description: "Draft and explain persistent goal-loop prompts for long-running agent work with clear stop conditions."
 category: agent-orchestration
@@ -32983,7 +32844,7 @@ tags: [goals, autonomy, planning]
 tools: [claude, codex]
 license: "MIT"
 license_source: "https://github.com/davidondrej/skills/blob/main/LICENSE"
----
+***
 
 # Agent `/goal` Loop
 
@@ -33146,13 +33007,12 @@ Don't let a drifting goal keep running "to see where it goes." Tokens burn, diff
 - For commands, remote access, scheduling, browser automation, or file-changing workflows, get explicit user approval and confirm the target environment first.
 
 
-
 ```markdown
---- END OF SKILL: goal-loop.md ---
+*** END OF SKILL: goal-loop.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-golang-testing"></a>
@@ -33161,18 +33021,18 @@ Don't let a drifting goal keep running "to see where it goes." Tokens burn, diff
 
 - **Source File:** `skills/golang-testing.md`
 - **Original Size:** 17,465 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: golang-testing.md ---
+*** START OF SKILL: golang-testing.md ***
 ```
 
----
+***
 name: golang-testing
 description: Go testing patterns including table-driven tests, subtests, benchmarks, fuzzing, and test coverage. Follows TDD methodology with idiomatic Go practices. Use when writing Go tests — table-driven cases, subtests, benchmarks, fuzzing, or coverage.
 metadata:
   origin: ECC
----
+***
 
 # Go Testing Patterns
 
@@ -33890,13 +33750,12 @@ test:
 **Remember**: Tests are documentation. They show how your code is meant to be used. Write them clearly and keep them up to date.
 
 
-
 ```markdown
---- END OF SKILL: golang-testing.md ---
+*** END OF SKILL: golang-testing.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-gpu-resource-optimizer"></a>
@@ -33905,13 +33764,13 @@ test:
 
 - **Source File:** `skills/gpu-resource-optimizer.md`
 - **Original Size:** 2,356 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: gpu-resource-optimizer.md ---
+*** START OF SKILL: gpu-resource-optimizer.md ***
 ```
 
----
+***
 name: gpu-resource-optimizer
 description: 'Optimize gpu resource optimizer operations. Auto-activating skill for
   ML Deployment.
@@ -33931,7 +33790,7 @@ tags:
 - ai
 - mlops
 compatibility: Designed for Claude Code
----
+***
 # Gpu Resource Optimizer
 
 ## Overview
@@ -33994,13 +33853,12 @@ Part of the **ML Deployment** skill category.
 Tags: mlops, serving, inference, monitoring, production
 
 
-
 ```markdown
---- END OF SKILL: gpu-resource-optimizer.md ---
+*** END OF SKILL: gpu-resource-optimizer.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-gradient-clipping-helper"></a>
@@ -34009,13 +33867,13 @@ Tags: mlops, serving, inference, monitoring, production
 
 - **Source File:** `skills/gradient-clipping-helper.md`
 - **Original Size:** 2,404 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: gradient-clipping-helper.md ---
+*** START OF SKILL: gradient-clipping-helper.md ***
 ```
 
----
+***
 name: gradient-clipping-helper
 description: 'Configure with gradient clipping helper operations. Auto-activating
   skill for ML Training.
@@ -34035,7 +33893,7 @@ tags:
 - ai
 - machine-learning
 compatibility: Designed for Claude Code
----
+***
 # Gradient Clipping Helper
 
 ## Overview
@@ -34098,13 +33956,12 @@ Part of the **ML Training** skill category.
 Tags: ml, training, pytorch, tensorflow, sklearn
 
 
-
 ```markdown
---- END OF SKILL: gradient-clipping-helper.md ---
+*** END OF SKILL: gradient-clipping-helper.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-grammarly-data-handling"></a>
@@ -34113,13 +33970,13 @@ Tags: ml, training, pytorch, tensorflow, sklearn
 
 - **Source File:** `skills/grammarly-data-handling.md`
 - **Original Size:** 2,429 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: grammarly-data-handling.md ---
+*** START OF SKILL: grammarly-data-handling.md ***
 ```
 
----
+***
 name: grammarly-data-handling
 description: 'Implement Grammarly data handling patterns for document processing.
 
@@ -34141,7 +33998,7 @@ tags:
 - grammarly
 - writing
 compatibility: Designed for Claude Code
----
+***
 # Grammarly Data Handling
 
 ## Overview
@@ -34210,13 +34067,12 @@ async function scoreFile(filePath: string, token: string) {
 - [Writing Score API](https://developer.grammarly.com/writing-score-api.html)
 
 
-
 ```markdown
---- END OF SKILL: grammarly-data-handling.md ---
+*** END OF SKILL: grammarly-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-grammarly-debug-bundle"></a>
@@ -34225,13 +34081,13 @@ async function scoreFile(filePath: string, token: string) {
 
 - **Source File:** `skills/grammarly-debug-bundle.md`
 - **Original Size:** 4,567 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: grammarly-debug-bundle.md ---
+*** START OF SKILL: grammarly-debug-bundle.md ***
 ```
 
----
+***
 name: grammarly-debug-bundle
 description: 'Collect Grammarly debug evidence for support tickets and troubleshooting.
 
@@ -34253,7 +34109,7 @@ tags:
 - grammarly
 - writing
 compatibility: Designed for Claude Code
----
+***
 # Grammarly Debug Bundle
 
 ## Overview
@@ -34348,13 +34204,12 @@ checkGrammarly();
 See `grammarly-common-errors`.
 
 
-
 ```markdown
---- END OF SKILL: grammarly-debug-bundle.md ---
+*** END OF SKILL: grammarly-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-grammarly-performance-tuning"></a>
@@ -34363,13 +34218,13 @@ See `grammarly-common-errors`.
 
 - **Source File:** `skills/grammarly-performance-tuning.md`
 - **Original Size:** 1,909 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: grammarly-performance-tuning.md ---
+*** START OF SKILL: grammarly-performance-tuning.md ***
 ```
 
----
+***
 name: grammarly-performance-tuning
 description: 'Optimize Grammarly API performance with caching, batching, and connection
   pooling.
@@ -34392,7 +34247,7 @@ tags:
 - grammarly
 - writing
 compatibility: Designed for Claude Code
----
+***
 # Grammarly Performance Tuning
 
 ## Latency Benchmarks
@@ -34445,13 +34300,12 @@ async function fullAudit(text: string, token: string) {
 For cost optimization, see `grammarly-cost-tuning`.
 
 
-
 ```markdown
---- END OF SKILL: grammarly-performance-tuning.md ---
+*** END OF SKILL: grammarly-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-grammarly-reference-architecture"></a>
@@ -34460,13 +34314,13 @@ For cost optimization, see `grammarly-cost-tuning`.
 
 - **Source File:** `skills/grammarly-reference-architecture.md`
 - **Original Size:** 2,645 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: grammarly-reference-architecture.md ---
+*** START OF SKILL: grammarly-reference-architecture.md ***
 ```
 
----
+***
 name: grammarly-reference-architecture
 description: 'Implement Grammarly reference architecture with best-practice project
   layout.
@@ -34489,7 +34343,7 @@ tags:
 - grammarly
 - writing
 compatibility: Designed for Claude Code
----
+***
 # Grammarly Reference Architecture
 
 ## Architecture
@@ -34544,13 +34398,12 @@ grammarly-integration/
 Start with `grammarly-install-auth`.
 
 
-
 ```markdown
---- END OF SKILL: grammarly-reference-architecture.md ---
+*** END OF SKILL: grammarly-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-granola-data-handling"></a>
@@ -34559,13 +34412,13 @@ Start with `grammarly-install-auth`.
 
 - **Source File:** `skills/granola-data-handling.md`
 - **Original Size:** 9,332 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: granola-data-handling.md ---
+*** START OF SKILL: granola-data-handling.md ***
 ```
 
----
+***
 name: granola-data-handling
 description: 'Manage Granola data export, retention policies, GDPR/CCPA compliance,
 
@@ -34587,7 +34440,7 @@ tags:
 - data
 - gdpr
 compatibility: Designed for Claude Code
----
+***
 # Granola Data Handling
 
 ## Overview
@@ -34814,13 +34667,12 @@ echo "Granola cache backed up"
 Proceed to `granola-enterprise-rbac` for role-based access control configuration.
 
 
-
 ```markdown
---- END OF SKILL: granola-data-handling.md ---
+*** END OF SKILL: granola-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-granola-debug-bundle"></a>
@@ -34829,13 +34681,13 @@ Proceed to `granola-enterprise-rbac` for role-based access control configuration
 
 - **Source File:** `skills/granola-debug-bundle.md`
 - **Original Size:** 7,429 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: granola-debug-bundle.md ---
+*** START OF SKILL: granola-debug-bundle.md ***
 ```
 
----
+***
 name: granola-debug-bundle
 description: 'Create diagnostic bundles for Granola support requests.
 
@@ -34860,7 +34712,7 @@ tags:
 - debugging
 - support
 compatibility: Designed for Claude Code
----
+***
 # Granola Debug Bundle
 
 ## Current State
@@ -35054,13 +34906,12 @@ Run through this before contacting support:
 Proceed to `granola-rate-limits` to understand usage limits and plan differences.
 
 
-
 ```markdown
---- END OF SKILL: granola-debug-bundle.md ---
+*** END OF SKILL: granola-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-granola-performance-tuning"></a>
@@ -35069,13 +34920,13 @@ Proceed to `granola-rate-limits` to understand usage limits and plan differences
 
 - **Source File:** `skills/granola-performance-tuning.md`
 - **Original Size:** 7,442 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: granola-performance-tuning.md ---
+*** START OF SKILL: granola-performance-tuning.md ***
 ```
 
----
+***
 name: granola-performance-tuning
 description: 'Optimize Granola transcription accuracy, note quality, and processing
   speed.
@@ -35099,7 +34950,7 @@ tags:
 - performance
 - transcription
 compatibility: Designed for Claude Code
----
+***
 # Granola Performance Tuning
 
 ## Overview
@@ -35261,13 +35112,12 @@ Track these monthly. If accuracy drops below target:
 Proceed to `granola-cost-tuning` for cost optimization and plan selection.
 
 
-
 ```markdown
---- END OF SKILL: granola-performance-tuning.md ---
+*** END OF SKILL: granola-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-granola-reference-architecture"></a>
@@ -35276,13 +35126,13 @@ Proceed to `granola-cost-tuning` for cost optimization and plan selection.
 
 - **Source File:** `skills/granola-reference-architecture.md`
 - **Original Size:** 11,085 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: granola-reference-architecture.md ---
+*** START OF SKILL: granola-reference-architecture.md ***
 ```
 
----
+***
 name: granola-reference-architecture
 description: 'Enterprise reference architecture for meeting management with Granola.
 
@@ -35305,7 +35155,7 @@ tags:
 - architecture
 - enterprise
 compatibility: Designed for Claude Code
----
+***
 # Granola Reference Architecture
 
 ## Overview
@@ -35519,13 +35369,12 @@ Recovery Procedures:
 Proceed to `granola-multi-env-setup` for workspace creation and configuration.
 
 
-
 ```markdown
---- END OF SKILL: granola-reference-architecture.md ---
+*** END OF SKILL: granola-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-graphify"></a>
@@ -35534,19 +35383,19 @@ Proceed to `granola-multi-env-setup` for workspace creation and configuration.
 
 - **Source File:** `skills/graphify.md`
 - **Original Size:** 13,478 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: graphify.md ---
+*** START OF SKILL: graphify.md ***
 ```
 
----
+***
 
----
+***
 name: graphify
 description: any input (code, docs, papers, images) → knowledge graph → clustered communities → HTML + JSON + audit report
 trigger: /graphify
----
+***
 
 # /graphify
 
@@ -35836,13 +35685,12 @@ edges = len(merged_edges)
 print(f'Merged: {total} nodes, {edges} edges ({len(ast[\"nodes\"])} AS
 
 
-
 ```markdown
---- END OF SKILL: graphify.md ---
+*** END OF SKILL: graphify.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-graphql-resolver-creator"></a>
@@ -35851,13 +35699,13 @@ print(f'Merged: {total} nodes, {edges} edges ({len(ast[\"nodes\"])} AS
 
 - **Source File:** `skills/graphql-resolver-creator.md`
 - **Original Size:** 2,416 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: graphql-resolver-creator.md ---
+*** START OF SKILL: graphql-resolver-creator.md ***
 ```
 
----
+***
 name: graphql-resolver-creator
 description: 'Create graphql resolver creator operations. Auto-activating skill for
   Backend Development.
@@ -35877,7 +35725,7 @@ tags:
 - backend
 - development
 compatibility: Designed for Claude Code
----
+***
 # Graphql Resolver Creator
 
 ## Overview
@@ -35940,13 +35788,12 @@ Part of the **Backend Development** skill category.
 Tags: nodejs, python, go, microservices, database
 
 
-
 ```markdown
---- END OF SKILL: graphql-resolver-creator.md ---
+*** END OF SKILL: graphql-resolver-creator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-grill-me"></a>
@@ -35955,28 +35802,27 @@ Tags: nodejs, python, go, microservices, database
 
 - **Source File:** `skills/grill-me.md`
 - **Original Size:** 164 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: grill-me.md ---
+*** START OF SKILL: grill-me.md ***
 ```
 
----
+***
 name: grill-me
 description: A relentless interview to sharpen a plan or design.
 disable-model-invocation: true
----
+***
 
 Call the Skill tool with "grilling".
 
 
-
 ```markdown
---- END OF SKILL: grill-me.md ---
+*** END OF SKILL: grill-me.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-grill-with-docs"></a>
@@ -35985,28 +35831,27 @@ Call the Skill tool with "grilling".
 
 - **Source File:** `skills/grill-with-docs.md`
 - **Original Size:** 254 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: grill-with-docs.md ---
+*** START OF SKILL: grill-with-docs.md ***
 ```
 
----
+***
 name: grill-with-docs
 description: A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.
 disable-model-invocation: true
----
+***
 
 Call the Skill tool twice, for "grilling" and "domain-modeling".
 
 
-
 ```markdown
---- END OF SKILL: grill-with-docs.md ---
+*** END OF SKILL: grill-with-docs.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-grilling"></a>
@@ -36015,16 +35860,16 @@ Call the Skill tool twice, for "grilling" and "domain-modeling".
 
 - **Source File:** `skills/grilling.md`
 - **Original Size:** 2,015 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: grilling.md ---
+*** START OF SKILL: grilling.md ***
 ```
 
----
+***
 name: grilling
 description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
----
+***
 
 Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.
 
@@ -36037,7 +35882,7 @@ Format a round like so:
 
 ➡️ <your recommended answer>
 
----
+***
 
 ❓ **Q2** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
 
@@ -36051,13 +35896,12 @@ Finding _facts_ is your job, never the user's. When a frontier question needs a 
 The session is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Do not act on it until the user confirms you have reached a shared understanding.
 
 
-
 ```markdown
---- END OF SKILL: grilling.md ---
+*** END OF SKILL: grilling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-groq-data-handling"></a>
@@ -36066,13 +35910,13 @@ The session is done when the frontier is empty: every branch of the design tree 
 
 - **Source File:** `skills/groq-data-handling.md`
 - **Original Size:** 5,163 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: groq-data-handling.md ---
+*** START OF SKILL: groq-data-handling.md ***
 ```
 
----
+***
 name: groq-data-handling
 description: |
   Use when you need to keep PII out of Groq API calls, filter model responses,
@@ -36089,7 +35933,7 @@ tags:
 - groq
 - compliance
 compatibility: Designed for Claude Code
----
+***
 # Groq Data Handling
 
 ## Overview
@@ -36190,13 +36034,12 @@ const { content, audit } = await auditedCompletion(sessionId, messages);
 For enterprise access controls, see the `groq-enterprise-rbac` skill.
 
 
-
 ```markdown
---- END OF SKILL: groq-data-handling.md ---
+*** END OF SKILL: groq-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-groq-debug-bundle"></a>
@@ -36205,13 +36048,13 @@ For enterprise access controls, see the `groq-enterprise-rbac` skill.
 
 - **Source File:** `skills/groq-debug-bundle.md`
 - **Original Size:** 5,277 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: groq-debug-bundle.md ---
+*** START OF SKILL: groq-debug-bundle.md ***
 ```
 
----
+***
 name: groq-debug-bundle
 description: 'Collect Groq debug evidence for support tickets and troubleshooting.
 
@@ -36233,7 +36076,7 @@ tags:
 - groq
 - debugging
 compatibility: Designed for Claude Code
----
+***
 # Groq Debug Bundle
 
 ## Current State
@@ -36330,13 +36173,12 @@ Full TypeScript diagnostic, healthy/bad-key sample outputs, and an end-to-end sh
 For rate limit and 429 throttling issues, escalate to the `groq-rate-limits` skill, which covers backoff strategy and quota inspection in depth.
 
 
-
 ```markdown
---- END OF SKILL: groq-debug-bundle.md ---
+*** END OF SKILL: groq-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-groq-performance-tuning"></a>
@@ -36345,13 +36187,13 @@ For rate limit and 429 throttling issues, escalate to the `groq-rate-limits` ski
 
 - **Source File:** `skills/groq-performance-tuning.md`
 - **Original Size:** 7,975 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: groq-performance-tuning.md ---
+*** START OF SKILL: groq-performance-tuning.md ***
 ```
 
----
+***
 name: groq-performance-tuning
 description: 'Optimize Groq API performance with model selection, caching, streaming,
   and parallel requests.
@@ -36375,7 +36217,7 @@ tags:
 - api
 - performance
 compatibility: Designed for Claude Code
----
+***
 # Groq Performance Tuning
 
 ## Overview
@@ -36507,13 +36349,12 @@ See [references/examples.md](references/examples.md) for the streaming, bulk, an
 - For cost optimization, see the `groq-cost-tuning` skill.
 
 
-
 ```markdown
---- END OF SKILL: groq-performance-tuning.md ---
+*** END OF SKILL: groq-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-groq-reference-architecture"></a>
@@ -36522,13 +36363,13 @@ See [references/examples.md](references/examples.md) for the streaming, bulk, an
 
 - **Source File:** `skills/groq-reference-architecture.md`
 - **Original Size:** 7,059 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: groq-reference-architecture.md ---
+*** START OF SKILL: groq-reference-architecture.md ***
 ```
 
----
+***
 name: groq-reference-architecture
 description: 'Implement Groq reference architecture with model routing, streaming
   pipelines, and fallbacks.
@@ -36551,7 +36392,7 @@ tags:
 - groq
 - groq-reference
 compatibility: Designed for Claude Code
----
+***
 # Groq Reference Architecture
 
 ## Overview
@@ -36687,13 +36528,12 @@ For multi-environment deployment, see the `groq-multi-env-setup` skill, which
 extends this service layer with per-environment configuration and secrets handling.
 
 
-
 ```markdown
---- END OF SKILL: groq-reference-architecture.md ---
+*** END OF SKILL: groq-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-grpc-service-generator"></a>
@@ -36702,13 +36542,13 @@ extends this service layer with per-environment configuration and secrets handli
 
 - **Source File:** `skills/grpc-service-generator.md`
 - **Original Size:** 2,390 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: grpc-service-generator.md ---
+*** START OF SKILL: grpc-service-generator.md ***
 ```
 
----
+***
 name: grpc-service-generator
 description: 'Generate grpc service generator operations. Auto-activating skill for
   Backend Development.
@@ -36728,7 +36568,7 @@ tags:
 - backend
 - development
 compatibility: Designed for Claude Code
----
+***
 # Grpc Service Generator
 
 ## Overview
@@ -36791,13 +36631,12 @@ Part of the **Backend Development** skill category.
 Tags: nodejs, python, go, microservices, database
 
 
-
 ```markdown
---- END OF SKILL: grpc-service-generator.md ---
+*** END OF SKILL: grpc-service-generator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-handoff"></a>
@@ -36806,18 +36645,18 @@ Tags: nodejs, python, go, microservices, database
 
 - **Source File:** `skills/handoff.md`
 - **Original Size:** 910 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: handoff.md ---
+*** START OF SKILL: handoff.md ***
 ```
 
----
+***
 name: handoff
 description: Compact the current conversation into a handoff document for another agent to pick up.
 argument-hint: "What will the next session be used for?"
 disable-model-invocation: true
----
+***
 
 Write a handoff document summarising the current conversation so a fresh agent can continue the work. Save to the temporary directory of the user's OS - not the current workspace.
 
@@ -36830,13 +36669,12 @@ Redact any sensitive information, such as API keys, passwords, or personally ide
 If the user passed arguments, treat them as a description of what the next session will focus on and tailor the doc accordingly.
 
 
-
 ```markdown
---- END OF SKILL: handoff.md ---
+*** END OF SKILL: handoff.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-harness-bench"></a>
@@ -36845,18 +36683,18 @@ If the user passed arguments, treat them as a description of what the next sessi
 
 - **Source File:** `skills/harness-bench.md`
 - **Original Size:** 2,415 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: harness-bench.md ---
+*** START OF SKILL: harness-bench.md ***
 ```
 
----
+***
 name: harness-bench
 description: Manage `@metaharness/darwin` bench suites — `bench create <repo>` scaffolds a JSON suite from a repo's test corpus; `bench verify <suite.json>` checks suite well-formedness. Bench suites are the fixed evaluation corpora that `harness-evolve --bench <suite.json>` scores variants against, decoupling evolution from the repo's natural tests. Degrades gracefully when @metaharness/darwin is absent.
 argument-hint: "--op create --repo <path> [--out <path>]  |  --op verify --suite <path>"
 allowed-tools: Bash
----
+***
 
 Surfaces `metaharness-darwin bench <create|verify>` — the supporting verb
 for `harness-evolve --bench`. Use when you want evolution scored against a
@@ -36917,13 +36755,12 @@ When `@metaharness/darwin` is absent, emits the standard `{degraded: true,
 reason: 'metaharness-darwin-not-available'}` payload and exits 0.
 
 
-
 ```markdown
---- END OF SKILL: harness-bench.md ---
+*** END OF SKILL: harness-bench.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-harness-security-bench"></a>
@@ -36932,18 +36769,18 @@ reason: 'metaharness-darwin-not-available'}` payload and exits 0.
 
 - **Source File:** `skills/harness-security-bench.md`
 - **Original Size:** 4,572 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: harness-security-bench.md ---
+*** START OF SKILL: harness-security-bench.md ***
 ```
 
----
+***
 name: harness-security-bench
 description: Run `@metaharness/darwin security bench` (upstream "Darwin Shield" / ADR-155) — evolves a champion security-detection harness against a 10-vuln / 9-decoy corpus and grades it on TPR/FPR/patch-pass/repro/unsafe vs four baselines (B0 static, B1 LLM-single-pass, B2 fixed-agent, B3 Darwin-champion). Closest reference implementation for ruflo's own ADR-155 nightly self-learning security harness (PR #2417). Degrades gracefully when @metaharness/darwin is absent.
 argument-hint: "[--population 2] [--cycles 1] [--seed N] [--alert-on-fail]"
 allowed-tools: Bash
----
+***
 
 Surfaces the upstream `metaharness-darwin security bench` command. **This is
 the upstream's own ADR-155 — Darwin Shield — and is the closest reference
@@ -37041,13 +36878,12 @@ corpus, weight findings caught only by `mcp-pentest` higher.
 When `@metaharness/darwin` is absent, emits `{degraded: true, reason: 'metaharness-darwin-not-available'}` and exits 0.
 
 
-
 ```markdown
---- END OF SKILL: harness-security-bench.md ---
+*** END OF SKILL: harness-security-bench.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hasdata-cli"></a>
@@ -37056,13 +36892,13 @@ When `@metaharness/darwin` is absent, emits `{degraded: true, reason: 'metaharne
 
 - **Source File:** `skills/hasdata-cli.md`
 - **Original Size:** 12,990 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hasdata-cli.md ---
+*** START OF SKILL: hasdata-cli.md ***
 ```
 
----
+***
 name: hasdata-cli
 description: Command-line access to search, scraping, and structured web data.
 risk: safe
@@ -37072,7 +36908,7 @@ source_repo: HasData/hasdata-cli
 license: MIT
 license_source: "https://github.com/HasData/hasdata-cli/blob/main/LICENSE"
 date_added: "2026-06-04"
----
+***
 
 # hasdata
 
@@ -37233,13 +37069,12 @@ For real-estate / e-commerce results, the array shape is API-specific — read a
 * Rate limits, quotas, and account restrictions may apply depending on the endpoint and subscription plan.
 
 
-
 ```markdown
---- END OF SKILL: hasdata-cli.md ---
+*** END OF SKILL: hasdata-cli.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hasdata"></a>
@@ -37248,13 +37083,13 @@ For real-estate / e-commerce results, the array shape is API-specific — read a
 
 - **Source File:** `skills/hasdata.md`
 - **Original Size:** 6,960 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hasdata.md ---
+*** START OF SKILL: hasdata.md ***
 ```
 
----
+***
 name: hasdata
 description: Use HasData APIs for web scraping and structured web data extraction.
 risk: safe
@@ -37264,7 +37099,7 @@ source_repo: HasData/hasdata-cli
 license: MIT
 license_source: "https://github.com/HasData/hasdata-cli/blob/main/LICENSE"
 date_added: "2026-06-04"
----
+***
 
 # HasData
 
@@ -37363,13 +37198,12 @@ See `references/code-recipes.md` for ready-to-paste Python and TypeScript client
 * Rate limits, quotas, and account restrictions may apply depending on the endpoint and subscription plan.
 
 
-
 ```markdown
---- END OF SKILL: hasdata.md ---
+*** END OF SKILL: hasdata.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-healthcare-eval-harness"></a>
@@ -37378,19 +37212,19 @@ See `references/code-recipes.md` for ready-to-paste Python and TypeScript client
 
 - **Source File:** `skills/healthcare-eval-harness.md`
 - **Original Size:** 8,057 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: healthcare-eval-harness.md ---
+*** START OF SKILL: healthcare-eval-harness.md ***
 ```
 
----
+***
 name: healthcare-eval-harness
 description: Patient safety evaluation harness for healthcare application deployments. Automated test suites for CDSS accuracy, PHI exposure, clinical workflow integrity, and integration compliance. Blocks deployments on safety failures. Use when a healthcare deployment must be gated on patient-safety tests for CDSS accuracy, PHI exposure, and workflow integrity.
 metadata:
   version: "1.0.0"
   origin: Health1 Super Speciality Hospitals — contributed by Dr. Keyur Patel
----
+***
 
 # Healthcare Eval Harness — Patient Safety Verification
 
@@ -37594,13 +37428,12 @@ jq '{
 ```
 
 
-
 ```markdown
---- END OF SKILL: healthcare-eval-harness.md ---
+*** END OF SKILL: healthcare-eval-harness.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-heap-dump-analyzer"></a>
@@ -37609,13 +37442,13 @@ jq '{
 
 - **Source File:** `skills/heap-dump-analyzer.md`
 - **Original Size:** 2,346 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: heap-dump-analyzer.md ---
+*** START OF SKILL: heap-dump-analyzer.md ***
 ```
 
----
+***
 name: heap-dump-analyzer
 description: 'Analyze heap dump analyzer operations. Auto-activating skill for Performance
   Testing.
@@ -37635,7 +37468,7 @@ tags:
 - performance
 - testing
 compatibility: Designed for Claude Code
----
+***
 # Heap Dump Analyzer
 
 ## Overview
@@ -37698,13 +37531,12 @@ Part of the **Performance Testing** skill category.
 Tags: performance, load-testing, k6, jmeter, benchmarking
 
 
-
 ```markdown
---- END OF SKILL: heap-dump-analyzer.md ---
+*** END OF SKILL: heap-dump-analyzer.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hex-debug-bundle"></a>
@@ -37713,13 +37545,13 @@ Tags: performance, load-testing, k6, jmeter, benchmarking
 
 - **Source File:** `skills/hex-debug-bundle.md`
 - **Original Size:** 3,993 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hex-debug-bundle.md ---
+*** START OF SKILL: hex-debug-bundle.md ***
 ```
 
----
+***
 name: hex-debug-bundle
 description: 'Collect Hex debug evidence for support tickets and troubleshooting.
 
@@ -37742,7 +37574,7 @@ tags:
 - data
 - analytics
 compatibility: Designed for Claude Code
----
+***
 # Hex Debug Bundle
 
 ## Overview
@@ -37835,13 +37667,12 @@ checkHex();
 See `hex-common-errors`.
 
 
-
 ```markdown
---- END OF SKILL: hex-debug-bundle.md ---
+*** END OF SKILL: hex-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hex-performance-tuning"></a>
@@ -37850,13 +37681,13 @@ See `hex-common-errors`.
 
 - **Source File:** `skills/hex-performance-tuning.md`
 - **Original Size:** 2,231 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hex-performance-tuning.md ---
+*** START OF SKILL: hex-performance-tuning.md ***
 ```
 
----
+***
 name: hex-performance-tuning
 description: 'Optimize Hex API performance with caching, batching, and connection
   pooling.
@@ -37880,7 +37711,7 @@ tags:
 - data
 - analytics
 compatibility: Designed for Claude Code
----
+***
 # Hex Performance Tuning
 
 ## Latency Benchmarks
@@ -37940,13 +37771,12 @@ async function adaptivePoll(client: HexClient, projectId: string, runId: string)
 - [Hex API](https://learn.hex.tech/docs/api/api-overview)
 
 
-
 ```markdown
---- END OF SKILL: hex-performance-tuning.md ---
+*** END OF SKILL: hex-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hex-reference-architecture"></a>
@@ -37955,13 +37785,13 @@ async function adaptivePoll(client: HexClient, projectId: string, runId: string)
 
 - **Source File:** `skills/hex-reference-architecture.md`
 - **Original Size:** 2,975 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hex-reference-architecture.md ---
+*** START OF SKILL: hex-reference-architecture.md ***
 ```
 
----
+***
 name: hex-reference-architecture
 description: 'Implement Hex reference architecture with best-practice project layout.
 
@@ -37984,7 +37814,7 @@ tags:
 - data
 - analytics
 compatibility: Designed for Claude Code
----
+***
 # Hex Reference Architecture
 
 ## Architecture
@@ -38041,13 +37871,12 @@ hex-orchestrator/
 - [Orchestration Blog](https://hex.tech/blog/announcing-orchestration-public-api/)
 
 
-
 ```markdown
---- END OF SKILL: hex-reference-architecture.md ---
+*** END OF SKILL: hex-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hexagonal-architecture"></a>
@@ -38056,18 +37885,18 @@ hex-orchestrator/
 
 - **Source File:** `skills/hexagonal-architecture.md`
 - **Original Size:** 11,797 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hexagonal-architecture.md ---
+*** START OF SKILL: hexagonal-architecture.md ***
 ```
 
----
+***
 name: hexagonal-architecture
 description: Design, implement, and refactor Ports & Adapters systems with clear domain boundaries, dependency inversion, and testable use-case orchestration across TypeScript, Java, Kotlin, and Go services. Use when introducing or refactoring toward Ports and Adapters, or when domain logic has become entangled with I/O.
 metadata:
   origin: ECC
----
+***
 
 # Hexagonal Architecture
 
@@ -38341,13 +38170,12 @@ Use the same boundary rules across ecosystems; only syntax and wiring style chan
 - Language/framework specifics stay in adapters, never in domain rules.
 
 
-
 ```markdown
---- END OF SKILL: hexagonal-architecture.md ---
+*** END OF SKILL: hexagonal-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hig-components-status"></a>
@@ -38356,19 +38184,19 @@ Use the same boundary rules across ecosystems; only syntax and wiring style chan
 
 - **Source File:** `skills/hig-components-status.md`
 - **Original Size:** 3,847 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hig-components-status.md ---
+*** START OF SKILL: hig-components-status.md ***
 ```
 
----
+***
 name: hig-components-status
 description: Apple HIG guidance for status and progress UI components including progress indicators, status bars, and activity rings.
 risk: safe
 source: community
 date_added: '2026-02-27'
----
+***
 
 # Apple HIG: Status Components
 
@@ -38438,7 +38266,7 @@ Check for `.claude/apple-design-context.md` before asking questions. Use existin
 - **hig-inputs** -- Gestures triggering progress states (pull-to-refresh)
 - **hig-technologies** -- HealthKit for activity ring data; VoiceOver for progress announcements
 
----
+***
 
 *Built by [Raintree Technology](https://raintree.technology) · [More developer tools](https://raintree.technology)*
 
@@ -38451,13 +38279,12 @@ This skill is applicable to execute the workflow or actions described in the ove
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: hig-components-status.md ---
+*** END OF SKILL: hig-components-status.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hootsuite-debug-bundle"></a>
@@ -38466,13 +38293,13 @@ This skill is applicable to execute the workflow or actions described in the ove
 
 - **Source File:** `skills/hootsuite-debug-bundle.md`
 - **Original Size:** 4,471 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hootsuite-debug-bundle.md ---
+*** START OF SKILL: hootsuite-debug-bundle.md ***
 ```
 
----
+***
 name: hootsuite-debug-bundle
 description: 'Collect Hootsuite debug evidence for support tickets and troubleshooting.
 
@@ -38494,7 +38321,7 @@ tags:
 - hootsuite
 - social-media
 compatibility: Designed for Claude Code
----
+***
 # Hootsuite Debug Bundle
 
 ## Overview
@@ -38587,13 +38414,12 @@ checkHootsuite();
 See `hootsuite-common-errors`.
 
 
-
 ```markdown
---- END OF SKILL: hootsuite-debug-bundle.md ---
+*** END OF SKILL: hootsuite-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hootsuite-performance-tuning"></a>
@@ -38602,13 +38428,13 @@ See `hootsuite-common-errors`.
 
 - **Source File:** `skills/hootsuite-performance-tuning.md`
 - **Original Size:** 2,602 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hootsuite-performance-tuning.md ---
+*** START OF SKILL: hootsuite-performance-tuning.md ***
 ```
 
----
+***
 name: hootsuite-performance-tuning
 description: 'Optimize Hootsuite API performance with caching, batching, and connection
   pooling.
@@ -38631,7 +38457,7 @@ tags:
 - hootsuite
 - social-media
 compatibility: Designed for Claude Code
----
+***
 # Hootsuite Performance Tuning
 
 ## Instructions
@@ -38697,13 +38523,12 @@ const agent = new Agent({ keepAlive: true, maxSockets: 5 });
 For cost optimization, see `hootsuite-cost-tuning`.
 
 
-
 ```markdown
---- END OF SKILL: hootsuite-performance-tuning.md ---
+*** END OF SKILL: hootsuite-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hootsuite-reference-architecture"></a>
@@ -38712,13 +38537,13 @@ For cost optimization, see `hootsuite-cost-tuning`.
 
 - **Source File:** `skills/hootsuite-reference-architecture.md`
 - **Original Size:** 3,184 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hootsuite-reference-architecture.md ---
+*** START OF SKILL: hootsuite-reference-architecture.md ***
 ```
 
----
+***
 name: hootsuite-reference-architecture
 description: 'Implement Hootsuite reference architecture with best-practice project
   layout.
@@ -38741,7 +38566,7 @@ tags:
 - hootsuite
 - social-media
 compatibility: Designed for Claude Code
----
+***
 # Hootsuite Reference Architecture
 
 ## Architecture
@@ -38804,13 +38629,12 @@ hootsuite-integration/
 Start with `hootsuite-install-auth` to set up OAuth.
 
 
-
 ```markdown
---- END OF SKILL: hootsuite-reference-architecture.md ---
+*** END OF SKILL: hootsuite-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-html-injection-testing"></a>
@@ -38819,20 +38643,20 @@ Start with `hootsuite-install-auth` to set up OAuth.
 
 - **Source File:** `skills/html-injection-testing.md`
 - **Original Size:** 14,671 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: html-injection-testing.md ---
+*** START OF SKILL: html-injection-testing.md ***
 ```
 
----
+***
 name: html-injection-testing
 description: "Identify and exploit HTML injection vulnerabilities that allow attackers to inject malicious HTML content into web applications. This vulnerability enables attackers to modify page appearance, create phishing pages, and steal user credentials through injected forms."
 risk: offensive
 source: community
 author: zebbern
 date_added: "2026-02-27"
----
+***
 
 > **⚠️ AUTHORIZED USE ONLY**
 > This skill is for educational purposes or authorized security assessments only.
@@ -39345,13 +39169,12 @@ Server-side protections:
 This skill is applicable to execute the workflow or actions described in the overview.
 
 
-
 ```markdown
---- END OF SKILL: html-injection-testing.md ---
+*** END OF SKILL: html-injection-testing.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hugging-face-community-evals"></a>
@@ -39360,13 +39183,13 @@ This skill is applicable to execute the workflow or actions described in the ove
 
 - **Source File:** `skills/hugging-face-community-evals.md`
 - **Original Size:** 7,781 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hugging-face-community-evals.md ---
+*** START OF SKILL: hugging-face-community-evals.md ***
 ```
 
----
+***
 name: hugging-face-community-evals
 description: Run evaluations for Hugging Face Hub models using inspect-ai and lighteval on local hardware. Use for backend selection, local GPU evals, and choosing between vLLM / Transformers / accelerate. Not for HF Jobs orchestration, model-card PRs, .eval_results publication, or community-evals...
 risk: critical
@@ -39376,7 +39199,7 @@ source_type: official
 date_added: 2026-07-01
 license: Apache-2.0
 license_source: https://github.com/huggingface/skills/blob/main/LICENSE
----
+***
 
 # Overview
 ## When to Use
@@ -39592,13 +39415,12 @@ See:
 - Do not treat generated examples as a substitute for environment-specific tests, security review, or user approval for destructive or costly actions.
 
 
-
 ```markdown
---- END OF SKILL: hugging-face-community-evals.md ---
+*** END OF SKILL: hugging-face-community-evals.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hugging-face-dataset-viewer"></a>
@@ -39607,13 +39429,13 @@ See:
 
 - **Source File:** `skills/hugging-face-dataset-viewer.md`
 - **Original Size:** 5,279 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hugging-face-dataset-viewer.md ---
+*** START OF SKILL: hugging-face-dataset-viewer.md ***
 ```
 
----
+***
 name: hugging-face-dataset-viewer
 description: Hugging Face Dataset Viewer
 risk: critical
@@ -39623,7 +39445,7 @@ source_type: official
 date_added: 2026-07-01
 license: Apache-2.0
 license_source: https://github.com/huggingface/skills/blob/main/LICENSE
----
+***
 
 # Hugging Face Dataset Viewer
 ## When to Use
@@ -39739,13 +39561,12 @@ hf upload <namespace>/<repo> ~/.codex/sessions codex/<project-or-cwd> --type dat
 - Do not treat generated examples as a substitute for environment-specific tests, security review, or user approval for destructive or costly actions.
 
 
-
 ```markdown
---- END OF SKILL: hugging-face-dataset-viewer.md ---
+*** END OF SKILL: hugging-face-dataset-viewer.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hugging-face-datasets"></a>
@@ -39754,18 +39575,18 @@ hf upload <namespace>/<repo> ~/.codex/sessions codex/<project-or-cwd> --type dat
 
 - **Source File:** `skills/hugging-face-datasets.md`
 - **Original Size:** 17,558 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hugging-face-datasets.md ---
+*** START OF SKILL: hugging-face-datasets.md ***
 ```
 
----
+***
 name: hugging-face-datasets
 description: Create and manage datasets on Hugging Face Hub. Supports initializing repos, defining configs/system prompts, streaming row updates, and SQL-based dataset querying/transformation. Designed to work alongside HF MCP server for comprehensive dataset workflows.
 risk: critical
 source: community
----
+***
 
 # Overview
 This skill provides tools to manage datasets on the Hugging Face Hub with a focus on creation, configuration, content management, and SQL-based data manipulation. It is designed to complement the existing Hugging Face MCP server by providing dataset editing and querying capabilities.
@@ -39834,7 +39655,7 @@ file.**
 - `uv` package manager installed
 - `HF_TOKEN` environment variable must be set with a Write-access token
 
----
+***
 
 # SQL Dataset Querying (sql_manager.py)
 
@@ -40064,7 +39885,7 @@ USING SAMPLE 10 (RESERVOIR, 42)   -- Reproducible sample
 ROW_NUMBER() OVER (PARTITION BY col ORDER BY col2)
 ```
 
----
+***
 
 # Dataset Creation (dataset_manager.py)
 
@@ -40246,7 +40067,7 @@ uv run scripts/dataset_manager.py stats --repo_id "your-username/dataset-name"
 - **Network issues**: Automatic retry for transient failures
 - **Token permissions**: Validation before operations begin
 
----
+***
 
 # Combined Workflow Examples
 
@@ -40316,13 +40137,12 @@ uv run scripts/dataset_manager.py add_rows \
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: hugging-face-datasets.md ---
+*** END OF SKILL: hugging-face-datasets.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hugging-face-evaluation"></a>
@@ -40331,18 +40151,18 @@ uv run scripts/dataset_manager.py add_rows \
 
 - **Source File:** `skills/hugging-face-evaluation.md`
 - **Original Size:** 23,912 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hugging-face-evaluation.md ---
+*** START OF SKILL: hugging-face-evaluation.md ***
 ```
 
----
+***
 name: hugging-face-evaluation
 description: Add and manage evaluation results in Hugging Face model cards. Supports extracting eval tables from README content, importing scores from Artificial Analysis API, and running custom model evaluations with vLLM/lighteval. Works with the model-index metadata format.
 risk: critical
 source: community
----
+***
 
 # Overview
 This skill provides tools to add structured evaluation results to Hugging Face model cards. It supports multiple methods for adding evaluation data:
@@ -40409,7 +40229,7 @@ uv run scripts/evaluation_manager.py get-prs --repo-id "username/model-name"
 
 This prevents spamming model repositories with duplicate evaluation PRs.
 
----
+***
 
 > **All paths are relative to the directory containing this SKILL.md
 file.**
@@ -41001,13 +40821,12 @@ def update_model_evaluations(repo_id, readme_content):
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: hugging-face-evaluation.md ---
+*** END OF SKILL: hugging-face-evaluation.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-huggingface-zerogpu"></a>
@@ -41016,13 +40835,13 @@ def update_model_evaluations(repo_id, readme_content):
 
 - **Source File:** `skills/huggingface-zerogpu.md`
 - **Original Size:** 18,992 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: huggingface-zerogpu.md ---
+*** START OF SKILL: huggingface-zerogpu.md ***
 ```
 
----
+***
 name: huggingface-zerogpu
 description: AI demos and GPU compute with Gradio Spaces and Hugging Face Spaces ZeroGPU. Use when writing or reviewing code that uses `@spaces.GPU`, configuring `python_version` or `requirements.txt` for a ZeroGPU Space, or handling ZeroGPU-specific code constraints — pickle-based process...
 risk: critical
@@ -41032,7 +40851,7 @@ source_type: official
 date_added: 2026-07-01
 license: Apache-2.0
 license_source: https://github.com/huggingface/skills/blob/main/LICENSE
----
+***
 
 # Hugging Face ZeroGPU
 ## When to Use
@@ -41330,13 +41149,12 @@ If you install a CUDA-dependent wheel via direct URL, the wheel filename encodes
 - Do not treat generated examples as a substitute for environment-specific tests, security review, or user approval for destructive or costly actions.
 
 
-
 ```markdown
---- END OF SKILL: huggingface-zerogpu.md ---
+*** END OF SKILL: huggingface-zerogpu.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hyperflow-status"></a>
@@ -41345,16 +41163,16 @@ If you install a CUDA-dependent wheel via direct URL, the wheel filename encodes
 
 - **Source File:** `skills/hyperflow-status.md`
 - **Original Size:** 967 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hyperflow-status.md ---
+*** START OF SKILL: hyperflow-status.md ***
 ```
 
----
+***
 name: hyperflow-status
 description: Hyperflow project status. Use to see current hyperflow state — "what is hyperflow doing", "show task progress", "where are we". Read-only — reports in-flight tasks, memory count, and progress. Never modifies state or runs work.
----
+***
 
 # hyperflow-status — read-only state (Antigravity single-agent)
 
@@ -41372,13 +41190,12 @@ One-screen view of hyperflow project state. **Read-only** — never edits files 
 - Never modify any file. Never dispatch work. Output is a single status block.
 
 
-
 ```markdown
---- END OF SKILL: hyperflow-status.md ---
+*** END OF SKILL: hyperflow-status.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hyperparameter-tuner"></a>
@@ -41387,13 +41204,13 @@ One-screen view of hyperflow project state. **Read-only** — never edits files 
 
 - **Source File:** `skills/hyperparameter-tuner.md`
 - **Original Size:** 2,359 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hyperparameter-tuner.md ---
+*** START OF SKILL: hyperparameter-tuner.md ***
 ```
 
----
+***
 name: hyperparameter-tuner
 description: 'Manage hyperparameter tuner operations. Auto-activating skill for ML
   Training.
@@ -41413,7 +41230,7 @@ tags:
 - ai
 - machine-learning
 compatibility: Designed for Claude Code
----
+***
 # Hyperparameter Tuner
 
 ## Overview
@@ -41476,13 +41293,12 @@ Part of the **ML Training** skill category.
 Tags: ml, training, pytorch, tensorflow, sklearn
 
 
-
 ```markdown
---- END OF SKILL: hyperparameter-tuner.md ---
+*** END OF SKILL: hyperparameter-tuner.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-hypothesis-tester"></a>
@@ -41491,13 +41307,13 @@ Tags: ml, training, pytorch, tensorflow, sklearn
 
 - **Source File:** `skills/hypothesis-tester.md`
 - **Original Size:** 10,791 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: hypothesis-tester.md ---
+*** START OF SKILL: hypothesis-tester.md ***
 ```
 
----
+***
 name: hypothesis-tester
 description: Structured hypothesis formulation, experiment design, and results interpretation
   for Product Managers. Use when the user needs to validate an assumption, design
@@ -41514,7 +41330,7 @@ tags:
 - testing
 - hypothesis-tester
 compatibility: Designed for Claude Code
----
+***
 # Hypothesis Tester Mode
 
 ## Instructions
@@ -41702,13 +41518,12 @@ When traffic is insufficient for the desired minimum detectable effect, recommen
 - [Novelty and primacy effects](https://en.wikipedia.org/wiki/Serial-position_effect) -- why short experiments mislead
 
 
-
 ```markdown
---- END OF SKILL: hypothesis-tester.md ---
+*** END OF SKILL: hypothesis-tester.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-i18n-localization"></a>
@@ -41717,24 +41532,24 @@ When traffic is insufficient for the desired minimum detectable effect, recommen
 
 - **Source File:** `skills/i18n-localization.md`
 - **Original Size:** 3,398 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: i18n-localization.md ---
+*** START OF SKILL: i18n-localization.md ***
 ```
 
----
+***
 name: i18n-localization
 description: Internationalization and localization patterns. Detecting hardcoded strings, managing translations, locale files, RTL support.
 when_to_use: "When internationalizing an app, managing translations, detecting hardcoded strings, or adding RTL support."
 allowed-tools: Read, Glob, Grep
----
+***
 
 # i18n & Localization
 
 > Internationalization (i18n) and Localization (L10n) best practices.
 
----
+***
 
 ## 1. Core Concepts
 
@@ -41745,7 +41560,7 @@ allowed-tools: Read, Glob, Grep
 | **Locale** | Language + Region (en-US, tr-TR) |
 | **RTL** | Right-to-left languages (Arabic, Hebrew) |
 
----
+***
 
 ## 2. When to Use i18n
 
@@ -41757,7 +41572,7 @@ allowed-tools: Read, Glob, Grep
 | Single-region app | ⚠️ Consider future |
 | Personal project | ❌ Optional |
 
----
+***
 
 ## 3. Implementation Patterns
 
@@ -41791,7 +41606,7 @@ from gettext import gettext as _
 print(_("Welcome to our app"))
 ```
 
----
+***
 
 ## 4. File Structure
 
@@ -41809,7 +41624,7 @@ locales/
     └── ...
 ```
 
----
+***
 
 ## 5. Best Practices
 
@@ -41830,7 +41645,7 @@ locales/
 - Forget about RTL layout
 - Mix languages in same file
 
----
+***
 
 ## 6. Common Issues
 
@@ -41842,7 +41657,7 @@ locales/
 | Number format | Use Intl.NumberFormat |
 | Pluralization | Use ICU message format |
 
----
+***
 
 ## 7. RTL Support
 
@@ -41858,7 +41673,7 @@ locales/
 }
 ```
 
----
+***
 
 ## 8. Checklist
 
@@ -41871,7 +41686,7 @@ Before shipping:
 - [ ] Fallback language configured
 - [ ] No hardcoded strings in components
 
----
+***
 
 ## Script
 
@@ -41880,13 +41695,12 @@ Before shipping:
 | `scripts/i18n_checker.py` | Detect hardcoded strings & missing translations | `python scripts/i18n_checker.py <project_path>` |
 
 
-
 ```markdown
---- END OF SKILL: i18n-localization.md ---
+*** END OF SKILL: i18n-localization.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-ideogram-data-handling"></a>
@@ -41895,13 +41709,13 @@ Before shipping:
 
 - **Source File:** `skills/ideogram-data-handling.md`
 - **Original Size:** 8,671 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: ideogram-data-handling.md ---
+*** START OF SKILL: ideogram-data-handling.md ***
 ```
 
----
+***
 name: ideogram-data-handling
 description: 'Manage Ideogram generated image assets, metadata tracking, and lifecycle
   management.
@@ -41925,7 +41739,7 @@ tags:
 - data
 - asset-management
 compatibility: Designed for Claude Code
----
+***
 # Ideogram Data Handling
 
 ## Overview
@@ -42184,13 +41998,12 @@ function findByTags(tags: string[]): GenerationRecord[] {
 For access control, see `ideogram-enterprise-rbac`.
 
 
-
 ```markdown
---- END OF SKILL: ideogram-data-handling.md ---
+*** END OF SKILL: ideogram-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-ideogram-debug-bundle"></a>
@@ -42199,13 +42012,13 @@ For access control, see `ideogram-enterprise-rbac`.
 
 - **Source File:** `skills/ideogram-debug-bundle.md`
 - **Original Size:** 6,256 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: ideogram-debug-bundle.md ---
+*** START OF SKILL: ideogram-debug-bundle.md ***
 ```
 
----
+***
 name: ideogram-debug-bundle
 description: 'Collect Ideogram debug evidence for support tickets and troubleshooting.
 
@@ -42228,7 +42041,7 @@ tags:
 - debugging
 - support
 compatibility: Designed for Claude Code
----
+***
 # Ideogram Debug Bundle
 
 ## Current State
@@ -42410,13 +42223,12 @@ async function debuggableRequest(url: string, init: RequestInit) {
 For rate limit issues, see `ideogram-rate-limits`.
 
 
-
 ```markdown
---- END OF SKILL: ideogram-debug-bundle.md ---
+*** END OF SKILL: ideogram-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-ideogram-performance-tuning"></a>
@@ -42425,13 +42237,13 @@ For rate limit issues, see `ideogram-rate-limits`.
 
 - **Source File:** `skills/ideogram-performance-tuning.md`
 - **Original Size:** 7,430 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: ideogram-performance-tuning.md ---
+*** START OF SKILL: ideogram-performance-tuning.md ***
 ```
 
----
+***
 name: ideogram-performance-tuning
 description: 'Optimize Ideogram API performance with caching, model selection, and
   parallel generation.
@@ -42455,7 +42267,7 @@ tags:
 - api
 - performance
 compatibility: Designed for Claude Code
----
+***
 # Ideogram Performance Tuning
 
 ## Overview
@@ -42676,13 +42488,12 @@ async function generateWithCDN(prompt: string, options: any = {}) {
 For cost optimization, see `ideogram-cost-tuning`.
 
 
-
 ```markdown
---- END OF SKILL: ideogram-performance-tuning.md ---
+*** END OF SKILL: ideogram-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-ideogram-reference-architecture"></a>
@@ -42691,13 +42502,13 @@ For cost optimization, see `ideogram-cost-tuning`.
 
 - **Source File:** `skills/ideogram-reference-architecture.md`
 - **Original Size:** 11,131 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: ideogram-reference-architecture.md ---
+*** START OF SKILL: ideogram-reference-architecture.md ***
 ```
 
----
+***
 name: ideogram-reference-architecture
 description: 'Implement Ideogram reference architecture with prompt templates, asset
   pipelines, and CDN delivery.
@@ -42721,7 +42532,7 @@ tags:
 - architecture
 - reference
 compatibility: Designed for Claude Code
----
+***
 # Ideogram Reference Architecture
 
 ## Overview
@@ -42996,13 +42807,12 @@ project/
 For multi-environment setup, see `ideogram-multi-env-setup`.
 
 
-
 ```markdown
---- END OF SKILL: ideogram-reference-architecture.md ---
+*** END OF SKILL: ideogram-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-idor-testing"></a>
@@ -43011,20 +42821,20 @@ For multi-environment setup, see `ideogram-multi-env-setup`.
 
 - **Source File:** `skills/idor-testing.md`
 - **Original Size:** 13,957 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: idor-testing.md ---
+*** START OF SKILL: idor-testing.md ***
 ```
 
----
+***
 name: idor-testing
 description: "Provide systematic methodologies for identifying and exploiting Insecure Direct Object Reference (IDOR) vulnerabilities in web applications."
 risk: offensive
 source: community
 author: zebbern
 date_added: "2026-02-27"
----
+***
 
 > **⚠️ AUTHORIZED USE ONLY**
 > This skill is for educational purposes or authorized security assessments only.
@@ -43481,13 +43291,12 @@ def download_receipt(request, receipt_id):
 This skill is applicable to execute the workflow or actions described in the overview.
 
 
-
 ```markdown
---- END OF SKILL: idor-testing.md ---
+*** END OF SKILL: idor-testing.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-image-optimization-helper"></a>
@@ -43496,13 +43305,13 @@ This skill is applicable to execute the workflow or actions described in the ove
 
 - **Source File:** `skills/image-optimization-helper.md`
 - **Original Size:** 2,435 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: image-optimization-helper.md ---
+*** START OF SKILL: image-optimization-helper.md ***
 ```
 
----
+***
 name: image-optimization-helper
 description: 'Configure with image optimization helper operations. Auto-activating
   skill for Frontend Development.
@@ -43522,7 +43331,7 @@ tags:
 - frontend
 - development
 compatibility: Designed for Claude Code
----
+***
 # Image Optimization Helper
 
 ## Overview
@@ -43585,13 +43394,12 @@ Part of the **Frontend Development** skill category.
 Tags: react, vue, css, accessibility, web
 
 
-
 ```markdown
---- END OF SKILL: image-optimization-helper.md ---
+*** END OF SKILL: image-optimization-helper.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-implement-spec"></a>
@@ -43600,17 +43408,17 @@ Tags: react, vue, css, accessibility, web
 
 - **Source File:** `skills/implement-spec.md`
 - **Original Size:** 2,078 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: implement-spec.md ---
+*** START OF SKILL: implement-spec.md ***
 ```
 
----
+***
 name: implement-spec
 description: "Implement a specification in code."
 disable-model-invocation: true
----
+***
 
 You have been provided a spec. This spec should have tickets associated with it, describing how to implement the spec.
 
@@ -43643,13 +43451,12 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 9. Clean up all **implementer subagent** worktrees.
 
 
-
 ```markdown
---- END OF SKILL: implement-spec.md ---
+*** END OF SKILL: implement-spec.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-implement"></a>
@@ -43658,17 +43465,17 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 - **Source File:** `skills/implement.md`
 - **Original Size:** 448 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: implement.md ---
+*** START OF SKILL: implement.md ***
 ```
 
----
+***
 name: implement
 description: "Implement a piece of work based on a spec or set of tickets."
 disable-model-invocation: true
----
+***
 
 Implement the work described by the user in the spec or tickets.
 
@@ -43681,13 +43488,12 @@ Once done, use /code-review to review the work.
 Commit your work to the current branch.
 
 
-
 ```markdown
---- END OF SKILL: implement.md ---
+*** END OF SKILL: implement.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-implementing-database-audit-logging"></a>
@@ -43696,13 +43502,13 @@ Commit your work to the current branch.
 
 - **Source File:** `skills/implementing-database-audit-logging.md`
 - **Original Size:** 9,533 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: implementing-database-audit-logging.md ---
+*** START OF SKILL: implementing-database-audit-logging.md ***
 ```
 
----
+***
 name: implementing-database-audit-logging
 description: 'Process use when you need to track database changes for compliance and
   security monitoring.
@@ -43725,7 +43531,7 @@ tags:
 - monitoring
 - logging
 compatibility: Designed for Claude Code
----
+***
 # Database Audit Logger
 
 ## Overview
@@ -43856,13 +43662,12 @@ Implement database audit logging to track all data modifications (INSERT, UPDATE
 - SOX compliance for databases:
 
 
-
 ```markdown
---- END OF SKILL: implementing-database-audit-logging.md ---
+*** END OF SKILL: implementing-database-audit-logging.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-implementing-database-caching"></a>
@@ -43871,13 +43676,13 @@ Implement database audit logging to track all data modifications (INSERT, UPDATE
 
 - **Source File:** `skills/implementing-database-caching.md`
 - **Original Size:** 7,496 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: implementing-database-caching.md ---
+*** START OF SKILL: implementing-database-caching.md ***
 ```
 
----
+***
 name: implementing-database-caching
 description: 'Process use when you need to implement multi-tier caching to improve
   database performance.
@@ -43898,7 +43703,7 @@ tags:
 - redis
 - performance
 compatibility: Designed for Claude Code
----
+***
 # Database Cache Layer
 
 ## Overview
@@ -43987,13 +43792,12 @@ Implement multi-tier caching strategies using Redis, application-level in-memory
 - redis-py (Python client): https://redis-py.readthedocs.io/
 
 
-
 ```markdown
---- END OF SKILL: implementing-database-caching.md ---
+*** END OF SKILL: implementing-database-caching.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-implementing-real-user-monitoring"></a>
@@ -44002,13 +43806,13 @@ Implement multi-tier caching strategies using Redis, application-level in-memory
 
 - **Source File:** `skills/implementing-real-user-monitoring.md`
 - **Original Size:** 4,014 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: implementing-real-user-monitoring.md ---
+*** START OF SKILL: implementing-real-user-monitoring.md ***
 ```
 
----
+***
 name: implementing-real-user-monitoring
 description: Implement Real User Monitoring (RUM) to capture actual user performance
   data including Core Web Vitals and page load times. Use when setting up user experience
@@ -44023,7 +43827,7 @@ tags:
 - monitoring
 - real-user
 compatibility: Designed for Claude Code
----
+***
 # Real User Monitoring
 
 Implement Real User Monitoring (RUM) to capture Core Web Vitals, page load times, and custom performance events using Google Analytics, Datadog RUM, or New Relic.
@@ -44118,13 +43922,12 @@ If RUM implementation fails:
 - Performance monitoring strategies
 
 
-
 ```markdown
---- END OF SKILL: implementing-real-user-monitoring.md ---
+*** END OF SKILL: implementing-real-user-monitoring.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-improve-codebase-architecture"></a>
@@ -44133,17 +43936,17 @@ If RUM implementation fails:
 
 - **Source File:** `skills/improve-codebase-architecture.md`
 - **Original Size:** 6,064 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: improve-codebase-architecture.md ---
+*** START OF SKILL: improve-codebase-architecture.md ***
 ```
 
----
+***
 name: improve-codebase-architecture
 description: Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.
 disable-model-invocation: true
----
+***
 
 # Improve Codebase Architecture
 
@@ -44212,13 +44015,12 @@ Side effects happen inline as decisions crystallize; call the Skill tool with "d
 - **Want to explore alternative interfaces for the deepened module?** Call the Skill tool with "codebase-design" and use its design-it-twice parallel sub-agent pattern.
 
 
-
 ```markdown
---- END OF SKILL: improve-codebase-architecture.md ---
+*** END OF SKILL: improve-codebase-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-incremental-load-setup"></a>
@@ -44227,13 +44029,13 @@ Side effects happen inline as decisions crystallize; call the Skill tool with "d
 
 - **Source File:** `skills/incremental-load-setup.md`
 - **Original Size:** 2,380 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: incremental-load-setup.md ---
+*** START OF SKILL: incremental-load-setup.md ***
 ```
 
----
+***
 name: incremental-load-setup
 description: 'Configure incremental load setup operations. Auto-activating skill for
   Data Pipelines.
@@ -44253,7 +44055,7 @@ tags:
 - data
 - data-engineering
 compatibility: Designed for Claude Code
----
+***
 # Incremental Load Setup
 
 ## Overview
@@ -44316,13 +44118,12 @@ Part of the **Data Pipelines** skill category.
 Tags: etl, airflow, spark, streaming, data-engineering
 
 
-
 ```markdown
---- END OF SKILL: incremental-load-setup.md ---
+*** END OF SKILL: incremental-load-setup.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-inference-latency-profiler"></a>
@@ -44331,13 +44132,13 @@ Tags: etl, airflow, spark, streaming, data-engineering
 
 - **Source File:** `skills/inference-latency-profiler.md`
 - **Original Size:** 2,414 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: inference-latency-profiler.md ---
+*** START OF SKILL: inference-latency-profiler.md ***
 ```
 
----
+***
 name: inference-latency-profiler
 description: 'Profile inference latency profiler operations. Auto-activating skill
   for ML Deployment.
@@ -44357,7 +44158,7 @@ tags:
 - ai
 - mlops
 compatibility: Designed for Claude Code
----
+***
 # Inference Latency Profiler
 
 ## Overview
@@ -44420,13 +44221,12 @@ Part of the **ML Deployment** skill category.
 Tags: mlops, serving, inference, monitoring, production
 
 
-
 ```markdown
---- END OF SKILL: inference-latency-profiler.md ---
+*** END OF SKILL: inference-latency-profiler.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-install-and-verify"></a>
@@ -44435,13 +44235,13 @@ Tags: mlops, serving, inference, monitoring, production
 
 - **Source File:** `skills/install-and-verify.md`
 - **Original Size:** 19,451 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: install-and-verify.md ---
+*** START OF SKILL: install-and-verify.md ***
 ```
 
----
+***
 name: install-and-verify
 description: Verify that a web app change actually works by driving the running app from the inside (DOM, network, routing, console, framework state) instead of screenshots or guessing. Use after any user-facing change, when a fix is claimed but unproven, when a test passes but the UI is broken, or when you need a real verdict rather than "looks right". Also use to install and wire up Reticle in a project that does not have it yet.
 license: Apache-2.0
@@ -44449,7 +44249,7 @@ metadata:
   version: 2.9.0
   homepage: https://www.reticle.sh
   repository: https://github.com/reticlehq/reticle
----
+***
 
 # Reticle: prove the change, do not guess
 
@@ -44505,7 +44305,7 @@ There are exactly three places you may stop, and none is a question about a pref
 
 Setup requires a client restart, which ends your turn. This skill survives that restart. **After the restart, re-read this file and resume at the step you were on.** Do not start over, and do not skip forward.
 
----
+***
 
 # SETUP
 
@@ -44636,7 +44436,7 @@ If it went well, one line and no more: Reticle is open source at https://github.
 
 Stop here. Do not continue into VERIFY.
 
----
+***
 
 # License key
 
@@ -44648,7 +44448,7 @@ Enterprise features are unlocked by a signed key, verified locally with Ed25519 
 
 Never echo the key back in your reply, and never put it in a commit, a code comment, or a feedback report. The rest: `curl https://docs.reticle.sh/enterprise.md`.
 
----
+***
 
 # VERIFY
 
@@ -44677,7 +44477,7 @@ The first two are **not on the advertised tool list**: they are reached through 
 
 The full loop (look, act, observe, assert), how to read a verdict, batching, and regression suites: [references/verify.md](references/verify.md).
 
----
+***
 
 # Feedback is first-class
 
@@ -44706,13 +44506,12 @@ Nothing is too minor. Report defects in **Reticle**; a bug you find in the app u
 - [references/troubleshooting.md](references/troubleshooting.md): no session, port mismatch, non-localhost hosts, daemon problems.
 
 
-
 ```markdown
---- END OF SKILL: install-and-verify.md ---
+*** END OF SKILL: install-and-verify.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-instantly-data-handling"></a>
@@ -44721,13 +44520,13 @@ Nothing is too minor. Report defects in **Reticle**; a bug you find in the app u
 
 - **Source File:** `skills/instantly-data-handling.md`
 - **Original Size:** 10,825 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: instantly-data-handling.md ---
+*** START OF SKILL: instantly-data-handling.md ***
 ```
 
----
+***
 name: instantly-data-handling
 description: 'Implement Instantly.ai lead data management, GDPR/CAN-SPAM compliance,
   and list operations.
@@ -44753,7 +44552,7 @@ tags:
 - compliance
 - leads
 compatibility: Designed for Claude Code
----
+***
 # Instantly Data Handling
 
 ## Overview
@@ -45092,13 +44891,12 @@ async function verifyEmail(email: string) {
 For workspace access control, see `instantly-enterprise-rbac`.
 
 
-
 ```markdown
---- END OF SKILL: instantly-data-handling.md ---
+*** END OF SKILL: instantly-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-instantly-debug-bundle"></a>
@@ -45107,13 +44905,13 @@ For workspace access control, see `instantly-enterprise-rbac`.
 
 - **Source File:** `skills/instantly-debug-bundle.md`
 - **Original Size:** 8,294 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: instantly-debug-bundle.md ---
+*** START OF SKILL: instantly-debug-bundle.md ***
 ```
 
----
+***
 name: instantly-debug-bundle
 description: 'Collect Instantly.ai debug evidence for support tickets and troubleshooting.
 
@@ -45136,7 +44934,7 @@ tags:
 - debugging
 - support
 compatibility: Designed for Claude Code
----
+***
 # Instantly Debug Bundle
 
 ## Overview
@@ -45373,13 +45171,12 @@ curl -s https://api.instantly.ai/api/v2/background-jobs?limit=5 \
 For error resolution patterns, see `instantly-common-errors`.
 
 
-
 ```markdown
---- END OF SKILL: instantly-debug-bundle.md ---
+*** END OF SKILL: instantly-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-instantly-performance-tuning"></a>
@@ -45388,13 +45185,13 @@ For error resolution patterns, see `instantly-common-errors`.
 
 - **Source File:** `skills/instantly-performance-tuning.md`
 - **Original Size:** 9,017 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: instantly-performance-tuning.md ---
+*** START OF SKILL: instantly-performance-tuning.md ***
 ```
 
----
+***
 name: instantly-performance-tuning
 description: 'Optimize Instantly.ai API performance with caching, batching, and connection
   pooling.
@@ -45419,7 +45216,7 @@ tags:
 - caching
 - optimization
 compatibility: Designed for Claude Code
----
+***
 # Instantly Performance Tuning
 
 ## Overview
@@ -45684,13 +45481,12 @@ class ThrottledEmailClient {
 For cost optimization, see `instantly-cost-tuning`.
 
 
-
 ```markdown
---- END OF SKILL: instantly-performance-tuning.md ---
+*** END OF SKILL: instantly-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-instantly-reference-architecture"></a>
@@ -45699,13 +45495,13 @@ For cost optimization, see `instantly-cost-tuning`.
 
 - **Source File:** `skills/instantly-reference-architecture.md`
 - **Original Size:** 11,677 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: instantly-reference-architecture.md ---
+*** START OF SKILL: instantly-reference-architecture.md ***
 ```
 
----
+***
 name: instantly-reference-architecture
 description: 'Implement Instantly.ai reference architecture with best-practice project
   layout.
@@ -45730,7 +45526,7 @@ tags:
 - architecture
 - design
 compatibility: Designed for Claude Code
----
+***
 # Instantly Reference Architecture
 
 ## Overview
@@ -45990,13 +45786,12 @@ Lead CSV/CRM → import.ts → POST /leads → Campaign
 For multi-environment setup, see `instantly-multi-env-setup`.
 
 
-
 ```markdown
---- END OF SKILL: instantly-reference-architecture.md ---
+*** END OF SKILL: instantly-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-integration-test-generator"></a>
@@ -46005,13 +45800,13 @@ For multi-environment setup, see `instantly-multi-env-setup`.
 
 - **Source File:** `skills/integration-test-generator.md`
 - **Original Size:** 2,387 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: integration-test-generator.md ---
+*** START OF SKILL: integration-test-generator.md ***
 ```
 
----
+***
 name: integration-test-generator
 description: 'Generate integration test generator operations. Auto-activating skill
   for API Integration.
@@ -46030,7 +45825,7 @@ tags:
 - api
 - integration
 compatibility: Designed for Claude Code
----
+***
 # Integration Test Generator
 
 ## Overview
@@ -46093,13 +45888,12 @@ Part of the **API Integration** skill category.
 Tags: integration, webhooks, sdk, oauth, third-party
 
 
-
 ```markdown
---- END OF SKILL: integration-test-generator.md ---
+*** END OF SKILL: integration-test-generator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-integration-test-setup"></a>
@@ -46108,13 +45902,13 @@ Tags: integration, webhooks, sdk, oauth, third-party
 
 - **Source File:** `skills/integration-test-setup.md`
 - **Original Size:** 2,340 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: integration-test-setup.md ---
+*** START OF SKILL: integration-test-setup.md ***
 ```
 
----
+***
 name: integration-test-setup
 description: 'Configure integration test setup operations. Auto-activating skill for
   Test Automation.
@@ -46133,7 +45927,7 @@ tags:
 - testing
 - automation
 compatibility: Designed for Claude Code
----
+***
 # Integration Test Setup
 
 ## Overview
@@ -46196,13 +45990,12 @@ Part of the **Test Automation** skill category.
 Tags: testing, jest, pytest, mocking, tdd
 
 
-
 ```markdown
---- END OF SKILL: integration-test-setup.md ---
+*** END OF SKILL: integration-test-setup.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-intelligent-routing"></a>
@@ -46211,18 +46004,18 @@ Tags: testing, jest, pytest, mocking, tdd
 
 - **Source File:** `skills/intelligent-routing.md`
 - **Original Size:** 11,176 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: intelligent-routing.md ---
+*** START OF SKILL: intelligent-routing.md ***
 ```
 
----
+***
 name: intelligent-routing
 description: Automatic agent selection and intelligent task routing. Analyzes user requests and automatically selects the best specialist agent(s) without requiring explicit user mentions.
 when_to_use: "Always active. Automatically selects the best specialist agent for each user request without explicit user mentions."
 version: 1.0.0
----
+***
 
 # Intelligent Agent Routing
 
@@ -46550,18 +46343,17 @@ Show selection reasoning:
 
 **Result**: User gets specialist-level responses without needing to know the system architecture.
 
----
+***
 
 **Next Steps**: Integrate this skill into the workspace rules (`.agents/rules/request-routing.md`).
 
 
-
 ```markdown
---- END OF SKILL: intelligent-routing.md ---
+*** END OF SKILL: intelligent-routing.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-intercom-data-handling"></a>
@@ -46570,13 +46362,13 @@ Show selection reasoning:
 
 - **Source File:** `skills/intercom-data-handling.md`
 - **Original Size:** 6,562 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: intercom-data-handling.md ---
+*** START OF SKILL: intercom-data-handling.md ***
 ```
 
----
+***
 name: intercom-data-handling
 description: 'Implement Intercom data handling for GDPR, contact export, data retention,
   and PII.
@@ -46602,7 +46394,7 @@ tags:
 - messaging
 - intercom
 compatibility: Designed for Claude Code
----
+***
 # Intercom Data Handling
 
 ## Overview
@@ -46732,13 +46524,12 @@ For enterprise access control and permission scoping on top of these data
 workflows, see the `intercom-enterprise-rbac` skill in this pack.
 
 
-
 ```markdown
---- END OF SKILL: intercom-data-handling.md ---
+*** END OF SKILL: intercom-data-handling.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-intercom-debug-bundle"></a>
@@ -46747,13 +46538,13 @@ workflows, see the `intercom-enterprise-rbac` skill in this pack.
 
 - **Source File:** `skills/intercom-debug-bundle.md`
 - **Original Size:** 4,929 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: intercom-debug-bundle.md ---
+*** START OF SKILL: intercom-debug-bundle.md ***
 ```
 
----
+***
 name: intercom-debug-bundle
 description: 'Collect Intercom debug evidence for support tickets and troubleshooting.
 
@@ -46778,7 +46569,7 @@ tags:
 - messaging
 - intercom
 compatibility: Designed for Claude Code
----
+***
 # Intercom Debug Bundle
 
 ## Overview
@@ -46871,13 +46662,12 @@ and the full redaction rules, see
 For rate limit handling, see `intercom-rate-limits`. For auth setup, see `intercom-install-auth`.
 
 
-
 ```markdown
---- END OF SKILL: intercom-debug-bundle.md ---
+*** END OF SKILL: intercom-debug-bundle.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-intercom-performance-tuning"></a>
@@ -46886,13 +46676,13 @@ For rate limit handling, see `intercom-rate-limits`. For auth setup, see `interc
 
 - **Source File:** `skills/intercom-performance-tuning.md`
 - **Original Size:** 7,192 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: intercom-performance-tuning.md ---
+*** START OF SKILL: intercom-performance-tuning.md ***
 ```
 
----
+***
 name: intercom-performance-tuning
 description: |
   Optimize Intercom API performance with caching, search optimization, and pagination.
@@ -46910,7 +46700,7 @@ tags:
 - messaging
 - intercom
 compatibility: Designed for Claude Code
----
+***
 # Intercom Performance Tuning
 
 ## Overview
@@ -47033,13 +46823,12 @@ const contact = await measuredCall("contacts.find", () =>
 For cost optimization, see the `intercom-cost-tuning` skill, which covers request-volume reduction, webhook-driven syncing instead of polling, and tiered caching to lower monthly API spend.
 
 
-
 ```markdown
---- END OF SKILL: intercom-performance-tuning.md ---
+*** END OF SKILL: intercom-performance-tuning.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-intercom-reference-architecture"></a>
@@ -47048,13 +46837,13 @@ For cost optimization, see the `intercom-cost-tuning` skill, which covers reques
 
 - **Source File:** `skills/intercom-reference-architecture.md`
 - **Original Size:** 6,632 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: intercom-reference-architecture.md ---
+*** START OF SKILL: intercom-reference-architecture.md ***
 ```
 
----
+***
 name: intercom-reference-architecture
 description: 'Implement Intercom reference architecture with layered project structure.
 
@@ -47077,7 +46866,7 @@ tags:
 - messaging
 - intercom
 compatibility: Designed for Claude Code
----
+***
 # Intercom Reference Architecture
 
 ## Overview
@@ -47205,13 +46994,12 @@ For multi-environment configuration and deployment, see the
 above into per-environment credential and rate-limit management.
 
 
-
 ```markdown
---- END OF SKILL: intercom-reference-architecture.md ---
+*** END OF SKILL: intercom-reference-architecture.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-ios-debugger-agent"></a>
@@ -47220,19 +47008,19 @@ above into per-environment credential and rate-limit management.
 
 - **Source File:** `skills/ios-debugger-agent.md`
 - **Original Size:** 3,190 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: ios-debugger-agent.md ---
+*** START OF SKILL: ios-debugger-agent.md ***
 ```
 
----
+***
 name: ios-debugger-agent
 description: Debug the current iOS project on a booted simulator with XcodeBuildMCP.
 risk: safe
 source: "Dimillian/Skills (MIT)"
 date_added: "2026-03-25"
----
+***
 
 # iOS Debugger Agent
 
@@ -47291,13 +47079,12 @@ Use these when asked to inspect or interact with the running app.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: ios-debugger-agent.md ---
+*** END OF SKILL: ios-debugger-agent.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-iterative-retrieval"></a>
@@ -47306,18 +47093,18 @@ Use these when asked to inspect or interact with the running app.
 
 - **Source File:** `skills/iterative-retrieval.md`
 - **Original Size:** 6,998 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: iterative-retrieval.md ---
+*** START OF SKILL: iterative-retrieval.md ***
 ```
 
----
+***
 name: iterative-retrieval
 description: Pattern for progressively refining context retrieval to solve the subagent context problem. Use when a subagent lacks the context it needs and retrieval must be refined across passes.
 metadata:
   origin: ECC
----
+***
 
 # Iterative Retrieval Pattern
 
@@ -47526,13 +47313,12 @@ When retrieving context for this task:
 - Agent definitions bundled with ECC (manual install path: `agents/`)
 
 
-
 ```markdown
---- END OF SKILL: iterative-retrieval.md ---
+*** END OF SKILL: iterative-retrieval.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-javascript-testing-patterns"></a>
@@ -47541,19 +47327,19 @@ When retrieving context for this task:
 
 - **Source File:** `skills/javascript-testing-patterns.md`
 - **Original Size:** 1,706 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: javascript-testing-patterns.md ---
+*** START OF SKILL: javascript-testing-patterns.md ***
 ```
 
----
+***
 name: javascript-testing-patterns
 description: "Comprehensive guide for implementing robust testing strategies in JavaScript/TypeScript applications using modern testing frameworks and best practices."
 risk: safe
 source: community
 date_added: "2026-02-27"
----
+***
 
 # JavaScript Testing Patterns
 
@@ -47592,13 +47378,12 @@ Comprehensive guide for implementing robust testing strategies in JavaScript/Typ
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
 
 
-
 ```markdown
---- END OF SKILL: javascript-testing-patterns.md ---
+*** END OF SKILL: javascript-testing-patterns.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-jest-test-generator"></a>
@@ -47607,13 +47392,13 @@ Comprehensive guide for implementing robust testing strategies in JavaScript/Typ
 
 - **Source File:** `skills/jest-test-generator.md`
 - **Original Size:** 2,296 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: jest-test-generator.md ---
+*** START OF SKILL: jest-test-generator.md ***
 ```
 
----
+***
 name: jest-test-generator
 description: 'Generate jest test generator operations. Auto-activating skill for Test
   Automation.
@@ -47632,7 +47417,7 @@ tags:
 - testing
 - automation
 compatibility: Designed for Claude Code
----
+***
 # Jest Test Generator
 
 ## Overview
@@ -47695,13 +47480,12 @@ Part of the **Test Automation** skill category.
 Tags: testing, jest, pytest, mocking, tdd
 
 
-
 ```markdown
---- END OF SKILL: jest-test-generator.md ---
+*** END OF SKILL: jest-test-generator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
 
 
 <a id="skill-jmeter-test-plan-creator"></a>
@@ -47710,13 +47494,13 @@ Tags: testing, jest, pytest, mocking, tdd
 
 - **Source File:** `skills/jmeter-test-plan-creator.md`
 - **Original Size:** 2,380 bytes
-- [⬆ Back to Volume Index](#-master-trading-skills--volume-3-of-6)
+- [Back to Volume Index](#master-trading-skills---volume-3-of-6)
 
 ```markdown
---- START OF SKILL: jmeter-test-plan-creator.md ---
+*** START OF SKILL: jmeter-test-plan-creator.md ***
 ```
 
----
+***
 name: jmeter-test-plan-creator
 description: 'Create jmeter test plan creator operations. Auto-activating skill for
   Performance Testing.
@@ -47735,7 +47519,7 @@ tags:
 - performance
 - testing
 compatibility: Designed for Claude Code
----
+***
 # Jmeter Test Plan Creator
 
 ## Overview
@@ -47798,10 +47582,9 @@ Part of the **Performance Testing** skill category.
 Tags: performance, load-testing, k6, jmeter, benchmarking
 
 
-
 ```markdown
---- END OF SKILL: jmeter-test-plan-creator.md ---
+*** END OF SKILL: jmeter-test-plan-creator.md ***
 ```
 
 
---------------------------------------------------------------------------------
+***
