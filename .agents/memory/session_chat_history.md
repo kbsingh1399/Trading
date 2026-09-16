@@ -45160,3 +45160,7 @@ ame: quant-coding-skills), only 2 --- delimiters in entire file.
 ### Turn 2026-09-16 (Two Production Strategies Comparative Synthesis & Benchmarking)
 - User Prompt: now we have 2 strategies
 - Action: Formulated comprehensive comparative breakdown of Strategy 1 (Dual-Model Orderflow Baseline, +129.1% ROI) vs Strategy 2 (S3 ORB/CRT Multiverse, +225.8% ROI, 10/10 Arena Certified) benchmarked against BTC Buy & Hold with comparative equity and drawdown visualization.
+
+### Turn 2026-09-16 (Clarification of run_forex_dry_run.py Architecture & Lineage)
+- User Prompt: c:\Users\SIGMA\Documents\Trading\Engine\live\run_forex_dry_run.py is strategy 1...right?
+- Clarification: Delineated the two production tracks: (1) Forex/CFD MT5 live dry-run engine (run_forex_dry_run.py / forex_engine.py using 13-feature ICT XGBoost) vs (2) Crypto & Cross-Asset Multiverse suite (run_20_oos_multiverse.py / s1_dual_model_orderflow.py / s3_orb_ml.py certified 10/10 by Arena).
