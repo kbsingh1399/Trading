@@ -1417,6 +1417,271 @@ def run_verify() -> None:
     print("=" * 85)
 
 
+def run_forward_test(strategy: str = "combined", start_date: str = "2025-01-01") -> None:
+    """Executes strictly causal out-of-sample forward backtest across certified Forex parquets."""
+    print("=" * 85)
+    print(f" [FORWARD TESTING] EVALUATING STRATEGY: {strategy.upper()} | OOS FORWARD START: {start_date}")
+    print("=" * 85)
+
+    xgb_model = None
+    if strategy in ["ml", "combined"]:
+        print(f"  -> Training causal XGBoost model strictly on in-sample data (< {start_date})...")
+        train_X = []
+        train_y = []
+        for sym in CANONICAL_18_ASSETS:
+            try:
+                df = engineer_features_polars(sym, DATA_DIR)
+                df['datetime'] = pd.to_datetime(df['datetime'], utc=True)
+                df_is = df[df['datetime'] < start_date].copy()
+                if len(df_is) < 500:
+                    continue
+                df_is = create_labels_ratchet(df_is)
+                valid = df_is[df_is['target'].notna()]
+                if len(valid) > 0:
+                    train_X.append(valid[CANONICAL_FEATURES])
+                    train_y.append(valid['target'].values)
+            except Exception:
+                pass
+
+        if train_X:
+            X_mat = pd.concat(train_X, ignore_index=True)
+            y_vec = np.concatenate(train_y)
+            dtrain = xgb.DMatrix(X_mat, label=y_vec)
+            params = {
+                'objective': 'binary:logistic',
+                'max_depth': 4,
+                'learning_rate': 0.05,
+                'eval_metric': 'logloss',
+                'seed': 42
+            }
+            xgb_model = xgb.train(params, dtrain, num_boost_round=120)
+            print(f"  -> Causal model trained on {len(X_mat):,} in-sample setups. (Zero Lookahead)")
+
+    results_table = Table(
+        title=f"OUT-OF-SAMPLE FORWARD TEST RESULTS | STRATEGY: {strategy.upper()} ({start_date} to 2026)",
+        box=box.ROUNDED,
+        header_style="bold bright_white on blue"
+    )
+    results_table.add_column("Asset", justify="left", style="bold white", width=9)
+    results_table.add_column("Trades", justify="right", width=8)
+    results_table.add_column("Win Rate", justify="right", width=10)
+    results_table.add_column("Profit Factor", justify="right", width=14)
+    results_table.add_column("Net R-Multiple", justify="right", width=15)
+    results_table.add_column("Net PnL (USD)", justify="right", style="bold", width=15)
+
+    all_portfolio_r = []
+    b_returns = []
+
+    for sym in CANONICAL_18_ASSETS:
+        try:
+            df = engineer_features_polars(sym, DATA_DIR)
+            df['datetime'] = pd.to_datetime(df['datetime'], utc=True)
+            df_oos = df[df['datetime'] >= start_date].copy().reset_index(drop=True)
+            if len(df_oos) < 100:
+                continue
+
+            b_ret = (df_oos['close'].iloc[-1] / df_oos['close'].iloc[0]) - 1.0
+            b_returns.append(b_ret)
+
+            if xgb_model is not None:
+                doos = xgb.DMatrix(df_oos[CANONICAL_FEATURES])
+                df_oos['prob'] = xgb_model.predict(doos)
+            else:
+                df_oos['prob'] = 0.50
+
+            lows = df_oos['low'].values
+            highs = df_oos['high'].values
+            closes = df_oos['close'].values
+            opens = df_oos['open'].values
+            hours = df_oos['hour'].values
+            mins = df_oos['datetime'].dt.minute.values
+            pdl_sweeps = df_oos['sweep_pdl'].values
+            pdh_sweeps = df_oos['sweep_pdh'].values
+            bull_fvg = df_oos['bullish_fvg'].values
+            bear_fvg = df_oos['bearish_fvg'].values
+            trend_4h = df_oos['htf_4h_trend'].values
+            probs = df_oos['prob'].values
+            n_bars = len(df_oos)
+
+            sym_trades = []
+            i = 20
+            while i < n_bars - 50:
+                h = hours[i]
+                m = mins[i]
+                is_kz = (7 <= h <= 10) or (12 <= h <= 15)
+
+                is_long = False
+                is_short = False
+                sl_long = lows[max(0, i-20):i+1].min()
+                sl_short = highs[max(0, i-20):i+1].max()
+
+                if strategy == "fvg":
+                    is_long = is_kz and (pdl_sweeps[i] == 1) and (bull_fvg[i] > 0) and (trend_4h[i] > 0)
+                    is_short = is_kz and (pdh_sweeps[i] == 1) and (bear_fvg[i] > 0) and (trend_4h[i] < 0)
+                elif strategy == "crt":
+                    in_session = (h == 7 and m >= 30) or (h in [8, 9, 10, 11]) or (h == 13 and m >= 45) or (h in [14, 15, 16, 17])
+                    if in_session:
+                        if h <= 11:
+                            or_mask = (hours[:i] == 7) & (mins[:i] == 0)
+                        else:
+                            or_mask = (hours[:i] == 13) & (mins[:i] == 30)
+                        or_indices = np.where(or_mask)[0]
+                        if len(or_indices) > 0:
+                            or_idx = or_indices[-1]
+                            if i > or_idx + 1:
+                                or_h = max(highs[or_idx], highs[or_idx+1])
+                                or_l = min(lows[or_idx], lows[or_idx+1])
+                                b_ratio = min(1.0, abs(closes[i] - opens[i]) / (highs[i] - lows[i] + 1e-9))
+                                if closes[i] > or_h and b_ratio >= 0.40 and trend_4h[i] > 0:
+                                    is_long = True
+                                    sl_long = or_l
+                                elif closes[i] < or_l and b_ratio >= 0.40 and trend_4h[i] < 0:
+                                    is_short = True
+                                    sl_short = or_h
+                elif strategy == "ml":
+                    is_long = is_kz and (trend_4h[i] > 0) and (probs[i] >= PROBABILITY_THRESHOLD)
+                    is_short = is_kz and (trend_4h[i] < 0) and (probs[i] >= PROBABILITY_THRESHOLD)
+                else:  # combined
+                    fvg_l = (pdl_sweeps[i] == 1) and (bull_fvg[i] > 0)
+                    fvg_s = (pdh_sweeps[i] == 1) and (bear_fvg[i] > 0)
+                    is_long = is_kz and (trend_4h[i] > 0) and fvg_l and (probs[i] >= PROBABILITY_THRESHOLD)
+                    is_short = is_kz and (trend_4h[i] < 0) and fvg_s and (probs[i] >= PROBABILITY_THRESHOLD)
+
+                if not (is_long or is_short):
+                    i += 1
+                    continue
+
+                entry_bar = i + 1
+                if entry_bar >= n_bars:
+                    break
+                entry = opens[entry_bar]
+
+                if is_long:
+                    sl = sl_long
+                    r_dist = entry - sl
+                    if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
+                        i += 1
+                        continue
+                    cur_sl = sl
+                    realized_r = 0.0
+                    exit_idx = entry_bar
+                    for b in range(1, MAX_HOLDING_BARS + 1):
+                        cur_idx = entry_bar + b
+                        if cur_idx >= n_bars:
+                            break
+                        h_r = (highs[cur_idx] - entry) / r_dist
+                        if b >= TIME_DECAY_BARS and h_r < TIME_DECAY_THRESHOLD_R:
+                            realized_r = (closes[cur_idx] - entry) / r_dist
+                            exit_idx = cur_idx
+                            break
+                        if h_r >= 2.5:
+                            realized_r = 2.5
+                            exit_idx = cur_idx
+                            break
+                        if h_r >= 1.5:
+                            cur_sl = max(cur_sl, entry + 0.80 * r_dist)
+                        elif h_r >= 0.8:
+                            cur_sl = max(cur_sl, entry + 0.15 * r_dist)
+                        if lows[cur_idx] <= cur_sl:
+                            realized_r = (cur_sl - entry) / r_dist
+                            exit_idx = cur_idx
+                            break
+                    realized_r -= 0.08  # friction
+                    sym_trades.append(realized_r)
+                    all_portfolio_r.append(realized_r)
+                    i = exit_idx + 1
+
+                elif is_short:
+                    sl = sl_short
+                    r_dist = sl - entry
+                    if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
+                        i += 1
+                        continue
+                    cur_sl = sl
+                    realized_r = 0.0
+                    exit_idx = entry_bar
+                    for b in range(1, MAX_HOLDING_BARS + 1):
+                        cur_idx = entry_bar + b
+                        if cur_idx >= n_bars:
+                            break
+                        h_r = (entry - lows[cur_idx]) / r_dist
+                        if b >= TIME_DECAY_BARS and h_r < TIME_DECAY_THRESHOLD_R:
+                            realized_r = (entry - closes[cur_idx]) / r_dist
+                            exit_idx = cur_idx
+                            break
+                        if h_r >= 2.5:
+                            realized_r = 2.5
+                            exit_idx = cur_idx
+                            break
+                        if h_r >= 1.5:
+                            cur_sl = min(cur_sl, entry - 0.80 * r_dist)
+                        elif h_r >= 0.8:
+                            cur_sl = min(cur_sl, entry - 0.15 * r_dist)
+                        if highs[cur_idx] >= cur_sl:
+                            realized_r = (entry - cur_sl) / r_dist
+                            exit_idx = cur_idx
+                            break
+                    realized_r -= 0.08
+                    sym_trades.append(realized_r)
+                    all_portfolio_r.append(realized_r)
+                    i = exit_idx + 1
+
+            t_arr = np.array(sym_trades)
+            if len(t_arr) > 0:
+                wins = t_arr[t_arr > 0]
+                losses = t_arr[t_arr <= 0]
+                pf = float(wins.sum() / abs(losses.sum())) if len(losses) > 0 and losses.sum() != 0 else (99.0 if len(wins) > 0 else 0.0)
+                wr = float((t_arr > 0).mean() * 100.0)
+                net_r = float(t_arr.sum())
+                net_usd = float(net_r * BASE_RISK_USD)
+                pnl_style = "green" if net_usd > 0 else "red"
+                results_table.add_row(
+                    sym,
+                    str(len(t_arr)),
+                    f"{wr:.1f}%",
+                    f"{pf:.2f}",
+                    f"{net_r:+.2f}R",
+                    f"[{pnl_style}]${net_usd:+,.2f}[/{pnl_style}]"
+                )
+            else:
+                results_table.add_row(sym, "0", "0.0%", "0.00", "+0.00R", "$0.00")
+        except Exception:
+            pass
+
+    console.print(results_table)
+
+    port_arr = np.array(all_portfolio_r)
+    if len(port_arr) > 0:
+        p_wins = port_arr[port_arr > 0]
+        p_losses = port_arr[port_arr <= 0]
+        tot_pf = float(p_wins.sum() / abs(p_losses.sum())) if len(p_losses) > 0 and p_losses.sum() != 0 else 0.0
+        tot_wr = float((port_arr > 0).mean() * 100.0)
+        tot_r = float(port_arr.sum())
+        tot_pnl = float(tot_r * BASE_RISK_USD)
+        final_equity = 5000.0 + tot_pnl
+        roi_pct = (tot_pnl / 5000.0) * 100.0
+        b_avg = np.mean(b_returns) * 100.0 if b_returns else 0.0
+
+        cum_pnl = np.cumsum(port_arr * BASE_RISK_USD)
+        peaks = np.maximum.accumulate(cum_pnl)
+        dds = peaks - cum_pnl
+        max_dd_usd = float(dds.max()) if len(dds) > 0 else 0.0
+        max_dd_pct = (max_dd_usd / 5000.0) * 100.0
+
+        summary_text = (
+            f"[bold white]Initial Capital:[/bold white] $5,000.00 USD  |  "
+            f"[bold white]Final Equity:[/bold white] ${final_equity:,.2f} USD  |  "
+            f"[bold white]Net ROI:[/bold white] [{ 'green' if roi_pct >= 0 else 'red' }]{roi_pct:+.2f}%[/{ 'green' if roi_pct >= 0 else 'red' }]\n"
+            f"[bold white]Total Trades:[/bold white] {len(port_arr)}  |  "
+            f"[bold white]Win Rate:[/bold white] {tot_wr:.1f}%  |  "
+            f"[bold white]Profit Factor:[/bold white] {tot_pf:.2f}\n"
+            f"[bold white]Max Drawdown:[/bold white] ${max_dd_usd:,.2f} USD ({max_dd_pct:.2f}%)  |  "
+            f"[bold white]Benchmark (Buy & Hold Avg):[/bold white] {b_avg:+.2f}%"
+        )
+        panel = Panel(summary_text, title="[bold bright_cyan]PORTFOLIO FORWARD TEST AGGREGATE SUMMARY[/bold bright_cyan]", border_style="green" if tot_pnl >= 0 else "red")
+        console.print(panel)
+
+
 def show_structure() -> None:
     """Prints repository storage paths for data, models, and logs."""
     print("=" * 85)
@@ -1449,6 +1714,8 @@ Standard Usage:
   python Engine/forex_engine.py --strategy combined     # Run multi-confluence FVG + CRT + ML strategy (Dry-Run)
   python Engine/forex_engine.py --mode snapshot         # Run single evaluation pass and cleanly exit
   python Engine/forex_engine.py --mode snapshot --strategy crt
+  python Engine/forex_engine.py --mode forward-test     # Run out-of-sample forward test simulation
+  python Engine/forex_engine.py --mode forward-test --strategy crt
   python Engine/forex_engine.py --skip-train            # Skip retraining, run telemetry immediately
   python Engine/forex_engine.py --live                  # ARM LIVE TRADING: Dispatch real market orders to MT5
   python Engine/forex_engine.py --mode verify           # Run numerical parity assertions (< 1e-9 error)
@@ -1457,7 +1724,7 @@ Standard Usage:
     )
     parser.add_argument(
         "--mode",
-        choices=["dry-run", "snapshot", "train", "verify", "info"],
+        choices=["dry-run", "snapshot", "train", "verify", "info", "forward-test"],
         default="dry-run",
         help="Execution mode (default: dry-run)"
     )
@@ -1466,6 +1733,11 @@ Standard Usage:
         choices=["fvg", "crt", "ml", "combined"],
         default="combined",
         help="Trading strategy: 'fvg' (Rule-Based ICT FVG), 'crt' (Candle Range Theory & ORB), 'ml' (Pure XGBoost ML), 'combined' (Multi-Confluence: FVG + CRT + ML) (default: combined)"
+    )
+    parser.add_argument(
+        "--start-date",
+        default="2025-01-01",
+        help="Out-of-sample forward test start date (default: 2025-01-01)"
     )
     parser.add_argument(
         "--dry-run",
@@ -1508,6 +1780,10 @@ Standard Usage:
         run_verify()
         return
 
+    if args.mode == "forward-test":
+        run_forward_test(strategy=args.strategy, start_date=args.start_date)
+        return
+
     if not args.skip_train and args.mode in ["dry-run", "snapshot", "train"]:
         if PRODUCTION_MODEL_PATH.exists():
             try:
@@ -1533,3 +1809,4 @@ Standard Usage:
 
 if __name__ == "__main__":
     main()
+
