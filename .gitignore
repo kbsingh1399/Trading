@@ -3,12 +3,19 @@ Seeding/
 *.xlsx
 *.xls
 
-# Ignore screenshots/media
+# Ignore screenshots/media (except equity curves, research papers, and audit artifacts)
 *.png
 *.jpg
 *.jpeg
 *.pdf
 *.zip
+# Allow equity curve artifacts
+!Engine/artifacts/*.png
+# Allow research papers and quant knowledge PDFs
+!Quant_Knowledge/**
+!papers/**
+# Allow .claude-flow workflow state
+!.claude-flow/
 
 # Ignore python caches and model run summaries
 __pycache__/
