@@ -14,10 +14,11 @@ trading pipeline for MetaTrader 5 (Blueberry Markets):
 3. DYNAMIC RETRAINING       : High-speed Polars causal feature engineering (13
                              stationary features with shift(1) 4H trend) and
                              7-stage microstructure ratchet simulation.
-4. TWO STRATEGIES + DUAL    :
+4. STRATEGIES SUPPORTED     :
    - Strategy 1 (FVG)       : Rule-Based ICT Fair Value Gap + Liquidity Sweeps.
-   - Strategy 2 (ML)        : Pure XGBoost Machine Learning Probability (P* >= 0.55).
-   - Combined (Default)     : Dual Confluence requiring both FVG & ML alignment.
+   - Strategy 2 (CRT)       : Candle Range Theory (CRT) & Opening Range Breakout (ORB).
+   - Strategy 3 (ML)        : Pure XGBoost Machine Learning Probability (P* >= 0.55).
+   - Combined (Default)     : Multi-Confluence: FVG + CRT + ML alignment.
 5. RISK & RATCHET GOVERNOR  : Dynamic equity-based lot sizing ($25-$50 base risk),
                              safe DRY-RUN mode (zero broker orders; default),
                              armed LIVE mode, and 7-stage microstructure ratchets.
@@ -27,8 +28,9 @@ trading pipeline for MetaTrader 5 (Blueberry Markets):
 Execution Modes:
   python Engine/forex_engine.py                     # Full cycle: Sync -> Retrain -> Live Telemetry (Combined)
   python Engine/forex_engine.py --strategy fvg      # Rule-Based ICT FVG Strategy (Dry-Run)
+  python Engine/forex_engine.py --strategy crt      # Candle Range Theory & ORB Strategy (Dry-Run)
   python Engine/forex_engine.py --strategy ml       # Pure XGBoost ML Strategy (Dry-Run)
-  python Engine/forex_engine.py --strategy combined # Dual Confluence: FVG + ML (Dry-Run)
+  python Engine/forex_engine.py --strategy combined # Multi-Confluence: FVG + CRT + ML (Dry-Run)
   python Engine/forex_engine.py --mode snapshot     # 1-pass evaluation snapshot across all 18 assets & exit
   python Engine/forex_engine.py --skip-train        # Run telemetry immediately with existing model weights
   python Engine/forex_engine.py --live              # ARM LIVE TRADING (Real broker orders dispatched)
@@ -565,6 +567,102 @@ def compute_features_pandas(df: pd.DataFrame, buffer_4h: Optional[pd.DataFrame] 
 
 
 # -------------------------------------------------------------------------
+# COMPONENT 3b: LIVE CRT / ORB OPENING RANGE STATE EXTRACTOR
+# -------------------------------------------------------------------------
+def compute_crt_orb_state(buffer: pd.DataFrame) -> dict:
+    """Computes live CRT/ORB session state from the 15m rolling buffer.
+
+    Returns dict with keys:
+        is_long_crt, is_short_crt  – confirmed breakout signals
+        or_high, or_low            – most recent session opening range bounds
+        body_ratio                 – breakout bar body confirmation ratio
+        judas_long, judas_short    – pre-market Judas sweep flags
+        session                    – 'London' | 'NY' | 'None'
+    """
+    default = dict(is_long_crt=False, is_short_crt=False,
+                   or_high=0.0, or_low=0.0, body_ratio=0.0,
+                   judas_long=False, judas_short=False, session="None")
+
+    if buffer.empty or len(buffer) < 10:
+        return default
+
+    df = buffer.copy()
+    if not isinstance(df.index, pd.DatetimeIndex):
+        return default
+
+    # Ensure UTC-aware index
+    if df.index.tz is None:
+        df.index = df.index.tz_localize("UTC")
+
+    df["_hour"]   = df.index.hour
+    df["_minute"] = df.index.minute
+    df["_date"]   = df.index.date
+
+    # Check both London (07:00) and NY (13:30) opening ranges
+    for sess_hour, sess_min, sess_name in [(7, 0, "London"), (13, 30, "NY")]:
+        or_bars = df[(df["_hour"] == sess_hour) & (df["_minute"] == sess_min)]
+        if or_bars.empty:
+            continue
+
+        or_start_idx = or_bars.index[-1]           # most recent session today
+        pos = df.index.get_loc(or_start_idx)
+        if pos + 1 >= len(df):
+            continue                                # need at least 1 bar after OR open
+
+        # Opening range: 2 bars (30 min)
+        or_slice = df.iloc[pos : pos + 2]
+        or_high  = float(or_slice["high"].max())
+        or_low   = float(or_slice["low"].min())
+        or_range = or_high - or_low
+        if or_range <= 0:
+            continue
+
+        # Previous day high/low from bars before the session date
+        or_date    = or_start_idx.date()
+        prev_bars  = df[df["_date"] < or_date]
+        if prev_bars.empty:
+            prev_day_high = float(df["high"].iloc[0])
+            prev_day_low  = float(df["low"].iloc[0])
+        else:
+            prev_day_high = float(prev_bars["high"].max())
+            prev_day_low  = float(prev_bars["low"].min())
+
+        # Judas sweep: pre-market (6 bars = 1.5 h before OR) swept PDH/PDL then reclaimed
+        pre_start = max(0, pos - 6)
+        pre_slice = df.iloc[pre_start:pos]
+        if not pre_slice.empty:
+            pre_low  = float(pre_slice["low"].min())
+            pre_high = float(pre_slice["high"].max())
+            judas_long  = (pre_low  < prev_day_low)  and (or_low  >= prev_day_low)
+            judas_short = (pre_high > prev_day_high) and (or_high <= prev_day_high)
+        else:
+            judas_long = judas_short = False
+
+        # Scan bars after OR for breakout confirmation
+        post_slice = df.iloc[pos + 2:]
+        for _, bar in post_slice.iterrows():
+            body = abs(bar["close"] - bar["open"])
+            wick = bar["high"] - bar["low"] + 1e-9
+            body_ratio = min(1.0, body / wick)
+
+            if bar["close"] > or_high and body_ratio >= 0.40:
+                return dict(is_long_crt=True, is_short_crt=False,
+                            or_high=or_high, or_low=or_low,
+                            body_ratio=body_ratio,
+                            judas_long=judas_long, judas_short=judas_short,
+                            session=sess_name)
+
+            if bar["close"] < or_low and body_ratio >= 0.40:
+                return dict(is_long_crt=False, is_short_crt=True,
+                            or_high=or_high, or_low=or_low,
+                            body_ratio=body_ratio,
+                            judas_long=judas_long, judas_short=judas_short,
+                            session=sess_name)
+
+    return default
+
+
+# -------------------------------------------------------------------------
 # COMPONENT 4: STATEFUL INFERENCE ENGINE
 # -------------------------------------------------------------------------
 class StatefulInferenceEngine:
@@ -642,6 +740,9 @@ class StatefulInferenceEngine:
         prob = float(xgb_model.predict(dmat)[0])
         del dmat
         return prob
+
+    def compute_crt_orb(self) -> dict:
+        return compute_crt_orb_state(self.buffer)
 
 
 # -------------------------------------------------------------------------
@@ -1121,30 +1222,45 @@ def run_telemetry(
                 local_low = eng.buffer['low'].iloc[-20:].min() if len(eng.buffer) >= 20 else eng.buffer['low'].min()
                 local_high = eng.buffer['high'].iloc[-20:].max() if len(eng.buffer) >= 20 else eng.buffer['high'].max()
 
+                crt_state = eng.compute_crt_orb()
+
                 if strat_mode == "fvg":
                     strat_tag = "FVG"
                     is_long_sig = (trend_val > 0 and bull_fvg > 0)
                     is_short_sig = (trend_val < 0 and bear_fvg > 0)
+                    sig_sl_long = local_low
+                    sig_sl_short = local_high
+                elif strat_mode == "crt":
+                    strat_tag = "CRT"
+                    is_long_sig = (crt_state["is_long_crt"] and (trend_val > 0 or crt_state["judas_long"]))
+                    is_short_sig = (crt_state["is_short_crt"] and (trend_val < 0 or crt_state["judas_short"]))
+                    sig_sl_long = crt_state["or_low"] if crt_state["or_low"] > 0 else local_low
+                    sig_sl_short = crt_state["or_high"] if crt_state["or_high"] > 0 else local_high
                 elif strat_mode == "ml":
                     strat_tag = "ML"
                     is_long_sig = (trend_val > 0 and prob >= PROBABILITY_THRESHOLD)
                     is_short_sig = (trend_val < 0 and prob >= PROBABILITY_THRESHOLD)
-                else:  # combined dual confluence
-                    strat_tag = "DUAL"
-                    is_long_sig = (trend_val > 0 and bull_fvg > 0 and prob >= PROBABILITY_THRESHOLD)
-                    is_short_sig = (trend_val < 0 and bear_fvg > 0 and prob >= PROBABILITY_THRESHOLD)
+                    sig_sl_long = local_low
+                    sig_sl_short = local_high
+                else:  # combined multi-confluence
+                    strat_tag = "COMBINED"
+                    # High conviction: FVG or CRT aligned with ML
+                    is_long_sig = ((trend_val > 0 and bull_fvg > 0) or crt_state["is_long_crt"]) and (prob >= PROBABILITY_THRESHOLD)
+                    is_short_sig = ((trend_val < 0 and bear_fvg > 0) or crt_state["is_short_crt"]) and (prob >= PROBABILITY_THRESHOLD)
+                    sig_sl_long = crt_state["or_low"] if crt_state["is_long_crt"] and crt_state["or_low"] > 0 else local_low
+                    sig_sl_short = crt_state["or_high"] if crt_state["is_short_crt"] and crt_state["or_high"] > 0 else local_high
 
                 decision_cell = "[dim]HOLD[/dim]"
                 if not is_kz:
                     decision_cell = "[dim yellow]HOLD (Off-Hours)[/dim yellow]"
                 elif is_long_sig:
                     entry = ask
-                    sl = local_low
+                    sl = sig_sl_long
                     r_dist = entry - sl
                     if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
                         decision_cell = "[dim]HOLD (Stop Range Invalid)[/dim]"
                     else:
-                        tp = entry + (4.0 * r_dist)
+                        tp = entry + (2.5 * r_dist)
                         calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
                         action_lbl = f"DRY-BUY ({strat_tag})" if is_dry_run else f"LIVE-BUY ({strat_tag})"
                         decision_cell = f"[bold white on green] {action_lbl} ({calc_lots:.2f}L) [/bold white on green]"
@@ -1155,12 +1271,12 @@ def run_telemetry(
 
                 elif is_short_sig:
                     entry = bid
-                    sl = local_high
+                    sl = sig_sl_short
                     r_dist = sl - entry
                     if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
                         decision_cell = "[dim]HOLD (Stop Range Invalid)[/dim]"
                     else:
-                        tp = entry - (4.0 * r_dist)
+                        tp = entry - (2.5 * r_dist)
                         calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
                         action_lbl = f"DRY-SELL ({strat_tag})" if is_dry_run else f"LIVE-SELL ({strat_tag})"
                         decision_cell = f"[bold white on red] {action_lbl} ({calc_lots:.2f}L) [/bold white on red]"
@@ -1175,14 +1291,24 @@ def run_telemetry(
                             decision_cell = "[dim]HOLD (No FVG)[/dim]"
                         elif (trend_val > 0 and bear_fvg > 0) or (trend_val < 0 and bull_fvg > 0):
                             decision_cell = "[dim yellow]HOLD (Trend Opposed)[/dim yellow]"
+                    elif strat_mode == "crt":
+                        if not crt_state["is_long_crt"] and not crt_state["is_short_crt"]:
+                            if crt_state["session"] != "None":
+                                decision_cell = f"[dim]HOLD (Inside {crt_state['session']} OR)[/dim]"
+                            else:
+                                decision_cell = "[dim]HOLD (No OR Formed)[/dim]"
+                        elif (crt_state["is_long_crt"] and trend_val < 0 and not crt_state["judas_long"]):
+                            decision_cell = "[dim yellow]HOLD (CRT Bull vs Bear Trend)[/dim yellow]"
+                        elif (crt_state["is_short_crt"] and trend_val > 0 and not crt_state["judas_short"]):
+                            decision_cell = "[dim yellow]HOLD (CRT Bear vs Bull Trend)[/dim yellow]"
                     elif strat_mode == "ml":
                         if prob < PROBABILITY_THRESHOLD:
                             decision_cell = f"[dim]HOLD (P*={prob:.2f}<{PROBABILITY_THRESHOLD})[/dim]"
                         elif trend_val == 0:
                             decision_cell = "[dim yellow]HOLD (Flat Trend)[/dim yellow]"
                     else:
-                        if bull_fvg == 0 and bear_fvg == 0:
-                            decision_cell = "[dim]HOLD (No FVG)[/dim]"
+                        if bull_fvg == 0 and bear_fvg == 0 and not crt_state["is_long_crt"] and not crt_state["is_short_crt"]:
+                            decision_cell = "[dim]HOLD (No FVG / CRT)[/dim]"
                         elif prob < PROBABILITY_THRESHOLD:
                             decision_cell = f"[dim]HOLD (P*={prob:.2f}<{PROBABILITY_THRESHOLD})[/dim]"
                         elif (trend_val > 0 and bear_fvg > 0) or (trend_val < 0 and bull_fvg > 0):
@@ -1204,7 +1330,14 @@ def run_telemetry(
                 )
 
             safety_lbl = "[bold green]DRY-RUN MODE (Zero Real Orders)[/bold green]" if is_dry_run else "[bold red]LIVE EXECUTION MODE (REAL ORDERS ARMED)[/bold red]"
-            strat_desc = "Rule-Based ICT FVG" if strat_mode == "fvg" else ("Pure XGBoost ML" if strat_mode == "ml" else "Dual Confluence: FVG + ML")
+            if strat_mode == "fvg":
+                strat_desc = "Rule-Based ICT FVG"
+            elif strat_mode == "crt":
+                strat_desc = "Candle Range Theory & ORB"
+            elif strat_mode == "ml":
+                strat_desc = "Pure XGBoost ML"
+            else:
+                strat_desc = "Multi-Confluence: FVG + CRT + ML"
             header_text = (
                 f"[bold white]Account:[/bold white] #{acc_dict.get('login')} ({acc_dict.get('server')})  |  "
                 f"[bold white]Balance:[/bold white] ${acc_dict.get('balance'):,.2f} USD  |  "
@@ -1309,13 +1442,13 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Standard Usage:
-  python Engine/forex_engine.py                         # Full cycle: Sync -> Retrain -> Dual Confluence (Dry-Run)
+  python Engine/forex_engine.py                         # Full cycle: Sync -> Retrain -> Multi-Confluence (Dry-Run)
   python Engine/forex_engine.py --strategy fvg          # Run pure Rule-Based ICT FVG strategy (Dry-Run)
+  python Engine/forex_engine.py --strategy crt          # Run pure Candle Range Theory & ORB strategy (Dry-Run)
   python Engine/forex_engine.py --strategy ml           # Run pure Machine Learning XGBoost strategy (Dry-Run)
-  python Engine/forex_engine.py --strategy combined     # Run dual confluence FVG + ML strategy (Dry-Run)
+  python Engine/forex_engine.py --strategy combined     # Run multi-confluence FVG + CRT + ML strategy (Dry-Run)
   python Engine/forex_engine.py --mode snapshot         # Run single evaluation pass and cleanly exit
-  python Engine/forex_engine.py --mode snapshot --strategy fvg
-  python Engine/forex_engine.py --mode snapshot --strategy ml
+  python Engine/forex_engine.py --mode snapshot --strategy crt
   python Engine/forex_engine.py --skip-train            # Skip retraining, run telemetry immediately
   python Engine/forex_engine.py --live                  # ARM LIVE TRADING: Dispatch real market orders to MT5
   python Engine/forex_engine.py --mode verify           # Run numerical parity assertions (< 1e-9 error)
@@ -1330,9 +1463,9 @@ Standard Usage:
     )
     parser.add_argument(
         "--strategy",
-        choices=["fvg", "ml", "combined"],
+        choices=["fvg", "crt", "ml", "combined"],
         default="combined",
-        help="Trading strategy: 'fvg' (Rule-Based ICT FVG), 'ml' (Pure XGBoost ML), 'combined' (Dual Confluence: FVG + ML) (default: combined)"
+        help="Trading strategy: 'fvg' (Rule-Based ICT FVG), 'crt' (Candle Range Theory & ORB), 'ml' (Pure XGBoost ML), 'combined' (Multi-Confluence: FVG + CRT + ML) (default: combined)"
     )
     parser.add_argument(
         "--dry-run",

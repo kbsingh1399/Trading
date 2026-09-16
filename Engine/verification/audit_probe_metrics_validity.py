@@ -53,7 +53,7 @@ if __package__ in (None, ""):
     sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 DEFAULT_TARGET = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "binance_backtesting_data"
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "binance_backtesting_data"
 )
 MASTER_SUFFIX = "_15m_master_2020_2026.parquet"
 

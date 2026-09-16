@@ -38,7 +38,7 @@ from Engine.verification.verify_parquet_integrity import (  # noqa: E402
     agent_microstructure, agent_schema, metrics_coverage_report,
 )
 
-DATA_DIR = os.path.join(ENGINE_DIR, "binance_backtesting_data")
+DATA_DIR = os.path.join(os.path.dirname(ENGINE_DIR), "binance_backtesting_data")
 CANARY = os.path.join(DATA_DIR, "BTCUSDT_15m_master_2020_2026.parquet")
 
 # exactly what historical_metrics_processor emits when no metrics rows exist for a bar

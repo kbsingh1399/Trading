@@ -39,7 +39,7 @@ REPO_ROOT = os.path.abspath(os.path.join(ENGINE_DIR, os.pardir))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
-DATA_DIR = os.path.join(ENGINE_DIR, "binance_backtesting_data")
+DATA_DIR = os.path.join(REPO_ROOT, "binance_backtesting_data")
 STEP_MS = 900_000
 CLOSE_OFFSET_MS = 899_999
 

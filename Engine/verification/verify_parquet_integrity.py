@@ -70,7 +70,7 @@ from Engine.core.schema import (  # noqa: E402
     master_filename,
 )
 
-DEFAULT_TARGET = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "binance_backtesting_data")
+DEFAULT_TARGET = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "binance_backtesting_data")
 _TOL = 1e-6
 
 # --- regime-scan calibration (multi-asset universe) ---------------------------

@@ -11,7 +11,7 @@ import os, glob
 import pandas as pd
 import numpy as np
 
-DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "binance_backtesting_data")
+DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "binance_backtesting_data")
 files = sorted(glob.glob(os.path.join(DATA_DIR, "*_15m_master_*.parquet")))
 print(f"Patching {len(files)} Parquet files in {DATA_DIR}...")
 

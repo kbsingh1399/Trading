@@ -262,7 +262,7 @@ class R11Config:
     gate_soft: bool = True                 # trade raw setups if model finds no EV
 
     # --- misc ---------------------------------------------------------------
-    data_dir: str = "Engine/binance_backtesting_data"
+    data_dir: str = "binance_backtesting_data"
     symbols: Tuple[str, ...] = tuple(SYMBOLS)
     verbose: bool = True
 
