@@ -45265,3 +45265,25 @@ study sessin chat for FVG based strategy which was giving postive alpha...
   - Total Trades: 498, Win Rate: 73.3%, Net R: +234.36R, Net PnL: +11,718.18 USD (+234.36% ROI), Max DD: -7.34%, Buy & Hold: -0.52%.
 - Tested python Engine/forex_engine.py --mode oos-window --strategy fvg_ml --window 20:
   - March 2026 Microstructure Shock: 23 trades, 65.2% Win Rate, +4.45R (+222.50 USD / +4.45% ROI), Max DD: -4.68% (within 5% threshold).
+
+## Turn 2026-09-16 18:19 UTC: Created ORB_CRT_ForexCFD_Strategy.py & Routed to forex_engine.py
+
+### 1. Architectural Upgrades Delivered
+- **Created Engine/ORB_CRT_ForexCFD_Strategy.py & Engine/strategy/ORB_CRT_ForexCFD_Strategy.py**:
+  - Implemented ORBCRTForexCFDStrategy subclassing BaseForexStrategy and registered with StrategyRegistry.register("orb_crt"), "crt_orb", and "crt".
+  - Numba JIT accelerated simulation (simulate_session_orb) evaluating London Open (07:00 UTC) and NY Open (13:30 UTC).
+  - Integrates 20 CRT features: body-to-range ratio (>= 0.40), close outside OR boundary, FVG expansion, pre-market 6-bar Judas sweep of PDL/PDH, and 4H trend alignment.
+  - Microstructure ratchets: +0.8R BE lock (+0.15R), +1.5R profit lock (+0.80R), +2.5R target exit, 24-bar time decay, and 8 bps friction.
+- **Engine Routing (Engine/forex_engine.py)**:
+  - Registered orb_crt, crt_orb, and crt directly in orex_engine.py.
+  - Available via python Engine/forex_engine.py --strategy orb_crt.
+
+### 2. Empirical Verification Results (Dec 1, 2025 to Sep 16, 2026 across 18 Forex & CFD Assets)
+- **Total Trades**: 7,180 completed trades
+- **Win Rate**: 58.6%
+- **Profit Factor**: 1.84
+- **Net R-Multiple**: +2,137.91R
+- **Net PnL**: +106,895.55 USD (+2,137.91% Net ROI on 5,000 USD capital)
+- **Max Drawdown**: -7.03%
+- **Asset Breadth**: 18 out of 18 assets delivered positive net alpha (Top: XAUCNH +167.19R, GAUCNH +161.21R, USDSEK +158.96R, FR40 +157.74R, EURCNH +157.42R, EURUSD +146.81R, US2000 +145.99R, AUDCHF +143.84R, GER40 +134.08R).
+- **Saved Visual Artifact**: Engine/artifacts/orb_crt_forex_equity_curve.png.

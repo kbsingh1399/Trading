@@ -85,6 +85,15 @@ except ImportError:
     except ImportError:
         logging.warning("Could not import FVGMLForexCFDStrategy at startup; will resolve dynamically.")
 
+# Explicitly import ORB_CRT strategy to register it into StrategyRegistry
+try:
+    from Engine.ORB_CRT_ForexCFD_Strategy import ORBCRTForexCFDStrategy
+except ImportError:
+    try:
+        from Engine.strategy.ORB_CRT_ForexCFD_Strategy import ORBCRTForexCFDStrategy
+    except ImportError:
+        logging.warning("Could not import ORBCRTForexCFDStrategy at startup; will resolve dynamically.")
+
 DATA_DIR = PROJECT_ROOT / "Forex_Backtesting_Data"
 MODELS_DIR = ENGINE_DIR / "models"
 PRODUCTION_MODEL_PATH = MODELS_DIR / "xgboost_forex.json"
@@ -830,74 +839,8 @@ class ICTFVGStrategy(BaseForexStrategy):
         return run_standard_backtest(self, start_date, end_date, symbols, save_plot)
 
 
-@StrategyRegistry.register("crt")
-class CRTStrategy(BaseForexStrategy):
-    """Candle Range Theory & Opening Range Breakout Strategy."""
-    name: str = "crt"
-    description: str = "Candle Range Theory & London/NY Opening Range Breakout Strategy"
-
-    def initialize(self, config: Optional[EngineConfig] = None) -> None:
-        self.config = config or EngineConfig.load()
-        self.initialized = True
-
-    def generate_signal(
-        self,
-        symbol: str,
-        buffer_15m: pd.DataFrame,
-        buffer_4h: Optional[pd.DataFrame] = None,
-        current_tick: Optional[Any] = None
-    ) -> StrategySignal:
-        if buffer_15m.empty or len(buffer_15m) < 25:
-            return StrategySignal(symbol=symbol, signal=0, reason="Insufficient Data")
-
-        feat_df = compute_features_pandas(buffer_15m, buffer_4h)
-        trend = feat_df.iloc[-1].get("htf_4h_trend", 0.0)
-        crt = compute_crt_orb_state(buffer_15m)
-
-        dt = buffer_15m['datetime'].iloc[-1] if 'datetime' in buffer_15m else pd.Timestamp.utcnow()
-        hour = dt.hour if hasattr(dt, 'hour') else 12
-        is_kz = (7 <= hour <= 10) or (12 <= hour <= 15)
-
-        bid = current_tick.bid if current_tick else float(buffer_15m['close'].iloc[-1])
-        ask = current_tick.ask if current_tick else float(buffer_15m['close'].iloc[-1])
-
-        if not is_kz:
-            return StrategySignal(symbol=symbol, signal=0, reason="HOLD (Off-Hours)")
-
-        is_long = crt["is_long_crt"] and (trend > 0 or crt["judas_long"])
-        is_short = crt["is_short_crt"] and (trend < 0 or crt["judas_short"])
-
-        if is_long:
-            entry = ask
-            sl = crt["or_low"] if crt["or_low"] > 0 else buffer_15m['low'].iloc[-20:].min()
-            r_dist = entry - sl
-            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                return StrategySignal(symbol=symbol, signal=0, reason="HOLD (Stop Range Invalid)")
-            return StrategySignal(
-                symbol=symbol, signal=1, entry_price=entry, sl_price=sl,
-                tp_price=entry + (2.5 * r_dist), strategy_tag="CRT", reason="BUY (CRT/ORB Breakout)"
-            )
-        elif is_short:
-            entry = bid
-            sl = crt["or_high"] if crt["or_high"] > 0 else buffer_15m['high'].iloc[-20:].max()
-            r_dist = sl - entry
-            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                return StrategySignal(symbol=symbol, signal=0, reason="HOLD (Stop Range Invalid)")
-            return StrategySignal(
-                symbol=symbol, signal=-1, entry_price=entry, sl_price=sl,
-                tp_price=entry - (2.5 * r_dist), strategy_tag="CRT", reason="SELL (CRT/ORB Breakdown)"
-            )
-
-        return StrategySignal(symbol=symbol, signal=0, reason="HOLD (No CRT Breakout)")
-
-    def run_backtest(
-        self,
-        start_date: str,
-        end_date: Optional[str] = None,
-        symbols: Optional[List[str]] = None,
-        save_plot: bool = True
-    ) -> BacktestResult:
-        return run_standard_backtest(self, start_date, end_date, symbols, save_plot)
+# Note: CRT / ORB Strategy is dynamically routed via ORBCRTForexCFDStrategy
+# Registered keys: 'orb_crt', 'crt_orb', 'crt'
 
 
 @StrategyRegistry.register("ml")
