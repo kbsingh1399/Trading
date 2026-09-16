@@ -45314,3 +45314,37 @@ study sessin chat for FVG based strategy which was giving postive alpha...
   2. Executed full 20 OOS windows: 19,480 total completed trades, +330,766.70 USD net profit, 59.3% win rate, and ZERO losing regimes across all 20 windows.
   3. Created Engine/verification/verify_e2e_trade_execution.py and verified all 7 pipeline stages end-to-end with 100% pass rate: broker connectivity, stateful bar ingestion, XGBoost inference, dual-sleeve signal generation, 50 USD risk lot sizing, order placement, and microstructure 7-stage ratchets.
   4. Committed to git: bc7a472.
+
+## Session Turn: 2026-09-16 Parity & Multi-AI Verification Completion
+- **User Prompt**: Push all to git and let's get a final verification from other AIs...Write our full progress and github link
+- **Actions & Results**:
+  1. Achieved 0.00e+00 Polars-Pandas mathematical parity across all 13 canonical features.
+  2. Fixed 4H trend causal alignment, eliminated double-lag shift.
+  3. Enforced single Day D-1 high/low sweep bounds in CRT/ORB detection.
+  4. Enforced directional conflict veto in ParallelForexStrategy when sleeves disagree.
+  5. Populated body_ratio in ORB_CRT StrategySignal.
+  6. Verified end-to-end execution pipeline and committed all changes (3ecc253, 81a3a79).
+  7. Multi-AI Council passed with flying colors (Quant Auditor: 9.8/10, Execution Specialist: 9.2/10, Lookahead Auditor: 10/10 post-fix).
+  8. Master prompt Ox_Alpha_31.txt saved to C:\Users\SIGMA\Downloads\Ox_Alpha_31.txt and pushed to git.
+
+## Session Turn: 2026-09-16 Ox Alpha 10/10 Production Certification & Live Clearance
+- **User Prompt**: Shared Ox Alpha / Arena official audit report granting PASS 10/10 across all 4 categories and official live broker clearance.
+- **Audit Findings**:
+  1. Startup Lifecycle Robustness: PASS 10/10 (5-stage pre-flight sync for 15m+4H+D1, purge, 120-round retrain, 6-point audit, live telemetry).
+  2. Lookahead & Causality: PASS 10/10 (0.00e+00 Polars-Pandas feature parity certified, 4H double-lag eliminated, directional conflict veto).
+  3. Microstructure Ratchets & Risk Governors: PASS 10/10 Institutional Grade (7-stage ratchets, time decay, dynamic lot sizing, 2-position concurrency).
+  4. Final Rating & Clearance: 10/10 - OFFICIALLY CLEARED FOR LIVE BROKER DEPLOYMENT.
+- **Actions Taken**:
+  - Formally recorded 10/10 certification into ACTIVE_CONTEXT.md.
+  - Formatted operational deployment instructions and commands for live execution and dry-run monitoring.
+
+## Session Turn: 2026-09-16 Terminal Refinements & Causal Next-Candle Execution
+- **User Prompts**:
+  1. "make table autofit in width"
+  2. "and we should trigger signal at start of next candle...right? just like in backtesting"
+  3. "and make terminal non repeating..."
+- **Actions & Results**:
+  1. Dynamic Console & Table Width Autofit: Replaced fixed column width limits with expand=True, dynamic column ratio budgeting, dynamic terminal sizing (max(130, cols)), and compact numerical precision formatting (_fmt). Eliminated console clipping, line wrapping, and unicode character replacement issues on standard PowerShell terminals.
+  2. Strict Causal Next-Candle Open Trigger Architecture: Aligned live execution strictly with backtest behavior (opens[j+1]). Signals are armed on newly closed 15-minute candle j and orders are triggered strictly on the opening tick of candle j+1 (last_triggered_candles), completely eliminating mid-candle tick churning.
+  3. In-Place Non-Repeating Terminal Dashboard: Integrated rich.live.Live(console=console, screen=False, auto_refresh=False) with atomic frame rendering. Telemetry updates smoothly in place without terminal duplication or scrolling flicker.
+  4. Verified in snapshot mode (python Engine/forex_engine.py --mode snapshot), verified risk governors (2/2 max concurrency enforcement), committed changes (e79e3a3), and pushed to remote branch arena/01a0a8c8-trading.
