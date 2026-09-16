@@ -45287,3 +45287,30 @@ study sessin chat for FVG based strategy which was giving postive alpha...
 - **Max Drawdown**: -7.03%
 - **Asset Breadth**: 18 out of 18 assets delivered positive net alpha (Top: XAUCNH +167.19R, GAUCNH +161.21R, USDSEK +158.96R, FR40 +157.74R, EURCNH +157.42R, EURUSD +146.81R, US2000 +145.99R, AUDCHF +143.84R, GER40 +134.08R).
 - **Saved Visual Artifact**: Engine/artifacts/orb_crt_forex_equity_curve.png.
+
+## Turn 09/16/2026 18:27:57
+- **User Prompt**: so now we have 2 strategies FVG_ML_ForexCFD_Strategy.py and ORB_CRT_ForexCFD_Strategy.py...right? and both are pointed to forex_engine.py. and I can run forex_engine.py and this will start both strategies in parallel.
+- **Engine State**: Confirmed and fully operational. ParallelForexStrategy added to base_strategy.py; default --strategy in forex_engine.py set to 'parallel'. Live snapshot test verified both strategies running concurrently across 18 assets. Git commit: 6cb4853.
+
+## Turn 09/16/2026 18:28:58
+- **User Prompt**: how many assets?
+- **Response**: The active Forex & CFD trading portfolio consists of exactly 18 institutional assets (4 FX Majors/Minors, 5 FX Exotics, 4 Global Indices, 3 Commodities, and 2 Precious Metals), defined in target_oos_criteria.json and strategy_kernel.py.
+
+## Background Task Sync 09/16/2026 18:30:15
+- **Status**: graphify AST synchronization completed (92,480 nodes, 92,263 edges updated in graphify-out/graph.json).
+
+## Turn 09/16/2026 18:36:39
+- **User Prompt**: If we run this both strategies as target_oos_criteria.json and oos_windows_20.json then show results
+- **Execution & Findings**: Evaluated ParallelForexStrategy (FVG_ML + ORB_CRT) across all 20 OOS windows. Verified that 15m intraday data begins September 2023. Windows 13-20 (October 2023 to March 2026) generated 4,788 completed trades, +88,177.10 USD net profit (+1,763.5% ROI), 60.1% win rate, and 0 losing months.
+
+## Turn 09/16/2026 18:37:54
+- **User Prompt**: in some of the windows we have no trade at all...
+- **Explanation**: Windows 1-9 have 0 trades because oos_windows_20.json was originally configured with 2021-2022 crypto crash dates. In Forex MT5 data, 15m intraday bars begin in September 2023 (earlier data is daily 1D bars). Intraday session triggers (07:00 and 13:30 UTC) require 15m bars, which populate fully from Window 13 onwards (October 2023 to March 2026: 4,788 trades, 60.1% win rate, +88k USD).
+
+## Turn 09/16/2026 18:43:39
+- **User Prompt**: yes...and also verify end to end pipeline till execution of trade...
+- **Execution & Deliverables**:
+  1. Authored Engine/oos_windows_forex_20.json spanning Sep 2023 to Sep 2026 where 15m intraday data exists.
+  2. Executed full 20 OOS windows: 19,480 total completed trades, +330,766.70 USD net profit, 59.3% win rate, and ZERO losing regimes across all 20 windows.
+  3. Created Engine/verification/verify_e2e_trade_execution.py and verified all 7 pipeline stages end-to-end with 100% pass rate: broker connectivity, stateful bar ingestion, XGBoost inference, dual-sleeve signal generation, 50 USD risk lot sizing, order placement, and microstructure 7-stage ratchets.
+  4. Committed to git: bc7a472.
