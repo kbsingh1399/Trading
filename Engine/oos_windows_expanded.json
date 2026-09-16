@@ -1,0 +1,162 @@
+[
+  {
+    "window_id": 1,
+    "name": "January 2025 Expanded OOS",
+    "start_date": "2025-01-01",
+    "end_date": "2025-01-31",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 1/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 2,
+    "name": "February 2025 Expanded OOS",
+    "start_date": "2025-02-01",
+    "end_date": "2025-02-28",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 2/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 3,
+    "name": "March 2025 Expanded OOS",
+    "start_date": "2025-03-01",
+    "end_date": "2025-03-31",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 3/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 4,
+    "name": "April 2025 Expanded OOS",
+    "start_date": "2025-04-01",
+    "end_date": "2025-04-30",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 4/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 5,
+    "name": "May 2025 Expanded OOS",
+    "start_date": "2025-05-01",
+    "end_date": "2025-05-31",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 5/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 6,
+    "name": "June 2025 Expanded OOS",
+    "start_date": "2025-06-01",
+    "end_date": "2025-06-30",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 6/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 7,
+    "name": "July 2025 Expanded OOS",
+    "start_date": "2025-07-01",
+    "end_date": "2025-07-31",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 7/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 8,
+    "name": "August 2025 Expanded OOS",
+    "start_date": "2025-08-01",
+    "end_date": "2025-08-31",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 8/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 9,
+    "name": "September 2025 Expanded OOS",
+    "start_date": "2025-09-01",
+    "end_date": "2025-09-30",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 9/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 10,
+    "name": "October 2025 Expanded OOS",
+    "start_date": "2025-10-01",
+    "end_date": "2025-10-31",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 10/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 11,
+    "name": "November 2025 Expanded OOS",
+    "start_date": "2025-11-01",
+    "end_date": "2025-11-30",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 11/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 12,
+    "name": "December 2025 Expanded OOS",
+    "start_date": "2025-12-01",
+    "end_date": "2025-12-31",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 12/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 13,
+    "name": "January 2026 Expanded OOS",
+    "start_date": "2026-01-01",
+    "end_date": "2026-01-31",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 13/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 14,
+    "name": "February 2026 Expanded OOS",
+    "start_date": "2026-02-01",
+    "end_date": "2026-02-28",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 14/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 15,
+    "name": "March 2026 Expanded OOS",
+    "start_date": "2026-03-01",
+    "end_date": "2026-03-31",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 15/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 16,
+    "name": "April 2026 Expanded OOS",
+    "start_date": "2026-04-01",
+    "end_date": "2026-04-30",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 16/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 17,
+    "name": "May 2026 Expanded OOS",
+    "start_date": "2026-05-01",
+    "end_date": "2026-05-31",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 17/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 18,
+    "name": "June 2026 Expanded OOS",
+    "start_date": "2026-06-01",
+    "end_date": "2026-06-30",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 18/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 19,
+    "name": "July 2026 Expanded OOS",
+    "start_date": "2026-07-01",
+    "end_date": "2026-07-31",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 19/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 20,
+    "name": "August 2026 Expanded OOS",
+    "start_date": "2026-08-01",
+    "end_date": "2026-08-31",
+    "regime": "unselected contiguous month",
+    "description": "Expanded block, window 20/20. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  }
+]

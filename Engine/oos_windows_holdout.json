@@ -1,0 +1,178 @@
+[
+  {
+    "window_id": 1,
+    "name": "March 2023 Holdout OOS",
+    "start_date": "2023-03-01",
+    "end_date": "2023-03-31",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 1/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 2,
+    "name": "April 2023 Holdout OOS",
+    "start_date": "2023-04-01",
+    "end_date": "2023-04-30",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 2/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 3,
+    "name": "May 2023 Holdout OOS",
+    "start_date": "2023-05-01",
+    "end_date": "2023-05-31",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 3/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 4,
+    "name": "June 2023 Holdout OOS",
+    "start_date": "2023-06-01",
+    "end_date": "2023-06-30",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 4/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 5,
+    "name": "July 2023 Holdout OOS",
+    "start_date": "2023-07-01",
+    "end_date": "2023-07-31",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 5/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 6,
+    "name": "August 2023 Holdout OOS",
+    "start_date": "2023-08-01",
+    "end_date": "2023-08-31",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 6/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 7,
+    "name": "September 2023 Holdout OOS",
+    "start_date": "2023-09-01",
+    "end_date": "2023-09-30",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 7/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 8,
+    "name": "October 2023 Holdout OOS",
+    "start_date": "2023-10-01",
+    "end_date": "2023-10-31",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 8/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 9,
+    "name": "November 2023 Holdout OOS",
+    "start_date": "2023-11-01",
+    "end_date": "2023-11-30",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 9/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 10,
+    "name": "December 2023 Holdout OOS",
+    "start_date": "2023-12-01",
+    "end_date": "2023-12-31",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 10/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 11,
+    "name": "January 2024 Holdout OOS",
+    "start_date": "2024-01-01",
+    "end_date": "2024-01-31",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 11/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 12,
+    "name": "February 2024 Holdout OOS",
+    "start_date": "2024-02-01",
+    "end_date": "2024-02-29",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 12/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 13,
+    "name": "March 2024 Holdout OOS",
+    "start_date": "2024-03-01",
+    "end_date": "2024-03-31",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 13/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 14,
+    "name": "April 2024 Holdout OOS",
+    "start_date": "2024-04-01",
+    "end_date": "2024-04-30",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 14/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 15,
+    "name": "May 2024 Holdout OOS",
+    "start_date": "2024-05-01",
+    "end_date": "2024-05-31",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 15/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 16,
+    "name": "June 2024 Holdout OOS",
+    "start_date": "2024-06-01",
+    "end_date": "2024-06-30",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 16/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 17,
+    "name": "July 2024 Holdout OOS",
+    "start_date": "2024-07-01",
+    "end_date": "2024-07-31",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 17/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 18,
+    "name": "August 2024 Holdout OOS",
+    "start_date": "2024-08-01",
+    "end_date": "2024-08-31",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 18/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 19,
+    "name": "September 2024 Holdout OOS",
+    "start_date": "2024-09-01",
+    "end_date": "2024-09-30",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 19/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 20,
+    "name": "October 2024 Holdout OOS",
+    "start_date": "2024-10-01",
+    "end_date": "2024-10-31",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 20/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 21,
+    "name": "November 2024 Holdout OOS",
+    "start_date": "2024-11-01",
+    "end_date": "2024-11-30",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 21/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  },
+  {
+    "window_id": 22,
+    "name": "December 2024 Holdout OOS",
+    "start_date": "2024-12-01",
+    "end_date": "2024-12-31",
+    "regime": "unselected contiguous month",
+    "description": "Holdout block, window 22/22. Contiguous calendar month drawn from a single disjoint grid; not event-selected."
+  }
+]

@@ -54,7 +54,7 @@ from scratch.fast_numba_oos_engine import (
     WINDOWS_PATH,
     CRITERIA_PATH,
 )
-from Engine.strategy.s1_dual_model_orderflow import (
+from Engine.strategy._retired_s1_dual_model_orderflow import (
     InstitutionalDualModelEngine,
 )
 
@@ -85,8 +85,6 @@ class EngineConfig:
     stage1_floor_profit: float = 75.0
     house_compounding_rate: float = 0.20
     house_compounding_start: float = 50.0
-    vol_shift_thresh: float = 0.92
-    vol_shift_amt: float = 0.025
     purge_hours: int = 72
     round_trip_friction_bps: float = 41.0
     random_state: int = 42
@@ -169,8 +167,6 @@ class LocalTradingEngine:
             stage1_floor_profit=self.config.stage1_floor_profit,
             house_compounding_rate=self.config.house_compounding_rate,
             house_compounding_start=self.config.house_compounding_start,
-            vol_shift_thresh=self.config.vol_shift_thresh,
-            vol_shift_amt=self.config.vol_shift_amt,
             random_state=self.config.random_state,
         )
 
@@ -247,10 +243,9 @@ class LocalTradingEngine:
             )
 
         # Causal model fitting & threshold scaling
-        trailing_vol = self._get_trailing_btc_vol(start_ts)
         ridge, clf, mu, sd, calib_thresh = self.strategy_engine.train_models(train_set)
         selected = self.strategy_engine.score_test_candidates(
-            test_set, ridge, clf, mu, sd, calib_thresh, trailing_vol_pct=trailing_vol
+            test_set, ridge, clf, mu, sd, calib_thresh
         )
 
         # Extract S1 candidate events

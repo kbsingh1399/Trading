@@ -1,35 +1,30 @@
 """
-================================================================================
-INSTITUTIONAL DUAL-MODEL ORDERFLOW STRATEGY (S1 DUAL-MODEL ENGINE)
-================================================================================
-Settled Invariants & Execution Protocols:
-1. Directional Separation: Independent LightGBM classifiers (clf_long, clf_short)
-   trained strictly on in-sample causal data with 72-hour quarantine purge.
-2. Stationary Feature Space:
-   - Relative VWAP Z-score (vwap_zscore)
-   - Liquidation Z-scores (long_liq_zs, short_liq_zs)
-   - Orderflow Divergence (zc_div)
-   - Relative Strength Index (rsi_14)
-   - Volume/Volatility expansion ratios (volume_ratio, atr_ratio)
-   - 200 EMA Trend Slope normalized by ATR (slope200)
-   - Spot/Futures basis in basis points (basis_bps)
-   - Intraday hour seasonality (hour)
-3. Cont-Stoikov Orderflow & Microstructure Gating:
-   - Safe Shorts: short_liq_zs < 1.2, vwap_zscore in [-2.0, -0.5]
-   - Institutional Volume Confirmation: volume_ratio >= 0.75 for breakdowns
-   - Mathematical Exhaustion Cap: vwap_zscore <= 2.8 for breakout longs
-4. Unified Regime-Dispatched Allocation:
-   - Strong Bull (tide >= 0.12): Trend-following longs (max 3 per asset)
-   - Bear Regime (tide <= -0.10): Safe shorts with volume confirmation (max 3 per asset)
-   - Neutral / Chop (-0.10 < tide < 0.12): Local bar-by-bar tide dispatch
-5. Microstructure Risk Bounding & Hsieh-Barmish Feedback Control:
-   - Base Risk: 50.00 USD (1.00% of 5,000.00 USD Capital)
-   - House Money Risk: 85.00 USD (unlocks at profit >= 60.00 USD)
-   - Mathematical Damping: risk = min(target_risk, max(5.0, dd_budget / 1.30))
-   - Hard Circuit Breaker: 4.75% drawdown exit
-   - Realistic Round-Trip Friction: 41.0 bps drag modeled per trade (-0.25R)
-================================================================================
+################################################################################
+#                                                                              #
+#   RETIRED 2026-09-16  --  S1 15m DUAL-MODEL ML SLEEVE. DO NOT USE.           #
+#                                                                              #
+#   Kept ONLY so the S1 teardown (scratch/diag_s1_autopsy.py) and the committed #
+#   historical ledgers stay reproducible. No live path imports this module.    #
+#                                                                              #
+#   Why it was retired (S1_TEARDOWN.md, 52,252 candidates, 18 symbols):        #
+#     * GROSS expectancy +0.0058 R, t = +0.85, p = 0.396. The entry signal is  #
+#       statistically indistinguishable from a coin flip. Setting transaction  #
+#       costs to exactly 0.0 bps would still not make it profitable.           #
+#     * Its risk unit, the 15m ATR-14, is a median 0.527% of price -- SMALLER  #
+#       than the 0.410% round trip. Friction was 0.779 R, i.e. 64.9% of the    #
+#       1.2R stop was consumed before price moved at all.                      #
+#     * OOS AUC 0.5217 against in-sample 0.8592. The strongest feature,        #
+#       vol_strain, correlates +0.1027 with the label but only +0.0142 with    #
+#       the GROSS outcome and -0.4865 with fric_r: the model learned the cost  #
+#       function, not the market.                                              #
+#                                                                              #
+#   The surviving sleeve is Engine/strategy/t1_breakout.py (4h Donchian).      #
+#   T1 generation below now DELEGATES to that module so there is exactly one   #
+#   copy of the T1 logic in the repository.                                    #
+#                                                                              #
+################################################################################
 """
+
 
 from __future__ import annotations
 from pathlib import Path
@@ -37,6 +32,13 @@ from typing import Tuple, Dict, Any, List
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+
+import sys as _sys
+from pathlib import Path as _Path
+_ROOT = _Path(__file__).resolve().parent.parent.parent
+if str(_ROOT) not in _sys.path:
+    _sys.path.insert(0, str(_ROOT))
+from Engine.execution_costs import ROUND_TRIP_BPS, ROUND_TRIP_FRAC, build_stress_series
 import lightgbm as lgb
 
 FEATURE_COLS = [
@@ -73,8 +75,7 @@ class InstitutionalDualModelEngine:
         stage1_floor_profit: float = 75.0,
         house_compounding_rate: float = 0.20,
         house_compounding_start: float = 50.0,
-        vol_shift_thresh: float = 0.92,
-        vol_shift_amt: float = 0.025,
+        min_train_rows_per_symbol: int = 500,
         random_state: int = 42
     ):
         self.capital = capital
@@ -100,8 +101,7 @@ class InstitutionalDualModelEngine:
         self.stage1_floor_profit = stage1_floor_profit
         self.house_compounding_rate = house_compounding_rate
         self.house_compounding_start = house_compounding_start
-        self.vol_shift_thresh = vol_shift_thresh
-        self.vol_shift_amt = vol_shift_amt
+        self.min_train_rows_per_symbol = min_train_rows_per_symbol
         self.random_state = random_state
 
     def train_models(
@@ -150,6 +150,81 @@ class InstitutionalDualModelEngine:
 
         return ridge, clf, mu, sd, calib_thresh
 
+    # ========================================================================
+    # PER-SYMBOL TRAINING  --  decouples the universe from the predictions
+    # ========================================================================
+    # Before this refactor the runner did:
+    #       train_set = all_data[train_mask]          # ALL symbols pooled
+    #       ridge, clf, ... = engine.train_models(train_set)
+    # so the S1 model was a single cross-sectional model fitted on every symbol
+    # at once. Adding or removing a symbol therefore changed the fitted
+    # coefficients and silently rewrote the predictions -- and the history --
+    # of every OTHER symbol. Measured effect: adding 7 altcoins moved the
+    # original 11 symbols' pooled PnL by +3,203.83 USD while the 7 newcomers
+    # themselves contributed -739.53. Attribution was impossible.
+    #
+    # Each symbol now gets its own model fitted only on its own history, so a
+    # universe change cannot touch another symbol's predictions. Symbols with
+    # insufficient history, or with only one class present in the training
+    # window, are skipped entirely for that window rather than silently
+    # borrowing a pooled model.
+    # ========================================================================
+    def train_models_by_symbol(self, train_df: pd.DataFrame) -> Dict[str, tuple]:
+        """Fit an independent model per symbol. Returns {symbol: (ridge, clf, mu, sd, thresh)}."""
+        models: Dict[str, tuple] = {}
+        for sym, sub in train_df.groupby("symbol", sort=True):
+            if len(sub) < self.min_train_rows_per_symbol:
+                continue
+            if sub["label_y"].nunique() < 2:
+                continue          # single-class window: no classifier can be fitted
+            sub = sub.sort_values("open_time_ms").reset_index(drop=True)
+            models[sym] = self.train_models(sub)
+        return models
+
+    def score_test_candidates_by_symbol(
+        self,
+        test_df: pd.DataFrame,
+        models: Dict[str, tuple],
+        regime_delta: float = 0.0
+    ) -> pd.DataFrame:
+        """Score each symbol's test rows with that symbol's own model."""
+        frames = []
+        skipped = []
+        thresholds = []
+        for sym, sub in test_df.groupby("symbol", sort=True):
+            if sym not in models:
+                skipped.append(sym)
+                continue
+            ridge, clf, mu, sd, thr = models[sym]
+            out = self.score_test_candidates(
+                sub, ridge, clf, mu, sd, thr, regime_delta=regime_delta
+            )
+            thresholds.append(float(out.attrs.get("effective_calib_thresh", thr)))
+            frames.append(out)
+
+        if not frames:
+            empty = test_df.iloc[0:0].copy()
+            empty["prob"] = pd.Series(dtype=float)
+            empty["calib_thresh"] = pd.Series(dtype=float)
+            empty.attrs.update(
+                effective_calib_thresh=0.0, regime_delta=max(0.0, float(regime_delta)),
+                symbols_modeled=[], symbols_skipped=skipped,
+            )
+            return empty
+
+        selected = pd.concat(frames, ignore_index=True)
+        selected.sort_values(by=["open_time_ms", "prob"], ascending=[True, False], inplace=True)
+        selected.reset_index(drop=True, inplace=True)
+        selected.attrs.update(
+            # Summary of the per-symbol thresholds; the runner reports this.
+            effective_calib_thresh=float(np.mean(thresholds)) if thresholds else 0.0,
+            regime_delta=max(0.0, float(regime_delta)),
+            symbols_modeled=sorted(models.keys()),
+            symbols_skipped=skipped,
+            n_thresholds=len(thresholds),
+        )
+        return selected
+
     def score_test_candidates(
         self,
         test_df: pd.DataFrame,
@@ -158,13 +233,22 @@ class InstitutionalDualModelEngine:
         mu: pd.Series,
         sd: pd.Series,
         calib_thresh: float,
-        trailing_vol_pct: float | None = None
+        regime_delta: float = 0.0
     ) -> pd.DataFrame:
         """Score out-of-sample test candidates using causal ensemble and threshold gating."""
-        if trailing_vol_pct is not None and trailing_vol_pct < self.vol_shift_thresh:
-            effective_calib_thresh = calib_thresh - self.vol_shift_amt
-        else:
-            effective_calib_thresh = calib_thresh
+        # PHASE 3: the relief branch is gone. The calibration threshold is FLAT.
+        # It formerly dropped by vol_shift_amt (0.025) whenever trailing BTC
+        # volatility fell below vol_shift_thresh (0.92), i.e. the system traded
+        # *more* aggressively in calm conditions -- an accelerator that walked
+        # it into macro tightenings. Governance here is penalty-only.
+        effective_calib_thresh = calib_thresh
+
+        # --- Regime Governor ------------------------------------------------
+        # Penalty-only defensive adjustment derived from persistent MARKET state
+        # (BTC realised volatility, tide alignment, cross-sectional dispersion)
+        # evaluated strictly before this window opened. Never negative.
+        regime_delta = max(0.0, float(regime_delta))
+        effective_calib_thresh += regime_delta
 
         X_test = test_df[FEATURE_COLS]
         X_te_s = np.nan_to_num(((X_test - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
@@ -180,141 +264,17 @@ class InstitutionalDualModelEngine:
         # At identical timestamps, prioritize higher model probability candidates first
         selected.sort_values(by=["open_time_ms", "prob"], ascending=[True, False], inplace=True)
         selected.reset_index(drop=True, inplace=True)
+        selected.attrs["regime_delta"] = regime_delta
+        selected.attrs["effective_calib_thresh"] = effective_calib_thresh
         return selected
 
 
     @staticmethod
-    def load_t1_breakout_trades(cache_dir: Path | str | None = None) -> pd.DataFrame:
-        """Load and generate pure 4h Donchian Breakout (T1) trade events across the certified assets.
-        
-        Orthogonal to 15m S1 discount pullbacks: triggers when 4h price breaks above/below 20 Donchian channel
-        with aligned Spot CVD slope and Bitcoin macro tide.
-        """
-        if cache_dir is None:
-            cache_dir = Path(__file__).resolve().parent.parent.parent / "scratch" / "cache_multi_tf"
-        else:
-            cache_dir = Path(cache_dir)
-
-        df_btc = pd.read_parquet(cache_dir / "BTCUSDT_4h.parquet")
-        df_btc['time'] = pd.to_datetime(df_btc['time'], utc=True)
-        btc_bull = (df_btc['close'] > df_btc['ema_50']) & (df_btc['ema_50'] > df_btc['ema_200'])
-        btc_bear = (df_btc['close'] < df_btc['ema_50']) & (df_btc['ema_50'] < df_btc['ema_200'])
-        btc_tide_series = pd.Series(np.where(btc_bull, 1, np.where(btc_bear, -1, 0)), index=df_btc['time'].astype('int64'))
-
-        parquet_files = list(cache_dir.glob("*_4h.parquet"))
-        asset_dfs = {}
-        for p in parquet_files:
-            sym = p.stem.replace("_4h", "")
-            df = pd.read_parquet(p)
-            df['time'] = pd.to_datetime(df['time'], utc=True)
-            asset_dfs[sym] = df.sort_values('time').reset_index(drop=True)
-
-        all_t1_trades = []
-        for sym, df in asset_dfs.items():
-            n = len(df)
-            ts_ms = df['time'].astype('int64')
-            btc_tide_val = ts_ms.map(btc_tide_series).fillna(0).values
-            closes = df['close'].values
-            highs = df['high'].values
-            lows = df['low'].values
-            opens = df['next_open'].values if 'next_open' in df.columns else df['open'].shift(-1).fillna(df['close']).values
-            atrs = df['atr'].values
-            d_high = df['donchian_high'].values
-            d_low = df['donchian_low'].values
-            e20 = df['ema_20'].values
-            e50 = df['ema_50'].values
-            e200 = df['ema_200'].values
-            e200_slope = df['ema_200_slope'].values
-            buy_vol = df['buy_vol_ratio'].values
-            cvd_slope = df['spot_cvd_slope'].values
-
-            last_entry = -999
-            for i in range(200, n - 17):
-                side = 0
-                if e20[i] > e50[i] > e200[i] and e200_slope[i] > 0 and closes[i] > d_high[i] and buy_vol[i] > 0.51 and cvd_slope[i] > 0 and btc_tide_val[i] > 0:
-                    side = 1
-                elif e20[i] < e50[i] < e200[i] and e200_slope[i] < 0 and closes[i] < d_low[i] and buy_vol[i] < 0.49 and cvd_slope[i] < 0 and btc_tide_val[i] < 0:
-                    side = -1
-
-                if side != 0 and (i - last_entry >= 4):
-                    last_entry = i
-                    fill_px = opens[i] * (1.0 + side * 0.0010)
-                    r_dist = 1.15 * max(atrs[i], fill_px * 0.005)
-                    stop_px = fill_px - side * r_dist
-                    t_entry = int(ts_ms.iloc[i+1])
-
-                    t_exit = -1
-                    r_gain = -1.0
-                    bars_held = 16
-                    max_fav = 0.0
-
-                    for j in range(1, 17):
-                        idx = i + 1 + j
-                        if idx >= n:
-                            break
-                        hi_j = highs[idx]
-                        lo_j = lows[idx]
-                        cl_j = closes[idx]
-
-                        if side == 1:
-                            if lo_j <= stop_px:
-                                t_exit = int(ts_ms.iloc[idx])
-                                r_gain = (stop_px - fill_px) / r_dist
-                                bars_held = j
-                                break
-                            cur_fav = (hi_j - fill_px) / r_dist
-                            if cur_fav > max_fav:
-                                max_fav = cur_fav
-                            if hi_j >= fill_px + 2.20 * r_dist:
-                                t_exit = int(ts_ms.iloc[idx])
-                                r_gain = 2.20
-                                bars_held = j
-                                break
-                            elif max_fav >= 1.40:
-                                stop_px = max(stop_px, fill_px + 0.85 * r_dist)
-                            elif max_fav >= 0.75:
-                                stop_px = max(stop_px, fill_px + 0.35 * r_dist)
-                        else:
-                            if hi_j >= stop_px:
-                                t_exit = int(ts_ms.iloc[idx])
-                                r_gain = (fill_px - stop_px) / r_dist
-                                bars_held = j
-                                break
-                            cur_fav = (fill_px - lo_j) / r_dist
-                            if cur_fav > max_fav:
-                                max_fav = cur_fav
-                            if lo_j <= fill_px - 2.20 * r_dist:
-                                t_exit = int(ts_ms.iloc[idx])
-                                r_gain = 2.20
-                                bars_held = j
-                                break
-                            elif max_fav >= 1.40:
-                                stop_px = min(stop_px, fill_px - 0.85 * r_dist)
-                            elif max_fav >= 0.75:
-                                stop_px = min(stop_px, fill_px - 0.35 * r_dist)
-
-                    if t_exit == -1:
-                        idx = min(i + 16, n - 1)
-                        t_exit = int(ts_ms.iloc[idx])
-                        cl_exit = closes[idx]
-                        r_gain = ((cl_exit - fill_px) / r_dist) if side == 1 else ((fill_px - cl_exit) / r_dist)
-                        bars_held = 16
-
-                    fric_r = (fill_px * 0.00205) / r_dist
-                    net_r = r_gain - fric_r
-
-                    all_t1_trades.append({
-                        "time": t_entry,
-                        "t_exit": t_exit,
-                        "r_gain": net_r,
-                        "hold_bars": bars_held * 16,
-                        "symbol": sym,
-                        "prob": 0.52,
-                        "strategy": "T1"
-                    })
-
-        df_t1 = pd.DataFrame(all_t1_trades).sort_values("time").reset_index(drop=True)
-        return df_t1
+    def load_t1_breakout_trades(cache_dir=None) -> pd.DataFrame:
+        """RETIRED shim. Delegates to Engine.strategy.t1_breakout, the single
+        source of truth for the T1 sleeve, so this frozen file cannot drift."""
+        from Engine.strategy.t1_breakout import load_t1_breakout_trades as _t1
+        return _t1(cache_dir)
 
     def simulate_execution(
         self,
@@ -473,7 +433,9 @@ class InstitutionalDualModelEngine:
                     consec_losses_s1 += 1
                     symbol_cooldown[sym] = t_entry + self.cooldown_bars * 15 * 60 * 1000
 
-                executed_trades.append({"win": 1 if r_gain > 0 else 0, "pnl": trade_pnl, "strat": "S1"})
+                executed_trades.append({"win": 1 if r_gain > 0 else 0, "pnl": trade_pnl, "strat": "S1",
+                                    "time": t_entry, "symbol": sym, "r_gain": r_gain,
+                                    "risk_usd": final_risk})
                 s1_count += 1
 
             else:  # T1 Breakout
@@ -509,7 +471,9 @@ class InstitutionalDualModelEngine:
                 if dd_pct > cur_max_dd_pct:
                     cur_max_dd_pct = dd_pct
 
-                executed_trades.append({"win": 1 if r_gain > 0 else 0, "pnl": trade_pnl, "strat": "T1"})
+                executed_trades.append({"win": 1 if r_gain > 0 else 0, "pnl": trade_pnl, "strat": "T1",
+                                    "time": t_entry, "symbol": sym, "r_gain": r_gain,
+                                    "risk_usd": final_risk})
                 t1_count += 1
 
         n_trades = len(executed_trades)
@@ -526,4 +490,7 @@ class InstitutionalDualModelEngine:
             "s1_trades": s1_count,
             "t1_trades": t1_count,
             "equity": equity,
+            # Trade-level ledger for the CVaR harness (Engine/strategy/cvar_gate_harness.py).
+            # Time-ordered, post-cost r_gain plus the USD risk actually deployed.
+            "trade_ledger": executed_trades,
         }

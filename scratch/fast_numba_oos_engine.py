@@ -19,10 +19,23 @@ from numba import njit, prange
 import numpy as np
 import pandas as pd
 
-DATA_DIR = Path(r"C:\Users\SIGMA\Documents\Trading\Engine\binance_backtesting_data")
-WINDOWS_PATH = Path(r"C:\Users\SIGMA\Documents\Trading\Engine\oos_windows_20.json")
-CRITERIA_PATH = Path(r"C:\Users\SIGMA\Documents\Trading\Engine\target_oos_criteria.json")
-OUTPUT_DIR = Path(r"C:\Users\SIGMA\Documents\Trading\scratch\ml_reversal_results")
+# Portable, repo-relative resolution (was hard-pinned to a Windows authoring machine).
+# Override with TRADING_DATA_DIR / TRADING_WINDOWS / TRADING_CRITERIA if needed.
+import os
+
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
+# Execution cost model -- single source of truth (Engine/execution_costs.py).
+# Numba resolves this module-level float as a compile-time constant inside @njit.
+from Engine.execution_costs import (ROUND_TRIP_BPS, ROUND_TRIP_FRAC,
+                                   STRESS_SCHEDULE, build_stress_series, stress_multiplier)
+
+DATA_DIR = Path(os.environ.get("TRADING_DATA_DIR", _REPO_ROOT / "Engine" / "binance_backtesting_data"))
+WINDOWS_PATH = Path(os.environ.get("TRADING_WINDOWS", _REPO_ROOT / "Engine" / "oos_windows_primary.json"))
+CRITERIA_PATH = Path(os.environ.get("TRADING_CRITERIA", _REPO_ROOT / "Engine" / "target_oos_criteria.json"))
+OUTPUT_DIR = Path(os.environ.get("TRADING_OUTPUT_DIR", _REPO_ROOT / "scratch" / "ml_reversal_results"))
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 CAPITAL = 5000.0
@@ -34,7 +47,12 @@ MIN_TRADES = 15
 # Certified genuine 11 institutional Binance USDT-M perpetuals
 CORE_SYMBOLS = [
     "BTCUSDT", "ETHUSDT", "XRPUSDT", "BNBUSDT", "DOGEUSDT",
-    "ADAUSDT", "TRXUSDT", "LINKUSDT", "DOTUSDT", "LTCUSDT", "BCHUSDT"
+    "ADAUSDT", "TRXUSDT", "LINKUSDT", "DOTUSDT", "LTCUSDT", "BCHUSDT",
+    # Added 2026-09: the 7 symbols whose 15m masters were already in the repo
+    # but were never traded. NOTE this does NOT raise the independent-episode
+    # count -- cross-symbol vol-rank correlation is 0.697, so n_eff moves only
+    # 1.380 -> 1.402. See DATA_EXPANSION_BLUEPRINT.md.
+    "AVAXUSDT", "SOLUSDT", "NEARUSDT", "APTUSDT", "ARBUSDT", "OPUSDT", "SUIUSDT",
 ]
 
 COLS_TO_LOAD = [
@@ -79,6 +97,7 @@ def label_triple_barriers_numba(
     h: np.ndarray,
     lo: np.ndarray,
     atr: np.ndarray,
+    stress: np.ndarray,
     long_cond: np.ndarray,
     short_cond: np.ndarray,
     horizon_bars: int = 24,
@@ -87,12 +106,14 @@ def label_triple_barriers_numba(
     be_trigger_r: float = 0.95,
     be_lock_r: float = 0.45,
     profit_trigger_r: float = 1.40,
-    profit_lock_r: float = 0.80,
-    friction_r: float = 0.25
+    profit_lock_r: float = 0.80
 ):
     """Lightning-fast Numba two-stage microstructure ratchet labeler.
     Causal bar j+1 ratchet arming prevents intra-bar lookahead.
     Tracks exact bars_held to accurately simulate position release.
+
+    Friction is NOT a parameter: it is derived from ROUND_TRIP_FRAC on entry
+    price, so it can never drift out of agreement with Engine/execution_costs.py.
     """
     n = len(c)
     is_candidate = np.zeros(n, dtype=np.bool_)
@@ -157,7 +178,10 @@ def label_triple_barriers_numba(
             exit_r = (exit_p - entry_p) / dist if s == 1 else (entry_p - exit_p) / dist
             hold_count = horizon_bars
 
-        net_r = exit_r - friction_r
+        # Round-trip cost in R units: charged on notional (regime-invariant in bps)
+        # and then stressed by the causal volatility-regime multiplier (Phase 4A).
+        fric_r = (entry_p * ROUND_TRIP_FRAC * stress[i]) / dist
+        net_r = exit_r - fric_r
         realized_r[i] = net_r
         label_y[i] = 1 if net_r > 0 else 0
         bars_held[i] = hold_count
@@ -172,16 +196,19 @@ def simulate_microstructure_ratchet_numba(
     h: np.ndarray,
     lo: np.ndarray,
     atr: np.ndarray,
+    stress: np.ndarray,
     entry_indices: np.ndarray,
     sides: np.ndarray,
     horizon_bars: int = 24,
     target_r: float = 2.2,
     stop_r: float = 1.0,
     be_trigger_r: float = 1.4,
-    be_lock_r: float = 0.35,
-    friction_r: float = 0.25
+    be_lock_r: float = 0.35
 ):
-    """Numba compiled simulator for two-stage microstructure ratchet with friction."""
+    """Numba compiled simulator for two-stage microstructure ratchet with friction.
+
+    Friction is derived from ROUND_TRIP_FRAC on entry price, not passed in.
+    """
     n_trades = len(entry_indices)
     net_r_arr = np.zeros(n_trades, dtype=np.float64)
     is_win_arr = np.zeros(n_trades, dtype=np.int8)
@@ -228,7 +255,9 @@ def simulate_microstructure_ratchet_numba(
             exit_p = c[min(i + horizon_bars, n_bars - 1)]
             exit_r = (exit_p - entry_p) / dist if side == 1 else (entry_p - exit_p) / dist
 
-        net_r = exit_r - friction_r
+        # Round-trip cost in R units, stressed by the volatility-regime multiplier.
+        fric_r = (entry_p * ROUND_TRIP_FRAC * stress[i]) / dist
+        net_r = exit_r - fric_r
         net_r_arr[k] = net_r
         is_win_arr[k] = 1 if net_r > 0 else 0
 
@@ -243,8 +272,9 @@ def warmup_numba():
     dummy_lo = np.array([99.0, 100.0, 101.0, 98.0, 102.0, 103.0], dtype=np.float64)
     dummy_atr = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0], dtype=np.float64)
     dummy_cond = np.array([True, False, False, False, False, False], dtype=np.bool_)
-    _ = label_triple_barriers_numba(dummy_c, dummy_h, dummy_lo, dummy_atr, dummy_cond, dummy_cond, 2, 2.0, 1.0)
-    _ = simulate_microstructure_ratchet_numba(dummy_c, dummy_h, dummy_lo, dummy_atr, np.array([0]), np.array([1]), 2, 2.0, 1.0, 1.4, 0.35, 0.25)
+    dummy_stress = np.ones(6, dtype=np.float64)
+    _ = label_triple_barriers_numba(dummy_c, dummy_h, dummy_lo, dummy_atr, dummy_stress, dummy_cond, dummy_cond, 2, 2.0, 1.0)
+    _ = simulate_microstructure_ratchet_numba(dummy_c, dummy_h, dummy_lo, dummy_atr, dummy_stress, np.array([0]), np.array([1]), 2, 2.0, 1.0, 1.4, 0.35)
     t_warm = (time.perf_counter() - t0) * 1000
     print(f"[Numba Core] JIT Compiler initialized and warm in {t_warm:.1f} ms.")
 
@@ -263,9 +293,17 @@ def load_btc_macro_tide() -> pd.Series:
     return pd.Series(tide, index=df["open_time_ms"])
 
 
-def compile_dataset_with_numba(friction_r: float = 0.18):
+def compile_dataset_with_numba():
     t_start = time.perf_counter()
     warmup_numba()
+
+    # PHASE 4A: causal volatility-regime friction stress, shared by every symbol.
+    _stress = build_stress_series(_REPO_ROOT / "scratch" / "cache_multi_tf").sort_values("avail_time")
+    _stress_hi = float((_stress["mult"] >= 3.0).mean())
+    _stress_mid = float((_stress["mult"] == 1.5).mean())
+    print(f"[Friction] regime stress armed: {ROUND_TRIP_BPS:.1f} bps base | "
+          f"{_stress_hi*100:.2f}% of 4h bars at 3.0x ({ROUND_TRIP_BPS*3.0:.1f} bps), "
+          f"{_stress_mid*100:.2f}% at 1.5x ({ROUND_TRIP_BPS*1.5:.1f} bps)")
 
     btc_tide = load_btc_macro_tide()
     frames = []
@@ -280,9 +318,19 @@ def compile_dataset_with_numba(friction_r: float = 0.18):
         t = df.open_time_ms.to_numpy(np.int64)
         n = len(df)
 
-        atr_raw = df["atr_14"].fillna(df["close"] * 0.01).to_numpy(float)
-        min_atr = df["close"].to_numpy(float) * 0.012  # Volatility targeting minimum 1.2% price stop
-        atr = np.maximum(atr_raw, min_atr)
+        # PHASE 2: the former np.maximum(atr_raw, close * 0.012) floor bound on
+        # 92.45% of bars across all 11 symbols, pinning R to a constant 1.440% of
+        # price and making the triple-barrier grid fixed-percentage rather than
+        # ATR-adaptive. Removed deliberately so pure ATR drives the geometry.
+        atr = df["atr_14"].fillna(df["close"] * 0.01).to_numpy(float)
+
+        # As-of join the causal 4h volatility-rank multiplier onto these 15m bars.
+        # The series is indexed by 4h bar CLOSE, so nothing here can see the future.
+        _bt = pd.DataFrame({"bt": pd.to_datetime(t, unit="ms", utc=True).astype("datetime64[ns, UTC]")})
+        _mg = pd.merge_asof(_bt, _stress, left_on="bt", right_on="avail_time",
+                            direction="backward")
+        stress = _mg["mult"].to_numpy(float)
+        stress = np.where(np.isfinite(stress), stress, 1.0)
 
         atr_100 = df["atr_100"].fillna(df["close"] * 0.01).to_numpy(float)
         atr_ratio = np.clip(np.where(atr_100 > 0, atr / atr_100, 1.0), 0.2, 5.0)
@@ -335,7 +383,7 @@ def compile_dataset_with_numba(friction_r: float = 0.18):
         # Execute JIT Ratchet Labeler with Convex Asymmetric Payoff Geometry
         t_numba_0 = time.perf_counter()
         is_cand, side, label_y, real_r, b_held = label_triple_barriers_numba(
-            c, h, lo, atr, long_cond, short_cond, 32, 3.0, 1.2, 1.6, 0.35, 2.2, 1.4, friction_r
+            c, h, lo, atr, stress, long_cond, short_cond, 32, 3.0, 1.2, 1.6, 0.35, 2.2, 1.4
         )
         t_numba_ms = (time.perf_counter() - t_numba_0) * 1000
 

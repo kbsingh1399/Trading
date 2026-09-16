@@ -1,0 +1,202 @@
+[
+  {
+    "window_id": 1,
+    "name": "January 2021 Expanded OOS",
+    "start_date": "2021-01-01",
+    "end_date": "2021-01-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 2,
+    "name": "February 2021 Expanded OOS",
+    "start_date": "2021-02-01",
+    "end_date": "2021-02-28",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 3,
+    "name": "March 2021 Expanded OOS",
+    "start_date": "2021-03-01",
+    "end_date": "2021-03-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 4,
+    "name": "April 2021 Expanded OOS",
+    "start_date": "2021-04-01",
+    "end_date": "2021-04-30",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 5,
+    "name": "June 2021 Expanded OOS",
+    "start_date": "2021-06-01",
+    "end_date": "2021-06-30",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 6,
+    "name": "July 2021 Expanded OOS",
+    "start_date": "2021-07-01",
+    "end_date": "2021-07-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 7,
+    "name": "August 2021 Expanded OOS",
+    "start_date": "2021-08-01",
+    "end_date": "2021-08-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 8,
+    "name": "October 2021 Expanded OOS",
+    "start_date": "2021-10-01",
+    "end_date": "2021-10-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 9,
+    "name": "December 2021 Expanded OOS",
+    "start_date": "2021-12-01",
+    "end_date": "2021-12-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 10,
+    "name": "February 2022 Expanded OOS",
+    "start_date": "2022-02-01",
+    "end_date": "2022-02-28",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 11,
+    "name": "March 2022 Expanded OOS",
+    "start_date": "2022-03-01",
+    "end_date": "2022-03-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 12,
+    "name": "April 2022 Expanded OOS",
+    "start_date": "2022-04-01",
+    "end_date": "2022-04-30",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 13,
+    "name": "July 2022 Expanded OOS",
+    "start_date": "2022-07-01",
+    "end_date": "2022-07-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 14,
+    "name": "August 2022 Expanded OOS",
+    "start_date": "2022-08-01",
+    "end_date": "2022-08-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 15,
+    "name": "October 2022 Expanded OOS",
+    "start_date": "2022-10-01",
+    "end_date": "2022-10-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 16,
+    "name": "December 2022 Expanded OOS",
+    "start_date": "2022-12-01",
+    "end_date": "2022-12-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 17,
+    "name": "February 2023 Expanded OOS",
+    "start_date": "2023-02-01",
+    "end_date": "2023-02-28",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 18,
+    "name": "April 2023 Expanded OOS",
+    "start_date": "2023-04-01",
+    "end_date": "2023-04-30",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 19,
+    "name": "May 2023 Expanded OOS",
+    "start_date": "2023-05-01",
+    "end_date": "2023-05-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 20,
+    "name": "July 2023 Expanded OOS",
+    "start_date": "2023-07-01",
+    "end_date": "2023-07-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 21,
+    "name": "September 2023 Expanded OOS",
+    "start_date": "2023-09-01",
+    "end_date": "2023-09-30",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 22,
+    "name": "November 2023 Expanded OOS",
+    "start_date": "2023-11-01",
+    "end_date": "2023-11-30",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 23,
+    "name": "December 2023 Expanded OOS",
+    "start_date": "2023-12-01",
+    "end_date": "2023-12-31",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 24,
+    "name": "February 2024 Expanded OOS",
+    "start_date": "2024-02-01",
+    "end_date": "2024-02-29",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  },
+  {
+    "window_id": 25,
+    "name": "April 2024 Expanded OOS",
+    "start_date": "2024-04-01",
+    "end_date": "2024-04-30",
+    "regime": "Expanded monthly OOS",
+    "description": "Non-overlapping monthly window added to widen the suite."
+  }
+]
