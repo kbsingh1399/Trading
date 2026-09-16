@@ -20,17 +20,25 @@ Your objective is to design, extract from Azure Kusto, and execute an institutio
    - Cluster URI: `https://kvc-u9tczy1a0qyc38exr3.northeurope.kusto.windows.net`
    - Cluster Name: `MyFreeCluster` (Europe)
    - Database: `Trading`
-   - Primary Table: `BinanceFootprint` (Aggregated 15-minute footprint bars)
+   - Primary Tables: 
+     * `Binance_Footprint_15min` (Aggregated 15-minute footprint bars, CVD, Delta, Liquidations)
+     * `Binance_Master_15min` (Canonical 15-minute OHLCV price bars)
 
-2. **Database Schema (`BinanceFootprint`):**
-   - `timestamp` (datetime): 15-minute bar close timestamp (UTC)
-   - `symbol` (string): Perpetual ticker (e.g., BTCUSDT, ETHUSDT)
-   - `open`, `high`, `low`, `close` (real): Price action
-   - `volume` (real): Base asset traded volume
-   - `quote_volume` (real): USDT total volume
-   - `taker_buy_quote_volume` (real): Aggressive taker buy volume in USDT
-   - `long_liquidations` (real): Notional USDT value of forced long liquidations
-   - `short_liquidations` (real): Notional USDT value of forced short liquidations
+2. **Database Schema Details:**
+   - **`Binance_Footprint_15min` Schema:**
+     * `timestamp` (datetime): 15-minute bar close timestamp (UTC)
+     * `symbol` (string): Perpetual ticker (e.g., BTCUSDT, ETHUSDT)
+     * `taker_buy_quote_volume` (real): Aggressive taker buy volume in USDT
+     * `quote_volume` (real): Total USDT volume traded
+     * `long_liquidations` (real): Notional USDT value of forced long liquidations
+     * `short_liquidations` (real): Notional USDT value of forced short liquidations
+   - **`Binance_Master_15min` Schema:**
+     * `timestamp` (datetime): 15-minute bar close timestamp (UTC)
+     * `symbol` (string): Perpetual ticker (e.g., BTCUSDT, ETHUSDT)
+     * `open`, `high`, `low`, `close` (real): Price action
+     * `volume` (real): Base asset traded volume
+     * `quote_volume` (real): Total USDT volume traded
+   - *Note:* If running combined queries, join `Binance_Footprint_15min` with `Binance_Master_15min` on `symbol, timestamp` or query `Binance_Footprint_15min` directly if OHLC columns are co-located.
 
 3. **Trading Universe (18 Institutional Binance Perpetuals):**
    `BTCUSDT, ETHUSDT, XRPUSDT, SOLUSDT, BNBUSDT, DOGEUSDT, ADAUSDT, TRXUSDT, LINKUSDT, AVAXUSDT, SUIUSDT, NEARUSDT, DOTUSDT, LTCUSDT, BCHUSDT, APTUSDT, OPUSDT, ARBUSDT`
