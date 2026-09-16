@@ -17,6 +17,7 @@ OOS_JSON = os.path.join(SCRIPT_DIR, "oos_windows_20.json")
 
 def process_asset(asset, df, start_h, start_m):
     # Prepare numpy arrays for numba
+    opens = df['open'].values.astype(np.float64)
     highs = df['high'].values.astype(np.float64)
     lows = df['low'].values.astype(np.float64)
     closes = df['close'].values.astype(np.float64)
@@ -38,7 +39,7 @@ def process_asset(asset, df, start_h, start_m):
     day_of_weeks = df['datetime'].dt.dayofweek.values.astype(np.int32)
     
     features, outcomes, timestamps_out = simulate_orb_trades(
-        highs, lows, closes, volumes, timestamps, dates, hours, minutes, day_of_weeks,
+        opens, highs, lows, closes, volumes, timestamps, dates, hours, minutes, day_of_weeks,
         start_hour=start_h, start_minute=start_m
     )
     
@@ -47,7 +48,8 @@ def process_asset(asset, df, start_h, start_m):
         
     res_df = pd.DataFrame(features, columns=['direction_enum', 'or_range_pct', 'rsi_14', 'vwap_dist', 'ema_dist', 
                                              'hour', 'day_of_week', 'ema_200_dist', 'ema_200_slope', 'atr_14_pct', 
-                                             'vol_spike', 'or_range_atr', 'pdl_dist', 'pdh_dist', 'swept_pdl', 'swept_pdh'])
+                                             'vol_spike', 'or_range_atr', 'pdl_dist', 'pdh_dist', 'swept_pdl', 'swept_pdh',
+                                             'body_ratio', 'close_outside', 'fvg_expansion', 'judas_sweep'])
     res_df['outcome'] = outcomes
     res_df['datetime'] = pd.to_datetime(timestamps_out, unit='s', utc=True)
     res_df['asset'] = asset
@@ -66,8 +68,8 @@ def evaluate_oos():
     
     all_trades = []
     
-    # We discovered raw ORB bleeds on exotics, so we restrict to the proven edge subset
-    ORB_ASSETS = [a for a in CANONICAL_18_ASSETS if a in ['GER40', 'FR40', 'US2000', 'GAS', 'XAUCNH', 'NICKEL']]
+    # Evaluate all 18 canonical institutional assets
+    ORB_ASSETS = CANONICAL_18_ASSETS
     
     for asset in ORB_ASSETS:
         filename = asset if asset != 'GER40' else 'GER30'
@@ -88,7 +90,8 @@ def evaluate_oos():
     
     features = ['direction_enum', 'or_range_pct', 'rsi_14', 'vwap_dist', 'ema_dist', 
                 'hour', 'day_of_week', 'ema_200_dist', 'ema_200_slope', 'atr_14_pct', 
-                'vol_spike', 'or_range_atr', 'pdl_dist', 'pdh_dist', 'swept_pdl', 'swept_pdh']
+                'vol_spike', 'or_range_atr', 'pdl_dist', 'pdh_dist', 'swept_pdl', 'swept_pdh',
+                'body_ratio', 'close_outside', 'fvg_expansion', 'judas_sweep']
     
     total_oos_pnl = 0.0
     total_trades = 0

@@ -5,6 +5,7 @@ from typing import Tuple
 
 @njit
 def simulate_orb_trades(
+    opens: np.ndarray,
     highs: np.ndarray,
     lows: np.ndarray,
     closes: np.ndarray,
@@ -23,7 +24,7 @@ def simulate_orb_trades(
     
     max_trades = (n // 10) + 100
     
-    features = np.zeros((max_trades, 16), dtype=np.float64)
+    features = np.zeros((max_trades, 20), dtype=np.float64)
     outcomes = np.zeros(max_trades, dtype=np.float64) # This will now hold exact Net R instead of 1/0
     timestamps_out = np.zeros(max_trades, dtype=np.int64)
     
@@ -127,6 +128,12 @@ def simulate_orb_trades(
                 trade_start = i + range_duration_bars
                 trade_end = min(n, trade_start + trade_duration_bars)
                 
+                min_prior_low = lows[i]
+                max_prior_high = highs[i]
+                for p in range(i, trade_start):
+                    if lows[p] < min_prior_low: min_prior_low = lows[p]
+                    if highs[p] > max_prior_high: max_prior_high = highs[p]
+                
                 for j in range(trade_start, trade_end):
                     if highs[j] > or_high:
                         # LONG FILTER
@@ -135,12 +142,10 @@ def simulate_orb_trades(
                             entry = or_high
                             sl = or_low
                             
-                            # RATCHET LOGIC
-                            r_val = or_range
+                            prev_idx = j - 1
+                            r_val = max(or_range, 0.50 * atrs[prev_idx])
                             tp = entry + 2.5 * r_val
                             current_sl = sl
-                            
-                            prev_idx = j - 1
                             
                             v_dist = (closes[prev_idx] - vwaps[prev_idx]) / (closes[prev_idx] + 1e-9)
                             e50_dist = (closes[prev_idx] - emas_50[prev_idx]) / (closes[prev_idx] + 1e-9)
@@ -153,6 +158,12 @@ def simulate_orb_trades(
                             atr_pct = atrs[prev_idx] / (closes[prev_idx] + 1e-9)
                             vol_spike = volumes[j] / (vol_sma_20[prev_idx] + 1e-9)
                             range_atr = or_range / (atrs[prev_idx] + 1e-9)
+                            
+                            # CRT Features
+                            body_ratio = abs(closes[j] - opens[j]) / (highs[j] - lows[j] + 1e-9)
+                            close_outside = 1.0 if closes[j] > or_high else 0.0
+                            fvg_expansion = 1.0 if (j >= 2 and lows[j] > highs[j-2]) else 0.0
+                            judas_sweep = 1.0 if min_prior_low < or_low else 0.0
                             
                             features[trade_idx, 0] = direction
                             features[trade_idx, 1] = or_range / (or_low + 1e-9)
@@ -170,6 +181,10 @@ def simulate_orb_trades(
                             features[trade_idx, 13] = pdh_dist
                             features[trade_idx, 14] = swept_pdl
                             features[trade_idx, 15] = swept_pdh
+                            features[trade_idx, 16] = body_ratio
+                            features[trade_idx, 17] = close_outside
+                            features[trade_idx, 18] = fvg_expansion
+                            features[trade_idx, 19] = judas_sweep
                             
                             outcome_r = -1.0 # Default loss
                             phase_0_locked = False
@@ -178,7 +193,6 @@ def simulate_orb_trades(
                             for k in range(j, trade_end):
                                 # Time decay check: 24 bars
                                 if k - j >= 24:
-                                    # Exit at market if we havent gained 0.2R
                                     current_r = (closes[k] - entry) / r_val
                                     if current_r < 0.2:
                                         outcome_r = current_r
@@ -202,10 +216,9 @@ def simulate_orb_trades(
                                     phase_1_locked = True
                                     
                             if outcome_r == -1.0:
-                                # if it just timed out without hitting anything
                                 outcome_r = (closes[trade_end-1] - entry) / r_val
                                 
-                            outcomes[trade_idx] = outcome_r
+                            outcomes[trade_idx] = max(-1.15, min(2.5, outcome_r))
                             timestamps_out[trade_idx] = timestamps[j]
                             trade_idx += 1
                         i = trade_end
@@ -218,11 +231,11 @@ def simulate_orb_trades(
                             entry = or_low
                             sl = or_high
                             
-                            r_val = or_range
+                            prev_idx = j - 1
+                            r_val = max(or_range, 0.50 * atrs[prev_idx])
                             tp = entry - 2.5 * r_val
                             current_sl = sl
                             
-                            prev_idx = j - 1
                             v_dist = (closes[prev_idx] - vwaps[prev_idx]) / (closes[prev_idx] + 1e-9)
                             e50_dist = (closes[prev_idx] - emas_50[prev_idx]) / (closes[prev_idx] + 1e-9)
                             e200_dist = (closes[prev_idx] - emas_200[prev_idx]) / (closes[prev_idx] + 1e-9)
@@ -234,6 +247,12 @@ def simulate_orb_trades(
                             atr_pct = atrs[prev_idx] / (closes[prev_idx] + 1e-9)
                             vol_spike = volumes[j] / (vol_sma_20[prev_idx] + 1e-9)
                             range_atr = or_range / (atrs[prev_idx] + 1e-9)
+                            
+                            # CRT Features
+                            body_ratio = abs(closes[j] - opens[j]) / (highs[j] - lows[j] + 1e-9)
+                            close_outside = 1.0 if closes[j] < or_low else 0.0
+                            fvg_expansion = 1.0 if (j >= 2 and highs[j] < lows[j-2]) else 0.0
+                            judas_sweep = 1.0 if max_prior_high > or_high else 0.0
                             
                             features[trade_idx, 0] = direction
                             features[trade_idx, 1] = or_range / (or_low + 1e-9)
@@ -251,6 +270,10 @@ def simulate_orb_trades(
                             features[trade_idx, 13] = pdh_dist
                             features[trade_idx, 14] = swept_pdl
                             features[trade_idx, 15] = swept_pdh
+                            features[trade_idx, 16] = body_ratio
+                            features[trade_idx, 17] = close_outside
+                            features[trade_idx, 18] = fvg_expansion
+                            features[trade_idx, 19] = judas_sweep
                             
                             outcome_r = -1.0
                             phase_0_locked = False
@@ -281,7 +304,7 @@ def simulate_orb_trades(
                             if outcome_r == -1.0:
                                 outcome_r = (entry - closes[trade_end-1]) / r_val
                             
-                            outcomes[trade_idx] = outcome_r
+                            outcomes[trade_idx] = max(-1.15, min(2.5, outcome_r))
                             timestamps_out[trade_idx] = timestamps[j]
                             trade_idx += 1
                         i = trade_end
