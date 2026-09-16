@@ -108,10 +108,11 @@ When `AGENTS.md` is loaded, execute sequentially without asking:
    - On every single turn, you must coordinate a minimum of **3 distinct agent personas** (e.g., Data Architect, Quant Strategist, QA/Verification Engineer).
    - You MUST generate an "Orchestration Report" header detailing the active agents and their specific mandates before writing any code.
    - Never declare a task complete without explicit cross-verification by the QA/Verification agent.
-3. **Mandatory Multi-Skill Loading (Zero Amnesia)**: 
-   - You MUST proactively search for and dynamically load **at least 2 relevant skills** from `.agents/skills/` (e.g., `@[engineering-features-for-machine-learning]` + `@[agent-data-ml-model]`) before proposing a solution. 
-   - You CANNOT assume you know what is in a skill file; you MUST physically read the `SKILL.md` into context using your `view_file` tool.
-   - You MUST include a header confirming which skills were dynamically loaded: `> 📚 **Active Skills Loaded & Applied:** @[skill-1], @[skill-2]`.
+3. **Mandatory Multi-Skill Ensemble Loading (Universal All-Relevant-Skills Directive)**: 
+   - **No Single-Skill Fallacy**: Real-world quant and engineering tasks are compound. You are strictly FORBIDDEN from arbitrarily loading only a single skill or an isolated pair if the task spans multiple dimensions. You MUST load ALL relevant skills across all touched domains (e.g. Prompt Optimization + Quant Strategy + Debugging + Clean Code).
+   - **Physical Load Gate**: You CANNOT assume you know what is in a skill file; you MUST physically read the `SKILL.md` of every relevant skill into context using your `view_file` tool before proposing a solution.
+   - **Proof of Ensemble Header**: You MUST include a header confirming ALL skills that were dynamically loaded and applied:
+     `> 📚 **Active Skills Loaded & Applied:** @[skill-1], @[skill-2], @[skill-3], ...`
 4. **Agent Skills & Compute**: Matt Pocock skill suite in `.agents/skills/`; offload heavy ML context to Prime Intellect CLI/API.
 
 ---
@@ -138,29 +139,49 @@ Windows: W1–W4 (2021), W5–W8 (2022), W9–W12 (2023), W13–W16 (2024), W17�
 
 ---
 
-# PART 9: UNIFIED MACHINE LEARNING & AI SKILLS ROUTER (TOKEN-EFFICIENT INSTANTIATION)
+# PART 9: THE OMNI-DOMAIN INSTITUTIONAL SKILLS ENSEMBLE ROUTER (MULTI-SKILL COMPOSITE ORCHESTRATION)
 
-> 🧠 **MANDATORY AUTOMATIC ACTIVATION**: Whenever the user prompt mentions "ml", "machine learning", "model", "training", "feature engineering", "predict", "classifier", or related quant ML concepts, the agent MUST automatically activate this unified ML architecture.
+> 🌐 **MANDATORY AUTOMATIC MULTI-SKILL ENSEMBLE**: On EVERY turn, evaluate the user's prompt against ALL 8 institutional domains below. If a task touches multiple domains (e.g. designing a prompt for a backtesting strategy with clean code), you MUST dynamically load and apply ALL corresponding skills simultaneously. Never isolate execution to a single skill!
 > 
-> **TOKEN-SAVING ZERO-AMNESIA PROTOCOL**:
-> To eliminate context bloat and prevent reading dozens of repetitive markdown files into context, the agent must reference this canonical matrix. On any ML task, the agent dynamically identifies the active sub-domain, physically loads ONLY the corresponding primary target skill via `view_file`, and displays the loaded skills in the mandatory top header:
-> `> 📚 **Active Skills Loaded & Applied:** @[primary-skill-1], @[primary-skill-2]`
+> **MANDATORY EXECUTION DIRECTIVE**:
+> 1. **Multi-Domain Intent Mapping**: Classify the user prompt across ALL applicable domains.
+> 2. **Physical Load Gate**: For EVERY matched domain, load the primary skill (and relevant auxiliary skills) via `view_file` before writing code or making plans.
+> 3. **Mandatory Header Verification**: Display ALL active skills in the mandatory top header:
+>    `> 📚 **Active Skills Loaded & Applied:** @[skill-1], @[skill-2], @[skill-3], ...`
+> 4. **Deterministic Fallback**: If no specific domain keywords match, default immediately to `@[clean-code]`, `@[karpathy-guidelines]`.
 
-### 9.1 The Institutional ML Sub-Domain Routing Matrix
+### 9.1 The Institutional Omni-Domain Skills Routing Matrix
 
-| ML Sub-Domain | Primary Target Skill | Secondary / Auxiliary Skills | Core Invariant Directives (Zero-Token Recall) |
-|---|---|---|---|
-| **1. Feature Engineering & Data Transforms** | `@[engineering-features-for-machine-learning]` | `@[ml-data-pipeline-architecture]` | Stationary transformations only (relative z-scores, percentage ratios). Footprint ladder aggregation (`fp_stacked_buy`, `fp_stacked_sell`, `fp_delta_ratio`). Strictly backward-looking rolling operators; zero forward-looking leakage. |
-| **2. Model Training & Hyperparameter Tuning** | `@[training-machine-learning-models]` | `@[agent-data-ml-model]`, `@[building-automl-pipelines]`, `@[ml-best-practices]`, `@[mlflow-tracking-setup]` | Event-conditioned sampling on volatility/liquidation triggers (`Z >= 1.2`). Shallow tree depth (`max_depth <= 4`) with combined L1/L2 regularization (`reg_alpha >= 1.0`, `reg_lambda >= 3.0`) to avoid high-frequency noise memorization. Cross-validation strictly causal with 72h purge. |
-| **3. Model Evaluation & Explainability** | `@[evaluating-machine-learning-models]` | `@[explaining-machine-learning-models]` | Asymmetric triple-barrier evaluation (+2.0R to +5.0R vs -1.0R). Precision-recall on rare liquidation tails. SHAP and gain-based feature attribution. Brier calibration scores. Mark-to-market drawdown verification. |
-| **4. MLOps, Pipelines & Codebase Architecture** | `@[machine-learning-ops-ml-pipeline]` | `@[ai-ml]`, `@[mlops-engineer]`, `@[mle-workflow]`, `@[ml-pipeline-workflow]`, `@[ml-adoption-playbook]`, `@[ml-engineer]` | End-to-end data contracts (`schema.py`). Dual-table Parquet partitioning (Master + Footprint Ladder). Sub-second vectorized aggregation. Zero circular imports; modular SRP architecture. |
-| **5. Model Serving & Live Deployment** | `@[deploying-machine-learning-models]` | `@[flask-ml-api-creator]`, `@[azure-ml-deployer]` | Strictly causal bar $j+1$ execution. Microstructure ratchets armed at bar $j$ close, effective bar $j+1$ open only. Low-latency inference (< 2ms per bar). Safe fallback rules on missing feeds. |
-| **6. Cloud & BigQuery ML** | `@[bigquery-ai-ml]` | `@[bigquery-ml-model-creator]`, `@[azure-ai-ml-py]` | `AI.DETECT_ANOMALIES`, `AI.FORECAST`, serverless scalable feature transforms, BigFrames compliance. |
+| Institutional Domain | Intent Triggers & Keywords | Primary Mandatory Skills | Secondary & Specialized Skills | Core Directives & Invariants |
+|---|---|---|---|---|
+| **1. Prompt Engineering & Agent Directives** | `prompt`, `optimizing-prompts`, `prompting`, `astra`, `copilot`, `instructions`, `agent prompt` | `@[optimizing-prompts]` | `@[writing-for-agents]`, `@[grill-me]`, `@[writing-beats]`, `@[writing-shape]` | 100% self-contained prompts, zero chat dump, Git-based references only, strict plain-text math, no raw LaTeX delimiters. |
+| **2. Quant Strategy & Microstructure** | `strategy`, `orderflow`, `cvd`, `footprint`, `ratchet`, `liquidation`, `oos`, `risk budget`, `drawdown` | `@[backtesting-trading-strategies]`, `@[trader-backtest]` | `@[quant-analyst]`, `@[trader-risk]`, `@[trader-signal]`, `@[trader-regime]`, `@[sharpe-ratio-non-iid-corrections]` | 18 Binance perps, 41 bps friction on notional, 3-phase ratchet (BE @ +0.8R, Lock @ +1.8R, Target @ >= +3.0R), 24-bar timeout, MAX_CONCURRENT = 2. |
+| **3. Systematic Debugging & Forensics** | `bug`, `error`, `exception`, `failed`, `lookahead`, `leak`, `fix`, `audit`, `investigate`, `why` | `@[systematic-debugging]` | `@[diagnosing-bugs]`, `@[debugging-code]`, `@[error-diagnostics-smart-debug]` | Zero lookahead mandate, causal bar j+1 entry, trace data provenance end-to-end, verify against live tests rather than diff inspections. |
+| **4. Code Craftsmanship & Simplicity** | `clean`, `refactor`, `simplify`, `rewrite`, `structure`, `code quality`, `codebase` | `@[clean-code]`, `@[karpathy-guidelines]` | `@[simplify-code]`, `@[code-refactoring-refactor-clean]`, `@[codebase-design]` | Karpathy 4 directives, rewrite 200 lines to 50, minimal dependencies, single-strategy file mandate, zero speculative abstractions. |
+| **5. Data Engineering, SQL & Kusto** | `kusto`, `kql`, `database`, `parquet`, `query`, `pipeline`, `ingestion`, `chunk`, `schema` | `@[data-engineering-data-pipeline]` | `@[sql-pro]`, `@[database-optimizer]`, `@[data-engineering-data-driven-feature]` | 500k row limit guardrail, windowed streaming, deterministic schema contracts (schema.py), strictly backward-looking rolling operators. |
+| **6. Testing, TDD & Verification** | `test`, `unit test`, `pytest`, `harness`, `assert`, `pre-flight`, `verification`, `tdd` | `@[pytest-skill]`, `@[test-driven-development]` | `@[python-testing]`, `@[pocock-tdd]`, `@[e2e-testing]`, `@[verify-changes]` | Goal-driven execution, 100% test assertions pass before commit, pre-flight lifecycle gates, headless execution. |
+| **7. Machine Learning & Predictive Modeling** | `ml`, `machine learning`, `xgboost`, `features`, `feature engineering`, `training`, `model`, `predict` | `@[engineering-features-for-machine-learning]`, `@[training-machine-learning-models]` | `@[evaluating-machine-learning-models]`, `@[agent-data-ml-model]`, `@[machine-learning-ops-ml-pipeline]`, `@[optuna-study-creator]` | Stationary transforms only, event-conditioned sampling on Z >= 1.2, shallow depth (<= 4), L1/L2 regularization, 72h causal purge. |
+| **8. System Architecture & Workflows** | `architecture`, `module`, `design`, `spec`, `workflow`, `handoff`, `coordination` | `@[codebase-design]` | `@[domain-modeling]`, `@[architecture-patterns]`, `@[c4-architecture-c4-architecture]` | SRP architecture, minimal file sprawl, single scratch folder isolation, zero circular imports. |
 
-### 9.2 Execution & Instantiation Rules
-1. **Dynamic Instantiation**: When "ml" or "machine learning" is detected, map the request to one or more rows above.
-2. **Physical Load**: Execute `view_file` on the corresponding `SKILL.md` (e.g. `.agents/skills/engineering-features-for-machine-learning/SKILL.md` and `.agents/skills/training-machine-learning-models/SKILL.md`).
-3. **Proof of Compliance**: Format the mandatory response header with the loaded skills:
-   `> 📚 **Active Skills Loaded & Applied:** @[skill-1], @[skill-2]`
-4. **AST Synchronization**: After creating or modifying any ML feature or model code, synchronize AST nodes via `python -m graphify update .` to maintain live knowledge graph parity.
+### 9.2 The Full-Cluster Skill Bundle Directive (Universal Multi-Skill Ingestion)
+
+> 🛑 **MANDATORY EXHAUSTIVE CLUSTER INGESTION**: When a task triggers any domain, loading only a single isolated skill is a **FATAL PROTOCOL VIOLATION**. The agent MUST load and read ALL skills in the corresponding domain cluster:
+>
+> - **When ML / AI is triggered**: You MUST load and read ALL skills in the ML cluster: `@[engineering-features-for-machine-learning]`, `@[training-machine-learning-models]`, `@[evaluating-machine-learning-models]`, `@[agent-data-ml-model]`, `@[machine-learning-ops-ml-pipeline]`.
+> - **When Strategy / Backtesting is triggered**: You MUST load and read ALL skills in the Quant Strategy cluster: `@[backtesting-trading-strategies]`, `@[trader-backtest]`, `@[quant-analyst]`, `@[trader-risk]`, `@[trader-signal]`.
+> - **When Prompting / Directives is triggered**: You MUST load and read ALL skills in the Prompt cluster: `@[optimizing-prompts]`, `@[writing-for-agents]`, `@[grill-me]`.
+> - **When Debugging / Audit is triggered**: You MUST load and read ALL skills in the Forensic Debugging cluster: `@[systematic-debugging]`, `@[diagnosing-bugs]`, `@[debugging-code]`.
+> - **When Code / Refactoring is triggered**: You MUST load and read ALL skills in the Clean Code cluster: `@[clean-code]`, `@[karpathy-guidelines]`, `@[simplify-code]`.
+> - **When Data / Kusto / SQL is triggered**: You MUST load and read ALL skills in the Data Pipeline cluster: `@[data-engineering-data-pipeline]`, `@[sql-pro]`, `@[database-optimizer]`.
+> - **When Testing / Verification is triggered**: You MUST load and read ALL skills in the Testing cluster: `@[pytest-skill]`, `@[test-driven-development]`, `@[python-testing]`.
+> - **When Architecture / Design is triggered**: You MUST load and read ALL skills in the Architecture cluster: `@[codebase-design]`, `@[architecture-patterns]`, `@[domain-modeling]`.
+>
+> **Compound Tasks**: If a task spans multiple domains (e.g. "Optimize this prompt for an orderflow backtesting strategy with clean code"), the agent MUST load the complete bundles across ALL touched domains!
+
+### 9.3 Execution & Invariant Verification Protocol
+1. **Physical Load Gate**: Never assume knowledge of skill files. Execute `view_file` on each `SKILL.md` in the activated clusters before generating code, prompts, or architecture.
+2. **Mandatory Header Verification**: Display ALL actively loaded cluster skills in the mandatory top header:
+   `> 📚 **Active Skills Loaded & Applied:** @[skill-1], @[skill-2], @[skill-3], @[skill-4], @[skill-5], ...`
+3. **AST Synchronization**: After creating or modifying any feature, model, or strategy code, synchronize AST nodes via `python -m graphify update .` to maintain live knowledge graph parity.
+
 
