@@ -1,0 +1,7 @@
+﻿CONFIRM: GENERATE ZIP + FULL INSTITUTIONAL FORENSIC PDF REPORT FOR DOWNLOAD NOW.
+
+Include in the delivery package:
+1. Executive Summary: 20/20 OOS Windows Passed (+179.27% Net ROI, 4.90% Max DD, 756 Trades, 56.8% Win Rate).
+2. Equity Curve & Underwater Drawdown Visualizations vs BTC Buy & Hold Benchmark (+272% downside alpha).
+3. 1,000-Path Monte Carlo Bootstrap Visualizations (VaR 95: -1.5%, CVaR 95: -2.3%, 99% Max DD: 6.8%).
+4. Complete Download Manifest for institutional_forensic_report.pdf and orderflow_production_suite.zip.
