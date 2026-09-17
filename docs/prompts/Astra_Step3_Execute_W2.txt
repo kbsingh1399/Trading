@@ -1,0 +1,28 @@
+﻿PROCEED — EXECUTE W2 (2021-Q2) AND OUTPUT SCORECARD NOW
+
+Execute the W2 KQL query on Binance_Master_15min via your MCP execute-query tool, run the backtest simulation, and print the results immediately.
+
+CONTEXT FOR W2 (2021-Q2: 2021-04-01 to 2021-06-30):
+- Market Regime: China Mining Ban Crash (BTC crashed from 58,763 USD to 35,040 USD = -40.37% return).
+- Benchmark: BTC Buy & Hold W2 ROI = -40.37%.
+
+SIMULATION INVARIANTS:
+- Signals: long_liq_zs > 1.80 and zc_div > 0.80 and (close < session_val or wap_zscore < -0.50).
+- Execution: Causal entry at opens[t+1].
+- Ratchet: Stop at entry - 1.0*ATR, BE lock @ +0.80R (+0.15R), Profit lock @ +1.80R (+1.00R), TP @ +3.00R, 24-bar time decay.
+- Friction: 41 bps continuous round-trip deduction on notional.
+- Portfolio: Initial capital 5,000 USD, base risk 40 USD, max 2 concurrent positions.
+
+OUTPUT REQUIREMENT:
+1. W2 Scorecard Table:
+   | Window | Period | Net PnL (USD) | Net ROI (%) | Max DD (%) | Win Rate (%) | Trades | Status |
+2. Performance & Risk Metrics (Win Rate, Profit Factor, Net PnL after friction, Max DD).
+3. Benchmark Comparison:
+   * Strategy W2 Net ROI (%) vs BTC Buy & Hold W2 ROI (-40.37%).
+   * Show Alpha generated during this historic crash.
+4. Cumulative Scorecard (W1 to W2):
+   | Total Windows | Cumulative PnL (USD) | Cumulative ROI (%) | Overall Max DD (%) | Total Trades |
+5. Update Progress Tracker:
+   📋 PROGRESS: [2/20 complete] | Current: Starting W3 (2021-Q3) | Remaining: W4-W20
+6. Footer:
+   ▶ CONTINUING... [Step 4 of 20 — W3 Simulation]
