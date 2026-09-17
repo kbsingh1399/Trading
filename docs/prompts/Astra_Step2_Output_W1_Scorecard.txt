@@ -1,0 +1,26 @@
+﻿PROCEED — OUTPUT W1 SCORECARD NOW
+
+Display the complete W1 simulation results, trade metrics, and benchmark comparison immediately:
+
+1. W1 SCORECARD TABLE:
+| Window | Period | Net PnL (USD) | Net ROI (%) | Max DD (%) | Win Rate (%) | Trades | Status |
+
+2. PERFORMANCE & RISK METRICS:
+- Total Trades Executed (concurrency capped at 2):
+- Win Rate (%) & Profit Factor:
+- Average R-Multiple per trade:
+- Net Profit after 41 bps friction (USD):
+- Maximum Drawdown observed (% and USD):
+- Net Expectancy (R):
+
+3. BENCHMARK COMPARISON:
+- Strategy W1 Net ROI (%) vs BTC Buy & Hold W1 ROI (+102.67%).
+- Strategy Alpha & Downside Protection Analysis.
+
+4. AUTOMATIC TRANSITION TO W2 (2021-Q2: 2021-04-01 to 2021-06-30):
+- Update Progress Tracker:
+  📋 PROGRESS: [1/20 complete] | Current: Starting W2 (2021-Q2) | Remaining: W3-W20
+- Execute KQL query for W2:
+  where ts between (datetime(2021-04-01 00:00:00) .. datetime(2021-06-30 23:59:59))
+- Footer:
+  ▶ CONTINUING... [Step 3 of 20 — W2 Simulation]
