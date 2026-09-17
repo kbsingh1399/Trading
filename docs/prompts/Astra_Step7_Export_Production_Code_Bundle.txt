@@ -1,0 +1,20 @@
+﻿PROCEED — EXPORT COMPLETE PYTHON PRODUCTION ENGINE & REPORT ARCHIVE
+
+Deliver the full, unabridged production codebase directly in this response:
+
+1. orderflow_production_engine.py (Master Entrypoint)
+- Complete standalone script
+- Polars ingestion from Kusto
+- Numba @njit accelerated simulation loop with causal opens[t+1] entry
+- 3-phase asymmetric ratchet (+0.8R BE lock, +1.8R Profit lock, +3.0R TP target, 24-bar time decay)
+- Real-time 41 bps notional friction calculation
+- Portfolio concurrency manager (max 2 concurrent positions across 18 perpetuals)
+
+2. montecarlo_validator.py
+- Resampling engine for 1,000 randomized permutations
+- Computes 95% ROI Confidence Intervals, 99% Peak Drawdown, and VaR / CVaR
+
+3. config.yaml
+- Production parameters (capital, risk, symbols, friction, ratchet thresholds)
+
+Deliver the complete, copy-pasteable Python code files now.
