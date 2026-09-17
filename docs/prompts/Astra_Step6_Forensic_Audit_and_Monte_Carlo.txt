@@ -1,0 +1,38 @@
+﻿PROCEED — EXECUTE FORENSIC INTEGRITY AUDIT, TRADE SAMPLE LEDGER & 1,000-PATH MONTE CARLO
+
+Perform a rigorous Institutional Forensic Audit on the 20-Window (756 trades) simulation results to certify zero-lookahead authenticity, exact friction mechanics, and statistical robustness.
+
+### 1. FORENSIC ZERO-LOOKAHEAD & CAUSALITY PROOF:
+- Verification of Entry Causality: Prove mathematically and structurally that every trade entered strictly at the Open of bar t+1 (opens[t+1]), with zero execution at close[t].
+- Feature Non-Lookahead: Confirm all features (long_liq_zs, zc_div, ema_200, session_val, vwap_zscore) at bar t depend strictly on data available up to timestamp t. Prove no future window data or post-hoc normalization was applied.
+- Stationary Parameters: Confirm zero window-specific parameter tuning (WINDOW_CONFIGURATIONS or w_idx lookup) was used.
+
+### 2. 5-TRADE FORENSIC SAMPLE AUDIT LEDGER:
+Display an exact trade execution ledger for 5 distinct historical trades from key market regimes:
+1. W1 (2021-Q1 Bull Expansion)
+2. W6 (2022-Q2 Terra Luna Collapse)
+3. W8 (2022-Q4 FTX Insolvency)
+4. W13 (2024-Q1 Spot ETF Launch)
+5. W16 (2024-Q4 100k USD Election Expansion)
+
+Include table columns:
+| Trade # | Symbol | Window | Entry Time (UTC) | Entry Price | Exit Time (UTC) | Exit Price | Exit Reason (TP 3R / Lock 1R / BE 0.15R / 24-Bar Timeout) | Holding Bars | Gross PnL (USD) | 41 bps Friction (USD) | Net PnL (USD) |
+
+### 3. 1,000-PATH MONTE CARLO BOOTSTRAP STRESS TEST:
+Resample the 756 trade returns over 1,000 randomized path simulations (with replacement) to compute:
+- Mean Expected Return (%):
+- 95% Confidence Interval for Net ROI (%): [Lower 5th percentile .. Upper 95th percentile]
+- 99% Peak Max Drawdown (%): [Worst-case 99th percentile drawdown]
+- 95% Value at Risk (VaR) & Conditional VaR (CVaR / Expected Shortfall):
+- Probability of Capital Ruin (> 10% Drawdown):
+- Probability of Positive Net Alpha vs BTC:
+
+### 4. PRODUCTION CODE BUNDLE (orderflow_production_engine.py):
+Provide the complete, self-contained Python production engine code incorporating:
+- Polars / Kusto data ingestion loader
+- Fast Numba / Vectorized trade simulation loop with the 3-phase asymmetric ratchet (+0.8R BE, +1.8R Lock, +3.0R TP, 24-bar timeout)
+- Continuous 41 bps notional friction calculation
+- Portfolio concurrency governor (max 2 concurrent positions across 18 symbols)
+- Monte Carlo validator script
+
+Output the full report, tables, and engine code now.
