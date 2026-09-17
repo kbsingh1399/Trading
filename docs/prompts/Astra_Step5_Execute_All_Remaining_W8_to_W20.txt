@@ -1,0 +1,52 @@
+﻿PROCEED — EXECUTE ALL REMAINING WINDOWS (W8 TO W20) IN FULL DETAIL
+
+Under the GOAL-LOOP protocol, execute the entire remaining walk-forward gauntlet (Windows W8 through W20) across 2022-Q4 to 2025-Q4 in this response.
+
+### 1. UNIFIED KQL QUERY (SINGLE CALL TO KUSTO):
+Query all remaining signals from 2022-10-01 to 2025-12-31 in one tool call:
+`kusto
+Binance_Master_15min
+| extend ts = todatetime(datetime_utc)
+| where ts between (datetime(2022-10-01 00:00:00) .. datetime(2025-12-31 23:59:59))
+| where long_liq_zs > 1.80 and zc_div > 0.80 and (close < session_val or vwap_zscore < -0.50)
+| project ts, symbol, open, high, low, close, atr_14, ema_200, session_val, vwap_zscore, zc_div, long_liq_zs
+| order by ts asc
+`
+
+### 2. REMAINING WINDOW SPECIFICATIONS & BENCHMARKS:
+- W8  (2022-Q4: 2022-10-01 to 2022-12-31) — FTX Insolvency Crash (BTC B&H: -15.28%)
+- W9  (2023-Q1: 2023-01-01 to 2023-03-31) — SVB Bank Run Rebound (BTC B&H: +71.77%)
+- W10 (2023-Q2: 2023-04-01 to 2023-06-30) — SEC Regulatory Actions (BTC B&H: +7.19%)
+- W11 (2023-Q3: 2023-07-01 to 2023-09-30) — Low Vol Summer Range (BTC B&H: -11.54%)
+- W12 (2023-Q4: 2023-10-01 to 2023-12-31) — Pre-ETF Breakout Rally (BTC B&H: +56.63%)
+- W13 (2024-Q1: 2024-01-01 to 2024-03-31) — Spot ETF Institutional Launch (BTC B&H: +68.68%)
+- W14 (2024-Q2: 2024-04-01 to 2024-06-30) — Post-Halving Chop (BTC B&H: -12.04%)
+- W15 (2024-Q3: 2024-07-01 to 2024-09-30) — Yen Carry Trade Crash (BTC B&H: +0.96%)
+- W16 (2024-Q4: 2024-10-01 to 2024-12-31) — US Election  Expansion (BTC B&H: +49.77%)
+- W17 (2025-Q1: 2025-01-01 to 2025-03-31) — Macro Expansion (BTC B&H: +8.40%)
+- W18 (2025-Q2: 2025-04-01 to 2025-06-30) — Summer Consolidation (BTC B&H: -3.20%)
+- W19 (2025-Q3: 2025-07-01 to 2025-09-30) — Institutional Inflow (BTC B&H: +14.60%)
+- W20 (2025-Q4: 2025-10-01 to 2025-12-31) — Cycle Maturity (BTC B&H: +6.10%)
+
+### 3. SIMULATION INVARIANTS:
+- Causal entry at opens[t+1].
+- Initial Stop: entry - 1.0*ATR.
+- Ratchet: BE lock @ +0.80R (+0.15R), Profit lock @ +1.80R (+1.00R), Take Profit @ +3.00R, 24-bar time decay (< +0.30R).
+- Continuous 41 bps notional friction deduction (entry_price * size * 0.0041).
+- Risk Governor: Initial capital 5,000 USD, base risk 40 USD, max 2 concurrent positions across all 18 symbols.
+
+### 4. REQUIRED OUTPUTS:
+1. Complete Scorecard Table for W8 through W20:
+   | Window | Period | Net PnL (USD) | Net ROI (%) | Max DD (%) | Win Rate (%) | Trades | Status |
+2. Benchmark Alpha Comparison Table (W8 through W20 vs BTC Buy & Hold).
+3. FINAL 20-WINDOW GRAND MASTER SCORECARD (W1 through W20):
+   | Metric | Result |
+   | Total 5-Year Net PnL (USD) |
+   | Total Net ROI (%) on ,000 |
+   | Peak-to-Trough Max Drawdown (%) |
+   | Total Completed Trades |
+   | Overall Win Rate (%) |
+   | Windows Passed (X/20) |
+   | Total Cumulative Strategy Alpha vs BTC Buy & Hold (%) |
+4. Closing Footer:
+   ✅ GOAL COMPLETE — 20/20 OOS Walk-Forward Windows Verified with Positive Alpha & Microstructure Friction.
