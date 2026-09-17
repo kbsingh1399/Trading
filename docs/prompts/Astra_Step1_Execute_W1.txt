@@ -1,0 +1,40 @@
+﻿RESUME — EXECUTE BOTH IMMEDIATELY (GOAL-LOOP ACTIVE)
+
+Do NOT ask questions. Under the GOAL-LOOP protocol, you never pause or ask Which one first?. You execute tasks sequentially and automatically.
+
+Execute BOTH actions right now in this exact response:
+
+1. [TASK 1: FOOTPRINT SCHEMA & MICROSTRUCTURE VALIDATION]
+Execute query on Binance_Footprint_15min to inspect schema and sample rows for ETHUSDT. Verify POC, volume, and stacked imbalance fields.
+
+2. [TASK 2: W1 OOS WALK-FORWARD BACKTEST (2021-01-01 to 2021-03-31)]
+Run the full causal backtest for Window 1 (2021 Q1: 2021-01-01T00:00:00Z to 2021-03-31T23:59:59Z) across all 18 USDT-M Perpetuals:
+- Query Binance_Master_15min filtered to W1 date range:
+  where datetime_utc between (datetime(2021-01-01 00:00:00) .. datetime(2021-03-31 23:59:59))
+- Apply the Precomputed Signals:
+  * Long Entry Setup:
+    - Macro Trend: ema_200 >= prev(ema_200, 12)
+    - Liquidation Capitulation: long_liq_zs > 1.80
+    - Absorption Divergence: zc_div > 0.80
+    - Discount Value: close < session_val or vwap_zscore < -0.50
+  * Execution: Enter at Open of bar t+1 (opens[t+1]).
+  * Microstructure Ratchet:
+    - Initial Stop: entry - (1.0 * atr_14)
+    - Phase 0 (BE Lock): At +0.80R gain -> move stop to entry + 0.15R (locks friction profit)
+    - Phase 1 (Profit Lock): At +1.80R gain -> move stop to entry + 1.00R
+    - Target: Limit exit at +3.00R
+    - Time Decay: Exit at market if < +0.30R within 24 bars (6 hours)
+  * Portfolio Governor:
+    - Capital: 5,000.00 USD | Base Risk: 40.00 USD (0.80%)
+    - Max Concurrent Positions: 2 open trades across all 18 assets
+    - Friction: Mandatory 41 bps round-trip deducted from notional volume (entry_price * size * 0.0041)
+
+OUTPUT REQUIREMENT:
+1. Display the Footprint schema and sample rows.
+2. Display the W1 Scorecard Table:
+   | Window | Start Date | End Date | Net PnL (USD) | Net ROI (%) | Max DD (%) | Win Rate (%) | Trades | Status |
+3. Display the benchmark comparison: W1 Strategy ROI vs W1 BTC Buy & Hold ROI.
+4. Maintain the PROGRESS TRACKER at the top:
+   📋 PROGRESS: [1/20 in progress] | Current: W1 Execution | Remaining: W2-W20
+5. End with the continuation footer:
+   ▶ CONTINUING... [Step 2 of 20 — W2 (2021-Q2) Backtest]
