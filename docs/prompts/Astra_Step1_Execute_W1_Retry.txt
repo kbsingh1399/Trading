@@ -1,0 +1,36 @@
+﻿PROCEED — EXECUTE NOW (ZERO QUESTIONS)
+
+Run the KQL query with 	odatetime(datetime_utc) immediately via your MCP execute-query tool.
+
+1. EXECUTE THE W1 SIGNAL QUERY:
+`kusto
+Binance_Master_15min
+| extend ts = todatetime(datetime_utc)
+| where ts between (datetime(2021-01-01 00:00:00) .. datetime(2021-03-31 23:59:59))
+| where long_liq_zs > 1.80 and zc_div > 0.80 and (close < session_val or vwap_zscore < -0.50)
+| project ts, symbol, open, high, low, close, atr_14, ema_200, session_val, vwap_zscore, zc_div, long_liq_zs
+| order by ts asc
+`
+
+2. EXECUTE THE BACKTEST SIMULATION:
+For each triggered signal:
+- Causal Entry: Enter Long at Open of bar t+1 (opens[t+1]).
+- Initial Stop: entry - (1.0 * atr_14)
+- Risk: 40.00 USD (0.80% of 5,000.00 USD initial capital). Position Size = 40.00 / (1.0 * atr_14).
+- Asymmetric 3-Phase Ratchet:
+  * At +0.80R gain: Stop moves to Entry + 0.15R (locks friction profit).
+  * At +1.80R gain: Stop moves to Entry + 1.00R (locks +1.0R profit).
+  * Take Profit Target: Exit at Entry + 3.00R.
+  * Time Decay: Exit at market if < +0.30R after 24 bars (6 hours).
+- Max Concurrent Positions: 2 open trades across all 18 symbols simultaneously (skip signals if 2 positions are already open).
+- Frictions: Deduct continuous 41 bps round-trip from position notional value (entry_price * size * 0.0041).
+
+3. OUTPUT THE REQUIRED SCORECARD & BENCHMARK:
+- W1 Scorecard Table:
+  | Window | Period | Net PnL (USD) | Net ROI (%) | Max DD (%) | Win Rate (%) | Trades | Status |
+- Benchmark Comparison:
+  * W1 Strategy Net ROI (%) vs W1 BTC Buy & Hold ROI (2021-01-01 open: 28,994 USD to 2021-03-31 close: 58,763 USD = +102.67%).
+- Progress Tracker:
+  📋 PROGRESS: [1/20 complete] | Current: W1 Completed | Remaining: W2-W20
+- Footer:
+  ▶ CONTINUING... [Step 2 of 20 — W2 (2021-Q2) Backtest]
