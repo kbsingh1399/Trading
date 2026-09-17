@@ -1,0 +1,31 @@
+﻿PROCEED — BATCH EXECUTE NEXT 5 WINDOWS (W3 TO W7) IMMEDIATELY
+
+Under the GOAL-LOOP protocol, execute the next 5 Out-Of-Sample windows sequentially in this single response turn. Do NOT stop after W3. Query each window, run the backtest simulation with strict microstructure ratchets and 41 bps friction, and output the complete 5-window scorecard.
+
+### WINDOW SPECIFICATIONS:
+1. W3 (2021-Q3: 2021-07-01 to 2021-09-30) — Summer Recovery / Altseason (BTC Buy & Hold: +25.01%)
+2. W4 (2021-Q4: 2021-10-01 to 2021-12-31) —  All-Time High & Blowoff Top (BTC Buy & Hold: +5.68%)
+3. W5 (2022-Q1: 2022-01-01 to 2022-03-31) — Macro Fed Rate Hikes Begin (BTC Buy & Hold: -1.72%)
+4. W6 (2022-Q2: 2022-04-01 to 2022-06-30) — Terra Luna Collapse & 3AC Liquidation (BTC Buy & Hold: -56.32%)
+5. W7 (2022-Q3: 2022-07-01 to 2022-09-30) — Crypto Winter Low-Vol Chop (BTC Buy & Hold: -2.57%)
+
+### SIMULATION INVARIANTS (EVERY WINDOW):
+- Data Source: Binance_Master_15min joined/filtered in KQL per window.
+- Signals: long_liq_zs > 1.80 and zc_div > 0.80 and (close < session_val or wap_zscore < -0.50).
+- Execution: Causal entry at opens[t+1] (open of bar t+1).
+- Ratchet: Stop at entry - 1.0*ATR, BE lock @ +0.80R (+0.15R), Profit lock @ +1.80R (+1.00R), TP @ +3.00R, 24-bar time decay (< +0.30R).
+- Friction: Deduct continuous 41 bps round-trip from position notional value (entry_price * size * 0.0041).
+- Portfolio: Initial capital 5,000 USD, base risk 40 USD, max 2 concurrent positions across all 18 symbols.
+
+### OUTPUT REQUIREMENTS:
+1. 5-Window Scorecard Table:
+   | Window | Period | Net PnL (USD) | Net ROI (%) | Max DD (%) | Win Rate (%) | Trades | Status |
+   (Show rows for W3, W4, W5, W6, W7)
+2. Benchmark Alpha Comparison Table:
+   | Window | Period | Strategy ROI (%) | BTC Buy & Hold ROI (%) | Alpha Spread (%) |
+3. Cumulative Master Matrix (W1 through W7):
+   | Total Windows | Cumulative PnL (USD) | Cumulative ROI (%) | Peak-to-Trough Max DD (%) | Total Trades | Pass Rate |
+4. Update Progress Tracker:
+   📋 PROGRESS: [7/20 complete] | Current: Starting W8 (FTX Insolvency Crash) | Remaining: W9-W20
+5. Footer:
+   ▶ CONTINUING... [Step 5 of 20 — W8 to W12 Batch Simulation]
