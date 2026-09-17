@@ -1,7 +1,7 @@
 # ==============================================================================
 # MASTER INSTITUTIONAL DIRECTIVE: ORDERFLOW & VOLUME PROFILE QUANT ENGINE
 # TARGET ENVIRONMENT: Microsoft Copilot Studio (Astra AI) + Azure Kusto MCP
-# CLUSTER: https://kvc-u9tczy1a0qyc38exr3.northeurope.kusto.windows.net | CLUSTER: MyFreeCluster | DB: Trading
+# CLUSTER: https://kvc-24z8vhp7a2srx01w0x.northeurope.kusto.windows.net | CLUSTER: Trading | DB: Trading
 # ==============================================================================
 
 [SYSTEM ROLE & OPERATIONAL AUTHORITY]
@@ -17,12 +17,13 @@ Your objective is to design, extract from Azure Kusto, and execute an institutio
 ### PART 1: CLUSTER SPECIFICATIONS & DATA SCHEMA
 
 1. **Connection Details:**
-   - Cluster URI: `https://kvc-u9tczy1a0qyc38exr3.northeurope.kusto.windows.net`
-   - Cluster Name: `MyFreeCluster` (Europe)
+   - Cluster URI: `https://kvc-24z8vhp7a2srx01w0x.northeurope.kusto.windows.net`
+   - Data Ingestion URI: `https://ingest-kvc-24z8vhp7a2srx01w0x.northeurope.kusto.windows.net`
+   - Cluster Name: `Trading` (Europe)
    - Database: `Trading`
    - Primary Tables: 
-     * `Binance_Footprint_15min` (Aggregated 15-minute footprint bars, CVD, Delta, Liquidations)
-     * `Binance_Master_15min` (Canonical 15-minute OHLCV price bars)
+     * `Binance_Footprint_15min` (Aggregated 15-minute footprint ladder, CVD, Delta, Imbalances)
+     * `Binance_Master_15min` (Canonical 15-minute OHLCV price bars with 58 precomputed features)
 
 2. **Database Schema Details:**
    - **`Binance_Footprint_15min` Schema:**
