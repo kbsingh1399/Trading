@@ -46041,3 +46041,14 @@ Fully completed, empirically verified, and pushed to GitHub main (commit c6ef13c
 2. Complete Parquet Synchronization: Executed comprehensive gap synchronization across all 98 instruments in Forex_Backtesting_Data/ using live MT5 connection (scratch/sync_all_forex_data.py). Appended and sorted 21,395 15m candles, 4,108 4H candles, and 616 D1 candles up to the latest closed candle with strict UTC monotonic integrity and duplicate deduplication.
 3. Live Snapshot Verification: Verified execution with python Engine/live/run_forex_dry_run.py --once. Confirmed clean telemetry rendering, exact spread/ATR quarantine gating, and zero data leakage.
 4. Git Persistence: Committed changes (f803bfd) and pushed successfully to GitHub origin main.
+
+---
+
+### User Prompt:
+and which we choose...do we choose highest probabilty first
+
+### Assistant Response:
+1. Probability-Priority Arbitration: Clarified that institutional portfolio arbitration mandates selecting candidate signals by highest model probability (P*) first when multiple pairs trigger concurrently.
+2. Two-Pass Candidate Arbitration Implemented: Refactored Engine/live/run_forex_dry_run.py to decouple signal detection from immediate execution. All candidate signals across the 18 assets are collected on each bar, sorted descending by P*, and processed top-down against the 2 concurrent position limits and correlation cluster rules.
+3. Live Execution Telemetry: Tested with --ignore-kz, confirming that high-probability candidates receive first priority while structural reward-to-risk (R_eff >= 1.20) and FVG confluence protect against suboptimal fills.
+4. Git Persistence: Committed and pushed to GitHub main (commit 1fbcedd).
