@@ -337,6 +337,9 @@ def main():
             table.add_column("P*", justify="right")
             table.add_column("Decision / Trigger Reason", justify="left", ratio=2)
 
+            eval_data = {}
+            candidates = []
+
             for asset, engine in engines.items():
                 tick = mt5_conn.get_last_tick(asset)
                 if tick is None:
@@ -416,7 +419,6 @@ def main():
                 local_high = engine.buffer['high'].rolling(20).max().iloc[-1] if len(engine.buffer) >= 20 else ask * 1.01
 
                 decision_cell = "[dim]HOLD[/dim]"
-                calc_lots = 0.01
 
                 # Determine long/short conditions based on selected strategy
                 is_long_sig = False
@@ -464,18 +466,18 @@ def main():
                     if not valid:
                         decision_cell = f"[dim red]{reason}[/dim red]"
                     else:
-                        can_open, veto_reason = order_mgr.can_open_trade(asset)
-                        calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
-                        if not can_open:
-                            decision_cell = f"[dim yellow]HOLD ({veto_reason})[/dim yellow]"
-                        else:
-                            action_label = f"DRY-BUY ({strat_tag})" if is_dry_run else f"LIVE-BUY ({strat_tag})"
-                            decision_cell = f"[bold white on green] {action_label} ({calc_lots:.2f}L) [/bold white on green]"
-                            signals_count += 1
-                            log_msg = f"[{'DRY-RUN' if is_dry_run else 'LIVE'} SIGNAL: {asset} | BUY ({strat_tag}) | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots} | REASON={reason}]"
-                            logging.info(log_msg)
-                            if not is_dry_run:
-                                order_mgr.place_market_order(asset, mt5.ORDER_TYPE_BUY, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD)
+                        candidates.append({
+                            'asset': asset,
+                            'is_long': True,
+                            'entry': entry,
+                            'sl': sl,
+                            'tp': tp,
+                            'r_dist': r_dist,
+                            'strat_tag': strat_tag,
+                            'prob': prob,
+                            'reason': reason
+                        })
+                        decision_cell = "[bold green]SIGNAL (Pending Queue)[/bold green]"
 
                 # 3. EVALUATE SHORT SETUP
                 elif is_short_sig:
@@ -493,18 +495,18 @@ def main():
                     if not valid:
                         decision_cell = f"[dim red]{reason}[/dim red]"
                     else:
-                        can_open, veto_reason = order_mgr.can_open_trade(asset)
-                        calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
-                        if not can_open:
-                            decision_cell = f"[dim yellow]HOLD ({veto_reason})[/dim yellow]"
-                        else:
-                            action_label = f"DRY-SELL ({strat_tag})" if is_dry_run else f"LIVE-SELL ({strat_tag})"
-                            decision_cell = f"[bold white on red] {action_label} ({calc_lots:.2f}L) [/bold white on red]"
-                            signals_count += 1
-                            log_msg = f"[{'DRY-RUN' if is_dry_run else 'LIVE'} SIGNAL: {asset} | SELL ({strat_tag}) | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots} | REASON={reason}]"
-                            logging.info(log_msg)
-                            if not is_dry_run:
-                                order_mgr.place_market_order(asset, mt5.ORDER_TYPE_SELL, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD)
+                        candidates.append({
+                            'asset': asset,
+                            'is_long': False,
+                            'entry': entry,
+                            'sl': sl,
+                            'tp': tp,
+                            'r_dist': r_dist,
+                            'strat_tag': strat_tag,
+                            'prob': prob,
+                            'reason': reason
+                        })
+                        decision_cell = "[bold red]SIGNAL (Pending Queue)[/bold red]"
 
                 # 4. DIAGNOSTIC REASON FOR NO SIGNAL
                 else:
@@ -532,19 +534,67 @@ def main():
                         else:
                             decision_cell = "[dim]HOLD[/dim]"
 
+                eval_data[asset] = {
+                    'bid_str': f"{bid:.5f}",
+                    'ask_str': f"{ask:.5f}",
+                    'spread_str': f"{spread:.5f}",
+                    'rsi_cell': rsi_cell,
+                    'vwap_str': f"{vwap_dist:+.2f}%",
+                    'ema50_str': f"{ema50_dist:+.2f}%",
+                    'ema200_str': f"{ema200_dist:+.2f}%",
+                    'trend_cell': trend_cell,
+                    'fvg_cell': fvg_cell,
+                    'prob_cell': prob_cell,
+                    'decision_cell': decision_cell
+                }
+
+            # ====================================================================
+            # CANDIDATE ARBITRATION: HIGHEST PROBABILITY (P*) FIRST
+            # ====================================================================
+            candidates.sort(key=lambda c: c['prob'], reverse=True)
+
+            for cand in candidates:
+                asset = cand['asset']
+                can_open, veto_reason = order_mgr.can_open_trade(asset)
+                calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=cand['r_dist'])
+
+                if not can_open:
+                    eval_data[asset]['decision_cell'] = f"[dim yellow]HOLD ({veto_reason})[/dim yellow]"
+                else:
+                    is_long = cand['is_long']
+                    strat_tag = cand['strat_tag']
+                    prob = cand['prob']
+                    entry = cand['entry']
+                    sl = cand['sl']
+                    tp = cand['tp']
+                    action_label = f"DRY-{'BUY' if is_long else 'SELL'} ({strat_tag})" if is_dry_run else f"LIVE-{'BUY' if is_long else 'SELL'} ({strat_tag})"
+                    style_tag = "bold white on green" if is_long else "bold white on red"
+                    eval_data[asset]['decision_cell'] = f"[{style_tag}] {action_label} ({calc_lots:.2f}L) [/{style_tag}]"
+                    signals_count += 1
+                    log_msg = f"[{'DRY-RUN' if is_dry_run else 'LIVE'} SIGNAL: {asset} | {'BUY' if is_long else 'SELL'} ({strat_tag}) | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots} | REASON={cand['reason']}]"
+                    logging.info(log_msg)
+                    if not is_dry_run:
+                        order_type = mt5.ORDER_TYPE_BUY if is_long else mt5.ORDER_TYPE_SELL
+                        order_mgr.place_market_order(asset, order_type, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD)
+
+            # Build Table Rows in canonical asset order
+            for asset in ASSETS:
+                if asset not in eval_data:
+                    continue
+                ed = eval_data[asset]
                 table.add_row(
                     asset,
-                    f"{bid:.5f}",
-                    f"{ask:.5f}",
-                    f"{spread:.5f}",
-                    rsi_cell,
-                    f"{vwap_dist:+.2f}%",
-                    f"{ema50_dist:+.2f}%",
-                    f"{ema200_dist:+.2f}%",
-                    trend_cell,
-                    fvg_cell,
-                    prob_cell,
-                    decision_cell
+                    ed['bid_str'],
+                    ed['ask_str'],
+                    ed['spread_str'],
+                    ed['rsi_cell'],
+                    ed['vwap_str'],
+                    ed['ema50_str'],
+                    ed['ema200_str'],
+                    ed['trend_cell'],
+                    ed['fvg_cell'],
+                    ed['prob_cell'],
+                    ed['decision_cell']
                 )
 
             # Header info panel
