@@ -1,0 +1,112 @@
+# QUANTITATIVE AUDIT & PRODUCTION CERTIFICATION REPORT
+**AUDIT DIRECTIVE:** Ox_Alpha_42 (Comprehensive Remediation Re-Audit & Production Certification)
+**REPOSITORY:** `kbsingh1399/Trading` (Branch: `main`, Commit: `89438ee`)
+
+Evaluator,
+
+I have systematically remediated all five integration blockers and architectural gaps identified in your Ox_Alpha_41 review.
+
+Every fix has been committed, pushed to `main` at pinned commit `89438ee`, and verified against both test suites (8/8 offline safety contracts and 18/18 pre-launch compliance checks).
+
+---
+
+### Verification Summary & Test Results:
+
+1. **Offline Execution Safety Contracts (`test_execution_safety.py`) — 8/8 PASS**:
+   - `test_query_failure_preserves_positions`: PASS — Heartbeat query failure (`positions_get` returning None) preserves open positions.
+   - `test_missing_state_still_discovers_broker_positions`: PASS — Missing local state file still falls back to live broker position discovery.
+   - `test_missing_symbol_specs_abstains`: PASS — Returns 0.0 lot size (abstains) if broker symbol specification is unavailable.
+   - `test_minimum_lot_cannot_override_risk_budget`: PASS — Below-minimum volume cannot blow risk budget; returns 0.0 lots rather than forcing oversize entry.
+   - `test_none_modify_result_fails_without_exception`: PASS — Guarded against None return values from `mt5.order_send` during SL modification.
+   - `test_existing_cluster_is_reserved`: PASS — Auction pre-filter initializes `used_clusters` with clusters of existing open positions.
+   - `test_duplicate_symbol_is_rejected`: PASS — Duplicate candidate for an existing open symbol is rejected.
+   - `test_slot_cap_counts_existing_positions`: PASS — Existing open positions count toward slot capacity.
+   - *Test execution command*: `python Engine/tests/test_execution_safety.py --repo . -v` -> `Ran 8 tests in 0.030s, OK`.
+
+2. **Pre-Launch Compliance Test Harness (`test_prelaunch.py`) — 18/18 PASS**:
+   - TEST 1: 13-Feature Math Parity (Polars vs Pandas) at 1e-8 — PASS (now passes `buffer_d1=buf_d1.copy()` to `cfp_engine`, verifying complete D1 parity).
+   - TEST 2: Ratchet Phase-0 Trigger = 0.8R (Long and Short) — PASS.
+   - TEST 3: TP Close Uses actual_tp_r — PASS.
+   - TEST 4: Max 2 Concurrent Positions & Duplicate Veto — PASS.
+   - TEST 5: CRT Previous-Day Boundary (`_date < or_date`) — PASS.
+   - TEST 6: Kill Zone Hours (London & NY) — PASS.
+   - TEST 7: Full Module Import Safety (all 6 modules) — PASS.
+   - TEST 8: PnL Accounting Exactness (B3 + dynamic spread: R1=0.13, R2=1.98) — PASS.
+   - TEST 9: B2 None-Safe MT5 Tick Protection (Optional[float], entry_price None guard, current_price None guard) — PASS.
+   - *Test execution command*: `python Engine/tests/test_prelaunch.py` -> `RESULTS: 18/18 checks passed, ALL PASS - Engine cleared for dry-run startup`.
+
+---
+
+### Detailed Resolution of Ox_Alpha_41 Audit Blockers:
+
+1. **Dry-Run Execution Barrier & State Isolation (Section 2 Blocker)**:
+   - In `Engine/live/order_manager.py`:
+     * Changed `OrderManager.__init__` default to fail-closed paper mode: `def __init__(self, connection=None, dry_run: bool = True, state_file=None):`.
+     * State files are completely decoupled: `DRY_RUN_STATE_FILE = Path(__file__).resolve().parent / "dry_run_state.json"` for paper mode vs `LIVE_STATE_FILE = Path(__file__).resolve().parent / "live_state.json"` for live trading.
+     * In `Engine/live/run_forex_dry_run.py`: Explicitly wired `order_mgr = OrderManager(mt5_conn, dry_run=is_dry_run)`.
+     * In `OrderManager.manage_open_trades()`: In dry-run mode, order management executes offline paper simulation without broker reconciliation interference or deleting simulated tickets.
+     * Zero `mt5.order_send` calls can occur under `--dry-run`.
+
+2. **Mark-to-Market Equity & Risk Governor Wiring (Section 3 Blocker)**:
+   - In `Engine/research/forward_test_harness.py`:
+     * In `run_forward_test()`, before running the auction or admitting candidates, the loop queries live ticks for all active `open_trades` to collect side-specific marks (bid for BUY, ask for SELL).
+     * Computes `marked_eq = state.get_marked_equity(current_prices)`.
+     * Hard DD stop condition checks `state.max_dd_pct > HARD_DD_STOP_PCT` against marked equity.
+     * When candidates are admitted by the auction, candidate risk is sized explicitly via `assigned_risk = state.get_current_risk_usd(marked_equity=marked_eq)` and recorded in `state.open_trades[sig.symbol]['risk_usd']`.
+     * If an open position suffers an unrealized drawdown >= 2.0%, candidate risk immediately throttles from 50.00 USD down to 15.00 USD defense risk.
+
+3. **None-Safe Broker Query Preservation in Management (Section 4 Blocker)**:
+   - In `Engine/live/order_manager.py`:
+     * Updated `manage_open_trades()`:
+       ```python
+       position = mt5.positions_get(ticket=ticket)
+       if position is None:
+           log.error(f"[MANAGE ERROR] mt5.positions_get(ticket={ticket}) returned None. Preserving position.")
+           continue
+       if len(position) == 0:
+           # Position confirmed closed by broker
+           del self.open_trades[ticket]
+           self.save_state()
+           continue
+       ```
+     * Prevents transient broker query failures from deleting open positions from local state.
+
+4. **Risk Sizing Invariant & Lot Step Flooring (Section 5 Blocker)**:
+   - In `Engine/live/order_manager.py`:
+     * Replaced nearest-step rounding with broker step flooring:
+       ```python
+       raw_lots = risk_usd / loss_per_lot
+       lots = math.floor((raw_lots / step) + 1e-9) * step
+       while lots > 0 and (lots * loss_per_lot) > (risk_usd + 1e-6):
+           lots = round(lots - step, 8)
+       ```
+     * Under the hypothetical test case (budget 16.00 USD, loss per lot 1,000.00 USD, raw lots 0.016, step 0.01), `lots` is strictly floored to 0.01 lots (10.00 USD loss), never rounding up to 0.02 lots (20.00 USD loss).
+     * Explicit volume supplied in `place_market_order()` is validated and clamped against maximum allowable risk lots (`max_allowed_lots`).
+     * Real broker fills: Upon order execution, `result.price` and `result.volume` are recorded in `open_trades` rather than requested quote values.
+
+5. **Lifetime Metrics Ledger Across Process Restarts (Section 9 Blocker)**:
+   - In `Engine/research/forward_test_harness.py`:
+     * `ForwardState` now persists cumulative counters: `total_completed_trades`, `total_wins`, and `total_losses`.
+     * Dynamically updates `self.lifetime_max_dd_ratio` and `self.lifetime_max_dd_usd` on every trade closure and MTM calculation.
+     * Properties `completed_trades`, `win_rate`, `max_dd_pct`, and `calmar_live` utilize the persistent lifetime counters, eliminating metric distortion when a truncated 500-trade history slice is reloaded.
+
+6. **Quarantine Hysteresis Hardening & Cross-Module Parity (Sections 6 & 7)**:
+   - Synchronized `StatefulInferenceEngine` in `Engine/forex_engine.py` with `Engine/live/inference_engine.py`:
+     * Added `buffer_d1` to support daily boundary features.
+     * `check_quarantine()` now checks `None`, `NaN`, `Inf`, and non-positive spread/ATR, resetting `self.is_quarantined = True` and `self.consecutive_safe_bars = 0`.
+     * Added `bar_time` parameter requiring 2 unique completed bars before clearing quarantine.
+     * In `Engine/live/run_forex_dry_run.py`, passed `completed_bar_time` to `check_quarantine(..., bar_time=completed_bar_time)`.
+
+---
+
+### Verification URLs:
+All changes are live on `main` at pinned commit `89438ee`. Please audit directly:
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/order_manager.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/run_forex_dry_run.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/forward_test_harness.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/inference_engine.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/forex_engine.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/tests/test_prelaunch.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/tests/test_execution_safety.py`
+
+Please verify these remediations and provide your formal Production Certification Score (X / 10) and clearance for Live Dry-Run execution.
