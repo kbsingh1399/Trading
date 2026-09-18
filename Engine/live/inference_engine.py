@@ -51,6 +51,8 @@ class StatefulInferenceEngine:
                 return True, f"Quarantined (Exotic off-hours: {current_utc_hour:02d}:00 UTC outside 07-17 UTC)"
 
         if atr is None or spread is None or not np.isfinite(atr) or not np.isfinite(spread) or atr <= 0 or spread <= 0:
+            self.is_quarantined = True
+            self.consecutive_safe_bars = 0
             return True, "Quarantined (Invalid spread/ATR <= 0, None, NaN or Inf)"
 
         ratio = spread / atr
@@ -62,11 +64,11 @@ class StatefulInferenceEngine:
             return False, "Active"
         else:
             if ratio < MAX_SPREAD_ATR_RATIO_EXIT:
-                # Only increment on a new unique completed bar
-                last_bar = getattr(self, "_last_quarantine_bar", None)
-                if bar_time is None or bar_time != last_bar:
-                    self.consecutive_safe_bars += 1
-                    if bar_time is not None:
+                # Require an explicit unique completed bar timestamp to increment recovery counter
+                if bar_time is not None:
+                    last_bar = getattr(self, "_last_quarantine_bar", None)
+                    if bar_time != last_bar:
+                        self.consecutive_safe_bars += 1
                         self._last_quarantine_bar = bar_time
 
                 if self.consecutive_safe_bars >= 2:

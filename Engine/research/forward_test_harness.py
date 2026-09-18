@@ -91,6 +91,9 @@ class ForwardState:
         self.peak_equity   = INITIAL_CAPITAL
         self.lifetime_max_dd_ratio: float = 0.0
         self.lifetime_max_dd_usd: float = 0.0
+        self.total_completed_trades: int = 0
+        self.total_wins: int = 0
+        self.total_losses: int = 0
         self.trades: List[Dict] = []
         self.open_trades: Dict[str, Dict] = {}
         self.start_time    = datetime.now(timezone.utc).isoformat()
@@ -110,7 +113,10 @@ class ForwardState:
                 self.open_trades    = d.get('open_trades', {})
                 self.start_time     = d.get('start_time', self.start_time)
                 self.bars_processed = d.get('bars_processed', 0)
-                log.info(f'Resumed forward state: equity={self.equity:.2f} trades={len(self.trades)}')
+                self.total_completed_trades = d.get('total_completed_trades', len(self.trades))
+                self.total_wins     = d.get('total_wins', sum(1 for t in self.trades if t.get('pnl_r', 0) > 0))
+                self.total_losses   = d.get('total_losses', sum(1 for t in self.trades if t.get('pnl_r', 0) < 0))
+                log.info(f'Resumed forward state: equity={self.equity:.2f} trades={self.completed_trades}')
             except Exception as e:
                 log.warning(f'Could not load forward state: {e}')
 
@@ -119,6 +125,9 @@ class ForwardState:
             'equity': self.equity, 'peak_equity': self.peak_equity,
             'lifetime_max_dd_ratio': self.lifetime_max_dd_ratio,
             'lifetime_max_dd_usd': self.lifetime_max_dd_usd,
+            'total_completed_trades': self.total_completed_trades,
+            'total_wins': self.total_wins,
+            'total_losses': self.total_losses,
             'trades': self.trades[-500:],  # keep last 500 for memory
             'open_trades': self.open_trades,
             'start_time': self.start_time,
@@ -132,7 +141,7 @@ class ForwardState:
     # ── Metrics ─────────────────────────────────────────────────────────
     @property
     def completed_trades(self) -> int:
-        return len(self.trades)
+        return max(self.total_completed_trades, len(self.trades))
 
     @property
     def net_pnl_usd(self) -> float:
@@ -140,20 +149,8 @@ class ForwardState:
 
     @property
     def max_dd_pct(self) -> float:
-        eq = INITIAL_CAPITAL
-        peak = INITIAL_CAPITAL
-        max_dd_ratio = self.lifetime_max_dd_ratio
-        for t in self.trades:
-            eq += t.get('pnl_usd', 0.0)
-            if eq > peak:
-                peak = eq
-            dd_ratio = (peak - eq) / peak if peak > 0 else 0.0
-            if dd_ratio > max_dd_ratio:
-                max_dd_ratio = dd_ratio
         current_dd_ratio = (self.peak_equity - self.equity) / self.peak_equity if self.peak_equity > 0 else 0.0
-        res = max(max_dd_ratio, current_dd_ratio)
-        self.lifetime_max_dd_ratio = max(self.lifetime_max_dd_ratio, res)
-        return res
+        return max(self.lifetime_max_dd_ratio, current_dd_ratio)
 
     @property
     def current_drawdown_usd(self) -> float:
@@ -161,23 +158,16 @@ class ForwardState:
 
     @property
     def win_rate(self) -> float:
-        wins = sum(1 for t in self.trades if t.get('pnl_r', 0) > 0)
-        return wins / max(self.completed_trades, 1)
+        total = self.completed_trades
+        if total == 0:
+            return 0.0
+        return self.total_wins / total
 
     @property
     def calmar_live(self) -> float:
         if self.completed_trades < 5: return 0.0
-        eq = INITIAL_CAPITAL
-        peak = INITIAL_CAPITAL
-        max_dd_usd = self.lifetime_max_dd_usd
-        for t in self.trades:
-            eq += t.get('pnl_usd', 0.0)
-            if eq > peak:
-                peak = eq
-            dd = peak - eq
-            if dd > max_dd_usd:
-                max_dd_usd = dd
-        self.lifetime_max_dd_usd = max(self.lifetime_max_dd_usd, max_dd_usd)
+        current_dd_usd = self.peak_equity - self.equity
+        max_dd_usd = max(self.lifetime_max_dd_usd, current_dd_usd)
         net_profit_usd = self.equity - INITIAL_CAPITAL
         if net_profit_usd <= 0: return 0.0
         if max_dd_usd <= 0: return 99.0
@@ -199,7 +189,7 @@ class ForwardState:
         return (datetime.now(timezone.utc) - start).total_seconds() / 86400
 
     def get_marked_equity(self, current_prices: Optional[Dict[str, float]] = None) -> float:
-        """Computes true mark-to-market equity including open trade unrealized PnL."""
+        """Computes true mark-to-market equity including open trade unrealized PnL and updates watermarks."""
         unrealized_usd = 0.0
         if current_prices and self.open_trades:
             for sym, tr in self.open_trades.items():
@@ -211,7 +201,14 @@ class ForwardState:
                         r = sign * (cur_p - tr['entry']) / sl_dist
                         unrealized_usd += r * tr.get('risk_usd', 35.0)
         marked_eq = self.equity + unrealized_usd
-        self.peak_equity = max(self.peak_equity, marked_eq)
+        if marked_eq > self.peak_equity:
+            self.peak_equity = marked_eq
+        cur_dd_ratio = (self.peak_equity - marked_eq) / self.peak_equity if self.peak_equity > 0 else 0.0
+        cur_dd_usd = self.peak_equity - marked_eq
+        if cur_dd_ratio > self.lifetime_max_dd_ratio:
+            self.lifetime_max_dd_ratio = cur_dd_ratio
+        if cur_dd_usd > self.lifetime_max_dd_usd:
+            self.lifetime_max_dd_usd = cur_dd_usd
         return marked_eq
 
     def get_current_risk_usd(self, marked_equity: Optional[float] = None) -> float:
@@ -242,7 +239,21 @@ class ForwardState:
                 r_multiple -= friction_r
         pnl_usd = r_multiple * risk_usd
         self.equity += pnl_usd
-        self.peak_equity = max(self.peak_equity, self.equity)
+        if self.equity > self.peak_equity:
+            self.peak_equity = self.equity
+        cur_dd_ratio = (self.peak_equity - self.equity) / self.peak_equity if self.peak_equity > 0 else 0.0
+        cur_dd_usd = self.peak_equity - self.equity
+        if cur_dd_ratio > self.lifetime_max_dd_ratio:
+            self.lifetime_max_dd_ratio = cur_dd_ratio
+        if cur_dd_usd > self.lifetime_max_dd_usd:
+            self.lifetime_max_dd_usd = cur_dd_usd
+
+        self.total_completed_trades += 1
+        if r_multiple > 0:
+            self.total_wins += 1
+        elif r_multiple < 0:
+            self.total_losses += 1
+
         self.trades.append({
             'symbol': symbol, 'direction': direction,
             'entry_price': entry_price, 'exit_price': exit_price, 'sl': sl,
@@ -386,6 +397,19 @@ def run_forward_test(mt5_login: Optional[int] = None, mt5_password: Optional[str
     log.info('Entering forward test loop...')
     try:
         while True:
+            # ── Mark-to-market equity & prices ───────────────────────────
+            current_prices = {}
+            for sym, tr in state.open_trades.items():
+                tick = conn.get_last_tick(sym)
+                if tick is not None:
+                    bid = getattr(tick, 'bid', None)
+                    ask = getattr(tick, 'ask', None)
+                    if tr['direction'] == 'BUY' and bid is not None:
+                        current_prices[sym] = bid
+                    elif tr['direction'] == 'SELL' and ask is not None:
+                        current_prices[sym] = ask
+            marked_eq = state.get_marked_equity(current_prices)
+
             # ── Hard DD stop ─────────────────────────────────────────────
             if state.max_dd_pct > HARD_DD_STOP_PCT:
                 log.error(f'HARD DD STOP: {state.max_dd_pct:.2%} > {HARD_DD_STOP_PCT:.2%}. HALTING.')
@@ -438,15 +462,16 @@ def run_forward_test(mt5_login: Optional[int] = None, mt5_password: Optional[str
                         entry_price = bid if sig.direction == 'SELL' else ask
                         sl_distance = sig.atr_14 * 1.5
                         sl = entry_price - sl_distance if sig.direction == 'BUY' else entry_price + sl_distance
+                        assigned_risk = state.get_current_risk_usd(marked_equity=marked_eq)
                         state.open_trades[sig.symbol] = {
                             'direction': sig.direction, 'entry': entry_price,
-                            'sl': sl, 'orig_sl': sl, 'risk_usd': state.get_current_risk_usd(),
+                            'sl': sl, 'orig_sl': sl, 'risk_usd': assigned_risk,
                             'entry_bar': state.bars_processed,
                             'prob': sig.prob_win,
                             'sl_dist': sl_distance,
                             'spread': spread,
                         }
-                        log.info(f'DRY OPEN: {sig.symbol} {sig.direction} @ {entry_price:.5f} SL={sl:.5f}')
+                        log.info(f'DRY OPEN: {sig.symbol} {sig.direction} @ {entry_price:.5f} SL={sl:.5f} Risk={assigned_risk:.2f}')
 
                 # ── Manage open trades (ratchet simulation) ───────────────
                 to_close = []

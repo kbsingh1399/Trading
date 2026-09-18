@@ -46224,3 +46224,60 @@ Remediated Ox_Alpha_37 re-audit findings:
 6. Expanded Compliance Suite: Engine/tests/test_prelaunch.py expanded to 19/19 passing checks.
 7. Live Terminal Snapshot: Verified against active MT5 Blueberry Markets Live #5064568 with 18/18 assets online, 0 NaNs, clean disconnect.
 8. Git Commits & Prompt: Pushed commits b68c7d2 and f445c33 to origin main. Generated Ox_Alpha_38_Remediation_Verification_and_Live_Production_Audit.txt in C:\Users\SIGMA\Downloads\ and archived in docs/prompts/.
+
+## Turn Entry: 2026-09-19 02:02 UTC
+### Context & Findings:
+Remediated Ox_Alpha_40 audit findings to achieve 10/10 Production Certification:
+1. Offline Execution Safety Contracts (test_execution_safety.py):
+   - Added Engine/tests/test_execution_safety.py covering all 8 offline safety regressions.
+   - OrderManager: added dry_run: bool = False execution barrier, guarded reconcile_with_broker to preserve positions when positions_get returns None, ensured load_state queries broker even if state file is absent, clamped calculate_lot_size to return 0.0 lot size (abstain) if symbol specs are missing or raw_lots < volume_min, guarded all mt5.order_send return values against None.
+   - SignalAuction: populated used_clusters with clusters of existing open_symbols during auction pre-filtering, preventing duplicate cluster exposure.
+   - Cluster Harmonization: synchronized CORRELATION_CLUSTERS across order_manager.py, forex_engine.py, and signal_auction.py (added USDSEK and USDHKD to USD_BLOC).
+   - Results: 8/8 PASS on python Engine/tests/test_execution_safety.py --repo . -v.
+2. D1 & 4H Causal Availability Parity:
+   - Replaced erroneous trim-and-shift lag with exact availability timestamp joins (bd_avail = bd.index + Timedelta(days=1), b4h_avail = b4h.index + Timedelta(hours=4)).
+   - Delegated compute_features_pandas in forex_engine.py directly to strategy_kernel.compute_features_pandas().
+   - Verified 0.00e+00 Polars-Pandas feature parity across all 15 canonical stationary features.
+3. Inference & Quarantine Hardening:
+   - Added None, NaN, inf, and non-positive guards to check_quarantine().
+   - Added bar_time parameter to track unique completed bar timestamps before incrementing the 2-bar hysteresis exit counter.
+   - Wired self.refresh_4h_buffer() inside infer_next_bar() on new candle detection.
+4. Financial Math & State Persistence:
+   - Replaced double spread debiting with clean single-tick executable fills (spread_already_deducted=True).
+   - Added persistent lifetime_max_dd_ratio and lifetime_max_dd_usd tracking to ForwardState.
+   - Added get_marked_equity() for true mark-to-market equity calculation including unrealized PnL.
+5. Pre-Launch Verification Suite:
+   - python Engine/tests/test_prelaunch.py -> 18/18 PASS (ALL PASS - Engine cleared for dry-run startup).
+6. Git Commits & Certification Prompt:
+   - Committed and pushed all changes to main at commits 2f61384 and c7e24a9.
+   - Authored Git-based prompt Ox_Alpha_41_Final_Production_Certification.txt in C:\Users\SIGMA\Downloads\ and archived in docs/prompts/.
+
+## Turn Entry: 2026-09-19 02:20 UTC
+### Context & Findings:
+Comprehensive Remediation of Ox_Alpha_41 Audit Blockers:
+1. Dry-Run Execution Barrier & Isolation (order_manager.py & run_forex_dry_run.py):
+   - Changed OrderManager constructor default to fail-closed paper mode: dry_run: bool = True.
+   - Isolated dry-run state to dry_run_state.json and live state to live_state.json.
+   - Explicitly wired dry_run=is_dry_run into run_forex_dry_run.py.
+   - In dry-run mode, runs simulated order management without calling broker positions_get() or order_send().
+2. None-Safe Broker Query Preservation:
+   - In manage_open_trades(), if mt5.positions_get(ticket=ticket) returns None, logs error and preserves position; only cleans up when broker explicitly returns empty list (len == 0).
+3. Risk Sizing Invariant & Lot Step Flooring:
+   - Floored lot calculations to volume_step using math.floor((raw_lots / step) + 1e-9) * step.
+   - Added guard loop ensuring (lots * loss_per_lot) <= risk_usd.
+   - Clamped explicitly supplied volume in place_market_order to maximum allowable risk lots.
+   - Recorded actual broker execution fill price (result.price) and volume (result.volume).
+4. Mark-to-Market Risk Sizing & Hard DD Stop (forward_test_harness.py):
+   - Wired live tick mark queries for all open positions at loop start.
+   - Passed marked_eq into state.get_current_risk_usd(marked_equity=marked_eq) when admitting candidates.
+   - Enforced hard DD stop against marked equity drawdown.
+5. Persistent Metrics Ledger Across Restarts (ForwardState):
+   - Added total_completed_trades, total_wins, and total_losses fields to ForwardState.
+   - Updated lifetime_max_dd_ratio and lifetime_max_dd_usd dynamically on mark and trade events.
+   - Prevented metric distortion from 500-trade slice replaying from initial capital on restart.
+6. Quarantine Hysteresis Hardening (inference_engine.py & forex_engine.py):
+   - Synchronized StatefulInferenceEngine in forex_engine.py with buffer_d1, NaN/inf/<=0 checks, and bar_time hysteresis tracking.
+   - Passed completed_bar_time from run_forex_dry_run.py into check_quarantine().
+7. Verification Suites:
+   - python Engine/tests/test_execution_safety.py --repo . -v -> 8/8 PASS.
+   - python Engine/tests/test_prelaunch.py -> 18/18 PASS.

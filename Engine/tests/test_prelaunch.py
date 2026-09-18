@@ -79,7 +79,7 @@ try:
         buf_d1.reset_index().to_parquet(Path(tmp_dir) / "TEST_d1_real.parquet")
         
         # Get Pandas output
-        re = cfp_engine(buf.copy(), buf_4h.copy()).iloc[-1]
+        re = cfp_engine(buf.copy(), buf_4h.copy(), buffer_d1=buf_d1.copy()).iloc[-1]
         # Get Polars output
         rk = engineer_features_polars("TEST", tmp_dir).iloc[-1]
         

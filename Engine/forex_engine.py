@@ -1256,12 +1256,14 @@ class StatefulInferenceEngine:
         self.max_bars = max_bars
         self.buffer: pd.DataFrame = pd.DataFrame()
         self.buffer_4h: pd.DataFrame = pd.DataFrame()
+        self.buffer_d1: pd.DataFrame = pd.DataFrame()
         self.is_warm = False
         self.mt5_conn = None
         self.is_quarantined = False
         self.consecutive_safe_bars = 0
+        self._last_quarantine_bar = None
 
-    def check_quarantine(self, spread: float, atr: float, current_utc_hour: int = 12) -> Tuple[bool, str]:
+    def check_quarantine(self, spread: float, atr: float, current_utc_hour: int = 12, bar_time: Optional[datetime] = None) -> Tuple[bool, str]:
         """
         P1 Quarantine with Hysteresis & Session Time Filter:
         1. Exotic assets are strictly quarantined outside 07:00-17:00 UTC.
@@ -1274,8 +1276,10 @@ class StatefulInferenceEngine:
                 self.consecutive_safe_bars = 0
                 return True, f"Quarantined (Exotic off-hours: {current_utc_hour:02d}:00 UTC outside 07-17 UTC)"
 
-        if atr <= 0 or spread <= 0:
-            return True, "Quarantined (Invalid spread/ATR <= 0)"
+        if spread is None or atr is None or np.isnan(spread) or np.isnan(atr) or np.isinf(spread) or np.isinf(atr) or atr <= 0 or spread <= 0:
+            self.is_quarantined = True
+            self.consecutive_safe_bars = 0
+            return True, "Quarantined (Invalid spread/ATR data)"
 
         ratio = spread / atr
         if not self.is_quarantined:
@@ -1286,7 +1290,11 @@ class StatefulInferenceEngine:
             return False, "Active"
         else:
             if ratio < MAX_SPREAD_ATR_RATIO_EXIT:
-                self.consecutive_safe_bars += 1
+                if bar_time is not None:
+                    if bar_time != self._last_quarantine_bar:
+                        self.consecutive_safe_bars += 1
+                        self._last_quarantine_bar = bar_time
+
                 if self.consecutive_safe_bars >= 2:
                     self.is_quarantined = False
                     self.consecutive_safe_bars = 0
@@ -1319,6 +1327,14 @@ class StatefulInferenceEngine:
                 bars_4h_df.set_index('datetime', inplace=True)
             self.buffer_4h = bars_4h_df[['open', 'high', 'low', 'close']].copy()
 
+        if hasattr(mt5_conn, 'get_1d_bars'):
+            bars_1d_df = mt5_conn.get_1d_bars(self.symbol, count=20)
+            if not bars_1d_df.empty and len(bars_1d_df) > 1:
+                bars_1d_df = bars_1d_df.iloc[:-1].copy()
+                if 'datetime' in bars_1d_df.columns:
+                    bars_1d_df.set_index('datetime', inplace=True)
+                self.buffer_d1 = bars_1d_df[['open', 'high', 'low', 'close']].copy()
+
         self.is_warm = True
         return True
 
@@ -1347,7 +1363,7 @@ class StatefulInferenceEngine:
                 self.buffer_4h = bars_4h_df[['open', 'high', 'low', 'close']].copy()
 
     def compute_features(self) -> pd.DataFrame:
-        return compute_features_pandas(self.buffer, self.buffer_4h)
+        return compute_features_pandas(self.buffer, self.buffer_4h, getattr(self, 'buffer_d1', None))
 
     def predict(self, xgb_model: Optional[xgb.Booster] = None) -> float:
         if self.buffer.empty:

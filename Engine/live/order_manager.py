@@ -3,11 +3,14 @@ import logging
 import os
 import json
 import time
+import math
 from pathlib import Path
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-STATE_FILE = Path(__file__).resolve().parent / "live_state.json"
+LIVE_STATE_FILE = Path(__file__).resolve().parent / "live_state.json"
+DRY_RUN_STATE_FILE = Path(__file__).resolve().parent / "dry_run_state.json"
+STATE_FILE = LIVE_STATE_FILE  # default backward-compatible alias
 MAX_MARGIN_UTILIZATION_PCT = 0.30  # Portfolio margin utilization ceiling (30%)
 MIN_MARGIN_LEVEL_PCT = 200.0       # Minimum account margin level before hard freeze (200%)
 MAX_CONCURRENT_POSITIONS = 3       # Max 3 concurrent positions across portfolio
@@ -29,9 +32,13 @@ from Engine.forex_engine import (
 )
 
 class OrderManager:
-    def __init__(self, connection=None, dry_run: bool = False):
+    def __init__(self, connection=None, dry_run: bool = True, state_file=None):
         self.conn = connection
         self.dry_run = dry_run
+        if state_file is not None:
+            self.state_file = Path(state_file)
+        else:
+            self.state_file = DRY_RUN_STATE_FILE if self.dry_run else LIVE_STATE_FILE
         self.open_trades = {}  # ticket -> trade_info
         self.load_state()
 
@@ -82,10 +89,12 @@ class OrderManager:
         Detects positions closed externally by broker-side SL/TP or terminal disconnects.
         Fails safe on query failure (preserves open_trades if broker query returns None).
         """
+        if getattr(self, "dry_run", False):
+            return  # In dry run mode, positions are simulated locally
         if self.conn is not None and not getattr(self.conn, "connected", True):
             return
         try:
-            live_pos = mt5.positions_get()
+            live_pos = mt5.positions_get() if hasattr(mt5, "positions_get") else None
             if live_pos is None:
                 logging.error("[RECONCILE HEARTBEAT ERROR] mt5.positions_get() returned None. Preserving active positions.")
                 return
@@ -101,12 +110,13 @@ class OrderManager:
 
         
     def save_state(self):
-        """Persists active open trades to live_state.json so positions survive restarts, preserving PnL metrics."""
+        """Persists active open trades so positions survive restarts, preserving PnL metrics."""
         try:
+            target_file = getattr(self, "state_file", STATE_FILE)
             state_data = {}
-            if STATE_FILE.exists():
+            if target_file.exists():
                 try:
-                    with open(STATE_FILE, "r", encoding="utf-8") as f:
+                    with open(target_file, "r", encoding="utf-8") as f:
                         state_data = json.load(f)
                 except Exception:
                     state_data = {}
@@ -116,46 +126,50 @@ class OrderManager:
                 state_data["realized_pnl"] = 0.0
             if "initial_balance" not in state_data:
                 state_data["initial_balance"] = 5000.0
-            with open(STATE_FILE, "w", encoding="utf-8") as f:
+            with open(target_file, "w", encoding="utf-8") as f:
                 json.dump(state_data, f, indent=2, default=str)
         except Exception as e:
-            logging.error(f"Failed to save live state: {e}")
+            logging.error(f"Failed to save state: {e}")
 
     def load_state(self):
         """Reconciles persisted state with active MT5 positions on startup and normalizes schema."""
+        target_file = getattr(self, "state_file", STATE_FILE)
         saved_trades = {}
-        if STATE_FILE.exists():
+        if target_file.exists():
             try:
-                with open(STATE_FILE, "r", encoding="utf-8") as f:
+                with open(target_file, "r", encoding="utf-8") as f:
                     state_data = json.load(f)
                 saved_trades = state_data.get("open_trades", {})
             except Exception as e:
-                logging.error(f"Failed to read state file {STATE_FILE}: {e}")
+                logging.error(f"Failed to read state file {target_file}: {e}")
                 saved_trades = {}
 
         try:
             raw_trades = {}
             is_connected = getattr(self.conn, "connected", False) if self.conn is not None else False
-            if is_connected or hasattr(mt5, "positions_get"):
+            if hasattr(mt5, "positions_get"):
                 live_pos = mt5.positions_get()
-                if live_pos is not None:
-                    live_positions = {p.ticket: p for p in live_pos}
-                    for k, v in saved_trades.items():
-                        if int(k) in live_positions:
-                            raw_trades[int(k)] = v
-                    for tkt, pos in live_positions.items():
-                        if tkt not in raw_trades:
-                            raw_trades[tkt] = {
-                                "ticket": tkt,
-                                "symbol": pos.symbol,
-                                "real_symbol": pos.symbol,
-                                "type": pos.type,
-                                "volume": pos.volume,
-                                "entry": pos.price_open,
-                                "entry_price": pos.price_open,
-                                "sl": pos.sl,
-                                "tp": pos.tp,
-                            }
+                if not getattr(self, "dry_run", False) and (is_connected or live_pos is not None):
+                    if live_pos is not None:
+                        live_positions = {p.ticket: p for p in live_pos}
+                        for k, v in saved_trades.items():
+                            if int(k) in live_positions:
+                                raw_trades[int(k)] = v
+                        for tkt, pos in live_positions.items():
+                            if tkt not in raw_trades:
+                                raw_trades[tkt] = {
+                                    "ticket": tkt,
+                                    "symbol": pos.symbol,
+                                    "real_symbol": pos.symbol,
+                                    "type": pos.type,
+                                    "volume": pos.volume,
+                                    "entry": pos.price_open,
+                                    "entry_price": pos.price_open,
+                                    "sl": pos.sl,
+                                    "tp": pos.tp,
+                                }
+                    else:
+                        raw_trades = {int(k): v for k, v in saved_trades.items()}
                 else:
                     raw_trades = {int(k): v for k, v in saved_trades.items()}
             else:
@@ -194,7 +208,7 @@ class OrderManager:
                     "ratchet_desc": str(tr.get("ratchet_desc", "Base SL (-1.00R)")),
                     "last_bar_time": tr.get("last_bar_time", None)
                 }
-            logging.info(f"Loaded live state: {len(self.open_trades)} active positions restored from {STATE_FILE.name}")
+            logging.info(f"Loaded state: {len(self.open_trades)} active positions restored from {target_file.name}")
         except Exception as e:
             logging.error(f"Failed to load live state: {e}")
 
@@ -263,11 +277,15 @@ class OrderManager:
             return 0.0
 
         step = getattr(info, "volume_step", 0.01) if getattr(info, "volume_step", 0) > 0 else 0.01
-        lots = round(raw_lots / step) * step
-        if lots < vol_min:
+        lots = math.floor((raw_lots / step) + 1e-9) * step
+        while (lots * loss_per_lot) > risk_usd and (lots - step) >= vol_min:
+            lots -= step
+        if (lots * loss_per_lot) > risk_usd or lots < vol_min:
             return 0.0
         lots = min(lots, vol_max)
-        return round(float(lots), 2)
+        step_str = f"{step:.8f}".rstrip('0')
+        decimals = len(step_str.split('.')[1]) if '.' in step_str else 2
+        return round(float(lots), decimals)
 
     def place_market_order(self, symbol, order_type, volume=None, sl_price=None, tp_price=None, risk_usd=25.0, strategy_tag="ML_FOREX"):
         if self.conn is not None and not getattr(self.conn, "connected", True):
@@ -310,6 +328,14 @@ class OrderManager:
             volume = self.calculate_lot_size(symbol, risk_usd=risk_usd, sl_dist=r_dist)
             if volume <= 0:
                 logging.warning(f"[ORDER ABSTAIN] Calculated lot size for {symbol} is 0.0. Order aborted.")
+                return None
+        else:
+            max_allowed = self.calculate_lot_size(symbol, risk_usd=risk_usd, sl_dist=r_dist)
+            if max_allowed > 0 and volume > max_allowed:
+                logging.warning(f"[RISK OVERRIDE] Supplied volume {volume} exceeds risk budget max {max_allowed}. Clamping to {max_allowed}.")
+                volume = max_allowed
+            elif max_allowed == 0.0:
+                logging.warning(f"[ORDER ABSTAIN] Risk budget forbids volume for {symbol}. Order aborted.")
                 return None
             
         request = {
@@ -366,7 +392,15 @@ class OrderManager:
             logging.error(f"Order send failed for {symbol}: retcode={retcode}")
             return None
             
-        logging.info(f"Order executed successfully: Ticket #{result.order} for {symbol} ({volume} lots)")
+        fill_price = getattr(result, "price", 0.0)
+        actual_entry = fill_price if fill_price > 0 else entry_price
+        fill_volume = getattr(result, "volume", 0.0)
+        actual_volume = fill_volume if fill_volume > 0 else volume
+        actual_r_dist = abs(actual_entry - sl_price) if sl_price else r_dist
+        if actual_r_dist <= 0:
+            actual_r_dist = 0.0001
+
+        logging.info(f"Order executed successfully: Ticket #{result.order} for {symbol} ({actual_volume} lots @ {actual_entry})")
         
         self.open_trades[result.order] = {
             "symbol": symbol,
@@ -374,12 +408,12 @@ class OrderManager:
             "ticket": result.order,
             "type": order_type,
             "action": "BUY" if order_type in (0, getattr(mt5, "ORDER_TYPE_BUY", 0)) else "SELL",
-            "volume": volume,
-            "entry": entry_price,
-            "entry_price": entry_price,
+            "volume": actual_volume,
+            "entry": actual_entry,
+            "entry_price": actual_entry,
             "sl": sl_price,
             "tp": tp_price,
-            "r_dist": r_dist,
+            "r_dist": actual_r_dist,
             "risk_usd": risk_usd,
             "strategy": strategy_tag,
             "bars_elapsed": 0,
@@ -516,17 +550,30 @@ class OrderManager:
 
         
         for ticket in tickets_to_check:
-            position = mt5.positions_get(ticket=ticket)
-            if position is None or len(position) == 0:
-                # Closed manually or hit SL/TP
-                if ticket in self.open_trades:
-                    del self.open_trades[ticket]
-                    self.save_state()
+            trade_info = self.open_trades.get(ticket)
+            if trade_info is None:
                 continue
-                
-            pos = position[0]
-            trade_info = self.open_trades[ticket]
-            
+
+            if getattr(self, "dry_run", False):
+                pos_type = int(trade_info.get("type", 0))
+                pos_symbol = trade_info.get("symbol", "")
+                pos_sl = float(trade_info.get("sl", 0.0))
+            else:
+                position = mt5.positions_get(ticket=ticket) if hasattr(mt5, "positions_get") else None
+                if position is None:
+                    logging.error(f"[MANAGE ERROR] mt5.positions_get(ticket={ticket}) returned None. Preserving active ticket.")
+                    continue
+                if len(position) == 0:
+                    logging.info(f"[BROKER CLOSED] Position #{ticket} closed externally on broker side.")
+                    if ticket in self.open_trades:
+                        del self.open_trades[ticket]
+                        self.save_state()
+                    continue
+                pos = position[0]
+                pos_type = pos.type
+                pos_symbol = pos.symbol
+                pos_sl = pos.sl
+
             # Update elapsed bars
             if current_bar_time and trade_info.get("last_bar_time") != current_bar_time:
                 bars = int(trade_info.get("bars_elapsed", trade_info.get("bars_held", 0))) + 1
@@ -534,14 +581,14 @@ class OrderManager:
                 trade_info["bars_held"] = bars
                 trade_info["last_bar_time"] = current_bar_time
                 
-            tick = self.conn.get_last_tick(pos.symbol)
+            tick = self.conn.get_last_tick(pos_symbol) if self.conn and hasattr(self.conn, "get_last_tick") else None
             if tick is None:
                 continue
                 
-            current_price = tick.bid if pos.type == mt5.POSITION_TYPE_BUY else tick.ask
-            entry = float(trade_info.get("entry_price") or trade_info.get("entry") or pos.price_open)
-            sl_val = float(trade_info.get("sl") or pos.sl)
-            r_dist = float(trade_info.get("r_dist") or abs(entry - sl_val) if sl_val > 0 else 0.0001)
+            current_price = tick.bid if pos_type in (0, getattr(mt5, "POSITION_TYPE_BUY", 0)) else tick.ask
+            entry = float(trade_info.get("entry_price") or trade_info.get("entry") or 0.0)
+            sl_val = float(trade_info.get("sl") or pos_sl)
+            r_dist = float(trade_info.get("r_dist") or (abs(entry - sl_val) if sl_val > 0 else 0.0001))
             if r_dist <= 0:
                 r_dist = 0.0001
             trade_info["entry"] = entry
@@ -550,7 +597,7 @@ class OrderManager:
             trade_info["cur_price"] = current_price
             
             # Calculate current R
-            if pos.type == mt5.POSITION_TYPE_BUY:
+            if pos_type in (0, getattr(mt5, "POSITION_TYPE_BUY", 0)):
                 current_r = (current_price - entry) / r_dist
             else:
                 current_r = (entry - current_price) / r_dist
@@ -559,6 +606,29 @@ class OrderManager:
             trade_info["running_pnl"] = current_r * float(trade_info.get("risk_usd", 25.0))
             trade_info["highest_r"] = max(float(trade_info.get("highest_r", 0.0)), current_r)
             trade_info["lowest_r"] = min(float(trade_info.get("lowest_r", 0.0)), current_r)
+
+            # In dry run mode, check simulated SL and TP hits
+            if getattr(self, "dry_run", False):
+                if pos_type in (0, getattr(mt5, "POSITION_TYPE_BUY", 0)):
+                    if pos_sl > 0 and current_price <= pos_sl:
+                        logging.info(f"[DRY RUN SL] Ticket #{ticket} hit SL at {current_price:.5f}")
+                        self.close_position(ticket)
+                        continue
+                    tp_val = float(trade_info.get("tp", 0.0))
+                    if tp_val > 0 and current_price >= tp_val:
+                        logging.info(f"[DRY RUN TP] Ticket #{ticket} hit TP at {current_price:.5f}")
+                        self.close_position(ticket)
+                        continue
+                else:
+                    if pos_sl > 0 and current_price >= pos_sl:
+                        logging.info(f"[DRY RUN SL] Ticket #{ticket} hit SL at {current_price:.5f}")
+                        self.close_position(ticket)
+                        continue
+                    tp_val = float(trade_info.get("tp", 0.0))
+                    if tp_val > 0 and current_price <= tp_val:
+                        logging.info(f"[DRY RUN TP] Ticket #{ticket} hit TP at {current_price:.5f}")
+                        self.close_position(ticket)
+                        continue
             
             # Time Decay Exit: 24 bars elapsed and hasn't gained 0.20R
             bars_elapsed = int(trade_info.get("bars_elapsed", trade_info.get("bars_held", 0)))
@@ -601,14 +671,14 @@ class OrderManager:
                     logging.info(f"[ROLLOVER LOCKOUT] Suppressing SL modification for #{ticket} during 21:55-22:15 UTC bank settlement.")
                 else:
                     # Calculate new SL price
-                    if pos.type == mt5.POSITION_TYPE_BUY:
+                    if pos_type in (0, getattr(mt5, "POSITION_TYPE_BUY", 0)):
                         new_sl_price = entry + (new_sl_r * r_dist)
                         # Ensure we only move SL up
-                        if new_sl_price > pos.sl:
+                        if new_sl_price > pos_sl:
                             self.modify_sl(ticket, new_sl_price)
                     else:
                         new_sl_price = entry - (new_sl_r * r_dist)
                         # Ensure we only move SL down (for short, SL is above entry)
-                        if new_sl_price < pos.sl or pos.sl == 0:
+                        if new_sl_price < pos_sl or pos_sl == 0:
                             self.modify_sl(ticket, new_sl_price)
 

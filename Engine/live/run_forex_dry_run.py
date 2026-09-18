@@ -252,8 +252,8 @@ def main():
     # Load Model
     xgb_model = load_production_model()
 
-    # Initialize Order Manager
-    order_mgr = OrderManager(mt5_conn)
+    # Initialize Order Manager (Strictly pass dry_run flag)
+    order_mgr = OrderManager(mt5_conn, dry_run=is_dry_run)
 
     # Warm-start Stateful Inference Engines
     engines = {}
@@ -450,7 +450,8 @@ def main():
                 current_utc_hour = datetime.now(timezone.utc).hour
 
                 # P1 Check: Spread/ATR Hysteresis Quarantine & Exotic Session Filter
-                is_quarantined, q_reason = engine.check_quarantine(spread, atr, current_utc_hour)
+                completed_bar_time = last_candle_times.get(asset)
+                is_quarantined, q_reason = engine.check_quarantine(spread, atr, current_utc_hour, bar_time=completed_bar_time)
 
                 # 1. GATING LOGIC FIRST
                 if is_quarantined:
