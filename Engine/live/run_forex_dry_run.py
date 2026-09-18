@@ -577,6 +577,17 @@ def main():
                         order_type = mt5.ORDER_TYPE_BUY if is_long else mt5.ORDER_TYPE_SELL
                         order_mgr.place_market_order(asset, order_type, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD)
 
+            # Mark active open positions directly in scanner decision cell
+            for ticket, trade_info in order_mgr.open_trades.items():
+                sym_clean = trade_info["symbol"].upper().replace(".PI", "").replace(".P", "").replace(".R", "")
+                for asset in ASSETS:
+                    if asset.upper() == sym_clean and asset in eval_data:
+                        direction = "BUY" if trade_info["type"] == 0 else "SELL"
+                        pos_mt5 = mt5.positions_get(ticket=ticket)
+                        profit_usd = pos_mt5[0].profit if (pos_mt5 and len(pos_mt5) > 0) else 0.0
+                        pnl_sign = "+" if profit_usd >= 0 else ""
+                        eval_data[asset]['decision_cell'] = f"[bold white on blue] ACTIVE TRADE: {direction} {trade_info['volume']}L ({pnl_sign}{profit_usd:.2f} USD) [/bold white on blue]"
+
             # Build Table Rows in canonical asset order
             for asset in ASSETS:
                 if asset not in eval_data:
@@ -596,6 +607,79 @@ def main():
                     ed['prob_cell'],
                     ed['decision_cell']
                 )
+
+            # Build Live Open Positions Table if positions exist
+            pos_table = None
+            if order_mgr.open_trades:
+                pos_table = Table(
+                    title=f"LIVE ACTIVE BROKER POSITIONS ({len(order_mgr.open_trades)} / 2 Max)",
+                    header_style="bold black on bright_green",
+                    border_style="bright_green",
+                    expand=True
+                )
+                pos_table.add_column("Ticket", style="bold cyan", justify="center")
+                pos_table.add_column("Asset", style="bold white", justify="left")
+                pos_table.add_column("Type", justify="center")
+                pos_table.add_column("Lots", justify="right")
+                pos_table.add_column("Entry Price", justify="right")
+                pos_table.add_column("Current Price", justify="right")
+                pos_table.add_column("PnL (USD)", justify="right")
+                pos_table.add_column("Current R", justify="right")
+                pos_table.add_column("Stop Loss", justify="right")
+                pos_table.add_column("Take Profit", justify="right")
+                pos_table.add_column("Decay Bars", justify="center")
+                pos_table.add_column("Ratchet Status", justify="left")
+
+                for ticket, trade_info in order_mgr.open_trades.items():
+                    pos_mt5 = mt5.positions_get(ticket=ticket)
+                    if pos_mt5 and len(pos_mt5) > 0:
+                        p = pos_mt5[0]
+                        current_p = p.price_current
+                        profit_usd = p.profit
+                    else:
+                        current_p = trade_info["entry_price"]
+                        profit_usd = 0.0
+
+                    direction = "BUY" if trade_info["type"] == 0 else "SELL"
+                    dir_style = "[bold green]BUY[/bold green]" if trade_info["type"] == 0 else "[bold red]SELL[/bold red]"
+                    pnl_style = f"[bold green]{profit_usd:+.2f} USD[/bold green]" if profit_usd >= 0 else f"[bold red]{profit_usd:+.2f} USD[/bold red]"
+                    
+                    r_dist = trade_info.get("r_dist", 0.0001)
+                    if trade_info["type"] == 0:
+                        curr_r = (current_p - trade_info["entry_price"]) / r_dist if r_dist > 0 else 0.0
+                    else:
+                        curr_r = (trade_info["entry_price"] - current_p) / r_dist if r_dist > 0 else 0.0
+                    r_style = f"[bold green]{curr_r:+.2f}R[/bold green]" if curr_r >= 0 else f"[bold red]{curr_r:+.2f}R[/bold red]"
+
+                    high_r = trade_info.get("highest_r", 0.0)
+                    ratchet_label = "Base SL"
+                    if high_r >= 3.5:
+                        ratchet_label = "[bold bright_green]Lock 3.3R[/bold bright_green]"
+                    elif high_r >= 3.0:
+                        ratchet_label = "[bold bright_green]Lock 2.8R[/bold bright_green]"
+                    elif high_r >= 2.5:
+                        ratchet_label = "[bold green]Lock 2.3R[/bold green]"
+                    elif high_r >= 2.0:
+                        ratchet_label = "[bold green]Lock 1.8R[/bold green]"
+                    elif high_r >= 1.5:
+                        ratchet_label = "[bold cyan]Lock 1.0R[/bold cyan]"
+                    elif high_r >= 1.0:
+                        ratchet_label = "[bold cyan]BE Lock (+0.15R)[/bold cyan]"
+
+                    pos_table.add_row(
+                        str(ticket),
+                        trade_info["symbol"],
+                        dir_style,
+                        f"{trade_info['volume']:.2f}",
+                        f"{trade_info['entry_price']:.5f}",
+                        f"{current_p:.5f}",
+                        pnl_style,
+                        r_style,
+                        f"{trade_info['sl']:.5f}",
+                        f"{trade_info['tp']:.5f}",
+                        f"{trade_info.get('bars_elapsed', 0)}/24",
+                        ratchet_label
+                    )
 
             # Header info panel
             uptime = str(datetime.now() - start_time).split('.')[0]
@@ -617,6 +701,8 @@ def main():
                 console.clear()
 
             console.print(header_panel)
+            if pos_table is not None:
+                console.print(pos_table)
             console.print(table)
             console.print("[dim]Press Ctrl+C to safely disconnect and exit.[/dim]\n")
 
