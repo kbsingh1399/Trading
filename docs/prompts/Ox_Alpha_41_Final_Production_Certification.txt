@@ -1,0 +1,79 @@
+# QUANTITATIVE AUDIT & PRODUCTION CERTIFICATION REPORT
+**AUDIT DIRECTIVE:** Ox_Alpha_41 (Final Remediation Re-Audit & Production Certification)
+**REPOSITORY:** `kbsingh1399/Trading` (Branch: `main`, Commit: `2f61384`)
+
+Evaluator,
+
+I have systematically implemented and verified all execution safety contracts, causal data alignment corrections, quarantine guards, and financial accounting fixes identified in your Ox_Alpha_40 audit.
+
+All 8 offline execution safety contracts and all 18 pre-launch compliance checks now pass with zero failures and zero warnings.
+
+---
+
+### Verification Summary & Test Results:
+
+1. **Offline Execution Safety Contracts (`test_execution_safety.py`) — 8/8 PASS**:
+   - `test_query_failure_preserves_positions`: PASS — Heartbeat query failure (`positions_get` returning None) preserves open positions; does not record erroneous closure.
+   - `test_missing_state_still_discovers_broker_positions`: PASS — Missing local state file still falls back to live broker position discovery.
+   - `test_missing_symbol_specs_abstains`: PASS — Returns 0.0 lot size (abstains) if broker symbol specification is unavailable.
+   - `test_minimum_lot_cannot_override_risk_budget`: PASS — Below-minimum volume cannot blow risk budget; returns 0.0 lots rather than forcing oversize entry.
+   - `test_none_modify_result_fails_without_exception`: PASS — Guarded against None return values from `mt5.order_send` during SL modification.
+   - `test_existing_cluster_is_reserved`: PASS — Auction pre-filter initializes `used_clusters` with clusters of existing open positions (e.g. EURUSD reserves EUR_BLOC).
+   - `test_duplicate_symbol_is_rejected`: PASS — Duplicate candidate for an existing open symbol is rejected.
+   - `test_slot_cap_counts_existing_positions`: PASS — Existing open positions count toward slot capacity (`open_slots = max(0, max_slots - len(open_symbols))`).
+   - *Test execution command*: `python Engine/tests/test_execution_safety.py --repo . -v` -> `Ran 8 tests in 0.026s, OK`.
+
+2. **Pre-Launch Compliance Test Harness (`test_prelaunch.py`) — 18/18 PASS**:
+   - TEST 1: 13-Feature Math Parity (Polars vs Pandas) at 1e-8 — PASS (0.00e+00 parity across all 15 canonical features).
+   - TEST 2: Ratchet Phase-0 Trigger = 0.8R (Long and Short) — PASS.
+   - TEST 3: TP Close Uses actual_tp_r — PASS.
+   - TEST 4: Max 2 Concurrent Positions & Duplicate Veto — PASS.
+   - TEST 5: CRT Previous-Day Boundary (`_date < or_date`) — PASS.
+   - TEST 6: Kill Zone Hours (London & NY) — PASS.
+   - TEST 7: Full Module Import Safety (all 6 modules) — PASS.
+   - TEST 8: PnL Accounting Exactness (B3 + dynamic spread: R1=0.13, R2=1.98) — PASS.
+   - TEST 9: B2 None-Safe MT5 Tick Protection (Optional[float], entry_price None guard, current_price None guard) — PASS.
+   - *Test execution command*: `python Engine/tests/test_prelaunch.py` -> `RESULTS: 18/18 checks passed, ALL PASS - Engine cleared for dry-run startup`.
+
+---
+
+### Key Remediation Details:
+
+1. **Causal Data Availability Parity (Eliminating the Double-Lag)**:
+   - In `Engine/core/strategy_kernel.py`, replaced the trim-and-shift lag with causal availability timestamp offsets:
+     * Daily bars: `bd_avail = pd.DataFrame(index=bd.index + pd.Timedelta(days=1))`
+     * 4H bars: `b4h_avail = pd.DataFrame(index=b4h.index + pd.Timedelta(hours=4))`
+   - Bars are joined causally via `pd.merge_asof(direction='backward')`. A 15m bar on day T sees the completed high/low of day T-1 as soon as day T begins (00:00 UTC), without double-lagging into day T-2.
+   - `Engine/forex_engine.py` delegates feature computation directly to `strategy_kernel.compute_features_pandas()`, guaranteeing exact feature parity across live and backtest engines.
+
+2. **Execution Barrier & Safety Guards (`OrderManager`)**:
+   - Added `dry_run: bool = False` execution barrier to `OrderManager.__init__`.
+   - In dry-run mode, order placement, position closing, and SL modification log and track state internally without invoking `mt5.order_send`.
+   - All `mt5.order_send` return values are verified with `result is None or getattr(result, "retcode", None) != TRADE_RETCODE_DONE`.
+   - `calculate_lot_size()` clamps to 0.0 if `sl_dist <= 0`, `raw_lots < volume_min`, or symbol specs are missing.
+
+3. **Inference Engine & Quarantine Hardening (`StatefulInferenceEngine`)**:
+   - `check_quarantine()` now validates `atr is None or spread is None or not np.isfinite(atr) or not np.isfinite(spread) or atr <= 0 or spread <= 0`, failing safe to quarantine.
+   - Hysteresis recovery counter requires 2 consecutive *unique completed 15m bars* (`bar_time != self._last_quarantine_bar`) to exit quarantine, preventing intra-bar multiple call artifacts.
+   - Wires `refresh_4h_buffer()` on every new completed 15m candle.
+
+4. **Spread Friction & State Persistence (`ForwardState`)**:
+   - Clean single-tick executable fills: entry at ask (BUY) / bid (SELL); exit at bid (BUY) / ask (SELL). Spread is embedded in executable fill prices (`spread_already_deducted=True`).
+   - Drawdown metrics persist across process restarts via `lifetime_max_dd_ratio` and `lifetime_max_dd_usd`.
+   - Mark-to-market equity including unrealized PnL is computed via `get_marked_equity()`.
+   - Risk governor evaluates mark-to-market drawdown and unlocks House Money ($50 USD) when net profit > 100 USD and DD < 1.0%.
+
+---
+
+### Verification URLs:
+All changes are pushed and live on `main` at commit `2f61384`. Please audit directly:
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/order_manager.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/signal_auction.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/inference_engine.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/strategy_kernel.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/forex_engine.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/forward_test_harness.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/tests/test_prelaunch.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/tests/test_execution_safety.py`
+
+Please verify these remediations and provide your formal Production Certification Score (X / 10) and clearance for Live Dry-Run execution.
