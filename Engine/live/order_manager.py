@@ -15,7 +15,7 @@ MAX_CONCURRENT_POSITIONS = 3       # Max 3 concurrent positions across portfolio
 # Institutional Correlation Clusters (Max 1 concurrent position per cluster)
 CORRELATION_CLUSTERS = {
     'EUR_BLOC': {'EURUSD', 'EURSEK', 'EURCNH', 'EURHUF'},
-    'USD_BLOC': {'NZDUSD', 'AUDCHF'},
+    'USD_BLOC': {'NZDUSD', 'AUDCHF', 'USDSEK', 'USDHKD'},
     'CNH_BLOC': {'NZDCNH', 'XAUCNH', 'GAUCNH'},
     'INDEX_BLOC': {'GER40', 'GER30', 'FR40', 'AU200', 'US2000'},
     'COMMODITY_BLOC': {'GAS', 'NICKEL', 'LEAD'}
@@ -29,8 +29,9 @@ from Engine.forex_engine import (
 )
 
 class OrderManager:
-    def __init__(self, connection):
+    def __init__(self, connection=None, dry_run: bool = False):
         self.conn = connection
+        self.dry_run = dry_run
         self.open_trades = {}  # ticket -> trade_info
         self.load_state()
 
@@ -79,12 +80,16 @@ class OrderManager:
         Broker Position Reconciliation Heartbeat (runs every 30 seconds).
         Cross-verifies MT5 broker-side tickets against local open_trades memory.
         Detects positions closed externally by broker-side SL/TP or terminal disconnects.
+        Fails safe on query failure (preserves open_trades if broker query returns None).
         """
-        if not self.conn.connected:
+        if self.conn is not None and not getattr(self.conn, "connected", True):
             return
         try:
             live_pos = mt5.positions_get()
-            live_positions = {p.ticket: p for p in (live_pos or [])}
+            if live_pos is None:
+                logging.error("[RECONCILE HEARTBEAT ERROR] mt5.positions_get() returned None. Preserving active positions.")
+                return
+            live_positions = {p.ticket: p for p in live_pos}
             missing_tickets = [t for t in list(self.open_trades.keys()) if t not in live_positions]
             for t in missing_tickets:
                 closed = self.open_trades.pop(t)
@@ -118,31 +123,41 @@ class OrderManager:
 
     def load_state(self):
         """Reconciles persisted state with active MT5 positions on startup and normalizes schema."""
-        if not STATE_FILE.exists():
-            return
+        saved_trades = {}
+        if STATE_FILE.exists():
+            try:
+                with open(STATE_FILE, "r", encoding="utf-8") as f:
+                    state_data = json.load(f)
+                saved_trades = state_data.get("open_trades", {})
+            except Exception as e:
+                logging.error(f"Failed to read state file {STATE_FILE}: {e}")
+                saved_trades = {}
+
         try:
-            with open(STATE_FILE, "r", encoding="utf-8") as f:
-                state_data = json.load(f)
-            saved_trades = state_data.get("open_trades", {})
             raw_trades = {}
-            if self.conn.connected:
-                live_positions = {p.ticket: p for p in (mt5.positions_get() or [])}
-                for k, v in saved_trades.items():
-                    if int(k) in live_positions:
-                        raw_trades[int(k)] = v
-                for tkt, pos in live_positions.items():
-                    if tkt not in raw_trades:
-                        raw_trades[tkt] = {
-                            "ticket": tkt,
-                            "symbol": pos.symbol,
-                            "real_symbol": pos.symbol,
-                            "type": pos.type,
-                            "volume": pos.volume,
-                            "entry": pos.price_open,
-                            "entry_price": pos.price_open,
-                            "sl": pos.sl,
-                            "tp": pos.tp,
-                        }
+            is_connected = getattr(self.conn, "connected", False) if self.conn is not None else False
+            if is_connected or hasattr(mt5, "positions_get"):
+                live_pos = mt5.positions_get()
+                if live_pos is not None:
+                    live_positions = {p.ticket: p for p in live_pos}
+                    for k, v in saved_trades.items():
+                        if int(k) in live_positions:
+                            raw_trades[int(k)] = v
+                    for tkt, pos in live_positions.items():
+                        if tkt not in raw_trades:
+                            raw_trades[tkt] = {
+                                "ticket": tkt,
+                                "symbol": pos.symbol,
+                                "real_symbol": pos.symbol,
+                                "type": pos.type,
+                                "volume": pos.volume,
+                                "entry": pos.price_open,
+                                "entry_price": pos.price_open,
+                                "sl": pos.sl,
+                                "tp": pos.tp,
+                            }
+                else:
+                    raw_trades = {int(k): v for k, v in saved_trades.items()}
             else:
                 raw_trades = {int(k): v for k, v in saved_trades.items()}
 
@@ -188,21 +203,31 @@ class OrderManager:
         Calculates exact MT5 lot size for risk_usd and stop distance sl_dist in price.
         Enforces institutional leverage caps (10:1 majors, 5:1 minors/indices, 3:1 exotics).
         Clamps to broker volume_min, volume_max, and steps.
+        Fails safe and returns 0.0 (abstain) if symbol specs are unavailable, sl_dist <= 0,
+        or affordable lots < broker volume_min.
         """
-        real_symbol = self.conn.resolve_symbol(symbol)
-        info = mt5.symbol_info(real_symbol)
+        if self.conn is None:
+            return 0.0
+        real_symbol = self.conn.resolve_symbol(symbol) if hasattr(self.conn, "resolve_symbol") else symbol
+        info = mt5.symbol_info(real_symbol) if hasattr(mt5, "symbol_info") else None
         if info is None or sl_dist <= 0:
-            return 0.01  # Safe minimum fallback
+            return 0.0
             
-        tick_value = info.trade_tick_value if info.trade_tick_value > 0 else 1.0
-        tick_size = info.trade_tick_size if info.trade_tick_size > 0 else (info.point if info.point > 0 else 0.0001)
+        tick_value = info.trade_tick_value if getattr(info, "trade_tick_value", 0) > 0 else 1.0
+        tick_size = info.trade_tick_size if getattr(info, "trade_tick_size", 0) > 0 else (info.point if getattr(info, "point", 0) > 0 else 0.0001)
         
         # Loss per 1.0 lot for this stop distance
         loss_per_lot = (sl_dist / tick_size) * tick_value
         if loss_per_lot <= 0:
-            return info.volume_min
+            return 0.0
             
         raw_lots = risk_usd / loss_per_lot
+        vol_min = getattr(info, "volume_min", 0.01)
+        vol_max = getattr(info, "volume_max", 100.0)
+
+        # Safety: If affordable volume is below broker's minimum lot size, abstain
+        if raw_lots < vol_min:
+            return 0.0
 
         # P0 FIX: Institutional Maximum Leverage & Notional Sizing Caps
         sym_clean = symbol.upper().replace(".PI", "").replace(".P", "").replace(".R", "")
@@ -215,112 +240,147 @@ class OrderManager:
         else:
             max_leverage = 3.0   # Exotics & Commodities: 3:1 max leverage
 
-        acc = mt5.account_info()
-        equity = float(acc.equity) if acc and acc.equity > 0 else 5000.0
-        acc_leverage = float(acc.leverage) if acc and acc.leverage > 0 else 30.0
+        acc = mt5.account_info() if hasattr(mt5, "account_info") else None
+        equity = float(acc.equity) if acc and getattr(acc, "equity", 0) > 0 else 5000.0
+        acc_leverage = float(acc.leverage) if acc and getattr(acc, "leverage", 0) > 0 else 30.0
 
-        tick = self.conn.get_last_tick(real_symbol)
-        curr_price = tick.ask if tick and tick.ask > 0 else 1.0
+        tick = self.conn.get_last_tick(real_symbol) if hasattr(self.conn, "get_last_tick") else None
+        curr_price = tick.ask if tick and getattr(tick, "ask", 0) > 0 else 1.0
 
         # Exact notional in account currency (USD) per 1.0 lot using broker margin requirements
-        broker_margin_1lot = mt5.order_calc_margin(mt5.ORDER_TYPE_BUY, real_symbol, 1.0, curr_price)
+        broker_margin_1lot = mt5.order_calc_margin(getattr(mt5, "ORDER_TYPE_BUY", 0), real_symbol, 1.0, curr_price) if hasattr(mt5, "order_calc_margin") else None
         if broker_margin_1lot and broker_margin_1lot > 0:
             contract_notional_usd = broker_margin_1lot * acc_leverage
         else:
-            contract_size = info.trade_contract_size if info.trade_contract_size > 0 else 100000.0
+            contract_size = getattr(info, "trade_contract_size", 100000.0) if getattr(info, "trade_contract_size", 0) > 0 else 100000.0
             contract_notional_usd = contract_size
 
         max_notional = equity * max_leverage
         max_lots_leverage = max_notional / contract_notional_usd if contract_notional_usd > 0 else 1.0
 
         raw_lots = min(raw_lots, max_lots_leverage)
+        if raw_lots < vol_min:
+            return 0.0
 
-        step = info.volume_step if info.volume_step > 0 else 0.01
+        step = getattr(info, "volume_step", 0.01) if getattr(info, "volume_step", 0) > 0 else 0.01
         lots = round(raw_lots / step) * step
-        lots = max(info.volume_min, min(lots, info.volume_max))
+        if lots < vol_min:
+            return 0.0
+        lots = min(lots, vol_max)
         return round(float(lots), 2)
 
     def place_market_order(self, symbol, order_type, volume=None, sl_price=None, tp_price=None, risk_usd=25.0, strategy_tag="ML_FOREX"):
-        if not self.conn.connected:
+        if self.conn is not None and not getattr(self.conn, "connected", True):
             logging.error("Not connected to MT5")
             return None
 
         # P0 FIX: Margin Level & Margin Utilization Circuit Breaker
-        acc = mt5.account_info()
+        acc = mt5.account_info() if hasattr(mt5, "account_info") else None
         if acc is not None:
-            if acc.margin_level > 0 and acc.margin_level < MIN_MARGIN_LEVEL_PCT:
+            if getattr(acc, "margin_level", 0) > 0 and acc.margin_level < MIN_MARGIN_LEVEL_PCT:
                 logging.warning(f"[RISK VETO] Account margin level ({acc.margin_level:.1f}%) < {MIN_MARGIN_LEVEL_PCT:.0f}%. Order for {symbol} vetoed.")
                 return None
-            if acc.equity > 0 and (acc.margin / acc.equity) > MAX_MARGIN_UTILIZATION_PCT:
+            if getattr(acc, "equity", 0) > 0 and (getattr(acc, "margin", 0) / acc.equity) > MAX_MARGIN_UTILIZATION_PCT:
                 logging.warning(f"[RISK VETO] Margin utilization ({(acc.margin/acc.equity):.1%}) > {MAX_MARGIN_UTILIZATION_PCT:.0%}. Order for {symbol} vetoed.")
                 return None
 
         # P1 FIX: Portfolio Limits & Correlation Cluster Veto
         can_open, veto_reason = self.can_open_trade(symbol)
         if not can_open:
-            logging.warning(f"[RISK VETO] Order for {symbol} vetoed: {veto_reason}")
+            logging.warning(f"[ORDER VETO] Trade rejected for {symbol}: {veto_reason}")
             return None
-            
-        real_symbol = self.conn.resolve_symbol(symbol)
-        tick = self.conn.get_last_tick(real_symbol)
-        if tick is None:
-            return None
-            
-        price = tick.ask if order_type == mt5.ORDER_TYPE_BUY else tick.bid
+
+        real_symbol = self.conn.resolve_symbol(symbol) if hasattr(self.conn, "resolve_symbol") else symbol
         
-        # Dynamic lot sizing if volume not specified
+        # Ensure symbol is selected in MarketWatch
+        if hasattr(mt5, "symbol_select"):
+            mt5.symbol_select(real_symbol, True)
+            
+        tick = self.conn.get_last_tick(real_symbol) if hasattr(self.conn, "get_last_tick") else None
+        if tick is None:
+            logging.error(f"Cannot get tick for {real_symbol}")
+            return None
+            
+        entry_price = tick.ask if order_type == getattr(mt5, "ORDER_TYPE_BUY", 0) else tick.bid
+        
+        # Determine Stop-Loss Distance (r_dist)
+        r_dist = abs(entry_price - sl_price) if sl_price else 0.0
+        
         if volume is None or volume <= 0:
-            sl_dist = abs(price - sl_price) if sl_price is not None else 0.0
-            volume = self.calculate_lot_size(real_symbol, risk_usd=risk_usd, sl_dist=sl_dist)
+            volume = self.calculate_lot_size(symbol, risk_usd=risk_usd, sl_dist=r_dist)
+            if volume <= 0:
+                logging.warning(f"[ORDER ABSTAIN] Calculated lot size for {symbol} is 0.0. Order aborted.")
+                return None
             
         request = {
-            "action": mt5.TRADE_ACTION_DEAL,
+            "action": getattr(mt5, "TRADE_ACTION_DEAL", 1),
             "symbol": real_symbol,
             "volume": float(volume),
             "type": order_type,
-            "price": price,
-            "sl": float(sl_price) if sl_price is not None else 0.0,
+            "price": float(entry_price),
             "deviation": 20,
             "magic": 123456,
-            "comment": f"Auto-{strategy_tag}",
-            "type_time": mt5.ORDER_TIME_GTC,
-            "type_filling": mt5.ORDER_FILLING_IOC,
+            "comment": f"{strategy_tag} Live",
+            "type_time": getattr(mt5, "ORDER_TIME_GTC", 0),
+            "type_filling": getattr(mt5, "ORDER_FILLING_IOC", 1),
         }
         
-        if tp_price:
+        if sl_price is not None:
+            request["sl"] = float(sl_price)
+        if tp_price is not None:
             request["tp"] = float(tp_price)
-            
+
+        if getattr(self, "dry_run", False):
+            mock_ticket = int(time.time() * 1000) % 10000000
+            logging.info(f"[DRY RUN] Simulating market order for {symbol}, mock ticket #{mock_ticket}")
+            self.open_trades[mock_ticket] = {
+                "symbol": symbol,
+                "real_symbol": real_symbol,
+                "ticket": mock_ticket,
+                "type": order_type,
+                "action": "BUY" if order_type in (0, getattr(mt5, "ORDER_TYPE_BUY", 0)) else "SELL",
+                "volume": volume,
+                "entry": entry_price,
+                "entry_price": entry_price,
+                "sl": sl_price,
+                "tp": tp_price,
+                "r_dist": r_dist,
+                "risk_usd": risk_usd,
+                "strategy": strategy_tag,
+                "bars_elapsed": 0,
+                "bars_held": 0,
+                "highest_r": 0.0,
+                "lowest_r": 0.0,
+                "current_r": 0.0,
+                "running_pnl": 0.0,
+                "ratchet_phase": 0,
+                "ratchet_desc": "Base SL (-1.00R)",
+                "last_bar_time": None
+            }
+            self.save_state()
+            return mock_ticket
+
         result = mt5.order_send(request)
-        if not result or result.retcode != mt5.TRADE_RETCODE_DONE:
-            err_code = result.retcode if result else -1
-            logging.error(f"Order send failed, retcode={err_code}")
+        if result is None or getattr(result, "retcode", None) != getattr(mt5, "TRADE_RETCODE_DONE", 10009):
+            retcode = getattr(result, "retcode", None)
+            logging.error(f"Order send failed for {symbol}: retcode={retcode}")
             return None
             
-        logging.info(f"Order placed successfully: ticket={result.order}, fill_price={result.price}, volume={volume}")
+        logging.info(f"Order executed successfully: Ticket #{result.order} for {symbol} ({volume} lots)")
         
-        # Use actual execution fill price from MT5 result
-        entry_fill_price = result.price if result.price > 0 else price
-        
-        # Calculate R value (distance from fill price to SL)
-        r_dist = abs(entry_fill_price - sl_price) if sl_price is not None else 0.0001
-        if r_dist <= 0:
-            r_dist = 0.0001
-            
-        action_str = "BUY" if order_type == mt5.ORDER_TYPE_BUY else "SELL"
         self.open_trades[result.order] = {
-            "symbol": real_symbol,
+            "symbol": symbol,
             "real_symbol": real_symbol,
             "ticket": result.order,
             "type": order_type,
-            "action": action_str,
+            "action": "BUY" if order_type in (0, getattr(mt5, "ORDER_TYPE_BUY", 0)) else "SELL",
             "volume": volume,
-            "entry": entry_fill_price,
-            "entry_price": entry_fill_price,
-            "cur_price": entry_fill_price,
+            "entry": entry_price,
+            "entry_price": entry_price,
             "sl": sl_price,
             "tp": tp_price,
-            "risk_usd": risk_usd,
             "r_dist": r_dist,
+            "risk_usd": risk_usd,
             "strategy": strategy_tag,
             "bars_elapsed": 0,
             "bars_held": 0,
@@ -337,24 +397,24 @@ class OrderManager:
         return result.order
         
     def close_position(self, ticket):
-        if not self.conn.connected:
+        if self.conn is not None and not getattr(self.conn, "connected", True):
             return False
             
-        position = mt5.positions_get(ticket=ticket)
+        position = mt5.positions_get(ticket=ticket) if hasattr(mt5, "positions_get") else None
         if position is None or len(position) == 0:
             logging.error(f"Position {ticket} not found")
             return False
             
         position = position[0]
-        tick = self.conn.get_last_tick(position.symbol)
+        tick = self.conn.get_last_tick(position.symbol) if self.conn and hasattr(self.conn, "get_last_tick") else None
         if tick is None:
             return False
             
-        close_type = mt5.ORDER_TYPE_SELL if position.type == mt5.POSITION_TYPE_BUY else mt5.ORDER_TYPE_BUY
-        price = tick.bid if position.type == mt5.POSITION_TYPE_BUY else tick.ask
+        close_type = getattr(mt5, "ORDER_TYPE_SELL", 1) if position.type == getattr(mt5, "POSITION_TYPE_BUY", 0) else getattr(mt5, "ORDER_TYPE_BUY", 0)
+        price = tick.bid if position.type == getattr(mt5, "POSITION_TYPE_BUY", 0) else tick.ask
         
         request = {
-            "action": mt5.TRADE_ACTION_DEAL,
+            "action": getattr(mt5, "TRADE_ACTION_DEAL", 1),
             "symbol": position.symbol,
             "volume": position.volume,
             "type": close_type,
@@ -363,13 +423,21 @@ class OrderManager:
             "deviation": 20,
             "magic": 123456,
             "comment": "Close Position",
-            "type_time": mt5.ORDER_TIME_GTC,
-            "type_filling": mt5.ORDER_FILLING_IOC,
+            "type_time": getattr(mt5, "ORDER_TIME_GTC", 0),
+            "type_filling": getattr(mt5, "ORDER_FILLING_IOC", 1),
         }
         
+        if getattr(self, "dry_run", False):
+            logging.info(f"[DRY RUN] Simulating close for position {ticket}")
+            if ticket in self.open_trades:
+                del self.open_trades[ticket]
+                self.save_state()
+            return True
+
         result = mt5.order_send(request)
-        if result.retcode != mt5.TRADE_RETCODE_DONE:
-            logging.error(f"Close failed, retcode={result.retcode}")
+        if result is None or getattr(result, "retcode", None) != getattr(mt5, "TRADE_RETCODE_DONE", 10009):
+            retcode = getattr(result, "retcode", None)
+            logging.error(f"Close failed, retcode={retcode}")
             return False
             
         logging.info(f"Position {ticket} closed successfully")
@@ -379,37 +447,45 @@ class OrderManager:
         return True
         
     def modify_sl(self, ticket, new_sl):
-        if not self.conn.connected:
+        if self.conn is not None and not getattr(self.conn, "connected", True):
             return False
             
-        position = mt5.positions_get(ticket=ticket)
+        position = mt5.positions_get(ticket=ticket) if hasattr(mt5, "positions_get") else None
         if position is None or len(position) == 0:
             return False
             
         pos = position[0]
         
         # Check minimum broker stop distance (trade_stops_level)
-        info = mt5.symbol_info(pos.symbol)
-        if info is not None:
+        info = mt5.symbol_info(pos.symbol) if hasattr(mt5, "symbol_info") else None
+        if info is not None and getattr(info, "trade_stops_level", None) is not None and getattr(info, "point", None) is not None:
             min_dist = info.trade_stops_level * info.point
-            tick = self.conn.get_last_tick(pos.symbol)
+            tick = self.conn.get_last_tick(pos.symbol) if self.conn and hasattr(self.conn, "get_last_tick") else None
             if tick is not None:
-                current_price = tick.bid if pos.type == mt5.POSITION_TYPE_BUY else tick.ask
+                current_price = tick.bid if pos.type == getattr(mt5, "POSITION_TYPE_BUY", 0) else tick.ask
                 if abs(new_sl - current_price) < min_dist:
                     logging.warning(f"Proposed SL {new_sl:.5f} too close to current price {current_price:.5f} (min dist: {min_dist:.5f}). Skipping modify.")
                     return False
         
         request = {
-            "action": mt5.TRADE_ACTION_SLTP,
+            "action": getattr(mt5, "TRADE_ACTION_SLTP", 6),
             "position": ticket,
             "symbol": pos.symbol,
             "sl": float(new_sl),
             "tp": pos.tp
         }
         
+        if getattr(self, "dry_run", False):
+            logging.info(f"[DRY RUN] Simulating SL modify for {ticket} to {new_sl}")
+            if ticket in self.open_trades:
+                self.open_trades[ticket]["sl"] = new_sl
+                self.save_state()
+            return True
+
         result = mt5.order_send(request)
-        if result.retcode != mt5.TRADE_RETCODE_DONE:
-            logging.error(f"Modify SL failed for {ticket}, retcode={result.retcode}")
+        if result is None or getattr(result, "retcode", None) != getattr(mt5, "TRADE_RETCODE_DONE", 10009):
+            retcode = getattr(result, "retcode", None)
+            logging.error(f"Modify SL failed for {ticket}, retcode={retcode}")
             return False
             
         logging.info(f"SL modified for {ticket} to {new_sl}")

@@ -198,17 +198,27 @@ def compute_features_pandas(buffer_15m: pd.DataFrame, buffer_4h: Optional[pd.Dat
 
     # Calculate sweeps
     if buffer_d1 is not None and not buffer_d1.empty and isinstance(df.index, pd.DatetimeIndex):
-        # buffer_d1 contains daily bars. We want the previous day's high/low.
-        # We merge_asof the shifted daily bars to get the exact matching parity with Polars
+        # buffer_d1 contains completed daily bars.
+        # Each completed day T-1 is available at start of day T (00:00:00 UTC of next day).
+        # We index by availability time (index + 1 day) so merge_asof direction='backward'
+        # causally joins each 15m bar with the most recently completed day's high/low without double-lag!
         bd = buffer_d1.copy()
         if 'datetime' in bd.columns:
             bd.set_index('datetime', inplace=True)
         bd = bd.sort_index()
-        bd['prev_day_high'] = bd['high'].shift(1)
-        bd['prev_day_low'] = bd['low'].shift(1)
+        
+        # Availability time = start of next day (00:00 UTC of next day)
+        bd_avail = pd.DataFrame(index=bd.index + pd.Timedelta(days=1))
+        bd_avail['prev_day_high'] = bd['high'].values
+        bd_avail['prev_day_low'] = bd['low'].values
         
         # Backward join
-        merged = pd.merge_asof(df.reset_index(), bd[['prev_day_high', 'prev_day_low']].reset_index(), on='datetime', direction='backward')
+        merged = pd.merge_asof(
+            df.reset_index(),
+            bd_avail.reset_index().rename(columns={'index': 'datetime'}),
+            on='datetime',
+            direction='backward'
+        )
         merged.set_index('datetime', inplace=True)
         
         df['sweep_pdl'] = (df['low'] <= merged['prev_day_low']).astype(int)
@@ -256,16 +266,35 @@ def compute_features_pandas(buffer_15m: pd.DataFrame, buffer_4h: Optional[pd.Dat
         df['day_of_week'] = 1
 
     # 8. 4H Trend Alignment (Causal: from previous closed 4H bar)
-    htf_4h_trend_val = 0.0
-    if buffer_4h is not None and not buffer_4h.empty and len(buffer_4h) >= 205:
+    if buffer_4h is not None and not buffer_4h.empty and len(buffer_4h) >= 205 and isinstance(df.index, pd.DatetimeIndex):
+        b4h = buffer_4h.copy()
+        if 'datetime' in b4h.columns:
+            b4h.set_index('datetime', inplace=True)
+        b4h = b4h.sort_index()
+        b4h['ema_200_4h'] = b4h['close'].ewm(span=200, adjust=False).mean()
+        b4h['htf_4h_trend'] = b4h['ema_200_4h'] - b4h['ema_200_4h'].shift(5)
+        
+        # Availability time = start of next 4H window (+4 hours)
+        b4h_avail = pd.DataFrame(index=b4h.index + pd.Timedelta(hours=4))
+        b4h_avail['htf_4h_trend'] = b4h['htf_4h_trend'].values
+        
+        merged_4h = pd.merge_asof(
+            df.reset_index(),
+            b4h_avail.reset_index().rename(columns={'index': 'datetime'}),
+            on='datetime',
+            direction='backward'
+        )
+        merged_4h.set_index('datetime', inplace=True)
+        df['htf_4h_trend'] = merged_4h['htf_4h_trend'].fillna(0.0)
+    elif buffer_4h is not None and not buffer_4h.empty and len(buffer_4h) >= 205:
         b4h = buffer_4h.copy()
         b4h['ema_200_4h'] = b4h['close'].ewm(span=200, adjust=False).mean()
-        b4h['htf_4h_trend'] = (b4h['ema_200_4h'] - b4h['ema_200_4h'].shift(5)).shift(1)
+        b4h['htf_4h_trend'] = b4h['ema_200_4h'] - b4h['ema_200_4h'].shift(5)
         valid_trends = b4h['htf_4h_trend'].dropna()
-        if len(valid_trends) > 0:
-            htf_4h_trend_val = float(valid_trends.iloc[-1])
+        df['htf_4h_trend'] = float(valid_trends.iloc[-1]) if len(valid_trends) > 0 else 0.0
+    else:
+        df['htf_4h_trend'] = 0.0
 
-    df['htf_4h_trend'] = htf_4h_trend_val
     df.fillna(0.0, inplace=True)
     return df
 

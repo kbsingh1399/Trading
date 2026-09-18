@@ -89,6 +89,8 @@ class ForwardState:
         self.state_path = state_path
         self.equity        = INITIAL_CAPITAL
         self.peak_equity   = INITIAL_CAPITAL
+        self.lifetime_max_dd_ratio: float = 0.0
+        self.lifetime_max_dd_usd: float = 0.0
         self.trades: List[Dict] = []
         self.open_trades: Dict[str, Dict] = {}
         self.start_time    = datetime.now(timezone.utc).isoformat()
@@ -102,6 +104,8 @@ class ForwardState:
                     d = json.load(f)
                 self.equity         = d.get('equity', INITIAL_CAPITAL)
                 self.peak_equity    = d.get('peak_equity', self.equity)
+                self.lifetime_max_dd_ratio = d.get('lifetime_max_dd_ratio', 0.0)
+                self.lifetime_max_dd_usd   = d.get('lifetime_max_dd_usd', 0.0)
                 self.trades         = d.get('trades', [])
                 self.open_trades    = d.get('open_trades', {})
                 self.start_time     = d.get('start_time', self.start_time)
@@ -113,6 +117,8 @@ class ForwardState:
     def save(self):
         d = {
             'equity': self.equity, 'peak_equity': self.peak_equity,
+            'lifetime_max_dd_ratio': self.lifetime_max_dd_ratio,
+            'lifetime_max_dd_usd': self.lifetime_max_dd_usd,
             'trades': self.trades[-500:],  # keep last 500 for memory
             'open_trades': self.open_trades,
             'start_time': self.start_time,
@@ -136,7 +142,7 @@ class ForwardState:
     def max_dd_pct(self) -> float:
         eq = INITIAL_CAPITAL
         peak = INITIAL_CAPITAL
-        max_dd_ratio = 0.0
+        max_dd_ratio = self.lifetime_max_dd_ratio
         for t in self.trades:
             eq += t.get('pnl_usd', 0.0)
             if eq > peak:
@@ -145,7 +151,9 @@ class ForwardState:
             if dd_ratio > max_dd_ratio:
                 max_dd_ratio = dd_ratio
         current_dd_ratio = (self.peak_equity - self.equity) / self.peak_equity if self.peak_equity > 0 else 0.0
-        return max(max_dd_ratio, current_dd_ratio)
+        res = max(max_dd_ratio, current_dd_ratio)
+        self.lifetime_max_dd_ratio = max(self.lifetime_max_dd_ratio, res)
+        return res
 
     @property
     def current_drawdown_usd(self) -> float:
@@ -161,7 +169,7 @@ class ForwardState:
         if self.completed_trades < 5: return 0.0
         eq = INITIAL_CAPITAL
         peak = INITIAL_CAPITAL
-        max_dd_usd = 0.0
+        max_dd_usd = self.lifetime_max_dd_usd
         for t in self.trades:
             eq += t.get('pnl_usd', 0.0)
             if eq > peak:
@@ -169,6 +177,7 @@ class ForwardState:
             dd = peak - eq
             if dd > max_dd_usd:
                 max_dd_usd = dd
+        self.lifetime_max_dd_usd = max(self.lifetime_max_dd_usd, max_dd_usd)
         net_profit_usd = self.equity - INITIAL_CAPITAL
         if net_profit_usd <= 0: return 0.0
         if max_dd_usd <= 0: return 99.0
@@ -189,18 +198,37 @@ class ForwardState:
         start = datetime.fromisoformat(self.start_time)
         return (datetime.now(timezone.utc) - start).total_seconds() / 86400
 
-    def get_current_risk_usd(self) -> float:
-        """3-Tier Risk Governor based on current DD and Profit."""
-        current_dd_pct = (self.peak_equity - self.equity) / self.peak_equity if self.peak_equity > 0 else 0.0
+    def get_marked_equity(self, current_prices: Optional[Dict[str, float]] = None) -> float:
+        """Computes true mark-to-market equity including open trade unrealized PnL."""
+        unrealized_usd = 0.0
+        if current_prices and self.open_trades:
+            for sym, tr in self.open_trades.items():
+                cur_p = current_prices.get(sym)
+                if cur_p is not None:
+                    sl_dist = tr.get('sl_dist', abs(tr['entry'] - tr.get('orig_sl', tr['sl'])))
+                    if sl_dist > 1e-9:
+                        sign = 1 if tr['direction'] == 'BUY' else -1
+                        r = sign * (cur_p - tr['entry']) / sl_dist
+                        unrealized_usd += r * tr.get('risk_usd', 35.0)
+        marked_eq = self.equity + unrealized_usd
+        self.peak_equity = max(self.peak_equity, marked_eq)
+        return marked_eq
+
+    def get_current_risk_usd(self, marked_equity: Optional[float] = None) -> float:
+        """3-Tier Risk Governor based on true mark-to-market DD and Profit."""
+        eq = marked_equity if marked_equity is not None else self.equity
+        peak = max(self.peak_equity, eq)
+        current_dd_pct = (peak - eq) / peak if peak > 0 else 0.0
+        net_profit = eq - INITIAL_CAPITAL
         if current_dd_pct >= 0.02:
-            return 15.0  # DD Defense
-        if self.net_pnl_usd > 100.0 and current_dd_pct < 0.01:
-            return 50.0  # House Money
-        return 35.0      # Base Risk
+            return 15.0  # DD Defense: $15 at DD >= 2.0%
+        if net_profit > 100.0 and current_dd_pct < 0.01:
+            return 50.0  # House Money: $50 at profit > $100 and DD < 1.0%
+        return 35.0      # Base Risk: $35
 
     def record_closed_trade(self, symbol: str, direction: str, entry_price: float,
                              exit_price: float, sl: float, orig_sl: float, risk_usd: float, exit_reason: str,
-                             spread: float = 0.0002):
+                             spread: float = 0.0, spread_already_deducted: bool = False):
         pip_dist = abs(exit_price - entry_price)
         sl_dist  = abs(entry_price - orig_sl)
         if sl_dist < 1e-9:
@@ -208,9 +236,10 @@ class ForwardState:
         else:
             sign = 1 if direction == 'BUY' else -1
             r_multiple = sign * (exit_price - entry_price) / sl_dist
-            # Friction = spread (entry + exit approximated)
-            friction_r = spread / sl_dist
-            r_multiple -= friction_r
+            # If fill prices are not side-specific executable fills, apply explicit spread friction
+            if not spread_already_deducted and spread > 0:
+                friction_r = spread / sl_dist
+                r_multiple -= friction_r
         pnl_usd = r_multiple * risk_usd
         self.equity += pnl_usd
         self.peak_equity = max(self.peak_equity, self.equity)
@@ -396,10 +425,14 @@ def run_forward_test(mt5_login: Optional[int] = None, mt5_password: Optional[str
                 if candidates:
                     last_auction = auction.rank_signals(candidates, open_syms)
                     for sig in last_auction.admitted:
-                        ask = conn.get_current_ask(sig.symbol)
-                        bid = conn.get_current_bid(sig.symbol)
-                        if ask is None or bid is None:
+                        tick = conn.get_last_tick(sig.symbol)
+                        if tick is None:
                             log.warning(f'Could not fetch live tick for {sig.symbol}; skipping entry.')
+                            continue
+                        ask = getattr(tick, 'ask', None)
+                        bid = getattr(tick, 'bid', None)
+                        if ask is None or bid is None:
+                            log.warning(f'Tick missing bid/ask for {sig.symbol}; skipping entry.')
                             continue
                         spread = ask - bid
                         entry_price = bid if sig.direction == 'SELL' else ask
@@ -419,8 +452,13 @@ def run_forward_test(mt5_login: Optional[int] = None, mt5_password: Optional[str
                 to_close = []
                 for sym, tr in state.open_trades.items():
                     bars_held = state.bars_processed - tr['entry_bar']
-                    # Use Bid for closing BUY (selling), Ask for closing SELL (covering)
-                    current_price = conn.get_current_bid(sym) if tr['direction'] == 'BUY' else conn.get_current_ask(sym)
+                    # Use single validated tick: Bid for closing BUY (selling), Ask for closing SELL (covering)
+                    tick = conn.get_last_tick(sym)
+                    if tick is None:
+                        continue
+                    bid = getattr(tick, 'bid', None)
+                    ask = getattr(tick, 'ask', None)
+                    current_price = bid if tr['direction'] == 'BUY' else ask
                     if current_price is None:
                         continue
 
@@ -468,7 +506,8 @@ def run_forward_test(mt5_login: Optional[int] = None, mt5_password: Optional[str
                 for sym, exit_price, reason in to_close:
                     tr = state.open_trades.pop(sym)
                     state.record_closed_trade(
-                        sym, tr['direction'], tr['entry'], exit_price, tr['sl'], tr.get('orig_sl', tr['sl']), tr['risk_usd'], reason, tr.get('spread', 0.0002))
+                        sym, tr['direction'], tr['entry'], exit_price, tr['sl'], tr.get('orig_sl', tr['sl']),
+                        tr['risk_usd'], reason, tr.get('spread', 0.0002), spread_already_deducted=True)
 
             # ── Dashboard ─────────────────────────────────────────────────
             render_dashboard(state, last_auction, len(engines))

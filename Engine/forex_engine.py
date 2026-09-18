@@ -155,7 +155,7 @@ MIN_MARGIN_LEVEL_PCT = 200.0      # Minimum margin level before hard freeze (200
 # Institutional Correlation Clusters (Max 1 concurrent position per cluster)
 CORRELATION_CLUSTERS = {
     'EUR_BLOC': {'EURUSD', 'EURSEK', 'EURCNH', 'EURHUF'},
-    'USD_BLOC': {'NZDUSD', 'AUDCHF'},
+    'USD_BLOC': {'NZDUSD', 'AUDCHF', 'USDSEK', 'USDHKD'},
     'CNH_BLOC': {'NZDCNH', 'XAUCNH', 'GAUCNH'},
     'INDEX_BLOC': {'GER40', 'GER30', 'FR40', 'AU200', 'US2000'},
     'COMMODITY_BLOC': {'GAS', 'NICKEL', 'LEAD'}
@@ -1073,86 +1073,10 @@ class OrderManager:
 # -------------------------------------------------------------------------
 # COMPONENT 3: MATHEMATICAL FEATURE EXTRACTION & PARITY KERNEL
 # -------------------------------------------------------------------------
-def compute_features_pandas(df: pd.DataFrame, buffer_4h: Optional[pd.DataFrame] = None) -> pd.DataFrame:
-    """Computes all 13 canonical stationary features with zero lookahead."""
-    df = df.copy()
-
-    # 1. Moving Averages
-    df['ema_50'] = df['close'].ewm(span=50, adjust=False).mean()
-    df['ema_200'] = df['close'].ewm(span=200, adjust=False).mean()
-
-    # 2. VWAP (Typical Price proxy)
-    df['typical_price'] = (df['high'] + df['low'] + df['close']) / 3.0
-    df['vwap_20'] = df['typical_price'].rolling(window=20, min_periods=20).mean()
-    df['vwap_dist'] = (df['close'] - df['vwap_20']) / df['vwap_20']
-
-    # Calculate sweeps
-    if isinstance(df.index, pd.DatetimeIndex):
-        daily = df.groupby(df.index.date).agg({'high': 'max', 'low': 'min'}).shift(1)
-        dates = df.index.date
-        prev_highs = pd.Series(dates, index=df.index).map(daily['high']).ffill()
-        prev_lows = pd.Series(dates, index=df.index).map(daily['low']).ffill()
-        df['sweep_pdl'] = (df['low'] <= prev_lows).astype(int)
-        df['sweep_pdh'] = (df['high'] >= prev_highs).astype(int)
-    else:
-        df['sweep_pdl'] = 0
-        df['sweep_pdh'] = 0
-
-    # 3. RSI (14 periods)
-    delta = df['close'].diff()
-    gain = delta.clip(lower=0.0)
-    loss = -delta.clip(upper=0.0)
-    avg_gain = gain.ewm(span=14, adjust=False).mean()
-    avg_loss = loss.ewm(span=14, adjust=False).mean()
-    rs = avg_gain / (avg_loss + 1e-12)
-    df['rsi_14'] = 100.0 - (100.0 / (1.0 + rs))
-
-    # 4. Fair Value Gaps (Rolling Unmitigated Lookback w=5)
-    w = 5
-    bullish_fvgs = []
-    bearish_fvgs = []
-    for k in range(w):
-        bull = (df['low'].rolling(k+1, min_periods=k+1).min() - df['high'].shift(k+2)).fillna(0.0).clip(lower=0.0)
-        bear = (df['low'].shift(k+2) - df['high'].rolling(k+1, min_periods=k+1).max()).fillna(0.0).clip(lower=0.0)
-        bullish_fvgs.append(bull)
-        bearish_fvgs.append(bear)
-
-    df['bullish_fvg'] = pd.concat(bullish_fvgs, axis=1).max(axis=1).fillna(0.0)
-    df['bearish_fvg'] = pd.concat(bearish_fvgs, axis=1).max(axis=1).fillna(0.0)
-
-    # 5. Distances & Slopes
-    df['ema_50_dist'] = (df['close'] - df['ema_50']) / df['ema_50']
-    df['ema_200_dist'] = (df['close'] - df['ema_200']) / df['ema_200']
-    df['ema_200_slope'] = df['ema_200'] - df['ema_200'].shift(12)
-
-    # 6. ATR & Volatility
-    df['atr_14'] = (df['high'] - df['low']).rolling(window=14).mean()
-    df['volatility_20'] = df['close'].rolling(window=20).std() / df['close']
-    df['roc_20'] = (df['close'] / df['close'].shift(20)) - 1.0
-
-    # 7. Time Features (UTC)
-    if isinstance(df.index, pd.DatetimeIndex):
-        df['hour'] = df.index.hour
-        df['day_of_week'] = df.index.dayofweek + 1
-    else:
-        df['hour'] = 0
-        df['day_of_week'] = 1
-
-    # 8. 4H Trend Alignment (Causal: from previous closed 4H bar via shift(1))
-    htf_4h_trend_val = 0.0
-    if buffer_4h is not None and not buffer_4h.empty and len(buffer_4h) >= 205:
-        b4h = buffer_4h.copy()
-        b4h['ema_200_4h'] = b4h['close'].ewm(span=200, adjust=False).mean()
-        b4h['htf_4h_trend'] = (b4h['ema_200_4h'] - b4h['ema_200_4h'].shift(5)).shift(1)
-        valid = b4h['htf_4h_trend'].dropna()
-        if len(valid) > 0:
-            htf_4h_trend_val = float(valid.iloc[-1])
-
-    df['htf_4h_trend'] = htf_4h_trend_val
-    for col in CANONICAL_FEATURES:
-        if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0.0)
-    return df
+def compute_features_pandas(df: pd.DataFrame, buffer_4h: Optional[pd.DataFrame] = None, buffer_d1: Optional[pd.DataFrame] = None) -> pd.DataFrame:
+    """Computes all 13 canonical stationary features with zero lookahead, delegating to strategy_kernel."""
+    from Engine.core.strategy_kernel import compute_features_pandas as sk_compute_features_pandas
+    return sk_compute_features_pandas(df, buffer_4h=buffer_4h, buffer_d1=buffer_d1)
 
 
 def compute_crt_orb_state(buffer: pd.DataFrame) -> dict:

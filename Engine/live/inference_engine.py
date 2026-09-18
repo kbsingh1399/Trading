@@ -35,11 +35,13 @@ class StatefulInferenceEngine:
         self.is_quarantined = False
         self.consecutive_safe_bars = 0
 
-    def check_quarantine(self, spread: float, atr: float, current_utc_hour: int = 12) -> Tuple[bool, str]:
+    def check_quarantine(self, spread: float, atr: float, current_utc_hour: int = 12, bar_time: Optional[datetime] = None) -> Tuple[bool, str]:
         """
         P1 Quarantine with Hysteresis & Session Time Filter:
         1. Exotic assets are strictly quarantined outside 07:00-17:00 UTC.
         2. Hysteresis band: enters quarantine if spread/atr > 0.12; exits only if spread/atr < 0.08 for 2 consecutive bars.
+        Fails safe on None, NaN, inf, or non-positive spread/atr.
+        Tracks unique completed bars for hysteresis clearing to avoid multi-call artifacts.
         """
         sym_clean = self.symbol.upper().replace(".PI", "").replace(".P", "").replace(".R", "")
         if sym_clean in EXOTIC_SESSION_RESTRICTED:
@@ -48,8 +50,8 @@ class StatefulInferenceEngine:
                 self.consecutive_safe_bars = 0
                 return True, f"Quarantined (Exotic off-hours: {current_utc_hour:02d}:00 UTC outside 07-17 UTC)"
 
-        if atr <= 0 or spread <= 0:
-            return True, "Quarantined (Invalid spread/ATR <= 0)"
+        if atr is None or spread is None or not np.isfinite(atr) or not np.isfinite(spread) or atr <= 0 or spread <= 0:
+            return True, "Quarantined (Invalid spread/ATR <= 0, None, NaN or Inf)"
 
         ratio = spread / atr
         if not self.is_quarantined:
@@ -60,7 +62,13 @@ class StatefulInferenceEngine:
             return False, "Active"
         else:
             if ratio < MAX_SPREAD_ATR_RATIO_EXIT:
-                self.consecutive_safe_bars += 1
+                # Only increment on a new unique completed bar
+                last_bar = getattr(self, "_last_quarantine_bar", None)
+                if bar_time is None or bar_time != last_bar:
+                    self.consecutive_safe_bars += 1
+                    if bar_time is not None:
+                        self._last_quarantine_bar = bar_time
+
                 if self.consecutive_safe_bars >= 2:
                     self.is_quarantined = False
                     self.consecutive_safe_bars = 0
@@ -226,6 +234,7 @@ class StatefulInferenceEngine:
                 'volume': float(closed_bar.get('tick_volume', closed_bar.get('volume', 0.0)))
             }
             self.update_bar(bar_dict)
+            self.refresh_4h_buffer()
 
         if len(self.buffer) < 50:
             return None
@@ -249,8 +258,8 @@ class StatefulInferenceEngine:
         spread = float(tick.ask - tick.bid) if tick else 0.0
         atr = float(latest_row.get("atr_14", 0.001))
 
-        # Check quarantine
-        is_quarantined, _ = self.check_quarantine(spread, atr, current_utc_hour=hour)
+        # Check quarantine with unique completed bar timestamp
+        is_quarantined, _ = self.check_quarantine(spread, atr, current_utc_hour=hour, bar_time=bar_time)
         if is_quarantined:
             return bar_time, "HOLD", prob, spread, atr
 

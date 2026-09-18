@@ -1,4 +1,4 @@
-﻿"""
+"""
 ================================================================================
 ENGINE RESEARCH: REAL-TIME SIGNAL AUCTION ENGINE (GATE 2 — OPPORTUNITY ARBITRATION)
 ================================================================================
@@ -196,7 +196,9 @@ class AuctionEngine:
         open_slots = max(0, self.max_slots - len(open_symbols))
         admitted: List[SignalCandidate] = []
         vetoed: List[SignalCandidate] = []
-        used_clusters: Set[str] = set()
+        used_clusters: Set[str] = {
+            _get_cluster(s) for s in open_symbols if _get_cluster(s) is not None
+        }
 
         # ── Pre-filter ───────────────────────────────────────────────────
         scored = []
