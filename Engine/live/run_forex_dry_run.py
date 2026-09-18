@@ -63,9 +63,17 @@ if sys.platform == "win32":
     except Exception:
         pass
 
-console = Console(force_terminal=True, width=135)
+import shutil
+
+def get_terminal_width() -> int:
+    try:
+        return max(135, shutil.get_terminal_size().columns)
+    except Exception:
+        return 135
+
+console = Console(force_terminal=True, width=get_terminal_width())
 DRY_RUN = True
-BASE_RISK_USD = 50.0  # 1.0% on 5,000 USD capital
+BASE_RISK_USD = 25.0  # 0.50% on 5,000 USD capital preservation
 
 
 # ============================================================================
@@ -306,6 +314,7 @@ def main():
             else:
                 kz_display = "[dim red]OFF-HOURS[/dim red]"
 
+            console.width = get_terminal_width()
             # Build Rich Table
             table = Table(
                 title=f"MT5 LIVE FOREX & CFD TELEMETRY | UTC: {utc_now.strftime('%H:%M:%S')}",
@@ -315,18 +324,18 @@ def main():
                 expand=True
             )
 
-            table.add_column("Asset", style="bold cyan", width=8, no_wrap=True)
-            table.add_column("Bid", justify="right", width=10)
-            table.add_column("Ask", justify="right", width=10)
-            table.add_column("Spread", justify="right", style="yellow", width=8)
-            table.add_column("RSI", justify="right", width=6)
-            table.add_column("VWAP%", justify="right", width=7)
-            table.add_column("EMA50%", justify="right", width=7)
-            table.add_column("EMA200%", justify="right", width=7)
-            table.add_column("4H Trend", justify="center", width=8)
-            table.add_column("FVG", justify="center", width=6)
-            table.add_column("P*", justify="right", width=6)
-            table.add_column("Decision / Trigger Reason", justify="left", width=24)
+            table.add_column("Asset", style="bold cyan", no_wrap=True)
+            table.add_column("Bid", justify="right")
+            table.add_column("Ask", justify="right")
+            table.add_column("Spread", justify="right", style="yellow")
+            table.add_column("RSI", justify="right")
+            table.add_column("VWAP%", justify="right")
+            table.add_column("EMA50%", justify="right")
+            table.add_column("EMA200%", justify="right")
+            table.add_column("4H Trend", justify="center")
+            table.add_column("FVG", justify="center")
+            table.add_column("P*", justify="right")
+            table.add_column("Decision / Trigger Reason", justify="left", ratio=2)
 
             for asset, engine in engines.items():
                 tick = mt5_conn.get_last_tick(asset)
@@ -551,7 +560,7 @@ def main():
                 f"[bold white]Signals Logged:[/bold white] {signals_count}  |  "
                 f"[bold white]Mode:[/bold white] {safety_label}"
             )
-            header_panel = Panel(header_text, title="[bold bright_cyan]ENGINE: UNIFIED FOREX & CFD MASTER TERMINAL[/bold bright_cyan]", border_style="cyan")
+            header_panel = Panel(header_text, title="[bold bright_cyan]ENGINE: UNIFIED FOREX & CFD MASTER TERMINAL[/bold bright_cyan]", border_style="cyan", expand=True)
 
             # Clear screen for live loop
             if not args.once:
