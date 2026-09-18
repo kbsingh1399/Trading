@@ -46185,3 +46185,13 @@ Verified [Engine/forex_engine.py](file:///c:/Users/SIGMA/Documents/Trading/Engin
 - Saved to C:\Users\SIGMA\Downloads\Ox_Alpha_36_Production_Calmar_Risk_and_Forward_Test_Review.txt and docs/prompts/
 - Prompt is 100% Git-based, zero code dump, contains complete provenance, frictions, 20-window scorecard, forward test scorecard (845 trades, +226.75% ROI, 77.16% WR), and 5 adversarial audit questions.
 
+
+---
+## Turn: Implementation of 3 Opus-Mandated Operational Safeguards (10/10 Readiness)
+- Integrated Safeguard 1: Broker Rollover Lockout (21:55-22:15 UTC bank settlement freeze on entries and ratchet mods).
+- Integrated Safeguard 2: Friday Weekend Gap Defense (no new entries >= 18:00 UTC, liquidation at 20:30 UTC).
+- Integrated Safeguard 3: Broker Position Reconciliation Heartbeat (30s sync against MT5 positions_get).
+- Implemented across Engine/forex_engine.py, Engine/live/order_manager.py, and Engine/live/run_forex_dry_run.py.
+- Verified syntax and successful dry-run execution (--once snapshot with 18/18 assets and active trade restoration).
+- Pushed to main under commit 555bfb1.
+
