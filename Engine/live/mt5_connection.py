@@ -81,6 +81,16 @@ class MT5Connection:
             logging.error(f"Failed to fetch tick for {real_symbol} (original: {symbol}), error code = {mt5.last_error()}")
             return None
         return tick
+
+    def get_current_bid(self, symbol: str) -> float:
+        """Returns current market bid price as float, or 0.0 if tick unavailable."""
+        tick = self.get_last_tick(symbol)
+        return float(tick.bid) if tick else 0.0
+
+    def get_current_ask(self, symbol: str) -> float:
+        """Returns current market ask price as float, or 0.0 if tick unavailable."""
+        tick = self.get_last_tick(symbol)
+        return float(tick.ask) if tick else 0.0
         
     def get_broker_utc_offset(self) -> int:
         """

@@ -1,4 +1,4 @@
-﻿"""
+"""
 ================================================================================
 ENGINE RESEARCH: FORWARD TEST HARNESS (GATE 3 — PAPER TRADING VALIDATION)
 ================================================================================
@@ -275,7 +275,7 @@ def render_dashboard(state: ForwardState, auction_result: Optional[AuctionResult
 
 # ─── MAIN FORWARD TEST LOOP ──────────────────────────────────────────────────
 
-def run_forward_test(mt5_login: int, mt5_password: str, mt5_server: str):
+def run_forward_test(mt5_login: Optional[int] = None, mt5_password: Optional[str] = None, mt5_server: Optional[str] = None):
     """
     Main forward test loop.
     Streams live bars from MT5, runs Gate 2 auction each bar, simulates PnL.
@@ -425,8 +425,11 @@ def run_forward_test(mt5_login: int, mt5_password: str, mt5_server: str):
 if __name__ == '__main__':
     import argparse
     ap = argparse.ArgumentParser(description='Gate 3 Forward Test Harness')
-    ap.add_argument('--login',    type=int, required=True)
-    ap.add_argument('--password', type=str, required=True)
-    ap.add_argument('--server',   type=str, required=True)
+    ap.add_argument('--login',    type=int, default=None, help='MT5 account login (default: env MT5_LOGIN or active terminal)')
+    ap.add_argument('--password', type=str, default=None, help='MT5 account password (default: env MT5_PASSWORD or active terminal)')
+    ap.add_argument('--server',   type=str, default=None, help='MT5 server (default: env MT5_SERVER or active terminal)')
     args = ap.parse_args()
-    run_forward_test(args.login, args.password, args.server)
+    login = args.login or (int(os.environ['MT5_LOGIN']) if 'MT5_LOGIN' in os.environ else None)
+    password = args.password or os.environ.get('MT5_PASSWORD')
+    server = args.server or os.environ.get('MT5_SERVER')
+    run_forward_test(login, password, server)

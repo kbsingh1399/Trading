@@ -33,7 +33,7 @@ CANONICAL_18_ASSETS = [
     'NZDCNH', 'XAUCNH', 'GAUCNH', 'EURSEK', 'EURUSD'
 ]
 
-MIN_R_MULTIPLE = 4.0
+MIN_R_MULTIPLE = 2.5
 MAX_HOLDING_BARS = 96  # 24 hours in 15m bars
 TIME_DECAY_BARS = 24   # 6 hours in 15m bars
 TIME_DECAY_THRESHOLD_R = 0.20
@@ -275,14 +275,11 @@ def check_setup_criteria(row: Dict[str, Any]) -> Tuple[bool, bool]:
 # -------------------------------------------------------------------------
 def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_fwd: int = MAX_HOLDING_BARS) -> pd.DataFrame:
     """
-    Simulates the exact 7-stage microstructure ratchet exit on all valid setups:
-    - Target: +4.0R
-    - Phase 0: Lock +0.15R at +1.0R gain
-    - Phase 1: Lock +1.0R at +1.5R gain
-    - Phase 2: Lock +1.8R at +2.0R gain
-    - Phase 3: Lock +2.3R at +2.5R gain
-    - Phase 4: Lock +2.8R at +3.0R gain
-    - Phase 5: Lock +3.3R at +3.5R gain
+    Simulates the exact microstructure ratchet exit on all valid setups:
+    - Target: +2.5R (MIN_R_MULTIPLE)
+    - Phase 0: Lock +0.15R at +0.8R gain (BE lock)
+    - Phase 1: Lock +0.80R at +1.5R gain (Profit lock)
+    - Phase 2: Lock +1.80R at +2.0R gain
     - Time Decay: Exit at market if < +0.20R at bar 24 (6 hours)
     - Labels: target = 1 if r_realized > 0 else 0
     """
@@ -325,13 +322,7 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
             for j in range(i + 1, min(i + look_fwd, n)):
                 # Check Stop Loss hit
                 if lows[j] <= sl:
-                    if sl == orig_sl: r_real = -1.0
-                    elif sl == entry + (0.15 * r_dist): r_real = 0.15
-                    elif sl == entry + (1.0 * r_dist): r_real = 1.0
-                    elif sl == entry + (1.8 * r_dist): r_real = 1.8
-                    elif sl == entry + (2.3 * r_dist): r_real = 2.3
-                    elif sl == entry + (2.8 * r_dist): r_real = 2.8
-                    elif sl == entry + (3.3 * r_dist): r_real = 3.3
+                    r_real = round((sl - entry) / r_dist, 4)
                     break
 
                 # Check Take Profit hit
@@ -348,8 +339,8 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
                     sl = entry + (2.3 * r_dist)
                 elif highs[j] >= lock_20r and sl < entry + (1.8 * r_dist):
                     sl = entry + (1.8 * r_dist)
-                elif highs[j] >= lock_15r and sl < entry + (1.0 * r_dist):
-                    sl = entry + (1.0 * r_dist)
+                elif highs[j] >= lock_15r and sl < entry + (0.80 * r_dist):
+                    sl = entry + (0.80 * r_dist)
                 elif highs[j] >= lock_08r and sl < entry + (0.15 * r_dist):
                     sl = entry + (0.15 * r_dist)
 
@@ -383,13 +374,7 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
             for j in range(i + 1, min(i + look_fwd, n)):
                 # Check Stop Loss hit
                 if highs[j] >= sl:
-                    if sl == orig_sl: r_real = -1.0
-                    elif sl == entry - (0.15 * r_dist): r_real = 0.15
-                    elif sl == entry - (1.0 * r_dist): r_real = 1.0
-                    elif sl == entry - (1.8 * r_dist): r_real = 1.8
-                    elif sl == entry - (2.3 * r_dist): r_real = 2.3
-                    elif sl == entry - (2.8 * r_dist): r_real = 2.8
-                    elif sl == entry - (3.3 * r_dist): r_real = 3.3
+                    r_real = round((entry - sl) / r_dist, 4)
                     break
 
                 # Check Take Profit hit
@@ -406,8 +391,8 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
                     sl = entry - (2.3 * r_dist)
                 elif lows[j] <= lock_20r and sl > entry - (1.8 * r_dist):
                     sl = entry - (1.8 * r_dist)
-                elif lows[j] <= lock_15r and sl > entry - (1.0 * r_dist):
-                    sl = entry - (1.0 * r_dist)
+                elif lows[j] <= lock_15r and sl > entry - (0.80 * r_dist):
+                    sl = entry - (0.80 * r_dist)
                 elif lows[j] <= lock_08r and sl > entry - (0.15 * r_dist):
                     sl = entry - (0.15 * r_dist)
 

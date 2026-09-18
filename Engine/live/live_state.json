@@ -1,31 +1,33 @@
 {
+  "realized_pnl": 0.0,
+  "initial_balance": 5000.0,
   "open_trades": {
-    "17569524": {
-      "symbol": "NZDCNH.pi",
-      "ticket": 17569524,
-      "type": 1,
-      "volume": 0.17,
-      "entry_price": 3.82303,
-      "sl": 3.83315,
-      "tp": 3.797730000000001,
-      "r_dist": 0.010119999999999685,
-      "bars_elapsed": 8,
-      "highest_r": 0.0,
-      "last_bar_time": "2026-09-18 15:30:00+00:00"
-    },
     "17585741": {
-      "symbol": "AUDCHF.pi",
       "ticket": 17585741,
+      "symbol": "AUDCHF.pi",
+      "real_symbol": "AUDCHF.pi",
       "type": 0,
+      "action": "BUY",
       "volume": 0.24,
+      "entry": 0.58603,
       "entry_price": 0.58603,
+      "cur_price": 0.58585,
       "sl": 0.58517,
       "tp": 0.58825,
+      "risk_usd": 25.0,
       "r_dist": 0.0008600000000000829,
+      "strategy": "ML_FOREX",
+      "bars_held": 0,
       "bars_elapsed": 0,
       "highest_r": 0.0,
-      "last_bar_time": null
+      "lowest_r": 0.0,
+      "current_r": 0.0,
+      "running_pnl": -5.26,
+      "ratchet_phase": 0,
+      "ratchet_desc": "Base SL (-1.00R)",
+      "last_bar_time": null,
+      "last_evaluated_bar": null
     }
   },
-  "timestamp": 1789747204.758734
+  "timestamp": 1789757262.1267142
 }

@@ -96,30 +96,89 @@ class OrderManager:
 
         
     def save_state(self):
-        """Persists active open trades to live_state.json so positions survive restarts."""
+        """Persists active open trades to live_state.json so positions survive restarts, preserving PnL metrics."""
         try:
-            state_data = {
-                "open_trades": self.open_trades,
-                "timestamp": time.time()
-            }
+            state_data = {}
+            if STATE_FILE.exists():
+                try:
+                    with open(STATE_FILE, "r", encoding="utf-8") as f:
+                        state_data = json.load(f)
+                except Exception:
+                    state_data = {}
+            state_data["open_trades"] = self.open_trades
+            state_data["timestamp"] = time.time()
+            if "realized_pnl" not in state_data:
+                state_data["realized_pnl"] = 0.0
+            if "initial_balance" not in state_data:
+                state_data["initial_balance"] = 5000.0
             with open(STATE_FILE, "w", encoding="utf-8") as f:
                 json.dump(state_data, f, indent=2, default=str)
         except Exception as e:
             logging.error(f"Failed to save live state: {e}")
 
     def load_state(self):
-        """Reconciles persisted state with active MT5 positions on startup."""
+        """Reconciles persisted state with active MT5 positions on startup and normalizes schema."""
         if not STATE_FILE.exists():
             return
         try:
             with open(STATE_FILE, "r", encoding="utf-8") as f:
                 state_data = json.load(f)
             saved_trades = state_data.get("open_trades", {})
+            raw_trades = {}
             if self.conn.connected:
                 live_positions = {p.ticket: p for p in (mt5.positions_get() or [])}
-                self.open_trades = {int(k): v for k, v in saved_trades.items() if int(k) in live_positions}
+                for k, v in saved_trades.items():
+                    if int(k) in live_positions:
+                        raw_trades[int(k)] = v
+                for tkt, pos in live_positions.items():
+                    if tkt not in raw_trades:
+                        raw_trades[tkt] = {
+                            "ticket": tkt,
+                            "symbol": pos.symbol,
+                            "real_symbol": pos.symbol,
+                            "type": pos.type,
+                            "volume": pos.volume,
+                            "entry": pos.price_open,
+                            "entry_price": pos.price_open,
+                            "sl": pos.sl,
+                            "tp": pos.tp,
+                        }
             else:
-                self.open_trades = {int(k): v for k, v in saved_trades.items()}
+                raw_trades = {int(k): v for k, v in saved_trades.items()}
+
+            self.open_trades = {}
+            for tkt, tr in raw_trades.items():
+                entry = float(tr.get("entry") or tr.get("entry_price") or 0.0)
+                sl = float(tr.get("sl", 0.0))
+                tp = float(tr.get("tp", 0.0))
+                r_dist = float(tr.get("r_dist", 0.0))
+                if r_dist <= 0.0:
+                    r_dist = abs(entry - sl) if sl > 0 else 0.0001
+                bars = int(tr.get("bars_elapsed", tr.get("bars_held", 0)))
+                self.open_trades[int(tkt)] = {
+                    "symbol": tr.get("symbol", ""),
+                    "real_symbol": tr.get("real_symbol", tr.get("symbol", "")),
+                    "ticket": int(tkt),
+                    "type": int(tr.get("type", 0)),
+                    "action": tr.get("action", "BUY" if tr.get("type", 0) in (0, mt5.ORDER_TYPE_BUY) else "SELL"),
+                    "volume": float(tr.get("volume", 0.01)),
+                    "entry": entry,
+                    "entry_price": entry,
+                    "sl": sl,
+                    "tp": tp,
+                    "r_dist": r_dist,
+                    "risk_usd": float(tr.get("risk_usd", 25.0)),
+                    "strategy": tr.get("strategy", "ML_FOREX"),
+                    "bars_elapsed": bars,
+                    "bars_held": bars,
+                    "highest_r": float(tr.get("highest_r", 0.0)),
+                    "lowest_r": float(tr.get("lowest_r", 0.0)),
+                    "current_r": float(tr.get("current_r", 0.0)),
+                    "running_pnl": float(tr.get("running_pnl", 0.0)),
+                    "ratchet_phase": int(tr.get("ratchet_phase", 0)),
+                    "ratchet_desc": str(tr.get("ratchet_desc", "Base SL (-1.00R)")),
+                    "last_bar_time": tr.get("last_bar_time", None)
+                }
             logging.info(f"Loaded live state: {len(self.open_trades)} active positions restored from {STATE_FILE.name}")
         except Exception as e:
             logging.error(f"Failed to load live state: {e}")
@@ -181,7 +240,7 @@ class OrderManager:
         lots = max(info.volume_min, min(lots, info.volume_max))
         return round(float(lots), 2)
 
-    def place_market_order(self, symbol, order_type, volume=None, sl_price=None, tp_price=None, risk_usd=25.0):
+    def place_market_order(self, symbol, order_type, volume=None, sl_price=None, tp_price=None, risk_usd=25.0, strategy_tag="ML_FOREX"):
         if not self.conn.connected:
             logging.error("Not connected to MT5")
             return None
@@ -223,7 +282,7 @@ class OrderManager:
             "sl": float(sl_price) if sl_price is not None else 0.0,
             "deviation": 20,
             "magic": 123456,
-            "comment": "ML Forex Strategy",
+            "comment": f"Auto-{strategy_tag}",
             "type_time": mt5.ORDER_TIME_GTC,
             "type_filling": mt5.ORDER_FILLING_IOC,
         }
@@ -232,8 +291,9 @@ class OrderManager:
             request["tp"] = float(tp_price)
             
         result = mt5.order_send(request)
-        if result.retcode != mt5.TRADE_RETCODE_DONE:
-            logging.error(f"Order send failed, retcode={result.retcode}")
+        if not result or result.retcode != mt5.TRADE_RETCODE_DONE:
+            err_code = result.retcode if result else -1
+            logging.error(f"Order send failed, retcode={err_code}")
             return None
             
         logging.info(f"Order placed successfully: ticket={result.order}, fill_price={result.price}, volume={volume}")
@@ -243,20 +303,33 @@ class OrderManager:
         
         # Calculate R value (distance from fill price to SL)
         r_dist = abs(entry_fill_price - sl_price) if sl_price is not None else 0.0001
-        if r_dist == 0:
+        if r_dist <= 0:
             r_dist = 0.0001
             
+        action_str = "BUY" if order_type == mt5.ORDER_TYPE_BUY else "SELL"
         self.open_trades[result.order] = {
             "symbol": real_symbol,
+            "real_symbol": real_symbol,
             "ticket": result.order,
             "type": order_type,
+            "action": action_str,
             "volume": volume,
+            "entry": entry_fill_price,
             "entry_price": entry_fill_price,
+            "cur_price": entry_fill_price,
             "sl": sl_price,
             "tp": tp_price,
+            "risk_usd": risk_usd,
             "r_dist": r_dist,
+            "strategy": strategy_tag,
             "bars_elapsed": 0,
+            "bars_held": 0,
             "highest_r": 0.0,
+            "lowest_r": 0.0,
+            "current_r": 0.0,
+            "running_pnl": 0.0,
+            "ratchet_phase": 0,
+            "ratchet_desc": "Base SL (-1.00R)",
             "last_bar_time": None
         }
         self.save_state()
@@ -370,15 +443,19 @@ class OrderManager:
             position = mt5.positions_get(ticket=ticket)
             if position is None or len(position) == 0:
                 # Closed manually or hit SL/TP
-                del self.open_trades[ticket]
+                if ticket in self.open_trades:
+                    del self.open_trades[ticket]
+                    self.save_state()
                 continue
                 
             pos = position[0]
             trade_info = self.open_trades[ticket]
             
             # Update elapsed bars
-            if current_bar_time and trade_info["last_bar_time"] != current_bar_time:
-                trade_info["bars_elapsed"] += 1
+            if current_bar_time and trade_info.get("last_bar_time") != current_bar_time:
+                bars = int(trade_info.get("bars_elapsed", trade_info.get("bars_held", 0))) + 1
+                trade_info["bars_elapsed"] = bars
+                trade_info["bars_held"] = bars
                 trade_info["last_bar_time"] = current_bar_time
                 
             tick = self.conn.get_last_tick(pos.symbol)
@@ -386,8 +463,15 @@ class OrderManager:
                 continue
                 
             current_price = tick.bid if pos.type == mt5.POSITION_TYPE_BUY else tick.ask
-            entry = trade_info["entry_price"]
-            r_dist = trade_info["r_dist"]
+            entry = float(trade_info.get("entry_price") or trade_info.get("entry") or pos.price_open)
+            sl_val = float(trade_info.get("sl") or pos.sl)
+            r_dist = float(trade_info.get("r_dist") or abs(entry - sl_val) if sl_val > 0 else 0.0001)
+            if r_dist <= 0:
+                r_dist = 0.0001
+            trade_info["entry"] = entry
+            trade_info["entry_price"] = entry
+            trade_info["r_dist"] = r_dist
+            trade_info["cur_price"] = current_price
             
             # Calculate current R
             if pos.type == mt5.POSITION_TYPE_BUY:
@@ -395,29 +479,46 @@ class OrderManager:
             else:
                 current_r = (entry - current_price) / r_dist
                 
-            trade_info["highest_r"] = max(trade_info["highest_r"], current_r)
+            trade_info["current_r"] = current_r
+            trade_info["running_pnl"] = current_r * float(trade_info.get("risk_usd", 25.0))
+            trade_info["highest_r"] = max(float(trade_info.get("highest_r", 0.0)), current_r)
+            trade_info["lowest_r"] = min(float(trade_info.get("lowest_r", 0.0)), current_r)
             
             # Time Decay Exit: 24 bars elapsed and hasn't gained 0.20R
-            if trade_info["bars_elapsed"] >= 24 and trade_info["highest_r"] < 0.20:
-                logging.info(f"Time decay exit for {ticket}, bars={trade_info['bars_elapsed']}, high_R={trade_info['highest_r']}")
+            bars_elapsed = int(trade_info.get("bars_elapsed", trade_info.get("bars_held", 0)))
+            if bars_elapsed >= 24 and float(trade_info.get("highest_r", 0.0)) < 0.20:
+                logging.info(f"Time decay exit for {ticket}, bars={bars_elapsed}, high_R={trade_info['highest_r']:.2f}")
                 self.close_position(ticket)
                 continue
                 
-            # Microstructure Ratchets (Exact parity with s2_ict_ml_forex.py)
-            # Lock 0.15R at 1.0R, Lock 1.0R at 1.5R, Lock 1.8R at 2.0R, Lock 2.3R at 2.5R, Lock 2.8R at 3.0R, Lock 3.3R at 3.5R
+            # Microstructure Ratchets (Exact parity with strategy_kernel.py & forex_engine.py)
+            # BE Lock +0.15R at 0.80R, Profit Lock +0.80R at 1.50R, Lock +1.80R at 2.00R, TP at +2.50R
             new_sl_r = None
-            if trade_info["highest_r"] >= 3.5:
+            highest_r = float(trade_info.get("highest_r", 0.0))
+            if highest_r >= 3.5:
                 new_sl_r = 3.3
-            elif trade_info["highest_r"] >= 3.0:
+                trade_info["ratchet_phase"] = 6
+                trade_info["ratchet_desc"] = "Lock +3.30R"
+            elif highest_r >= 3.0:
                 new_sl_r = 2.8
-            elif trade_info["highest_r"] >= 2.5:
+                trade_info["ratchet_phase"] = 5
+                trade_info["ratchet_desc"] = "Lock +2.80R"
+            elif highest_r >= 2.5:
                 new_sl_r = 2.3
-            elif trade_info["highest_r"] >= 2.0:
+                trade_info["ratchet_phase"] = 4
+                trade_info["ratchet_desc"] = "Lock +2.30R"
+            elif highest_r >= 2.0:
                 new_sl_r = 1.8
-            elif trade_info["highest_r"] >= 1.5:
-                new_sl_r = 1.0
-            elif trade_info["highest_r"] >= 1.0:
+                trade_info["ratchet_phase"] = 3
+                trade_info["ratchet_desc"] = "Lock +1.80R"
+            elif highest_r >= 1.5:
+                new_sl_r = 0.80
+                trade_info["ratchet_phase"] = 2
+                trade_info["ratchet_desc"] = "Lock +0.80R"
+            elif highest_r >= 0.8:
                 new_sl_r = 0.15
+                trade_info["ratchet_phase"] = 1
+                trade_info["ratchet_desc"] = "BE Lock (+0.15R)"
                 
             if new_sl_r is not None:
                 if in_rollover:

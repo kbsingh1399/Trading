@@ -1,6 +1,6 @@
 """
 ================================================================================
-ENGINE RESEARCH: HYBRID DYNAMIC ASSET SCREENER (GATE 1 — HISTORICAL QUALITY)
+ENGINE RESEARCH: HYBRID DYNAMIC ASSET SCREENER (GATE 1 -- HISTORICAL QUALITY)
 ================================================================================
 PURPOSE:
     Nightly/weekly batch job that evaluates ALL 98 available Forex_Backtesting_Data
@@ -23,6 +23,19 @@ ANTI-LOOKAHEAD GUARANTEE:
     - All features computed with backward-looking rolling operators only
     - eval_window = last EVAL_DAYS calendar days of available data
     - train_window = data strictly prior to eval_window start
+
+--------------------------------------------------------------------------------
+AUDIT Ox_Alpha_36 (2026-09-18) -- CORRECTION APPLIED
+--------------------------------------------------------------------------------
+S-1  simulate_ratchet_pnl() paid every `target == 1` a flat +2.5R. But
+     create_labels_ratchet sets `target = 1 if r_realized > 0`, so a +0.15R
+     break-even ratchet exit was admitted as a full 2.5R winner. Under the
+     6-rung ratchet those scratch exits are the modal outcome, so Gate 1a
+     (min Calmar) and the pool ranking were both computed on inflated PnL.
+     The function now consumes `r_realized` directly.
+     Effect: break-even win rate moves from 28.57% to ~55.7%. Expect the
+     approved pool to shrink materially; that is the correct behaviour, not
+     a regression.
 ================================================================================
 """
 import os, sys, json, logging, warnings
@@ -71,18 +84,23 @@ def discover_all_assets() -> List[str]:
     return assets
 
 
-def simulate_ratchet_pnl(y_true, probs, threshold=PROB_THRESHOLD, win_r=2.5, loss_r=-1.0):
+def simulate_ratchet_pnl(r_realized, probs, threshold=PROB_THRESHOLD):
+    """
+    S-1 FIX: pay each fired trade its REALISED R-multiple.
+    Previously signed as (y_true, probs, threshold, win_r=2.5, loss_r=-1.0) and
+    booked a constant payoff off the binary label, which counted +0.15R
+    break-even exits as full 2.5R wins.
+    """
     signals = probs >= threshold
     n_trades = int(signals.sum())
     if n_trades == 0:
         return np.array([0.0]), 0, 0.0, 0.0
-    fired = y_true[signals]
+    fired = r_realized[signals]
     equity = np.zeros(n_trades + 1)
     peak, max_dd, wins = 0.0, 0.0, 0
-    for i, lbl in enumerate(fired):
-        pnl = win_r if lbl == 1 else loss_r
-        wins += int(lbl == 1)
-        equity[i+1] = equity[i] + pnl
+    for i, r in enumerate(fired):
+        wins += int(r > 0)
+        equity[i+1] = equity[i] + float(r)
         peak = max(peak, equity[i+1])
         max_dd = max(max_dd, peak - equity[i+1])
     return equity, n_trades, wins/n_trades, max_dd
@@ -137,12 +155,12 @@ def screen_single_asset(symbol: str) -> Optional[Dict]:
     if model is None: return None
 
     probs  = model.predict(xgb.DMatrix(df_eval_lbl[CANONICAL_FEATURES]))
-    y_eval = df_eval_lbl['target'].to_numpy().astype(int)
+    r_eval = df_eval_lbl['r_realized'].to_numpy(np.float64)   # S-1 FIX
 
     n_signals = int((probs >= PROB_THRESHOLD).sum())
     if n_signals < GATE_MIN_SETUPS_PER_MONTH: return None
 
-    equity, n_trades, win_rate, max_dd_r = simulate_ratchet_pnl(y_eval, probs)
+    equity, n_trades, win_rate, max_dd_r = simulate_ratchet_pnl(r_eval, probs)
     if win_rate < GATE_MIN_WIN_RATE: return None
 
     calmar = compute_calmar(equity, max_dd_r)
@@ -185,6 +203,7 @@ def run_screener(force_assets=None, pool_size=APPROVED_POOL_SIZE):
         'generated_at': datetime.now(timezone.utc).isoformat(), 'eval_days': EVAL_DAYS,
         'gate_thresholds': {'min_calmar': GATE_MIN_CALMAR, 'min_win_rate': GATE_MIN_WIN_RATE,
                             'min_signals': GATE_MIN_SETUPS_PER_MONTH, 'hurst_range': [GATE_MIN_HURST, GATE_MAX_HURST]},
+        'pnl_accounting': 'r_realized',
         'approved_count': len(top_pool), 'screened_count': len(assets), 'assets': top_pool,
     }
     with open(APPROVED_POOL_PATH, 'w', encoding='utf-8') as f:

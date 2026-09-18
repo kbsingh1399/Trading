@@ -166,3 +166,74 @@ class StatefulInferenceEngine:
         del dmatrix
         
         return float(prediction[0])
+
+    def infer_next_bar(self, model: xgb.Booster, conn) -> Optional[Tuple[datetime, str, float, float, float]]:
+        """
+        Polls for newly closed 15m bar, updates rolling buffer, computes features,
+        evaluates setup criteria, and returns (bar_time, direction, prob, spread, atr).
+        """
+        if not conn or not getattr(conn, 'connected', False):
+            return None
+
+        bars_df = conn.get_15m_bars(self.symbol, count=5)
+        if bars_df.empty or len(bars_df) < 2:
+            return None
+
+        # The last completed closed bar is iloc[-2] (since iloc[-1] is the forming bar)
+        closed_bar = bars_df.iloc[-2]
+        if 'datetime' in closed_bar:
+            bar_time = closed_bar['datetime']
+        elif 'time' in closed_bar:
+            bar_time = pd.to_datetime(closed_bar['time'], unit='s', utc=True)
+        else:
+            bar_time = datetime.now(timezone.utc)
+
+        # Check if this bar is already in buffer
+        if not self.buffer.empty and self.buffer.index[-1] == bar_time:
+            pass
+        else:
+            bar_dict = {
+                'datetime': bar_time,
+                'open': float(closed_bar['open']),
+                'high': float(closed_bar['high']),
+                'low': float(closed_bar['low']),
+                'close': float(closed_bar['close']),
+                'volume': float(closed_bar.get('tick_volume', closed_bar.get('volume', 0.0)))
+            }
+            self.update_bar(bar_dict)
+
+        if len(self.buffer) < 50:
+            return None
+
+        features_df = self.compute_features()
+        if features_df.empty:
+            return None
+
+        latest_row = features_df.iloc[-1]
+        trend = float(latest_row.get("htf_4h_trend", 0.0))
+        bull_fvg = float(latest_row.get("bullish_fvg", 0.0))
+        bear_fvg = float(latest_row.get("bearish_fvg", 0.0))
+
+        prob = self.predict(model)
+
+        dt = self.buffer.index[-1] if isinstance(self.buffer.index, pd.DatetimeIndex) else bar_time
+        hour = dt.hour if hasattr(dt, 'hour') else 12
+        is_kz = (7 <= hour <= 10) or (12 <= hour <= 15)
+
+        tick = conn.get_last_tick(self.symbol)
+        spread = float(tick.ask - tick.bid) if tick else 0.0
+        atr = float(latest_row.get("atr_14", 0.001))
+
+        # Check quarantine
+        is_quarantined, _ = self.check_quarantine(spread, atr, current_utc_hour=hour)
+        if is_quarantined:
+            return bar_time, "HOLD", prob, spread, atr
+
+        direction = "HOLD"
+        if is_kz:
+            if trend > 0 and bull_fvg > 0:
+                direction = "BUY"
+            elif trend < 0 and bear_fvg > 0:
+                direction = "SELL"
+
+        return bar_time, direction, prob, spread, atr
