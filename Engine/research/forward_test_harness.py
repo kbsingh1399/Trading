@@ -148,11 +148,21 @@ class ForwardState:
     @property
     def calmar_live(self) -> float:
         if self.completed_trades < 5: return 0.0
-        net_r = sum(t.get('pnl_r', 0) for t in self.trades)
-        max_dd_r = max((t.get('max_adverse_r', 0) for t in self.trades), default=0.0)
-        if net_r <= 0: return 0.0
-        if max_dd_r <= 0: return 99.0
-        return net_r / max_dd_r
+        # Calculate peak-to-trough max drawdown on equity curve
+        eq = INITIAL_CAPITAL
+        peak = INITIAL_CAPITAL
+        max_dd_usd = 0.0
+        for t in self.trades:
+            eq += t.get('pnl_usd', 0.0)
+            if eq > peak:
+                peak = eq
+            dd = peak - eq
+            if dd > max_dd_usd:
+                max_dd_usd = dd
+        net_profit_usd = self.equity - INITIAL_CAPITAL
+        if net_profit_usd <= 0: return 0.0
+        if max_dd_usd <= 0: return 99.0
+        return net_profit_usd / max_dd_usd
 
     @property
     def consecutive_losses(self) -> int:
@@ -365,13 +375,17 @@ def run_forward_test(mt5_login: Optional[int] = None, mt5_password: Optional[str
                     for sig in last_auction.admitted:
                         # Simulate entry (DRY RUN)
                         entry_price = conn.get_current_bid(sig.symbol) if sig.direction == 'SELL' else conn.get_current_ask(sig.symbol)
+                        if entry_price is None:
+                            log.warning(f'Could not fetch live tick for {sig.symbol}; skipping entry.')
+                            continue
                         sl_distance = sig.atr_14 * 1.5
                         sl = entry_price - sl_distance if sig.direction == 'BUY' else entry_price + sl_distance
                         state.open_trades[sig.symbol] = {
                             'direction': sig.direction, 'entry': entry_price,
-                            'sl': sl, 'risk_usd': BASE_RISK_USD,
+                            'sl': sl, 'orig_sl': sl, 'risk_usd': BASE_RISK_USD,
                             'entry_bar': state.bars_processed,
                             'prob': sig.prob_win,
+                            'sl_dist': sl_distance,
                         }
                         log.info(f'DRY OPEN: {sig.symbol} {sig.direction} @ {entry_price:.5f} SL={sl:.5f}')
 
@@ -379,22 +393,51 @@ def run_forward_test(mt5_login: Optional[int] = None, mt5_password: Optional[str
                 to_close = []
                 for sym, tr in state.open_trades.items():
                     bars_held = state.bars_processed - tr['entry_bar']
-                    current_price = conn.get_current_bid(sym)
-                    sl_dist = abs(tr['entry'] - tr['sl'])
-                    r_now = (current_price - tr['entry']) / max(sl_dist, 1e-9)
-                    if tr['direction'] == 'SELL':
-                        r_now = -r_now
+                    # Use Bid for closing BUY (selling), Ask for closing SELL (covering)
+                    current_price = conn.get_current_bid(sym) if tr['direction'] == 'BUY' else conn.get_current_ask(sym)
+                    if current_price is None:
+                        continue
+
+                    sl_dist = tr.get('sl_dist', abs(tr['entry'] - tr.get('orig_sl', tr['sl'])))
+                    sl_dist = max(sl_dist, 1e-9)
+
+                    # Calculate current gain in R
+                    gain_r = (current_price - tr['entry']) / sl_dist if tr['direction'] == 'BUY' else (tr['entry'] - current_price) / sl_dist
+
+                    # Update 3-phase ratchet stop loss
+                    if tr['direction'] == 'BUY':
+                        if gain_r >= 2.0 and tr['sl'] < tr['entry'] + (1.80 * sl_dist):
+                            tr['sl'] = tr['entry'] + (1.80 * sl_dist)
+                        elif gain_r >= 1.5 and tr['sl'] < tr['entry'] + (0.80 * sl_dist):
+                            tr['sl'] = tr['entry'] + (0.80 * sl_dist)
+                        elif gain_r >= 0.8 and tr['sl'] < tr['entry'] + (0.15 * sl_dist):
+                            tr['sl'] = tr['entry'] + (0.15 * sl_dist)
+                    else:
+                        if gain_r >= 2.0 and tr['sl'] > tr['entry'] - (1.80 * sl_dist):
+                            tr['sl'] = tr['entry'] - (1.80 * sl_dist)
+                        elif gain_r >= 1.5 and tr['sl'] > tr['entry'] - (0.80 * sl_dist):
+                            tr['sl'] = tr['entry'] - (0.80 * sl_dist)
+                        elif gain_r >= 0.8 and tr['sl'] > tr['entry'] - (0.15 * sl_dist):
+                            tr['sl'] = tr['entry'] - (0.15 * sl_dist)
 
                     close_reason = None
-                    if r_now >= WIN_R:
+                    exit_price = current_price
+
+                    # Check Target Profit hit (+2.5R)
+                    if gain_r >= WIN_R:
                         close_reason = f'Target +{WIN_R}R'
-                    elif bars_held >= 24 and r_now < 0.20:
+                        exit_price = tr['entry'] + (WIN_R * sl_dist) if tr['direction'] == 'BUY' else tr['entry'] - (WIN_R * sl_dist)
+                    # Check Stop Loss / Ratchet hit
+                    elif (tr['direction'] == 'BUY' and current_price <= tr['sl']) or (tr['direction'] == 'SELL' and current_price >= tr['sl']):
+                        close_reason = 'StopLoss / Ratchet Lock'
+                        exit_price = tr['sl']
+                    # Check Time Decay (24 bars / 6 hours, gain < +0.20R)
+                    elif bars_held >= 24 and gain_r < 0.20:
                         close_reason = f'TimeDecay ({bars_held}bars)'
-                    elif r_now < -1.0:
-                        close_reason = 'StopOut'
+                        exit_price = current_price
 
                     if close_reason:
-                        to_close.append((sym, current_price, close_reason))
+                        to_close.append((sym, exit_price, close_reason))
 
                 for sym, exit_price, reason in to_close:
                     tr = state.open_trades.pop(sym)

@@ -6,7 +6,7 @@ Single source of truth for:
 1. 13 Canonical Stationary Features (Polars batch & Pandas streaming).
 2. Strictly causal 4H As-Of Join with shift(1) to eliminate 3h45m lookahead.
 3. Strictly causal Daily PDH/PDL with shift(1).
-4. Microstructure 7-Stage Ratchet Exit Simulation with 24-bar time decay.
+4. Microstructure 3-Phase Ratchet Exit Simulation with 24-bar time decay and MTM exhaustion.
 5. Unified Setup Entry Filter (Kill Zones, Liquidity Sweeps, FVGs, 4H Trend).
 6. 96-bar Purge & Embargo Protocol at Out-Of-Sample boundaries.
 ================================================================================
@@ -275,12 +275,13 @@ def check_setup_criteria(row: Dict[str, Any]) -> Tuple[bool, bool]:
 # -------------------------------------------------------------------------
 def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_fwd: int = MAX_HOLDING_BARS) -> pd.DataFrame:
     """
-    Simulates the exact microstructure ratchet exit on all valid setups:
+    Simulates the exact 3-phase microstructure ratchet exit on all valid setups:
     - Target: +2.5R (MIN_R_MULTIPLE)
     - Phase 0: Lock +0.15R at +0.8R gain (BE lock)
     - Phase 1: Lock +0.80R at +1.5R gain (Profit lock)
     - Phase 2: Lock +1.80R at +2.0R gain
     - Time Decay: Exit at market if < +0.20R at bar 24 (6 hours)
+    - Exhaustion: Mark-to-market at bar 96 if neither SL nor TP is hit
     - Labels: target = 1 if r_realized > 0 else 0
     """
     n = len(df)
@@ -312,32 +313,26 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
             lock_08r = entry + (0.8 * r_dist)  # Phase-0 BE lock trigger (matches live manage_open_trades)
             lock_15r = entry + (1.5 * r_dist)
             lock_20r = entry + (2.0 * r_dist)
-            lock_25r = entry + (2.5 * r_dist)
-            lock_30r = entry + (3.0 * r_dist)
-            lock_35r = entry + (3.5 * r_dist)
 
             sl = orig_sl
             r_real = -1.0
+            exited = False
 
             for j in range(i + 1, min(i + look_fwd, n)):
                 # Check Stop Loss hit
                 if lows[j] <= sl:
                     r_real = round((sl - entry) / r_dist, 4)
+                    exited = True
                     break
 
                 # Check Take Profit hit
                 if highs[j] >= tp:
                     r_real = min_r
+                    exited = True
                     break
 
                 # Ratchet updates
-                if highs[j] >= lock_35r and sl < entry + (3.3 * r_dist):
-                    sl = entry + (3.3 * r_dist)
-                elif highs[j] >= lock_30r and sl < entry + (2.8 * r_dist):
-                    sl = entry + (2.8 * r_dist)
-                elif highs[j] >= lock_25r and sl < entry + (2.3 * r_dist):
-                    sl = entry + (2.3 * r_dist)
-                elif highs[j] >= lock_20r and sl < entry + (1.8 * r_dist):
+                if highs[j] >= lock_20r and sl < entry + (1.8 * r_dist):
                     sl = entry + (1.8 * r_dist)
                 elif highs[j] >= lock_15r and sl < entry + (0.80 * r_dist):
                     sl = entry + (0.80 * r_dist)
@@ -346,8 +341,16 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
 
                 # Time Decay Rule: Exit at market if < +0.2R within 24 bars
                 if j == i + TIME_DECAY_BARS and closes[j] < entry + (TIME_DECAY_THRESHOLD_R * r_dist):
-                    r_real = (closes[j] - entry) / r_dist
+                    r_real = round((closes[j] - entry) / r_dist, 4)
+                    exited = True
                     break
+
+            if not exited:
+                # S-11 FIX: Mark-to-market exit on holding exhaustion (bar 96)
+                j_last = min(i + look_fwd, n) - 1
+                mtm_r = (closes[j_last] - entry) / r_dist
+                locked_r = (sl - entry) / r_dist
+                r_real = round(min(min_r, max(mtm_r, locked_r)), 4)
 
             targets[i] = 1 if r_real > 0 else 0
             r_reals[i] = r_real
@@ -364,32 +367,26 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
             lock_08r = entry - (0.8 * r_dist)  # Phase-0 BE lock trigger (matches live manage_open_trades)
             lock_15r = entry - (1.5 * r_dist)
             lock_20r = entry - (2.0 * r_dist)
-            lock_25r = entry - (2.5 * r_dist)
-            lock_30r = entry - (3.0 * r_dist)
-            lock_35r = entry - (3.5 * r_dist)
 
             sl = orig_sl
             r_real = -1.0
+            exited = False
 
             for j in range(i + 1, min(i + look_fwd, n)):
                 # Check Stop Loss hit
                 if highs[j] >= sl:
                     r_real = round((entry - sl) / r_dist, 4)
+                    exited = True
                     break
 
                 # Check Take Profit hit
                 if lows[j] <= tp:
                     r_real = min_r
+                    exited = True
                     break
 
                 # Ratchet updates
-                if lows[j] <= lock_35r and sl > entry - (3.3 * r_dist):
-                    sl = entry - (3.3 * r_dist)
-                elif lows[j] <= lock_30r and sl > entry - (2.8 * r_dist):
-                    sl = entry - (2.8 * r_dist)
-                elif lows[j] <= lock_25r and sl > entry - (2.3 * r_dist):
-                    sl = entry - (2.3 * r_dist)
-                elif lows[j] <= lock_20r and sl > entry - (1.8 * r_dist):
+                if lows[j] <= lock_20r and sl > entry - (1.8 * r_dist):
                     sl = entry - (1.8 * r_dist)
                 elif lows[j] <= lock_15r and sl > entry - (0.80 * r_dist):
                     sl = entry - (0.80 * r_dist)
@@ -398,8 +395,16 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
 
                 # Time Decay Rule: Exit at market if < +0.2R within 24 bars
                 if j == i + TIME_DECAY_BARS and closes[j] > entry - (TIME_DECAY_THRESHOLD_R * r_dist):
-                    r_real = (entry - closes[j]) / r_dist
+                    r_real = round((entry - closes[j]) / r_dist, 4)
+                    exited = True
                     break
+
+            if not exited:
+                # S-11 FIX: Mark-to-market exit on holding exhaustion (bar 96)
+                j_last = min(i + look_fwd, n) - 1
+                mtm_r = (entry - closes[j_last]) / r_dist
+                locked_r = (entry - sl) / r_dist
+                r_real = round(min(min_r, max(mtm_r, locked_r)), 4)
 
             targets[i] = 1 if r_real > 0 else 0
             r_reals[i] = r_real

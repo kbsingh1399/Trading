@@ -101,6 +101,32 @@ record("strategy_kernel: London & NY hours", ("7 <= hour" in sk_src or "hour >= 
 record("FVG_ML: is_london + is_ny gates",    "is_london" in fvg_src and "is_ny" in fvg_src)
 record("ORB_CRT: kill zone enforced",        "is_kill_zone" in orb_src or ("7 <= hour" in orb_src))
 
+# TEST 7
+print("\nTEST 7 - Full Module Import Safety")
+try:
+    import Engine.live.inference_engine
+    import Engine.live.order_manager
+    import Engine.live.mt5_connection
+    import Engine.research.forward_test_harness
+    import Engine.research.asset_screener
+    import Engine.research.run_dynamic_oos
+    record("All 6 core/live/research modules import cleanly", True)
+except Exception as ex:
+    record("All 6 core/live/research modules import cleanly", False, str(ex))
+
+# TEST 8
+print("\nTEST 8 - S-11 Mark-To-Market Exhaustion at Bar 96")
+record("Bar 96 MTM exhaustion in create_labels_ratchet", "j_last = min(i + look_fwd, n) - 1" in src)
+record("Reachable ratchet rungs clean (no dead 35r)", "lock_35r" not in src)
+
+# TEST 9
+print("\nTEST 9 - B2 None-Safe MT5 Tick Protection")
+harness_src = (ROOT/"Engine/research/forward_test_harness.py").read_text()
+mt5_src = (ROOT/"Engine/live/mt5_connection.py").read_text()
+record("MT5Connection returns Optional[float]", "Optional[float]" in mt5_src)
+record("ForwardTest checks entry_price is None", "if entry_price is None:" in harness_src)
+record("ForwardTest checks current_price is None", "if current_price is None:" in harness_src)
+
 # SUMMARY
 total, passed, failed = len(results), sum(results), len(results)-sum(results)
 print("\n" + "="*54)

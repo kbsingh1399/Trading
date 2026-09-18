@@ -1,6 +1,7 @@
 import MetaTrader5 as mt5
 import pandas as pd
 import logging
+from typing import Optional
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -82,15 +83,19 @@ class MT5Connection:
             return None
         return tick
 
-    def get_current_bid(self, symbol: str) -> float:
-        """Returns current market bid price as float, or 0.0 if tick unavailable."""
+    def get_current_bid(self, symbol: str) -> Optional[float]:
+        """Returns current market bid price as float, or None if tick unavailable."""
         tick = self.get_last_tick(symbol)
-        return float(tick.bid) if tick else 0.0
+        if tick and getattr(tick, 'bid', 0.0) > 0.0:
+            return float(tick.bid)
+        return None
 
-    def get_current_ask(self, symbol: str) -> float:
-        """Returns current market ask price as float, or 0.0 if tick unavailable."""
+    def get_current_ask(self, symbol: str) -> Optional[float]:
+        """Returns current market ask price as float, or None if tick unavailable."""
         tick = self.get_last_tick(symbol)
-        return float(tick.ask) if tick else 0.0
+        if tick and getattr(tick, 'ask', 0.0) > 0.0:
+            return float(tick.ask)
+        return None
         
     def get_broker_utc_offset(self) -> int:
         """
