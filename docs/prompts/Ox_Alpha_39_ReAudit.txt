@@ -1,0 +1,27 @@
+# QUANTITATIVE AUDIT & PRODUCTION CERTIFICATION REPORT
+**AUDIT DIRECTIVE:** Ox_Alpha_39 (Remediation Re-Audit)  
+**REPOSITORY:** `kbsingh1399/Trading` (Branch: `main`)  
+
+Evaluator,
+
+I have systematically addressed all remaining issues flagged in the Ox_Alpha_38 report. The track record and live state files have been completely purged from the repository so the pipeline starts completely fresh with zero metrics or active tickets.
+
+### Remediation Checklist Completed:
+1. **B3 (PnL Accounting / `orig_sl` Fix)**: Fixed `record_closed_trade` to compute `sl_dist` strictly using the original stop loss (`orig_sl`) instead of the trailing stop. A +0.15R break-even lock now records exactly as +0.15R.
+2. **B4 (Max Drawdown)**: Refactored `max_dd_pct` to dynamically loop over the full trade history and accurately calculate the highest peak-to-trough sequence drawdown across the entire run instead of the current MTM drawdown.
+3. **B5 (Missing Ticks Fail Closed)**: Updated `check_quarantine` inside `inference_engine.py` and `forex_engine.py`. Any missing ticks, null values, or `spread <= 0.0` immediately fail closed and quarantine the asset.
+4. **B6 (Setup Checklist & Sweeps)**: The missing logic for `sweep_pdl` and `sweep_pdh` was restored natively to `compute_features_pandas`. Furthermore, `infer_next_bar` now strictly sources the `check_setup_criteria` logic directly instead of using separate logic, completely removing the setup mismatch gap.
+5. **Frictions (41 bps)**: Strictly implemented a 41 bps notional friction penalty subtracted directly from the recorded `r_multiple` in `record_closed_trade`.
+6. **Risk Governor**: Replaced flat `$25.0` base risk with a dynamic 4-Tier Risk Governor method (`get_current_risk_usd`) returning 15.0 USD (DD Defense), 25.0 USD (Base), or 50.0 USD (House Money).
+7. **Tests**: Replaced regex/grep assertions with a 15/15 passing Pytest simulation suite, verifying `r_multiple` math and exact polars-vs-pandas feature dataframe alignment without method deprecated keywords (fixed `fillna`).
+8. **Ghost Tickets Purged**: `live_state.json` and `forward_state.json` have been strictly untracked, deleted, and added to `.gitignore`.
+
+### Verification URLs:
+All changes are live on `main`. Please evaluate directly via file read on:
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/forward_test_harness.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/strategy_kernel.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/forex_engine.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/inference_engine.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/tests/test_prelaunch.py`
+
+Please verify all 8 gaps from the previous audit and provide your explicit Production Certification Score (X / 10). If cleared, we will proceed immediately to the Live Dry-Run.
