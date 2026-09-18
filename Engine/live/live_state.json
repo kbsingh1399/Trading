@@ -6,13 +6,26 @@
       "type": 0,
       "volume": 0.01,
       "entry_price": 9.82184,
-      "sl": 9.79743,
+      "sl": 9.84625,
       "tp": 9.882864999999999,
       "r_dist": 0.0244099999999996,
-      "bars_elapsed": 0,
+      "bars_elapsed": 5,
+      "highest_r": 1.541581319131531,
+      "last_bar_time": "2026-09-18 12:00:00+00:00"
+    },
+    "17569524": {
+      "symbol": "NZDCNH.pi",
+      "ticket": 17569524,
+      "type": 1,
+      "volume": 0.17,
+      "entry_price": 3.82303,
+      "sl": 3.83315,
+      "tp": 3.797730000000001,
+      "r_dist": 0.010119999999999685,
+      "bars_elapsed": 1,
       "highest_r": 0.0,
-      "last_bar_time": null
+      "last_bar_time": "2026-09-18 12:00:00+00:00"
     }
   },
-  "timestamp": 1789721369.4096968
+  "timestamp": 1789734015.7183557
 }

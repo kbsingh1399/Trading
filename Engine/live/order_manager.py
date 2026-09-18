@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 STATE_FILE = Path(__file__).resolve().parent / "live_state.json"
 MAX_MARGIN_UTILIZATION_PCT = 0.30  # Portfolio margin utilization ceiling (30%)
 MIN_MARGIN_LEVEL_PCT = 200.0       # Minimum account margin level before hard freeze (200%)
-MAX_CONCURRENT_POSITIONS = 2       # Max 2 concurrent positions across portfolio
+MAX_CONCURRENT_POSITIONS = 3       # Max 3 concurrent positions across portfolio
 
 # Institutional Correlation Clusters (Max 1 concurrent position per cluster)
 CORRELATION_CLUSTERS = {

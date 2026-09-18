@@ -36,7 +36,7 @@ if PROJECT_ROOT not in sys.path:
 
 from Engine.live.mt5_connection import MT5Connection
 from Engine.live.inference_engine import StatefulInferenceEngine
-from Engine.live.order_manager import OrderManager
+from Engine.live.order_manager import OrderManager, MAX_CONCURRENT_POSITIONS
 from Engine.core.strategy_kernel import CANONICAL_FEATURES, CANONICAL_18_ASSETS
 from Engine.forex_engine import (
     calculate_adaptive_sl_tp,
@@ -612,7 +612,7 @@ def main():
             pos_table = None
             if order_mgr.open_trades:
                 pos_table = Table(
-                    title=f"LIVE ACTIVE BROKER POSITIONS ({len(order_mgr.open_trades)} / 2 Max)",
+                    title=f"LIVE ACTIVE BROKER POSITIONS ({len(order_mgr.open_trades)} / {MAX_CONCURRENT_POSITIONS} Max)",
                     header_style="bold black on bright_green",
                     border_style="bright_green",
                     expand=True
