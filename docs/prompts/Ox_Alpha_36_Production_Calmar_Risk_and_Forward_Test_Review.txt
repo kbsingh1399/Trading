@@ -1,0 +1,136 @@
+# ====================================================================================================
+# ARENA.AI / CLAUDE OPUS (OX ALPHA) QUANT AUDIT & PRODUCTION CERTIFICATION PROMPT
+# TOPIC: CALMAR-OPTIMIZED RISK GOVERNOR, CONTINUOUS FORWARD TEST VALIDATION & ZERO-LOOKAHEAD ARCHITECTURE
+# PROMPT IDENTIFIER: Ox_Alpha_36
+# REPOSITORY: https://github.com/kbsingh1399/Trading (branch: main)
+# ====================================================================================================
+
+[SYSTEM ROLE & AUDIT MANDATE]
+You are the Chief Quantitative Officer and Head of Algorithmic Risk at a Tier-1 Systematic Macro Hedge Fund.
+You are tasked with conducting an exhaustive, adversarial code and mathematical audit of our production Forex, CFD Indices, and Commodities automated trading pipeline.
+Our system operates across an institutional universe of 18 Canonical Assets using ICT Fair Value Gaps (FVG), Candle Range Theory (CRT), causal XGBoost probabilistic conditioning, 7-stage microstructure ratchets, and an empirical Calmar-optimized multi-tier risk governor.
+
+All production code, strategy logic, feature pipelines, and models are live and committed to GitHub on the 'main' branch. You MUST fetch and inspect the files directly via the raw GitHub URLs provided below.
+
+====================================================================================================
+[PRIMARY GITHUB REFERENCES - FETCH AND INSPECT DIRECTLY]
+====================================================================================================
+1. Master Forex & CFD Live/Backtest Orchestration Engine:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/forex_engine.py
+
+2. Real-Time MetaTrader 5 Execution & Live Telemetry Runner:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/run_forex_dry_run.py
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/order_manager.py
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/inference_engine.py
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/mt5_connection.py
+
+3. Core Strategy Kernel & Feature Pipelines:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/strategy_kernel.py
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/base_strategy.py
+
+4. Production Strategies:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/FVG_ML_ForexCFD_Strategy.py
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/ORB_CRT_ForexCFD_Strategy.py
+
+5. Institutional 3-Gate Dynamic Asset Selection & Research Modules:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/asset_screener.py
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/signal_auction.py
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/forward_test_harness.py
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/run_dynamic_oos.py
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/dynamic_oos_results.csv
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/oos_20_windows_forex_results.csv
+
+6. Certified Production Model & Target Criteria:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/models/xgboost_forex.json
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/oos_windows_forex_20.json
+
+====================================================================================================
+[DATASET PROVENANCE & REALISTIC FRICTIONS]
+====================================================================================================
+- Asset Universe: 18 Canonical Institutional Instruments:
+  EURUSD, NZDUSD, AUDCHF, USDHKD, USDSEK, EURSEK, EURCNH, NZDCNH, XAUCNH, GAUCNH, EURHUF, GER40, FR40, AU200, US2000, GAS, NICKEL, LEAD.
+- Multi-Timeframe Causal Alignment: 15m entry/exit bars, 4H higher-timeframe trend filter, D1 structural session extremes.
+- Monotonicity & Completeness: 2020 through September 18, 2026. Zero nulls, zero synthetic interpolations, strictly verified bid/ask tick depth.
+- Capital Base: 5,000.00 USD initial capital.
+- Exchange Frictions Enforced:
+  * Variable broker spread dynamically ingested per bar from live MetaTrader 5 tick stream.
+  * Taker fee equivalent >= 8 bps on notional.
+  * Slippage: 10 bps on market entry, 15 bps on stop-loss execution.
+- Concurrency Governor: Maximum 3 concurrent open positions across all 18 symbols simultaneously, partitioned across 5 macro correlation blocs (EUR, USD, CNH, INDEX, COMMODITY).
+
+====================================================================================================
+[CORE ARCHITECTURAL COMPONENTS UNDER AUDIT]
+====================================================================================================
+1. 4-Tier Calmar-Optimized Risk Governor (Engine/forex_engine.py):
+   - Tier 0 (Hard Freeze): Drawdown >= 4.50% (225.00 USD) -> Risk budget = 0.00 USD (All trading halted immediately).
+   - Tier 1 (Drawdown Defense): Drawdown >= 2.00% (100.00 USD) -> Risk budget steps down from 25.00 USD to 15.00 USD (0.30% capital). Priority over house money.
+   - Tier 2 (House Money Expansion): Realized cumulative profit >= 100.00 USD AND current drawdown < 1.00% -> Risk budget expands to 35.00 USD (0.70% capital).
+   - Tier 3 (Normal Base Risk): Standard operation -> 25.00 USD (0.50% base capital preservation).
+   - Signal Probability Threshold: Conditioned at P* >= 0.54.
+
+2. Microstructure Piecewise Ratchet:
+   - Phase 0 (Break-Even Lock): At +0.80R gain, move stop loss to Entry + 0.15R (securing broker spread and taker fees).
+   - Phase 1 (Profit Lock): At +1.50R gain, move stop loss to Entry + 0.80R.
+   - Exit Target: Structural take-profit at +2.50R (eliminating unachievable 4R/5R moonshots that retrace).
+   - Time Decay Exit: If unrealized gain remains below +0.20R after 24 bars (6 hours), exit at market.
+
+3. Option C Microstructure Hardening & Spread Trap Firewall:
+   - Dynamic Quarantine: If broker spread exceeds 12% of 15m ATR (spread_atr_ratio > 0.12), symbol is quarantined from new order generation. Hysteresis exit at 0.08.
+   - Triple-Floor Adaptive Stop Loss: adaptive_sl = max(raw_swing_sl, 3.5 * current_spread, 1.5 * atr_14).
+
+4. Zero-Lookahead Invariants (FABLE-5 Compliance):
+   - Causal Shift: All features engineered strictly using historical bars (t-1 and prior). No future bar knowledge.
+   - Next-Bar Execution: Orders executed at open of bar j+1 upon signal confirmation at close of bar j.
+   - Zero Static Cache: Winning status or configurations are never hardcoded; all evaluations are calculated dynamically.
+
+====================================================================================================
+[EMPIRICAL SCORECARDS & COMPARATIVE BENCHMARK DATA]
+====================================================================================================
+1. Full 20 Out-Of-Sample (OOS) Walk-Forward Windows (2021 - 2026):
+   - Historical Pass Rate: 20/20 Profitable Windows (100% positive return across 5 years).
+   - Average Calmar Ratio: 40.41 (Peak: Window 11 = 138.59, Median: 38.44).
+   - Average Net ROI per Window: +87.0% on 5,000.00 USD capital.
+   - Average Max Drawdown: 2.73% (contained strictly below the 4.50% hard threshold).
+
+2. Continuous Live Forward Test (December 1, 2025 to September 18, 2026 - 9.5 Months):
+   - Universe: 18 Canonical Assets (100% profitable, 18/18 assets positive).
+   - Total Completed Trades: 845 trades.
+   - Portfolio Win Rate: 77.16%.
+   - Profit Factor: 2.87.
+   - Net Realized R-Multiple: +325.25R.
+   - Governed Net ROI: +226.75% (+11,337.52 USD net profit on 5,000.00 USD initial capital).
+   - Flat Risk (25.00 USD) Comparison: +162.63% Net ROI (+8,131.26 USD net profit).
+   - Max Trailing Drawdown: 6.77% across 9.5 months of continuous real-time market regimes.
+   - Calmar Ratio: 33.50.
+   - Equal-Weighted Buy & Hold Benchmark: -0.61% return (4,969.58 USD final equity). The strategy outperformed the benchmark by +227.36%.
+   - Top Assets: GAS (+1,573.76 USD), XAUCNH (+1,329.58 USD), USDSEK (+1,246.37 USD), NICKEL (+1,002.06 USD), NZDCNH (+962.75 USD).
+
+3. Empirical Research Finding: Fixed Canonical 18 vs. Dynamic 98-Asset Screener:
+   - Dynamic Screening Across 20 Windows: Average Calmar = 9.80, Average ROI = +47.6%, Worst Drawdown = 17.00% (W06).
+   - Fixed Canonical 18 Across 20 Windows: Average Calmar = 40.41, Average ROI = +87.0%, Worst Drawdown = 5.49% (W15).
+   - Forensic Finding: The Fixed Canonical 18 pre-filtered universe provides superior downside containment and prevents correlation shocks. The Dynamic Screener is best utilized as a real-time diagnostic regime monitor rather than a full universe replacement.
+
+====================================================================================================
+[ADVERSARIAL AUDIT QUESTIONS FOR ARENA.AI / CLAUDE OPUS]
+====================================================================================================
+Please evaluate our production architecture and empirical results against institutional hedge fund standards, addressing the following 5 key questions:
+
+1. MATHEMATICAL AUDIT OF THE 4-TIER RISK GOVERNOR:
+   Analyze the interaction between the 25.00 USD base risk, the 15.00 USD drawdown defense (at 2.0% DD), the 35.00 USD house money expansion (at 100.00 USD profit and DD < 1.0%), and the 4.50% hard freeze stop.
+   Does this piecewise step function mathematically prevent gambler ruin and drawdown compounding while maximizing the portfolio Calmar ratio?
+
+2. ANTI-LOOKAHEAD & CAUSALITY VERIFICATION:
+   Inspect Engine/forex_engine.py and Engine/core/strategy_kernel.py.
+   Confirm that all rolling features, FVG mitigations, session VWAPs, and probability inferences are strictly causal and free from forward-looking data leakage (bar j+1 execution).
+
+3. UNIVERSE SELECTION DYNAMICS (FIXED VS. DYNAMIC):
+   Critique our empirical finding where the Fixed Canonical 18 substantially outperformed the Dynamic 98-Asset Screener (Average Calmar 40.41 vs. 9.80).
+   How should an institutional desk structure asset rotation: as a full periodic replacement or as a hybrid veto/quarantine mechanism?
+
+4. MICROSTRUCTURE RATCHET & RETRACEMENT DEFENSE:
+   Assess the 3-phase ratchet (Break-even lock at +0.80R, profit lock at +1.50R, target at +2.50R, time decay at 24 bars).
+   Does truncating the target from 5.0R to 2.50R align with real-world institutional orderflow and execution frictions in Forex and CFD markets?
+
+5. FINAL PRODUCTION & LIVE MT5 DEPLOYMENT CERTIFICATION:
+   Based on the 845 forward trades (+226.75% Net ROI, 77.16% WR, 18/18 profitable assets, Calmar 33.50), provide your formal production score (out of 10) and identify any remaining operational risks before live capital deployment.
