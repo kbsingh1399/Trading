@@ -46195,3 +46195,32 @@ Verified [Engine/forex_engine.py](file:///c:/Users/SIGMA/Documents/Trading/Engin
 - Verified syntax and successful dry-run execution (--once snapshot with 18/18 assets and active trade restoration).
 - Pushed to main under commit 555bfb1.
 
+
+## Turn Entry: 2026-09-19 00:33 UTC
+### User Prompt:
+"push all to git and give me prompt again for opus to verify and review pipeline"
+
+### Actions Completed:
+1. Reconciled and staged all files in repository including:
+   - Engine/core/strategy_kernel.py: Unified MIN_R_MULTIPLE = 2.5, modernized create_labels_ratchet with exact R-multiple computation on SL hits.
+   - Engine/forex_engine.py: Schema normalization, dual-key fallback, defensive modify_sl and close_trade, duplicate symbol veto check.
+   - Engine/live/order_manager.py: Synchronized 7-stage ratchet thresholds (+0.80R BE lock at +0.15R, +1.50R profit lock at +0.80R).
+   - Engine/live/inference_engine.py: Implemented infer_next_bar with bar deduplication and quarantine filtering.
+   - Engine/live/mt5_connection.py: Implemented get_current_bid and get_current_ask.
+   - Engine/research/forward_test_harness.py: Made MT5 credentials optional via env vars or active terminal connection.
+   - Engine/research/run_dynamic_oos.py and sset_screener.py: Remediated S-1 and S-3 evaluation defects (real r_realized, chronological trade sorting, criteria gating).
+2. Passed 13/13 checks on Engine/tests/test_prelaunch.py and validated live snapshot --mode snapshot.
+3. Pushed all commits to https://github.com/kbsingh1399/Trading.git on branch main (commit: 46c731).
+4. Authored Git-based prompt: Ox_Alpha_37_Remediation_Audit_and_Pipeline_Certification.txt in C:\Users\SIGMA\Downloads\ and archived in docs/prompts/.
+
+## Turn Entry: 2026-09-19 00:45 UTC
+### Context & Findings:
+Remediated Ox_Alpha_37 re-audit findings:
+1. B1 (Import crash): Added missing datetime and timezone imports in Engine/live/inference_engine.py.
+2. B2 (Zero-tick price fallback & Side Parity): Updated MT5Connection.get_current_bid/ask to return Optional[float] = None on unavailable ticks. Updated forward_test_harness.py with explicit None guards and evaluate short exits against Ask price.
+3. S-11 (Mark-to-Market Exhaustion): Updated create_labels_ratchet in Engine/core/strategy_kernel.py to mark unexited trades to market at bar 96 instead of -1.0R penalty. Cleaned unreachable ratchet rungs.
+4. Target Criteria Parity: Updated Engine/target_oos_criteria.json min_r_multiple to 2.5.
+5. Forward Test Harness Ratchets & Portfolio Calmar: Integrated 3-phase ratchet (+0.8R BE, +1.5R Lock, +2.0R Lock, TP @ +2.5R) and true peak-to-trough portfolio max drawdown Calmar ratio.
+6. Expanded Compliance Suite: Engine/tests/test_prelaunch.py expanded to 19/19 passing checks.
+7. Live Terminal Snapshot: Verified against active MT5 Blueberry Markets Live #5064568 with 18/18 assets online, 0 NaNs, clean disconnect.
+8. Git Commits & Prompt: Pushed commits b68c7d2 and f445c33 to origin main. Generated Ox_Alpha_38_Remediation_Verification_and_Live_Production_Audit.txt in C:\Users\SIGMA\Downloads\ and archived in docs/prompts/.
