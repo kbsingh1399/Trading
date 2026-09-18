@@ -157,3 +157,17 @@ class MT5Connection:
         df['time'] = df['time'] - offset
         df['datetime'] = pd.to_datetime(df['time'], unit='s', utc=True)
         return df
+
+    def get_1d_bars(self, symbol, count=20):
+        if not self.connected:
+            return pd.DataFrame()
+        real_symbol = self.resolve_symbol(symbol)
+        rates = mt5.copy_rates_from_pos(real_symbol, mt5.TIMEFRAME_D1, 0, count)
+        if rates is None or len(rates) == 0:
+            return pd.DataFrame()
+        df = pd.DataFrame(rates)
+        offset = self.get_broker_utc_offset()
+        df['time_broker'] = df['time']
+        df['time'] = df['time'] - offset
+        df['datetime'] = pd.to_datetime(df['time'], unit='s', utc=True)
+        return df

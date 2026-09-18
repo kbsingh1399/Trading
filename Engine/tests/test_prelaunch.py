@@ -46,7 +46,7 @@ prices_4h = 1.08 + np.cumsum(np.random.randn(250)*0.001)
 buf_4h = pd.DataFrame({
     "open": prices_4h, "high": prices_4h+0.001,
     "low": prices_4h-0.001, "close": prices_4h,
-}, index=pd.date_range("2024-01-01", periods=250, freq="4h", tz="UTC"))
+}, index=pd.date_range(end=buf.index[-1], periods=250, freq="4h", tz="UTC"))
 
 print("\n" + "="*54)
 print("  PRE-LAUNCH COMPLIANCE TEST HARNESS")
@@ -55,15 +55,44 @@ print(f"  {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
 print("="*54 + "\n")
 
 # TEST 1
-print("TEST 1 - 13-Feature Math Parity")
+print("TEST 1 - 13-Feature Math Parity (Polars vs Pandas)")
 try:
-    re = cfp_engine(buf.copy(), buf_4h.copy()).iloc[-1]
-    rk = compute_features_pandas(buf.copy(), buf_4h.copy()).iloc[-1]
-    FEATS = ["bullish_fvg","bearish_fvg","htf_4h_trend","hour","day_of_week",
-             "rsi_14","vwap_dist","ema_50_dist","ema_200_dist","ema_200_slope",
-             "atr_14","volatility_20","roc_20"]
-    all_ok = all(abs(float(re[f])-float(rk[f])) < 1e-8 for f in FEATS)
-    record("All 13 features match engine vs kernel at 1e-8", all_ok)
+    import tempfile
+    from Engine.core.strategy_kernel import engineer_features_polars
+    
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        # Create daily buf
+        buf_d1 = buf.groupby(buf.index.date).agg({'open': 'first', 'high': 'max', 'low': 'min', 'close': 'last'})
+        buf_d1.index = pd.to_datetime(buf_d1.index).tz_localize('UTC')
+        
+        # Write parquets
+        buf.index = buf.index.astype('datetime64[us, UTC]')
+        buf.index.name = "datetime"
+        buf.reset_index().to_parquet(Path(tmp_dir) / "TEST_15m_real.parquet")
+        
+        buf_4h.index = buf_4h.index.astype('datetime64[us, UTC]')
+        buf_4h.index.name = "datetime"
+        buf_4h.reset_index().to_parquet(Path(tmp_dir) / "TEST_4h_real.parquet")
+        
+        buf_d1.index = buf_d1.index.astype('datetime64[us, UTC]')
+        buf_d1.index.name = "datetime"
+        buf_d1.reset_index().to_parquet(Path(tmp_dir) / "TEST_d1_real.parquet")
+        
+        # Get Pandas output
+        re = cfp_engine(buf.copy(), buf_4h.copy()).iloc[-1]
+        # Get Polars output
+        rk = engineer_features_polars("TEST", tmp_dir).iloc[-1]
+        
+        FEATS = ["bullish_fvg","bearish_fvg","htf_4h_trend","hour","day_of_week",
+                 "rsi_14","vwap_dist","ema_50_dist","ema_200_dist","ema_200_slope",
+                 "atr_14","volatility_20","roc_20", "sweep_pdl", "sweep_pdh"]
+        
+        all_ok = True
+        for f in FEATS:
+            if abs(float(re[f])-float(rk[f])) > 1e-8:
+                all_ok = False
+                print(f"Mismatch in {f}: Pandas={re[f]}, Polars={rk[f]}")
+        record("All features match engine (Pandas) vs kernel (Polars) at 1e-8", all_ok)
 except Exception as ex:
     record("Feature parity computation", False, str(ex))
 
@@ -117,33 +146,42 @@ except Exception as ex:
 # TEST 8
 print("\nTEST 8 - PnL Accounting Exactness (B3 Fix)")
 try:
+    import os
     from Engine.research.forward_test_harness import ForwardState
-    fs = ForwardState()
-    # Assume ENTRY = 1.000, SL = 0.990, ORIG_SL = 0.990 (R dist = 0.010), RISK = 25.0
-    # Ratchet locks at +0.15R => EXIT = 1.0015, SL moves to 1.0015
-    # When exit hits SL = 1.0015, exit_price = 1.0015
+    tmp_path = "tmp_state_test8.json"
+    if os.path.exists(tmp_path): os.remove(tmp_path)
+    fs = ForwardState(tmp_path)
+    # Assume ENTRY = 1.000, SL = 0.990, ORIG_SL = 0.990 (R dist = 0.010), RISK = 25.0, SPREAD = 0.0002
     fs.record_closed_trade(
         symbol='TEST', direction='BUY', entry_price=1.000,
-        exit_price=1.0015, sl=1.0015, orig_sl=0.990, risk_usd=25.0, exit_reason='Ratchet'
+        exit_price=1.0015, sl=1.0015, orig_sl=0.990, risk_usd=25.0, exit_reason='Ratchet', spread=0.0002
     )
     # Expected R = (1.0015 - 1.000) / 0.010 = 0.15 R
-    # Minus 41 bps friction: (1.000 * 0.0041) / 0.010 = 0.41 R friction
-    # Net R = 0.15 - 0.41 = -0.26 R
+    # Minus friction: 0.0002 / 0.010 = 0.02 R friction
+    # Net R = 0.15 - 0.02 = 0.13 R
     last_trade = fs.trades[-1]
     
-    # Let's test a +2R target to see if it registers positive
     fs.record_closed_trade(
         symbol='TEST', direction='BUY', entry_price=1.000,
-        exit_price=1.020, sl=1.018, orig_sl=0.990, risk_usd=25.0, exit_reason='Target'
+        exit_price=1.020, sl=1.018, orig_sl=0.990, risk_usd=25.0, exit_reason='Target', spread=0.0002
     )
     last_trade_2 = fs.trades[-1]
-    expected_r2 = 2.0 - 0.41
+    expected_r2 = 2.0 - 0.02
     
-    ok1 = abs(last_trade['r_multiple'] - (-0.26)) < 1e-4
+    ok1 = abs(last_trade['r_multiple'] - 0.13) < 1e-4
     ok2 = abs(last_trade_2['r_multiple'] - expected_r2) < 1e-4
-    record("PnL accounting uses orig_sl distance", ok1 and ok2, f"R1={last_trade['r_multiple']}, R2={last_trade_2['r_multiple']}")
+    record("PnL accounting uses orig_sl and dynamic spread", ok1 and ok2, f"R1={last_trade['r_multiple']}, R2={last_trade_2['r_multiple']}")
+    if os.path.exists(tmp_path): os.remove(tmp_path)
 except Exception as ex:
     record("PnL accounting uses orig_sl distance", False, str(ex))
+
+# TEST 9
+print("\nTEST 9 - B2 None-Safe MT5 Tick Protection")
+harness_src = (ROOT/"Engine/research/forward_test_harness.py").read_text()
+mt5_src = (ROOT/"Engine/live/mt5_connection.py").read_text()
+record("MT5Connection returns Optional[float]", "Optional[float]" in mt5_src)
+record("ForwardTest checks entry_price is None", "ask is None or bid is None:" in harness_src)
+record("ForwardTest checks current_price is None", "if current_price is None:" in harness_src)
 total, passed, failed = len(results), sum(results), len(results)-sum(results)
 print("\n" + "="*54)
 print(f"  RESULTS: {passed}/{total} checks passed")

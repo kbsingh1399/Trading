@@ -23,11 +23,12 @@ EXOTIC_SESSION_RESTRICTED = {
 
 
 class StatefulInferenceEngine:
-    def __init__(self, symbol: str, max_bars: int = 1000):
+    def __init__(self, symbol: str, max_bars: int = 800):
         self.symbol = symbol
         self.max_bars = max_bars
         self.buffer: pd.DataFrame = pd.DataFrame()
         self.buffer_4h: pd.DataFrame = pd.DataFrame()
+        self.buffer_d1: pd.DataFrame = pd.DataFrame()
         self.is_warm = False
         self.mt5_connection = None
         self.features_order = CANONICAL_FEATURES
@@ -111,6 +112,18 @@ class StatefulInferenceEngine:
                 bars_4h_df.set_index('datetime', inplace=True)
             self.buffer_4h = bars_4h_df[['open', 'high', 'low', 'close']].copy()
 
+        # Warm-start 1D buffer for exact previous day high/low parity
+        if hasattr(mt5_connection, 'get_1d_bars'):
+            bars_1d_df = mt5_connection.get_1d_bars(self.symbol, count=20)
+            if not bars_1d_df.empty:
+                bars_1d_df = bars_1d_df.iloc[:-1].copy()
+                if 'datetime' in bars_1d_df.columns:
+                    bars_1d_df.set_index('datetime', inplace=True)
+                elif 'time' in bars_1d_df.columns:
+                    bars_1d_df['datetime'] = pd.to_datetime(bars_1d_df['time'], unit='s', utc=True)
+                    bars_1d_df.set_index('datetime', inplace=True)
+                self.buffer_d1 = bars_1d_df[['open', 'high', 'low', 'close']].copy()
+
         self.is_warm = True
         logging.info(f"[{self.symbol}] Buffer warm-started successfully.")
         return True
@@ -132,7 +145,7 @@ class StatefulInferenceEngine:
                 self.buffer = self.buffer.iloc[-self.max_bars:].copy()
 
     def refresh_4h_buffer(self) -> None:
-        """Periodically refreshes 4H buffer from MT5 to keep trend current."""
+        """Periodically refreshes 4H and 1D buffer from MT5 to keep trend and daily levels current."""
         if self.mt5_connection and self.mt5_connection.connected:
             bars_4h_df = self.mt5_connection.get_4h_bars(self.symbol, count=250)
             if not bars_4h_df.empty and len(bars_4h_df) >= 205:
@@ -144,9 +157,20 @@ class StatefulInferenceEngine:
                     bars_4h_df.set_index('datetime', inplace=True)
                 self.buffer_4h = bars_4h_df[['open', 'high', 'low', 'close']].copy()
 
+            if hasattr(self.mt5_connection, 'get_1d_bars'):
+                bars_1d_df = self.mt5_connection.get_1d_bars(self.symbol, count=20)
+                if not bars_1d_df.empty:
+                    bars_1d_df = bars_1d_df.iloc[:-1].copy()
+                    if 'datetime' in bars_1d_df.columns:
+                        bars_1d_df.set_index('datetime', inplace=True)
+                    elif 'time' in bars_1d_df.columns:
+                        bars_1d_df['datetime'] = pd.to_datetime(bars_1d_df['time'], unit='s', utc=True)
+                        bars_1d_df.set_index('datetime', inplace=True)
+                    self.buffer_d1 = bars_1d_df[['open', 'high', 'low', 'close']].copy()
+
     def compute_features(self) -> pd.DataFrame:
         """Delegates feature calculation to canonical strategy kernel."""
-        return compute_features_pandas(self.buffer, self.buffer_4h)
+        return compute_features_pandas(self.buffer, self.buffer_4h, self.buffer_d1)
 
     def predict(self, xgb_model: xgb.Booster) -> float:
         """Formats latest features into DMatrix and runs inference."""

@@ -85,7 +85,8 @@ console = Console(force_terminal=True, width=140) if RICH_AVAILABLE else None
 
 class ForwardState:
     """Persistent state for the forward test (survives restarts)."""
-    def __init__(self):
+    def __init__(self, state_path: str = FORWARD_STATE_PATH):
+        self.state_path = state_path
         self.equity        = INITIAL_CAPITAL
         self.peak_equity   = INITIAL_CAPITAL
         self.trades: List[Dict] = []
@@ -95,9 +96,9 @@ class ForwardState:
         self.load()
 
     def load(self):
-        if os.path.exists(FORWARD_STATE_PATH):
+        if os.path.exists(self.state_path):
             try:
-                with open(FORWARD_STATE_PATH, 'r') as f:
+                with open(self.state_path, 'r') as f:
                     d = json.load(f)
                 self.equity         = d.get('equity', INITIAL_CAPITAL)
                 self.peak_equity    = d.get('peak_equity', self.equity)
@@ -117,10 +118,10 @@ class ForwardState:
             'start_time': self.start_time,
             'bars_processed': self.bars_processed,
         }
-        tmp = FORWARD_STATE_PATH + '.tmp'
+        tmp = self.state_path + '.tmp'
         with open(tmp, 'w', encoding='utf-8') as f:
             json.dump(d, f, indent=2, default=str)
-        os.replace(tmp, FORWARD_STATE_PATH)
+        os.replace(tmp, self.state_path)
 
     # ── Metrics ─────────────────────────────────────────────────────────
     @property
@@ -189,15 +190,17 @@ class ForwardState:
         return (datetime.now(timezone.utc) - start).total_seconds() / 86400
 
     def get_current_risk_usd(self) -> float:
-        """4-Tier Risk Governor based on current DD and Profit."""
-        if self.max_dd_pct >= 0.025:
+        """3-Tier Risk Governor based on current DD and Profit."""
+        current_dd_pct = (self.peak_equity - self.equity) / self.peak_equity if self.peak_equity > 0 else 0.0
+        if current_dd_pct >= 0.02:
             return 15.0  # DD Defense
-        if self.net_pnl_usd > 50.0:
+        if self.net_pnl_usd > 100.0 and current_dd_pct < 0.01:
             return 50.0  # House Money
-        return 25.0      # Base Risk
+        return 35.0      # Base Risk
 
     def record_closed_trade(self, symbol: str, direction: str, entry_price: float,
-                             exit_price: float, sl: float, orig_sl: float, risk_usd: float, exit_reason: str):
+                             exit_price: float, sl: float, orig_sl: float, risk_usd: float, exit_reason: str,
+                             spread: float = 0.0002):
         pip_dist = abs(exit_price - entry_price)
         sl_dist  = abs(entry_price - orig_sl)
         if sl_dist < 1e-9:
@@ -205,8 +208,8 @@ class ForwardState:
         else:
             sign = 1 if direction == 'BUY' else -1
             r_multiple = sign * (exit_price - entry_price) / sl_dist
-            # Subtract 41 bps total friction on notional
-            friction_r = (entry_price * 0.0041) / sl_dist
+            # Friction = spread (entry + exit approximated)
+            friction_r = spread / sl_dist
             r_multiple -= friction_r
         pnl_usd = r_multiple * risk_usd
         self.equity += pnl_usd
@@ -393,11 +396,13 @@ def run_forward_test(mt5_login: Optional[int] = None, mt5_password: Optional[str
                 if candidates:
                     last_auction = auction.rank_signals(candidates, open_syms)
                     for sig in last_auction.admitted:
-                        # Simulate entry (DRY RUN)
-                        entry_price = conn.get_current_bid(sig.symbol) if sig.direction == 'SELL' else conn.get_current_ask(sig.symbol)
-                        if entry_price is None:
+                        ask = conn.get_current_ask(sig.symbol)
+                        bid = conn.get_current_bid(sig.symbol)
+                        if ask is None or bid is None:
                             log.warning(f'Could not fetch live tick for {sig.symbol}; skipping entry.')
                             continue
+                        spread = ask - bid
+                        entry_price = bid if sig.direction == 'SELL' else ask
                         sl_distance = sig.atr_14 * 1.5
                         sl = entry_price - sl_distance if sig.direction == 'BUY' else entry_price + sl_distance
                         state.open_trades[sig.symbol] = {
@@ -406,6 +411,7 @@ def run_forward_test(mt5_login: Optional[int] = None, mt5_password: Optional[str
                             'entry_bar': state.bars_processed,
                             'prob': sig.prob_win,
                             'sl_dist': sl_distance,
+                            'spread': spread,
                         }
                         log.info(f'DRY OPEN: {sig.symbol} {sig.direction} @ {entry_price:.5f} SL={sl:.5f}')
 
@@ -462,7 +468,7 @@ def run_forward_test(mt5_login: Optional[int] = None, mt5_password: Optional[str
                 for sym, exit_price, reason in to_close:
                     tr = state.open_trades.pop(sym)
                     state.record_closed_trade(
-                        sym, tr['direction'], tr['entry'], exit_price, tr['sl'], tr.get('orig_sl', tr['sl']), tr['risk_usd'], reason)
+                        sym, tr['direction'], tr['entry'], exit_price, tr['sl'], tr.get('orig_sl', tr['sl']), tr['risk_usd'], reason, tr.get('spread', 0.0002))
 
             # ── Dashboard ─────────────────────────────────────────────────
             render_dashboard(state, last_auction, len(engines))

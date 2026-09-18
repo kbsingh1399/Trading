@@ -168,7 +168,7 @@ def engineer_features_polars(symbol: str, data_dir: str) -> pd.DataFrame:
 # -------------------------------------------------------------------------
 # PANDAS STREAMING FEATURE ENGINEERING (INFERENCE ENGINE & LIVE BUFFER)
 # -------------------------------------------------------------------------
-def compute_features_pandas(buffer_15m: pd.DataFrame, buffer_4h: Optional[pd.DataFrame] = None) -> pd.DataFrame:
+def compute_features_pandas(buffer_15m: pd.DataFrame, buffer_4h: Optional[pd.DataFrame] = None, buffer_d1: Optional[pd.DataFrame] = None) -> pd.DataFrame:
     """
     Computes all 13 canonical features on a rolling Pandas DataFrame.
     Guarantees mathematical parity with engineer_features_polars.
@@ -197,7 +197,23 @@ def compute_features_pandas(buffer_15m: pd.DataFrame, buffer_4h: Optional[pd.Dat
     df['vwap_dist'] = (df['close'] - vwap_20) / vwap_20
 
     # Calculate sweeps
-    if isinstance(df.index, pd.DatetimeIndex):
+    if buffer_d1 is not None and not buffer_d1.empty and isinstance(df.index, pd.DatetimeIndex):
+        # buffer_d1 contains daily bars. We want the previous day's high/low.
+        # We merge_asof the shifted daily bars to get the exact matching parity with Polars
+        bd = buffer_d1.copy()
+        if 'datetime' in bd.columns:
+            bd.set_index('datetime', inplace=True)
+        bd = bd.sort_index()
+        bd['prev_day_high'] = bd['high'].shift(1)
+        bd['prev_day_low'] = bd['low'].shift(1)
+        
+        # Backward join
+        merged = pd.merge_asof(df.reset_index(), bd[['prev_day_high', 'prev_day_low']].reset_index(), on='datetime', direction='backward')
+        merged.set_index('datetime', inplace=True)
+        
+        df['sweep_pdl'] = (df['low'] <= merged['prev_day_low']).astype(int)
+        df['sweep_pdh'] = (df['high'] >= merged['prev_day_high']).astype(int)
+    elif isinstance(df.index, pd.DatetimeIndex):
         daily = df.groupby(df.index.date).agg({'high': 'max', 'low': 'min'}).shift(1)
         dates = df.index.date
         prev_highs = pd.Series(dates, index=df.index).map(daily['high']).ffill()
