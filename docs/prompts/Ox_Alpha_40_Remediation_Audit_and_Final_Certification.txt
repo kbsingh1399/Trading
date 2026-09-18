@@ -1,0 +1,59 @@
+# QUANTITATIVE AUDIT & PRODUCTION CERTIFICATION REPORT
+**AUDIT DIRECTIVE:** Ox_Alpha_40 (Final Remediation Re-Audit & Production Certification)  
+**REPOSITORY:** `kbsingh1399/Trading` (Branch: `main`, Commit: `8e570b7`)  
+
+Evaluator,
+
+I have systematically addressed all three blocking defects (F1, F2, F3) as well as the daily extremes alignment (B6) flagged in your Ox_Alpha_39 audit. 
+
+All 18 checks in `Engine/tests/test_prelaunch.py` now pass with zero failures and zero warnings.
+
+---
+
+### Remediation Details Completed:
+
+1. **F1 (Dynamic Spread-Based Friction Model)**:
+   - Purged the mathematically impossible 41 bps notional penalty that subtracted 4.1R on 10-pip stop losses.
+   - Implemented exact tick-level spread friction in `Engine/research/forward_test_harness.py`:
+     `friction_r = spread / sl_dist`
+   - For EURUSD with a 0.2 pip spread and 10 pip SL distance, friction is exactly 0.02R. A +0.15R break-even lock now nets +0.13R, and a +2.0R target nets +1.98R.
+
+2. **F2 (Risk Governor Keyed Off Current Drawdown)**:
+   - Fixed `ForwardState.get_current_risk_usd()` in `Engine/research/forward_test_harness.py`.
+   - The governor now evaluates `self.current_dd_pct` (mark-to-market drawdown relative to current peak equity) rather than the all-time historical peak `max_dd_pct`.
+   - The portfolio no longer gets permanently frozen in DD Defense ($15) after recovering from a drawdown. When equity returns to ATH and net profit > 50 USD, House Money ($50) unlocks seamlessly.
+
+3. **F3 (Test State Isolation & No Leakage)**:
+   - `ForwardState` now accepts a configurable `state_path` parameter.
+   - `Engine/tests/test_prelaunch.py` (Test 8) now injects an isolated `tmp_state_test8.json` and deletes it upon completion.
+   - Production `forward_state.json` is never written to, polluted, or corrupted during test runs.
+
+4. **B6 (Daily Extremes & Broker Session Parity via `buffer_d1`)**:
+   - Added `get_1d_bars(symbol, count=20)` to `Engine/live/mt5_connection.py` with broker-to-UTC offset normalization.
+   - `StatefulInferenceEngine` in `Engine/live/inference_engine.py` now warm-starts and refreshes `self.buffer_d1`.
+   - Updated `compute_features_pandas` in `Engine/core/strategy_kernel.py` to accept `buffer_d1` and perform a causal `merge_asof` backward join against shifted daily high/low bars.
+   - Test 1 in `test_prelaunch.py` confirms 1e-8 parity across all 13 canonical features between Polars (`engineer_features_polars`) and Pandas (`compute_features_pandas`).
+
+5. **Test Suite Verification (18/18 PASS)**:
+   - `python Engine/tests/test_prelaunch.py` passes 18/18 checks:
+     * TEST 1: 13-Feature Math Parity (Polars vs Pandas) at 1e-8
+     * TEST 2: Ratchet Phase-0 Trigger = 0.8R
+     * TEST 3: TP Close Uses actual_tp_r
+     * TEST 4: Max 2 Concurrent Positions
+     * TEST 5: CRT Previous-Day Boundary
+     * TEST 6: Kill Zone Hours
+     * TEST 7: Full Module Import Safety (all 6 modules)
+     * TEST 8: PnL Accounting Exactness (B3 + F1 dynamic spread)
+     * TEST 9: B2 None-Safe MT5 Tick Protection
+
+---
+
+### Verification URLs:
+All changes are pushed and live on `main` at commit `8e570b7`. Please audit directly:
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/forward_test_harness.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/inference_engine.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/mt5_connection.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/strategy_kernel.py`
+- `https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/tests/test_prelaunch.py`
+
+Please verify these remediations and provide your formal Production Certification Score (X / 10) and clearance for Live Dry-Run execution.
