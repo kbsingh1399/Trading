@@ -46177,3 +46177,11 @@ Verified [Engine/forex_engine.py](file:///c:/Users/SIGMA/Documents/Trading/Engin
 - Benchmark: Equal-weighted Buy & Hold basket returned -0.61% (4,969.58 USD final equity)
 - Equity curve chart saved to: forward_test_dec2025_latest_equity_curve.png
 
+
+---
+## Turn: Git Push and Ox_Alpha_36 Arena Prompt Generation
+- All production files, models, datasets, and forward test results committed and pushed to origin/main (Commit: bdd8861).
+- Generated Arena.ai Review Prompt: Ox_Alpha_36_Production_Calmar_Risk_and_Forward_Test_Review.txt
+- Saved to C:\Users\SIGMA\Downloads\Ox_Alpha_36_Production_Calmar_Risk_and_Forward_Test_Review.txt and docs/prompts/
+- Prompt is 100% Git-based, zero code dump, contains complete provenance, frictions, 20-window scorecard, forward test scorecard (845 trades, +226.75% ROI, 77.16% WR), and 5 adversarial audit questions.
+
