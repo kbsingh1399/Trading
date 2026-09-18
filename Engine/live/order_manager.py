@@ -120,13 +120,21 @@ class OrderManager:
 
         acc = mt5.account_info()
         equity = float(acc.equity) if acc and acc.equity > 0 else 5000.0
-        contract_size = info.trade_contract_size if info.trade_contract_size > 0 else 100000.0
+        acc_leverage = float(acc.leverage) if acc and acc.leverage > 0 else 30.0
+
         tick = self.conn.get_last_tick(real_symbol)
         curr_price = tick.ask if tick and tick.ask > 0 else 1.0
-        contract_notional = contract_size * curr_price if contract_size > 0 else 100000.0 * curr_price
+
+        # Exact notional in account currency (USD) per 1.0 lot using broker margin requirements
+        broker_margin_1lot = mt5.order_calc_margin(mt5.ORDER_TYPE_BUY, real_symbol, 1.0, curr_price)
+        if broker_margin_1lot and broker_margin_1lot > 0:
+            contract_notional_usd = broker_margin_1lot * acc_leverage
+        else:
+            contract_size = info.trade_contract_size if info.trade_contract_size > 0 else 100000.0
+            contract_notional_usd = contract_size
 
         max_notional = equity * max_leverage
-        max_lots_leverage = max_notional / contract_notional if contract_notional > 0 else 1.0
+        max_lots_leverage = max_notional / contract_notional_usd if contract_notional_usd > 0 else 1.0
 
         raw_lots = min(raw_lots, max_lots_leverage)
 
