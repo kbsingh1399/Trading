@@ -1,18 +1,5 @@
 {
   "open_trades": {
-    "17559113": {
-      "symbol": "USDSEK.pi",
-      "ticket": 17559113,
-      "type": 0,
-      "volume": 0.01,
-      "entry_price": 9.82184,
-      "sl": 9.84625,
-      "tp": 9.882864999999999,
-      "r_dist": 0.0244099999999996,
-      "bars_elapsed": 5,
-      "highest_r": 1.541581319131531,
-      "last_bar_time": "2026-09-18 12:00:00+00:00"
-    },
     "17569524": {
       "symbol": "NZDCNH.pi",
       "ticket": 17569524,
@@ -22,10 +9,23 @@
       "sl": 3.83315,
       "tp": 3.797730000000001,
       "r_dist": 0.010119999999999685,
-      "bars_elapsed": 1,
+      "bars_elapsed": 8,
       "highest_r": 0.0,
-      "last_bar_time": "2026-09-18 12:00:00+00:00"
+      "last_bar_time": "2026-09-18 15:30:00+00:00"
+    },
+    "17585741": {
+      "symbol": "AUDCHF.pi",
+      "ticket": 17585741,
+      "type": 0,
+      "volume": 0.24,
+      "entry_price": 0.58603,
+      "sl": 0.58517,
+      "tp": 0.58825,
+      "r_dist": 0.0008600000000000829,
+      "bars_elapsed": 0,
+      "highest_r": 0.0,
+      "last_bar_time": null
     }
   },
-  "timestamp": 1789734015.7183557
+  "timestamp": 1789747204.758734
 }
