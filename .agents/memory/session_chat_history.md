@@ -46064,3 +46064,17 @@ it show no trade / done? / continue
 3. Telemetry Highlighting: Updated the scanner table so holding assets display 'ACTIVE TRADE: BUY 0.01L' in bold white-on-blue instead of generic new-entry gating reasons.
 4. MT5 View Reset: Instructed user on revealing the MT5 bottom Toolbox via Ctrl + T to inspect live floating equity, margin, and order status in the broker GUI.
 5. Git Persistence: Committed and pushed changes to GitHub main.
+
+---
+
+### User Prompt:
+more over...it just opened 0.01 lot
+
+### Assistant Response:
+1. Root Cause Analysis: Audited calculate_lot_size() in Engine/live/order_manager.py and Engine/forex_engine.py. Isolated an issue in the institutional leverage cap calculation: contract_notional was calculated as trade_contract_size * curr_price (100,000 * 9.83 = 983,335). For USDSEK, the base currency is USD, meaning 1.0 lot has a notional value of exactly 100,000 USD (not 983,335 SEK). Multiplying by the exchange rate inflated the apparent notional by ~9.83x, which artificially compressed the leverage-capped lots from 0.15 down to 0.0148, forcing the broker volume_min clamp of 0.01 lots.
+2. Production Math Fix: Replaced static multiplication with exact account-currency notional derived from MT5 broker margin calculation (broker_margin_1lot * account_leverage).
+3. Parity Verification: Re-tested calculate_lot_size across the portfolio:
+   - USDSEK with 0.02441 SL: now sizes to exactly 0.10 Lots (risk = 24.89 USD on 25.00 USD target).
+   - EURUSD with 20 pip SL: sizes to 0.12 Lots (risk = 24.00 USD).
+   - AUDCHF: sizes to 0.10 Lots.
+4. Git Persistence: Committed and pushed fix to GitHub main.
