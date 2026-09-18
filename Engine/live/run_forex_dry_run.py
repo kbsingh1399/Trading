@@ -5,7 +5,7 @@ ENGINE 2: PRODUCTION-READY FOREX ML LIVE DRY-RUN TERMINAL (RICH DASHBOARD)
 Features:
 1. RICH INSTITUTIONAL UI: Color-coded live telemetry table using the `rich` library.
 2. TRANSPARENT DECISION TELEMETRY: Explicitly shows WHY trades are held
-   (e.g., HOLD (Off-Hours), HOLD (No FVG), HOLD (P* < 0.55), or DRY-BUY / DRY-SELL).
+   (e.g., HOLD (Off-Hours), HOLD (No FVG), HOLD (P* < 0.54), or DRY-BUY / DRY-SELL).
 3. 24/7 OVERRIDE (--ignore-kz): Allows testing signal triggers and order geometry
    outside standard London/NY kill zones.
 4. ATOMIC PRE-FLIGHT SYNC: Zero file locking on Windows via temporary file replacement.
@@ -409,7 +409,7 @@ def main():
                     rsi_cell = f"{rsi:.1f}"
 
                 # Format P* styling
-                if prob >= 0.55:
+                if prob >= 0.54:
                     prob_cell = f"[bold green]{prob:.3f}[/bold green]"
                 else:
                     prob_cell = f"[dim]{prob:.3f}[/dim]"
@@ -431,12 +431,12 @@ def main():
                     is_short_sig = (trend_val < 0 and bear_fvg > 0)
                 elif strat_mode == "ml":
                     strat_tag = "ML"
-                    is_long_sig = (trend_val > 0 and prob >= 0.55)
-                    is_short_sig = (trend_val < 0 and prob >= 0.55)
+                    is_long_sig = (trend_val > 0 and prob >= 0.54)
+                    is_short_sig = (trend_val < 0 and prob >= 0.54)
                 else:  # combined (dual confluence)
                     strat_tag = "DUAL"
-                    is_long_sig = (trend_val > 0 and bull_fvg > 0 and prob >= 0.55)
-                    is_short_sig = (trend_val < 0 and bear_fvg > 0 and prob >= 0.55)
+                    is_long_sig = (trend_val > 0 and bull_fvg > 0 and prob >= 0.54)
+                    is_short_sig = (trend_val < 0 and bear_fvg > 0 and prob >= 0.54)
 
                 atr = float(features.get('atr_14', 0.0))
                 current_utc_hour = datetime.now(timezone.utc).hour
@@ -518,8 +518,8 @@ def main():
                         else:
                             decision_cell = "[dim]HOLD[/dim]"
                     elif strat_mode == "ml":
-                        if prob < 0.55:
-                            decision_cell = f"[dim]HOLD (P*={prob:.2f}<0.55)[/dim]"
+                        if prob < 0.54:
+                            decision_cell = f"[dim]HOLD (P*={prob:.2f}<0.54)[/dim]"
                         elif trend_val == 0:
                             decision_cell = "[dim yellow]HOLD (Flat Trend)[/dim yellow]"
                         else:
@@ -527,8 +527,8 @@ def main():
                     else:
                         if bull_fvg == 0 and bear_fvg == 0:
                             decision_cell = "[dim]HOLD (No FVG)[/dim]"
-                        elif prob < 0.55:
-                            decision_cell = f"[dim]HOLD (P*={prob:.2f}<0.55)[/dim]"
+                        elif prob < 0.54:
+                            decision_cell = f"[dim]HOLD (P*={prob:.2f}<0.54)[/dim]"
                         elif (trend_val > 0 and bear_fvg > 0) or (trend_val < 0 and bull_fvg > 0):
                             decision_cell = "[dim yellow]HOLD (Trend Opposed)[/dim yellow]"
                         else:

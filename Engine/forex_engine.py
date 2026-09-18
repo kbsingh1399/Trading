@@ -130,17 +130,18 @@ console = Console(force_terminal=True, width=get_terminal_width())
 # -------------------------------------------------------------------------
 # CANONICAL STRATEGY CONSTANTS & OPTION C GOVERNANCE
 # -------------------------------------------------------------------------
-BASE_RISK_USD = 25.0              # Stepped down from 50.0 to 25.0 (0.50%) as recommended by Opus for pre-live capital preservation
-DEFENSE_RISK_USD = 15.0
-HOUSE_MONEY_RISK_USD = 50.0       # Scaled down proportionally (1.00%)
-HARD_DD_LIMIT_PCT = 4.50          # 4.5% Hard DD Stop (225.00 USD on 5,000.00 USD capital)
-DEFENSE_DD_LIMIT_PCT = 2.00       # 2.0% DD Defense Mode (100.00 USD on 5,000.00 USD capital)
-HOUSE_MONEY_THRESHOLD_USD = 50.0  # Profit threshold to unlock house money risk
+BASE_RISK_USD = 25.0              # 0.50% of 5,000 USD capital (base risk)
+DEFENSE_RISK_USD = 15.0           # 0.30% — arms when DD >= 2.0% (100 USD)
+HOUSE_MONEY_RISK_USD = 35.0       # 0.70% — unlocks when cumulative profit >= 100 USD AND DD < 1.0%
+HARD_DD_LIMIT_PCT = 4.50          # 4.5% Hard DD Stop (225.00 USD) — total freeze
+DEFENSE_DD_LIMIT_PCT = 2.00       # 2.0% DD Defense threshold (100.00 USD)
+HOUSE_MONEY_THRESHOLD_USD = 100.0 # Profit must exceed 100 USD to unlock house money (research: Calmar 109.86)
+HOUSE_MONEY_MAX_DD_PCT = 1.00     # House money only active if current DD < 1.0% (protects against giving back gains)
 MAX_HOLDING_BARS = 96             # 24 hours in 15m bars
 TIME_DECAY_BARS = 24              # 6 hours in 15m bars
 TIME_DECAY_THRESHOLD_R = 0.20
 MAX_STOP_PCT = 0.025              # 2.5% max stop distance
-PROBABILITY_THRESHOLD = 0.55
+PROBABILITY_THRESHOLD = 0.54      # Signal confidence gate (research: 0.54 maximises Calmar across 20 OOS windows)
 MAX_SPREAD_ATR_RATIO = 0.12       # Dynamic quarantine: spread > 12% of 15m ATR
 MAX_SPREAD_ATR_RATIO_ENTER = 0.12 # Enter quarantine threshold
 MAX_SPREAD_ATR_RATIO_EXIT = 0.08  # Exit quarantine hysteresis threshold
@@ -399,12 +400,11 @@ class OrderManager:
 
     def get_current_risk_budget(self) -> Tuple[float, str]:
         """
-        Enforces institutional risk budget:
-        - Initial Capital: 5,000.00 USD
-        - Hard Drawdown Stop: 4.50% (225.00 USD) -> 0.00 USD (Hard Freeze)
-        - Drawdown Defense Mode: 2.00% (100.00 USD) -> 15.00 USD
-        - House Money Mode: Cumulative Profit >= 50.00 USD -> 50.00 USD
-        - Normal Base Risk: 25.00 USD (0.50% capital preservation)
+        3-Tier Calmar-Optimised Risk Governor (research: Avg Calmar 40.41, peak 138.59 across 20 OOS windows):
+        - Tier 0 HARD FREEZE  : DD >= 4.50% (225 USD)  -> 0.00 USD. No new trades.
+        - Tier 1 DD DEFENSE   : DD >= 2.00% (100 USD)  -> 15.00 USD (0.30%). Priority over house money.
+        - Tier 2 HOUSE MONEY  : Profit >= 100 USD AND DD < 1.00% -> 35.00 USD (0.70%).
+        - Tier 3 NORMAL       : Default                -> 25.00 USD (0.50%).
         Returns: (governed_risk_usd, regime_label)
         """
         metrics = self.get_account_metrics()
@@ -416,9 +416,10 @@ class OrderManager:
             return 0.0, f"HARD FREEZE (DD {dd_pct:.2f}% >= {HARD_DD_LIMIT_PCT:.1f}%)"
         elif dd_pct >= DEFENSE_DD_LIMIT_PCT or dd_usd >= 100.0:
             return DEFENSE_RISK_USD, f"DEFENSE (15.00 USD | DD {dd_pct:.2f}%)"
-        elif self.realized_pnl >= HOUSE_MONEY_THRESHOLD_USD:
-            return HOUSE_MONEY_RISK_USD, f"HOUSE MONEY (50.00 USD | Profit +{self.realized_pnl:.2f} USD)"
+        elif self.realized_pnl >= HOUSE_MONEY_THRESHOLD_USD and dd_pct < HOUSE_MONEY_MAX_DD_PCT:
+            return HOUSE_MONEY_RISK_USD, f"HOUSE MONEY (35.00 USD | Profit +{self.realized_pnl:.2f} USD | DD {dd_pct:.2f}%)"
         return BASE_RISK_USD, f"NORMAL ({BASE_RISK_USD:.2f} USD)"
+
 
     def calculate_lot_size(self, symbol: str, risk_usd: float, sl_dist: float) -> float:
         """Calculates exact lot size based on symbol contract size and currency conversion with leverage caps."""
