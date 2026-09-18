@@ -348,10 +348,11 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
         if buffer_15m.empty or len(buffer_15m) < 20:
             return StrategySignal(symbol=symbol, signal=0, reason="Insufficient Data")
 
-        from Engine.forex_engine import compute_crt_orb_state, compute_features_pandas
+        from Engine.forex_engine import compute_crt_orb_state, compute_features_pandas, calculate_adaptive_sl_tp, MAX_SPREAD_ATR_RATIO
         crt = compute_crt_orb_state(buffer_15m)
         feat_df = compute_features_pandas(buffer_15m, buffer_4h)
         trend = feat_df.iloc[-1].get("htf_4h_trend", 0.0)
+        atr = float(feat_df.iloc[-1].get("atr_14", 0.0))
 
         dt = buffer_15m['datetime'].iloc[-1] if 'datetime' in buffer_15m else pd.Timestamp.utcnow()
         hour = dt.hour if hasattr(dt, 'hour') else 12
@@ -359,22 +360,34 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
 
         bid = current_tick.bid if current_tick else float(buffer_15m['close'].iloc[-1])
         ask = current_tick.ask if current_tick else float(buffer_15m['close'].iloc[-1])
+        spread = abs(ask - bid) if (ask > 0 and bid > 0) else 0.0
 
         base_risk = self.config.criteria.base_risk_usd
 
         if not is_kz:
             return StrategySignal(symbol=symbol, signal=0, reason="HOLD (Off-Hours)")
 
+        # Option C Filter 1: Dynamic Spread-to-ATR Regime Quarantine (> 12%)
+        if atr > 0 and spread > 0:
+            spread_atr_ratio = spread / atr
+            if spread_atr_ratio > MAX_SPREAD_ATR_RATIO:
+                return StrategySignal(symbol=symbol, signal=0, reason=f"HOLD (Spread/ATR {spread_atr_ratio:.1%} > {MAX_SPREAD_ATR_RATIO:.0%})")
+
+        local_low = buffer_15m['low'].iloc[-20:].min() if len(buffer_15m) >= 20 else buffer_15m['low'].min()
+        local_high = buffer_15m['high'].iloc[-20:].max() if len(buffer_15m) >= 20 else buffer_15m['high'].max()
+
         is_long = crt["is_long_crt"] and (trend > 0 or crt["judas_long"])
         is_short = crt["is_short_crt"] and (trend < 0 or crt["judas_short"])
 
         if is_long:
             entry = ask
-            sl = crt["or_low"] if crt["or_low"] > 0 else buffer_15m['low'].iloc[-20:].min()
-            r_dist = entry - sl
-            if r_dist <= 0 or (r_dist / entry) > 0.025:
-                return StrategySignal(symbol=symbol, signal=0, reason="HOLD (Stop Range Invalid)")
-            tp = entry + (2.5 * r_dist)
+            raw_sl = crt["or_low"] if crt["or_low"] > 0 else local_low
+            sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
+                symbol=symbol, is_long=True, entry=entry, raw_sl=raw_sl,
+                local_extreme=local_low, spread=spread, atr=atr
+            )
+            if not valid:
+                return StrategySignal(symbol=symbol, signal=0, reason=reason)
             return StrategySignal(
                 symbol=symbol,
                 signal=1,
@@ -384,17 +397,19 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
                 tp_price=tp,
                 risk_usd=base_risk,
                 strategy_tag="ORB_CRT",
-                reason=f"BUY ({crt['session']} OR Breakout)",
-                metadata={"session": crt["session"], "body_ratio": crt["body_ratio"]}
+                reason=f"BUY ({crt['session']} OR Adaptive Breakout)",
+                metadata={"session": crt["session"], "body_ratio": crt["body_ratio"], "r_dist": r_dist}
             )
 
         elif is_short:
             entry = bid
-            sl = crt["or_high"] if crt["or_high"] > 0 else buffer_15m['high'].iloc[-20:].max()
-            r_dist = sl - entry
-            if r_dist <= 0 or (r_dist / entry) > 0.025:
-                return StrategySignal(symbol=symbol, signal=0, reason="HOLD (Stop Range Invalid)")
-            tp = entry - (2.5 * r_dist)
+            raw_sl = crt["or_high"] if crt["or_high"] > 0 else local_high
+            sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
+                symbol=symbol, is_long=False, entry=entry, raw_sl=raw_sl,
+                local_extreme=local_high, spread=spread, atr=atr
+            )
+            if not valid:
+                return StrategySignal(symbol=symbol, signal=0, reason=reason)
             return StrategySignal(
                 symbol=symbol,
                 signal=-1,
@@ -404,8 +419,8 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
                 tp_price=tp,
                 risk_usd=base_risk,
                 strategy_tag="ORB_CRT",
-                reason=f"SELL ({crt['session']} OR Breakdown)",
-                metadata={"session": crt["session"], "body_ratio": crt["body_ratio"]}
+                reason=f"SELL ({crt['session']} OR Adaptive Breakdown)",
+                metadata={"session": crt["session"], "body_ratio": crt["body_ratio"], "r_dist": r_dist}
             )
 
         if crt["session"] != "None":

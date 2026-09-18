@@ -1,0 +1,32 @@
+capital: 5000.0
+risk_per_trade: 40.0
+take_profit_R: 3.0
+phase0_trigger_R: 0.8
+phase0_lock_R: 0.35       # BE lock — covers 41 bps round-trip friction
+phase1_trigger_R: 1.5
+phase1_lock_R: 0.80
+trail_atr_mult: 1.5        # ATR trailing stop activates after Phase 1 (+1.5R)
+entry_fee_bps: 18          # 8 bps taker + 10 bps slippage
+exit_fee_bps: 18           # 8 bps taker + 10 bps slippage (TP or timeout exit)
+stop_fee_bps: 23           # 8 bps taker + 15 bps stop slippage
+timeout_bars: 24           # 6h at 15m bars
+max_concurrent_positions: 2
+symbols:
+  - BTCUSDT
+  - ETHUSDT
+  - XRPUSDT
+  - SOLUSDT
+  - BNBUSDT
+  - DOGEUSDT
+  - ADAUSDT
+  - TRXUSDT
+  - LINKUSDT
+  - AVAXUSDT
+  - SUIUSDT
+  - NEARUSDT
+  - DOTUSDT
+  - LTCUSDT
+  - BCHUSDT
+  - APTUSDT
+  - OPUSDT
+  - ARBUSDT

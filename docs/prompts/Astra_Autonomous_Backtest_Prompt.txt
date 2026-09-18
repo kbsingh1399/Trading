@@ -1,0 +1,138 @@
+# ASTRA AUTONOMOUS DIRECTIVE: 20 OOS WALK-FORWARD BACKTEST & CERTIFICATION
+# SESSION TYPE: AUTONOMOUS EXECUTION MODE (DATASET UPLOADED DIRECTLY TO ASTRA ENVIRONMENT)
+# TARGET: 20/20 INSTITUTIONAL PRODUCTION PASSES ON BINANCE USDT-M PERPETUALS
+
+CRITICAL INSTRUCTION: DO NOT GENERATE ZIP ARCHIVES, DO NOT USE SANDBOX DOWNLOAD LINKS, DO NOT TRUNCATE CODE. Print ALL analysis, scorecards, and full Python scripts completely in markdown code blocks.
+
+================================================================================
+1. AUTONOMOUS MISSION OVERVIEW
+================================================================================
+You are Astra, Lead Quantitative Architect and Execution Engineer.
+You have been provided with the complete institutional Binance USDT-M Perpetuals dataset uploaded directly to this session (files <= 50MB).
+
+Your mission is to AUTONOMOUSLY:
+1. Ingest and reconstitute the uploaded 18-symbol dataset.
+2. Execute the complete 20 Out-Of-Sample (OOS) walk-forward backtest for Strategy S3 (ORB / CRT ML with 1:3 RR and Dynamic Trailing Stop).
+3. Compute the full 20-window performance scorecard (Trades, Win Rate %, Net PnL in USD, ROI %, Max Drawdown %, vs BTC Buy & Hold).
+4. Identify any remaining friction points or regime failures, apply surgical quantitative optimizations, and iterate until achieving 20/20 Institutional Passes.
+5. Print the complete scorecard, empirical verification metrics, and final unabridged production code in chat.
+
+================================================================================
+2. UPLOADED DATASET STRUCTURE & INGESTION PROTOCOL
+================================================================================
+The uploaded dataset consists of 18 Institutional Binance USDT-M Perpetuals spanning 2020-01-01 to 2026-03-31 (15-minute bars, 0 nulls, strictly monotonic).
+
+Because of the 50 MB upload constraint, large master files were partitioned into `_part1.parquet` and `_part2.parquet`:
+- Dual-part assets: ADAUSDT, APTUSDT, AVAXUSDT, BCHUSDT, BNBUSDT, BTCUSDT, DOGEUSDT, DOTUSDT, ETHUSDT, LINKUSDT, LTCUSDT, NEARUSDT, OPUSDT, SOLUSDT, TRXUSDT, XRPUSDT.
+- Single-part assets: ARBUSDT_15m_master_2020_2026.parquet, SUIUSDT_15m_master_2020_2026.parquet.
+- Footprint ladders: `<SYMBOL>_15m_footprint_ladder.parquet` (single files).
+
+### Python Reconstitution Helper:
+```python
+import os
+import glob
+import pandas as pd
+import polars as pl
+
+def load_symbol_data(symbol: str, data_dir: str = ".") -> pd.DataFrame:
+    # Check for split parts first
+    parts = sorted(glob.glob(os.path.join(data_dir, f"{symbol}_15m_master_2020_2026_part*.parquet")))
+    if parts:
+        dfs = [pd.read_parquet(p) for p in parts]
+        df = pd.concat(dfs, ignore_index=True)
+    else:
+        single = os.path.join(data_dir, f"{symbol}_15m_master_2020_2026.parquet")
+        df = pd.read_parquet(single)
+    
+    df = df.sort_values("open_time_ms").drop_duplicates(subset=["open_time_ms"]).reset_index(drop=True)
+    ts = pd.to_datetime(df["open_time_ms"], unit="ms", utc=True)
+    df["date_int"]   = (ts.dt.year * 10000 + ts.dt.month * 100 + ts.dt.day).astype("int32")
+    df["hour_int"]   = ts.dt.hour.astype("int32")
+    df["minute_int"] = ts.dt.minute.astype("int32")
+    df["dow_int"]    = ts.dt.dayofweek.astype("int32")
+    return df
+```
+
+================================================================================
+3. INSTITUTIONAL RISK BUDGET & TARGET CRITERIA
+================================================================================
+Every window is evaluated under the certified fund criteria from `target_oos_criteria.json`:
+- Starting Capital: 5,000.00 USD
+- Base Risk per Trade: 40.00 USD (0.80% of initial capital)
+- Drawdown Defense Mode: When drawdown from peak >= 2.00% (100 USD), reduce risk to 20.00 USD (0.40%).
+- House Money Mode: When cumulative profit >= +50.00 USD, expand risk to 60.00 USD (1.20%).
+- Circuit Breaker Stop: If mark-to-market drawdown touches 4.50% (225 USD), halt trading for that window.
+- Portfolio Concurrency Governor: Maximum 2 concurrent positions across the entire 18-symbol universe simultaneously.
+- Minimum Passing Thresholds per 1-Month Window:
+  * Net ROI: >= +10.00% (+500.00 USD net profit)
+  * Max Drawdown: <= 5.00% (250.00 USD)
+  * Win Rate: >= 40.00%
+  * Min Completed Trades: >= 15 trades
+
+================================================================================
+4. SETTLED STRATEGY INVARIANTS & MICROSTRUCTURE RATCHET
+================================================================================
+- Causal Execution: Opening Range is measured across `range_duration_bars = 2` (30 minutes). Breakout bar `j` must close outside the range. Fill occurs strictly at `opens[j+1]` (the open of the subsequent bar).
+- Enforced 1:3 RR: Take profit is set at exactly `entry + 3.0 * r_val` (long) or `entry - 3.0 * r_val` (short).
+- Microstructure Ratchet:
+  * Phase 0 (BE Lock): At +0.8R gain, move stop to `entry + 0.35R` (guarantees net positive PnL clearing 41 bps friction).
+  * Phase 1 (Profit Lock): At +1.5R gain, move stop to `entry + 0.80R` and unlock dynamic trailing SL.
+  * Dynamic ATR Trailing Stop: Trailing stop trails at `closes[k] - 1.5 * ATR` (long) or `closes[k] + 1.5 * ATR` (short). Computed on close of bar `k`, evaluated against bar `k+1`. Stop never moves backwards.
+  * Time Decay: Exit at market after 24 bars (6 hours) if trade gain is < +0.2R.
+- Friction Model: Calibrated 0.08R flat deduction per completed trade.
+- 72-Hour Causal Purge: In-sample training cutoff is strictly `window_start - 72 hours`.
+
+================================================================================
+5. THE 20 OUT-OF-SAMPLE WINDOWS (2021–2026)
+================================================================================
+```python
+OOS_WINDOWS = [
+  {"window_id": 1, "name": "May 2021 Great Liquidation Crash", "start_date": "2021-05-01", "end_date": "2021-05-31", "regime": "Bearish Extreme Liquidation Shock"},
+  {"window_id": 2, "name": "September 2021 El Salvador Flash Crash", "start_date": "2021-09-01", "end_date": "2021-09-30", "regime": "Flash Crash & High Volatility Rebound"},
+  {"window_id": 3, "name": "November 2021 Cycle Peak Reversal", "start_date": "2021-11-01", "end_date": "2021-11-30", "regime": "Blowoff Top & Distribution Reversal"},
+  {"window_id": 4, "name": "January 2022 Fed Macro Tightening", "start_date": "2022-01-01", "end_date": "2022-01-31", "regime": "Macro Trending Bear Cascade"},
+  {"window_id": 5, "name": "May 2022 Terra-Luna Systemic Shock", "start_date": "2022-05-01", "end_date": "2022-05-31", "regime": "Systemic Credit Contagion Cascade"},
+  {"window_id": 6, "name": "June 2022 3AC & Celsius Capitulation", "start_date": "2022-06-01", "end_date": "2022-06-30", "regime": "Major Institutional Capitulation Flush"},
+  {"window_id": 7, "name": "September 2022 ETH Merge Chop & Grind", "start_date": "2022-09-01", "end_date": "2022-09-30", "regime": "Low-Volatility Rangebound Grind"},
+  {"window_id": 8, "name": "November 2022 FTX Collapse Bottom", "start_date": "2022-11-01", "end_date": "2022-11-30", "regime": "Exchange Insolvency Black Swan"},
+  {"window_id": 9, "name": "January 2023 Bullish Short Squeeze Recovery", "start_date": "2023-01-01", "end_date": "2023-01-31", "regime": "Aggressive Mean Reversion Short Squeeze"},
+  {"window_id": 10, "name": "March 2023 SVB Bank Run & USDC Depeg", "start_date": "2023-03-01", "end_date": "2023-03-31", "regime": "Banking Shock to Massive Flight-to-Quality"},
+  {"window_id": 11, "name": "June 2023 BlackRock Spot ETF Momentum", "start_date": "2023-06-01", "end_date": "2023-06-30", "regime": "Institutional Narrative Breakout"},
+  {"window_id": 12, "name": "August 2023 Mid-Summer Flash Liquidation", "start_date": "2023-08-01", "end_date": "2023-08-31", "regime": "Extreme Flash Liquidation Flush"},
+  {"window_id": 13, "name": "October 2023 Uptober Spot ETF Ignition", "start_date": "2023-10-01", "end_date": "2023-10-31", "regime": "Strong Trending Momentum Breakout"},
+  {"window_id": 14, "name": "January 2024 Spot ETF Approval Shakeout", "start_date": "2024-01-01", "end_date": "2024-01-31", "regime": "Sell-the-News Cascade & Rotation"},
+  {"window_id": 15, "name": "March 2024 Pre-Halving All-Time High Run", "start_date": "2024-03-01", "end_date": "2024-03-31", "regime": "High-Volatility Euphoric Bull Expansion"},
+  {"window_id": 16, "name": "August 2024 Global Carry Trade Liquidation", "start_date": "2024-08-01", "end_date": "2024-08-31", "regime": "Global Macro Liquidity Shock"},
+  {"window_id": 17, "name": "November 2024 US Election Mega Breakout", "start_date": "2024-11-01", "end_date": "2024-11-30", "regime": "Historic Unidirectional Bull Trend"},
+  {"window_id": 18, "name": "February 2025 Post-Inauguration Consolidation", "start_date": "2025-02-01", "end_date": "2025-02-28", "regime": "High-Level Range Chop & False Breakouts"},
+  {"window_id": 19, "name": "July 2025 Mid-Year Volatility Expansion", "start_date": "2025-07-01", "end_date": "2025-07-31", "regime": "Derivative Expiry Volatility Shakeout"},
+  {"window_id": 20, "name": "March 2026 Late-Cycle Microstructure Shock", "start_date": "2026-03-01", "end_date": "2026-03-31", "regime": "Mature Cycle Cascade & Absorption"}
+]
+```
+
+================================================================================
+6. PREVIOUS BENCHMARK BASELINE (15/20 PASSES)
+================================================================================
+Our London-only (09:00 UTC) execution achieved 15/20 passes, +18,551 USD Net PnL, +371% ROI, vs BTC B&H -8.65%:
+- Failing windows were:
+  * W1: +499.80 USD (+9.996% ROI — failed purely on a 20-cent rounding threshold!)
+  * W4: 11 trades only, -234 USD (circuit breaker tripped on initial drawdown before trade count reached 15)
+  * W6: +102.78 USD (+2.06% ROI — large OR bars diluted R-efficiency)
+  * W18: +238.60 USD (+4.77% ROI — premature BE locks in ATH range chop)
+  * W19: +66.10 USD (+1.32% ROI — derivative rollover compression)
+
+Note: When we tested adding a second session at 14:30 UTC globally, the ML model gated aggressively and trade concurrency caused regressions. 
+
+================================================================================
+7. AUTONOMOUS EXECUTION INSTRUCTIONS FOR ASTRA
+================================================================================
+Astra, run your code autonomously in this session:
+1. Write and execute the full backtest script on the uploaded files.
+2. Verify that London (09:00 UTC) remains the core session. If experimenting with multi-session or New York (14:30 UTC), ensure that session-specific features (e.g. session indicator feature) or separate models are evaluated so that NY noise does not dilute London's proven edge.
+3. Test your recommended fixes:
+   - Partial credit for Phase 0 locked expired trades (fixing W1).
+   - Volatility-adjusted BE lock for tight ATR regimes (fixing W18).
+   - ATR-capped initial risk distance (fixing W6).
+   - Adaptive ML gating threshold (fixing W4).
+4. Run all 20 windows and print the complete, unedited markdown scorecard table.
+5. Provide the final, production-certified `s3_orb_ml.py` and runner script in full unabridged code blocks.

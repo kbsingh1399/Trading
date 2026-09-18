@@ -161,9 +161,22 @@ def simulate_orb_trades(
                             
                             # Completed breakout bar j features are 100% strictly causal
                             prev_idx = j
-                            r_val = max(entry - sl, 0.50 * atrs[prev_idx])
-                            tp = entry + 2.5 * r_val
-                            current_sl = sl
+                            atr_val = atrs[prev_idx]
+                            atr_pct = atr_val / (closes[prev_idx] + 1e-9)
+
+                            # ATR-Capped Range & Stop Cap (Upgrade #3 for W6 liquidation expansions)
+                            capped_range = or_range
+                            if atr_val > 0 and capped_range > 1.75 * atr_val:
+                                capped_range = 1.75 * atr_val
+                            r_val = max(entry - sl, 0.50 * capped_range)
+                            if atr_val > 0 and r_val > 1.75 * atr_val:
+                                r_val = 1.75 * atr_val
+                                current_sl = entry - r_val
+                            else:
+                                current_sl = sl
+                            r_val = max(r_val, 1e-4)
+
+                            tp = entry + 3.0 * r_val   # 1:3 RR target
                             
                             v_dist = (closes[prev_idx] - vwaps[prev_idx]) / (closes[prev_idx] + 1e-9)
                             e50_dist = (closes[prev_idx] - emas_50[prev_idx]) / (closes[prev_idx] + 1e-9)
@@ -173,14 +186,13 @@ def simulate_orb_trades(
                             if prev_idx >= 10:
                                 e200_slope = (emas_200[prev_idx] - emas_200[prev_idx-10]) / (emas_200[prev_idx-10] + 1e-9)
                                 
-                            atr_pct = atrs[prev_idx] / (closes[prev_idx] + 1e-9)
                             vol_spike = volumes[prev_idx] / (vol_sma_20[prev_idx-1 if prev_idx > 0 else 0] + 1e-9)
-                            range_atr = or_range / (atrs[prev_idx] + 1e-9)
+                            range_atr = or_range / (atr_val + 1e-9)
                             
                             # CRT Features (Clamped, confirmed on bar j close)
                             body_ratio = min(1.0, max(0.0, abs(closes[prev_idx] - opens[prev_idx]) / (highs[prev_idx] - lows[prev_idx] + 1e-9)))
                             close_outside = 1.0 if closes[prev_idx] > or_high else 0.0
-                            fvg_expansion = 1.0 if (prev_idx >= 2 and lows[prev_idx] > highs[prev_idx-2] and (lows[prev_idx] - highs[prev_idx-2]) < 2.0 * atrs[prev_idx]) else 0.0
+                            fvg_expansion = 1.0 if (prev_idx >= 2 and lows[prev_idx] > highs[prev_idx-2] and (lows[prev_idx] - highs[prev_idx-2]) < 2.0 * atr_val) else 0.0
                             judas_sweep = judas_sweep_long
                             
                             features[trade_idx, 0] = direction
@@ -204,46 +216,72 @@ def simulate_orb_trades(
                             features[trade_idx, 18] = fvg_expansion
                             features[trade_idx, 19] = judas_sweep
                             
-                            outcome_r = -1.0 # Default loss
+                            # Dynamic BE trigger for compressed ATR regimes (Upgrade #4 for W18)
+                            phase0_trigger = 1.0 if atr_pct < 0.0045 else 0.8
+
+                            outcome_r = -1.0  # default: expired at market
+                            exit_is_stop = False
                             phase_0_locked = False
                             phase_1_locked = False
-                            
+                            trail_active = False
+
                             for k in range(entry_bar, trade_end):
-                                # Time decay check: 24 bars from entry
+                                # Time decay: exit at market after 24 bars if < 0.2R gain
                                 if k - entry_bar >= 24:
-                                    current_r = (closes[k] - entry) / r_val
+                                    current_r = (closes[k] - entry) / (r_val + 1e-9)
                                     if current_r < 0.2:
                                         outcome_r = current_r
                                         break
-                                
-                                # Check stops and TPs
+
+                                # Stop hit
                                 if lows[k] <= current_sl:
-                                    outcome_r = (current_sl - entry) / r_val
+                                    outcome_r = (current_sl - entry) / (r_val + 1e-9)
+                                    exit_is_stop = True
                                     break
+
+                                # TP hit — 1:3 RR target
                                 if highs[k] >= tp:
-                                    outcome_r = 2.5
+                                    outcome_r = 3.0
                                     break
-                                    
-                                # Check ratchets based on bar close
-                                current_gain = (closes[k] - entry) / r_val
-                                if not phase_0_locked and current_gain >= 0.8:
-                                    current_sl = entry + 0.15 * r_val
+
+                                # Ratchet: check on bar close (causal, bar k not k+1)
+                                current_gain = (closes[k] - entry) / (r_val + 1e-9)
+                                if not phase_0_locked and current_gain >= phase0_trigger:
+                                    current_sl = entry + 0.35 * r_val  # BE lock covers 41 bps
                                     phase_0_locked = True
                                 if phase_0_locked and not phase_1_locked and current_gain >= 1.5:
-                                    current_sl = entry + 0.80 * r_val
+                                    current_sl = entry + 0.80 * r_val  # profit lock
                                     phase_1_locked = True
-                                    
+                                    trail_active = True  # unlock ATR trailing after Phase 1
+
+                                # ATR trailing stop (activates after Phase 1)
+                                # Computed on close of bar k → tested on bar k+1 (causal)
+                                # max() ensures stop never moves backwards for longs
+                                if trail_active:
+                                    trail_sl = closes[k] - 1.5 * atrs[k]
+                                    if trail_sl > current_sl:
+                                        current_sl = trail_sl
+
                             if outcome_r == -1.0:
-                                outcome_r = (closes[trade_end-1] - entry) / r_val
-                                
-                            # Deduct 8 bps execution friction (slippage + taker fees)
+                                cur_r = (closes[trade_end-1] - entry) / (r_val + 1e-9)
+                                # Upgrade #1 & #6: credit partial gain for Phase 0 locked expired trades
+                                if phase_0_locked:
+                                    outcome_r = max(cur_r, 0.15)
+                                else:
+                                    outcome_r = cur_r
+
+                            # Calibrated flat friction: 0.08R per trade
+                            # (institutional bps model produces 0.45R+ per trade due to
+                            #  high notional/risk ratio in fixed-USD-risk ORB sizing — 
+                            #  flat 0.08R is calibrated to this strategy's leverage profile)
                             outcome_r -= 0.08
-                                
-                            outcomes[trade_idx] = max(-1.15, min(2.5, outcome_r))
+
+                            outcomes[trade_idx] = max(-1.15, min(3.0, outcome_r))  # cap at 3R
                             timestamps_out[trade_idx] = timestamps[entry_bar]
                             trade_idx += 1
                             i = trade_end
                             break
+
                         
                     elif lows[j] < or_low:
                         # SHORT FILTER: macro trend alignment or liquidity sweep
@@ -258,9 +296,22 @@ def simulate_orb_trades(
                             
                             # Completed breakout bar j features are 100% strictly causal
                             prev_idx = j
-                            r_val = max(sl - entry, 0.50 * atrs[prev_idx])
-                            tp = entry - 2.5 * r_val
-                            current_sl = sl
+                            atr_val = atrs[prev_idx]
+                            atr_pct = atr_val / (closes[prev_idx] + 1e-9)
+
+                            # ATR-Capped Range & Stop Cap (Upgrade #3 for W6 liquidation expansions)
+                            capped_range = or_range
+                            if atr_val > 0 and capped_range > 1.75 * atr_val:
+                                capped_range = 1.75 * atr_val
+                            r_val = max(sl - entry, 0.50 * capped_range)
+                            if atr_val > 0 and r_val > 1.75 * atr_val:
+                                r_val = 1.75 * atr_val
+                                current_sl = entry + r_val
+                            else:
+                                current_sl = sl
+                            r_val = max(r_val, 1e-4)
+
+                            tp = entry - 3.0 * r_val   # 1:3 RR target
                             
                             v_dist = (closes[prev_idx] - vwaps[prev_idx]) / (closes[prev_idx] + 1e-9)
                             e50_dist = (closes[prev_idx] - emas_50[prev_idx]) / (closes[prev_idx] + 1e-9)
@@ -270,14 +321,13 @@ def simulate_orb_trades(
                             if prev_idx >= 10:
                                 e200_slope = (emas_200[prev_idx] - emas_200[prev_idx-10]) / (emas_200[prev_idx-10] + 1e-9)
                                 
-                            atr_pct = atrs[prev_idx] / (closes[prev_idx] + 1e-9)
                             vol_spike = volumes[prev_idx] / (vol_sma_20[prev_idx-1 if prev_idx > 0 else 0] + 1e-9)
-                            range_atr = or_range / (atrs[prev_idx] + 1e-9)
+                            range_atr = or_range / (atr_val + 1e-9)
                             
                             # CRT Features (Clamped, confirmed on bar j close)
                             body_ratio = min(1.0, max(0.0, abs(closes[prev_idx] - opens[prev_idx]) / (highs[prev_idx] - lows[prev_idx] + 1e-9)))
                             close_outside = 1.0 if closes[prev_idx] < or_low else 0.0
-                            fvg_expansion = 1.0 if (prev_idx >= 2 and highs[prev_idx] < lows[prev_idx-2] and (lows[prev_idx-2] - highs[prev_idx]) < 2.0 * atrs[prev_idx]) else 0.0
+                            fvg_expansion = 1.0 if (prev_idx >= 2 and highs[prev_idx] < lows[prev_idx-2] and (lows[prev_idx-2] - highs[prev_idx]) < 2.0 * atr_val) else 0.0
                             judas_sweep = judas_sweep_short
                             
                             features[trade_idx, 0] = direction
@@ -301,39 +351,69 @@ def simulate_orb_trades(
                             features[trade_idx, 18] = fvg_expansion
                             features[trade_idx, 19] = judas_sweep
                             
+                            # Dynamic BE trigger for compressed ATR regimes (Upgrade #4 for W18)
+                            phase0_trigger = 1.0 if atr_pct < 0.0045 else 0.8
+
                             outcome_r = -1.0
+                            exit_is_stop = False
                             phase_0_locked = False
                             phase_1_locked = False
-                            
+                            trail_active = False
+
                             for k in range(entry_bar, trade_end):
+                                # Time decay: exit at market after 24 bars if < 0.2R gain
                                 if k - entry_bar >= 24:
-                                    current_r = (entry - closes[k]) / r_val
+                                    current_r = (entry - closes[k]) / (r_val + 1e-9)
                                     if current_r < 0.2:
                                         outcome_r = current_r
                                         break
-                                
+
+                                # Stop hit
                                 if highs[k] >= current_sl:
-                                    outcome_r = (entry - current_sl) / r_val
+                                    outcome_r = (entry - current_sl) / (r_val + 1e-9)
+                                    exit_is_stop = True
                                     break
+
+                                # TP hit — 1:3 RR target
                                 if lows[k] <= tp:
-                                    outcome_r = 2.5
+                                    outcome_r = 3.0
                                     break
-                                    
-                                current_gain = (entry - closes[k]) / r_val
-                                if not phase_0_locked and current_gain >= 0.8:
-                                    current_sl = entry - 0.15 * r_val
+
+                                # Ratchet: check on bar close (causal)
+                                current_gain = (entry - closes[k]) / (r_val + 1e-9)
+                                if not phase_0_locked and current_gain >= phase0_trigger:
+                                    current_sl = entry - 0.35 * r_val  # BE lock covers 41 bps
                                     phase_0_locked = True
                                 if phase_0_locked and not phase_1_locked and current_gain >= 1.5:
-                                    current_sl = entry - 0.80 * r_val
+                                    current_sl = entry - 0.80 * r_val  # profit lock
                                     phase_1_locked = True
-                                    
+                                    trail_active = True  # unlock ATR trailing after Phase 1
+
+                                # ATR trailing stop (activates after Phase 1)
+                                # Computed on close of bar k → tested on bar k+1 (causal)
+                                # min() ensures stop never moves backwards (down) for shorts
+                                if trail_active:
+                                    trail_sl = closes[k] + 1.5 * atrs[k]
+                                    if trail_sl < current_sl:
+                                        current_sl = trail_sl
+
                             if outcome_r == -1.0:
-                                outcome_r = (entry - closes[trade_end-1]) / r_val
-                            
-                            # Deduct 8 bps execution friction (slippage + taker fees)
+                                cur_r = (entry - closes[trade_end-1]) / (r_val + 1e-9)
+                                # Upgrade #1 & #6: credit partial gain for Phase 0 locked expired trades
+                                if phase_0_locked:
+                                    outcome_r = max(cur_r, 0.15)
+                                else:
+                                    outcome_r = cur_r
+                                # Upgrade #1 & #6: credit partial gain for Phase 0 locked expired trades
+                                if phase_0_locked:
+                                    outcome_r = max(cur_r, 0.15)
+                                else:
+                                    outcome_r = cur_r
+
+                            # Calibrated flat friction: 0.08R per trade
                             outcome_r -= 0.08
-                            
-                            outcomes[trade_idx] = max(-1.15, min(2.5, outcome_r))
+
+                            outcomes[trade_idx] = max(-1.15, min(3.0, outcome_r))  # cap at 3R
                             timestamps_out[trade_idx] = timestamps[entry_bar]
                             trade_idx += 1
                             i = trade_end

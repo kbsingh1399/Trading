@@ -1,0 +1,25 @@
+CRITICAL INSTRUCTION: DO NOT GENERATE ZIP ARCHIVES, DO NOT USE SANDBOX DOWNLOAD LINKS, AND DO NOT TRUNCATE CODE.
+
+YES, please extend the PDF report generator to pull real backtest data dynamically.
+
+Here is the exact integration spec:
+
+1. The script must accept a CSV or JSON file of actual trade results (produced by run_local_orderflow_suite.py or test_ml_orderflow_suite.py). Each trade record has these fields:
+   - symbol, side, entry_ms, exit_ms, entry_utc, exit_utc, entry_px, exit_px, reason, gross_pnl, fees, net_pnl, bars
+
+2. From that real trade data the script must compute and embed in the PDF:
+   - Real cumulative equity curve (starting at 5,000 USD, applying each net_pnl trade in chronological order).
+   - Real underwater drawdown profile computed from the real equity curve.
+   - Real BTC Buy & Hold benchmark curve (normalized to 5,000 USD start, using BTCUSDT_15m_master_2020_2026.parquet for prices).
+   - Real Monte Carlo distribution using the actual trade net_pnl values from the run (not simulated random.normal).
+   - Real per-window OOS scorecard table (windows from Engine/oos_windows_20.json).
+
+3. The script must call our existing `run_monte_carlo_bootstrap()` function from `Engine/montecarlo_validator.py` to compute the real Monte Carlo statistics.
+
+4. Use `polars` to load the Parquet benchmark data and compute BTC Buy & Hold.
+
+5. The output PDF file must be saved to both:
+   - Engine/institutional_forensic_report.pdf
+   - C:\Users\SIGMA\Downloads\institutional_forensic_report.pdf
+
+Print the ENTIRE, UNABRIDGED, runnable Python source code directly in your chat response now. One complete code block, zero placeholders, no download links.

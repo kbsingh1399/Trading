@@ -121,7 +121,7 @@ class FVGMLForexCFDStrategy(BaseForexStrategy):
             return StrategySignal(symbol=symbol, signal=0, reason="Model Not Loaded")
 
         # Import feature engineering helper from forex_engine or calculate locally
-        from Engine.forex_engine import compute_features_pandas
+        from Engine.forex_engine import compute_features_pandas, calculate_adaptive_sl_tp, MAX_SPREAD_ATR_RATIO
         feat_df = compute_features_pandas(buffer_15m, buffer_4h=buffer_4h)
         if feat_df.empty:
             return StrategySignal(symbol=symbol, signal=0, reason="Feature Generation Failed")
@@ -142,6 +142,7 @@ class FVGMLForexCFDStrategy(BaseForexStrategy):
         trend_val = last_row.get("htf_4h_trend", 0.0)
         bull_fvg = last_row.get("bullish_fvg", 0.0)
         bear_fvg = last_row.get("bearish_fvg", 0.0)
+        atr = float(last_row.get("atr_14", 0.0))
 
         # 20-bar swing stop boundaries
         local_low = buffer_15m['low'].iloc[-20:].min() if len(buffer_15m) >= 20 else buffer_15m['low'].min()
@@ -149,6 +150,7 @@ class FVGMLForexCFDStrategy(BaseForexStrategy):
 
         bid = current_tick.bid if current_tick is not None else float(buffer_15m['close'].iloc[-1])
         ask = current_tick.ask if current_tick is not None else float(buffer_15m['close'].iloc[-1])
+        spread = abs(ask - bid) if (ask > 0 and bid > 0) else 0.0
 
         base_risk = self.config.criteria.base_risk_usd
 
@@ -159,13 +161,20 @@ class FVGMLForexCFDStrategy(BaseForexStrategy):
         if not is_kz:
             return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Off-Hours)")
 
+        # Option C Filter 1: Spread-to-ATR Regime Quarantine (> 12%)
+        if atr > 0 and spread > 0:
+            spread_atr_ratio = spread / atr
+            if spread_atr_ratio > MAX_SPREAD_ATR_RATIO:
+                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=f"HOLD (Spread/ATR {spread_atr_ratio:.1%} > {MAX_SPREAD_ATR_RATIO:.0%})")
+
         if is_long:
             entry = ask
-            sl = local_low
-            r_dist = entry - sl
-            if r_dist <= 0 or (r_dist / entry) > self.max_stop_pct:
-                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Stop Range Invalid)")
-            tp = entry + (self.target_r * r_dist)
+            sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
+                symbol=symbol, is_long=True, entry=entry, raw_sl=local_low,
+                local_extreme=local_low, spread=spread, atr=atr
+            )
+            if not valid:
+                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=reason)
             return StrategySignal(
                 symbol=symbol,
                 signal=1,
@@ -181,11 +190,12 @@ class FVGMLForexCFDStrategy(BaseForexStrategy):
 
         elif is_short:
             entry = bid
-            sl = local_high
-            r_dist = sl - entry
-            if r_dist <= 0 or (r_dist / entry) > self.max_stop_pct:
-                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Stop Range Invalid)")
-            tp = entry - (self.target_r * r_dist)
+            sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
+                symbol=symbol, is_long=False, entry=entry, raw_sl=local_high,
+                local_extreme=local_high, spread=spread, atr=atr
+            )
+            if not valid:
+                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=reason)
             return StrategySignal(
                 symbol=symbol,
                 signal=-1,

@@ -1,0 +1,19 @@
+CRITICAL INSTRUCTION: DO NOT GENERATE ZIP ARCHIVES, DO NOT USE SANDBOX DOWNLOAD LINKS, AND DO NOT TRUNCATE CODE.
+
+Thank you for printing the complete modules directly in chat. We audited your code and noticed two minor bugs that we fixed locally:
+1. In `orderflow_ml_overlay.py`, `labels.append(label)` in `causal_labels()` was indented outside the `for i in range(n)` loop, causing a single-element label array.
+2. In `orderflow_production_engine.py`, `PHASE0_LOCK_R = 0.15` locks at +0.15R, which under 41 bps notional friction results in a -0.19R net loss on BE trades. We calibrated it to +0.35R to guarantee full friction clearance.
+
+YES, PLEASE PROCEED WITH YOUR SUGGESTION:
+Print the complete, runnable Python code for:
+`generate_institutional_pdf_report.py`
+
+Requirements for this script:
+1. Pure Python using Matplotlib and ReportLab (or FPDF2).
+2. Generates the executive PDF report containing:
+   - Executive Quant Summary table (20/20 OOS windows passed, +179% ROI, 4.90% Max DD, 756 trades, 56.8% WR).
+   - Equity curve plot comparing Strategy Equity vs BTC Buy & Hold benchmark.
+   - Underwater drawdown profile chart.
+   - 1,000-Path Monte Carlo histogram (VaR 95%, CVaR 95%, 99% Max DD).
+   - Forensic audit checklist confirming zero lookahead, causal bar j+1 entry, and 41 bps friction.
+3. Print the ENTIRE, UNABRIDGED Python script directly in a markdown code block in your chat response right now. Zero placeholders, no ZIPs, and no download links.

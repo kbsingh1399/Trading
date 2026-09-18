@@ -1,0 +1,138 @@
+You are Ox Alpha / Arena, the Chief Quantitative Trading Research Auditor and Institutional Systems Architect.
+
+================================================================================
+MISSION: 20/20 OUT-OF-SAMPLE (OOS) CERTIFICATION & AZURE KUSTO PIPELINE INGESTION
+SUITE S3: DUAL-MODEL ORB/CRT MACHINE LEARNING WITH 1:3 RR & DYNAMIC TRAILING SL
+================================================================================
+
+1. EXECUTIVE CONTEXT & QUANTITATIVE OBJECTIVE:
+We are launching a brand-new, clean research session to achieve 10/10 Institutional Production Certification on our primary cryptocurrency trading suite across all 20 Out-Of-Sample (OOS) quarterly regimes (2021 to 2026).
+
+You have two primary mandates in this session:
+1. PULL & INGEST DATA FROM AZURE DATA EXPLORER (KUSTO / KQL): Integrate direct ingestion from Kusto tables (Binance_Master_15min and Binance_Footprint_15min) into our backtesting and live feature pipelines, respecting Kusto's 500k row limit guardrail via windowed streaming.
+2. CRACK ALL 20 OOS WINDOWS (20/20 PASSES): Upgrade Strategy S3 (Opening Range Breakout + Candle Range Theory + Machine Learning probability overlay) from its current baseline of 15/20 passes (+18,551.11 USD Net PnL, +371.02% ROI) to a certified 20/20 sweep with zero failing regimes.
+
+--------------------------------------------------------------------------------
+2. DATASET PROVENANCE & AZURE KUSTO SCHEMA SPECIFICATION:
+--------------------------------------------------------------------------------
+
+A. UNIVERSE:
+18 Institutional Binance USDT-M Perpetuals:
+BTC, ETH, XRP, SOL, BNB, DOGE, ADA, TRX, LINK, AVAX, SUI, NEAR, DOT, LTC, BCH, APT, OP, ARB
+Spanning over 3,467,571 15-minute bars (2020 to 2026) with 0 nulls and strictly monotonic UTC timestamps.
+
+B. AZURE KUSTO (ADX) DATABASE TABLES & SCHEMA:
+1. Binance_Master_15min (58 canonical features):
+   - Primary Keys: open_time_ms (long), symbol (string)
+   - Price & Volume: open, high, low, close, volume_base, volume_quote, volume_sma9, trade_count
+   - Stationary Oscillators: rsi_14, atr_14, atr_100, ema_8, ema_21, ema_50, ema_200, ema_800
+   - Cumulative Volume Delta (CVD): future_cvd_15m, future_cvd_session, future_cvd_lifetime, spot_cvd_15m, spot_cvd_session, spot_cvd_lifetime, zc_div
+   - Microstructure & Orderflow: funding_rate_pct, basis_usd, open_interest_usd, oi_change_pct, long_liq_usd, short_liq_usd, long_liq_zs, short_liq_zs, whale_index, taker_volume_ratio, vwap_zscore, session_vwap, session_vah, session_val, prev_day_vah, prev_day_val
+
+2. Binance_Footprint_15min (13 tick ladder features):
+   - Keys: open_time_ms (long), price_bin (real)
+   - Ladder Volume: bid_vol_coin, ask_vol_coin, net_delta_coin, total_vol_coin, trade_count
+   - Imbalance Flags: is_poc, is_buy_imbalance, is_sell_imbalance, is_stacked_buy_imb, is_stacked_sell_imb, is_value_area
+
+C. KUSTO INGESTION MANDATE:
+Write a clean, modular Python connector (Engine/pipeline/kusto_client.py or direct KQL streaming queries) using azure-kusto-data (or REST API / parquet chunks). Enforce causal, backward-looking windowing:
+- KQL query pattern:
+  Binance_Master_15min
+  | where symbol in ('BTCUSDT', 'ETHUSDT', ...)
+  | where open_time_ms between (datetime_to_epoch_ms(w_start - 72h) .. datetime_to_epoch_ms(w_end))
+  | order by open_time_ms asc
+- Automatically handle the 500,000 row truncation limit using chunked time-slices.
+
+--------------------------------------------------------------------------------
+3. INSTITUTIONAL PASS HURDLES & SETTLED INVARIANTS:
+--------------------------------------------------------------------------------
+
+A. TARGET OOS PASS CRITERIA (Engine/target_oos_criteria.json):
+Evaluated independently across each of the 20 Out-Of-Sample Quarterly Windows:
+- Net ROI: >= +10.00% (+500.00 USD net gain on 5,000.00 USD initial capital)
+- Maximum Drawdown: <= 5.00% (250.00 USD max peak-to-trough drop)
+- Win Rate: >= 40.0%
+- Minimum Completed Trades: >= 15 closed trades per quarter
+
+B. SETTLED RISK BUDGET INVARIANTS:
+- Initial Capital: 5,000.00 USD
+- Base Risk: 40.00 USD (0.80%)
+- Drawdown Defense: 15.00 USD (0.30% arming when account drawdown exceeds 2.0% / 100.00 USD)
+- House Money: 100.00 USD (2.0% unlocking when net profit exceeds +50.00 USD)
+- Hard Drawdown Stop: 4.50% (225.00 USD catastrophic breaker)
+- Max Concurrent Positions: Strictly 2 open positions across all 18 symbols simultaneously.
+
+C. REALISTIC EXCHANGE FRICTIONS (ENFORCED ON NOTIONAL):
+- Taker Fee: 8 bps (0.08%)
+- Entry Slippage: 10 bps (0.10%)
+- Stop Loss Slippage: 15 bps (0.15%)
+- Round-Trip Total Friction Penalty: 41 bps on position notional.
+
+D. MICROSTRUCTURE RATCHET & 1:3 RISK-REWARD:
+- Initial Stop Loss: Placed at structural invalidation level (CRT session swing high/low), capped at 1.75 * ATR(14). Denominator guarded against zero: r_val = max(r_val, 1e-4).
+- Phase 0 (Breakeven Lock): At +0.70R to +0.80R price gain, advance stop loss to Entry +0.35R (guaranteeing friction clearance and net profit).
+- Phase 1 (Profit Lock): At +1.50R price gain, advance stop loss to Entry +0.80R.
+- Take Profit Target: Full exit at +3.00R (strictly 1:3 RR; purged legacy 4R/5R moonshots).
+- Dynamic Trailing Stop: Trailing stop trails at 1.5 * ATR(14) behind peak favorable price once in profit.
+- Time-Decay Liquidation: Force market exit if trade fails to gain +0.20R within 24 bars (6 hours).
+
+--------------------------------------------------------------------------------
+4. BASELINE EMPIRICAL SCORECARD & THE 5 OUTLIER REGIMES:
+--------------------------------------------------------------------------------
+
+Our master baseline (London 09:00 UTC core session) currently achieves:
+- Total Net PnL: +18,551.11 USD (+371.02% Net ROI on 5,000.00 USD capital)
+- Total Completed Trades: 1,125 trades
+- Win Rate: 46.8%
+- Benchmark Comparison: BTC Buy & Hold produced -8.65% over the same periods.
+- Outright Passing Windows: 15 out of 20.
+
+THE 5 OUTLIERS REQUIRING SURGICAL RESOLUTION:
+1. Window 1 (W01: Jan-Mar 2021): Net ROI reached +9.996% vs 10.00% threshold (0.004% micro-shortfall due to friction drag on final bar).
+2. Window 4 (W04: Oct-Dec 2021): Trade starvation (11 trades completed vs 15 minimum requirement). Fixed 0.52 ML probability threshold over-filtered signals during early regime with smaller training history.
+3. Window 5 (W05: Jan-Mar 2022 - Terra/Luna Pre-Crash) & Window 8 (W08: Oct-Dec 2022 - FTX Collapse): Preserved positive capital (+15.26 USD / +42.05 USD) with Max DD strictly contained below 4.69%, but completed trade counts (8-10 trades) fell short of the 15-trade hurdle.
+4. Window 17 (W17: Jan-Mar 2025): Low-volatility regime where ATR-based expansion filters over-pruned valid London ORB breakouts.
+
+--------------------------------------------------------------------------------
+5. CODEBASE ACCESS (GIT REPOSITORY ON MAIN):
+--------------------------------------------------------------------------------
+
+All active production modules and registries are available on GitHub:
+Repository: https://github.com/kbsingh1399/Trading.git (Branch: main)
+
+Direct Raw URLs:
+1. Strategy S3 Master Implementation:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/s3_orb_ml.py
+2. 20 OOS Walk-Forward Runner:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/scratch/run_20_oos_s3_orb.py
+3. Azure Kusto KQL Schema Definition:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/scratch/kusto_create_tables.kql
+4. Target OOS Criteria Registry:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json
+5. 20 OOS Windows Registry (2021 to 2026):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/oos_windows_20.json
+6. Canonical Indicators & Math Kernel:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/canonical_indicators.py
+7. Canonical Schema Contract:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/schema.py
+
+--------------------------------------------------------------------------------
+6. REQUIRED DELIVERABLES & EXECUTION MANDATES:
+--------------------------------------------------------------------------------
+
+1. KUSTO INGESTION CONNECTOR:
+   Provide an end-to-end, production-grade ingestion script (Engine/pipeline/kusto_client.py) that queries Binance_Master_15min and Binance_Footprint_15min from Azure Data Explorer, handles the 500k row limit, enforces causal joins, and outputs verified Parquet files or Polars DataFrames matching our canonical schema.
+
+2. SURGICAL UPGRADE FOR 20/20 OOS CERTIFICATION:
+   Modify Engine/strategy/s3_orb_ml.py and scratch/run_20_oos_s3_orb.py to solve the 5 outlier windows without relaxing core invariants:
+   - Implement an adaptive ML threshold: if training samples < 150 or positive labels < 25, dynamically scale threshold to 0.48 instead of hardcoded 0.52.
+   - Credit expired trades with fractional partial profit if they achieved >= Phase 0 (+0.80R gain) before timeout.
+   - Enable session-conditioned multi-session routing (London 09:00 UTC primary + NY 14:30 UTC secondary conditioned on daily ATR ratio > 1.15 to avoid chop).
+
+3. CAUSALITY & EXECUTION VERIFICATION:
+   - Strictly causal next-bar execution: entry at opens[j+1].
+   - Zero lookahead: mark-to-market drawdown calculated bar-by-bar.
+   - 41 bps friction strictly deducted from notional on every trade.
+
+4. DELIVER COMPLETE UNABRIDGED SOURCE CODE:
+   Provide full, copy-paste ready Python code blocks in chat. Do not output truncated code blocks or sandbox links.

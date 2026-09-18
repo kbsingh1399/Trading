@@ -128,14 +128,23 @@ def get_terminal_width() -> int:
 console = Console(force_terminal=True, width=get_terminal_width())
 
 # -------------------------------------------------------------------------
-# CANONICAL STRATEGY CONSTANTS
+# CANONICAL STRATEGY CONSTANTS & OPTION C GOVERNANCE
 # -------------------------------------------------------------------------
 BASE_RISK_USD = 50.0
-MAX_HOLDING_BARS = 96      # 24 hours in 15m bars
-TIME_DECAY_BARS = 24       # 6 hours in 15m bars
+DEFENSE_RISK_USD = 15.0
+HOUSE_MONEY_RISK_USD = 75.0
+HARD_DD_LIMIT_PCT = 4.50          # 4.5% Hard DD Stop (225.00 USD on 5,000.00 USD capital)
+DEFENSE_DD_LIMIT_PCT = 2.00       # 2.0% DD Defense Mode (100.00 USD on 5,000.00 USD capital)
+HOUSE_MONEY_THRESHOLD_USD = 50.0  # Profit threshold to unlock house money risk
+MAX_HOLDING_BARS = 96             # 24 hours in 15m bars
+TIME_DECAY_BARS = 24              # 6 hours in 15m bars
 TIME_DECAY_THRESHOLD_R = 0.20
-MAX_STOP_PCT = 0.025       # 2.5% max stop distance
+MAX_STOP_PCT = 0.025              # 2.5% max stop distance
 PROBABILITY_THRESHOLD = 0.55
+MAX_SPREAD_ATR_RATIO = 0.12       # Dynamic quarantine: spread > 12% of 15m ATR
+MIN_SPREAD_MULTIPLIER = 3.5       # Stop distance must be >= 3.5x current broker spread
+MIN_ATR_MULTIPLIER = 1.5          # Stop distance must be >= 1.5x 15m ATR
+
 
 
 # -------------------------------------------------------------------------
@@ -334,6 +343,29 @@ class OrderManager:
         self.initial_balance: float = 5000.0
         self.realized_pnl: float = 0.0
 
+    def get_current_risk_budget(self) -> Tuple[float, str]:
+        """
+        Enforces institutional risk budget:
+        - Initial Capital: 5,000.00 USD
+        - Hard Drawdown Stop: 4.50% (225.00 USD) -> 0.00 USD (Hard Freeze)
+        - Drawdown Defense Mode: 2.00% (100.00 USD) -> 15.00 USD
+        - House Money Mode: Cumulative Profit >= 50.00 USD -> 75.00 USD
+        - Normal Base Risk: 50.00 USD
+        Returns: (governed_risk_usd, regime_label)
+        """
+        metrics = self.get_account_metrics()
+        current_equity = metrics.get("equity", self.initial_balance + self.realized_pnl)
+        dd_usd = max(0.0, self.initial_balance - current_equity)
+        dd_pct = (dd_usd / self.initial_balance) * 100.0 if self.initial_balance > 0 else 0.0
+
+        if dd_pct >= HARD_DD_LIMIT_PCT or dd_usd >= 225.0:
+            return 0.0, f"HARD FREEZE (DD {dd_pct:.2f}% >= {HARD_DD_LIMIT_PCT:.1f}%)"
+        elif dd_pct >= DEFENSE_DD_LIMIT_PCT or dd_usd >= 100.0:
+            return DEFENSE_RISK_USD, f"DEFENSE (15.00 USD | DD {dd_pct:.2f}%)"
+        elif self.realized_pnl >= HOUSE_MONEY_THRESHOLD_USD:
+            return HOUSE_MONEY_RISK_USD, f"HOUSE MONEY (75.00 USD | Profit +{self.realized_pnl:.2f} USD)"
+        return BASE_RISK_USD, "NORMAL (50.00 USD)"
+
     def calculate_lot_size(self, symbol: str, risk_usd: float, sl_dist: float) -> float:
         """Calculates exact lot size based on symbol contract size and currency conversion."""
         if not self.conn.connected or sl_dist <= 0:
@@ -375,6 +407,14 @@ class OrderManager:
         risk_usd: float,
         strategy_tag: str = "COMBINED"
     ) -> Optional[int]:
+        # Risk constraint 0: Institutional Drawdown Circuit Breaker
+        governed_risk, regime_lbl = self.get_current_risk_budget()
+        if governed_risk <= 0.0:
+            logging.warning(f"[RISK VETO] {regime_lbl}. New order for {symbol} blocked.")
+            return None
+        # Enforce governed risk level
+        risk_usd = min(risk_usd, governed_risk) if risk_usd > 0 else governed_risk
+
         # Risk constraint 1: Max concurrent positions across portfolio
         if len(self.open_trades) >= self.max_concurrent:
             logging.info(f"[RISK VETO] Max concurrent positions ({self.max_concurrent}) reached. Signal for {symbol} vetoed.")
@@ -862,6 +902,63 @@ def compute_crt_orb_state(buffer: pd.DataFrame) -> dict:
     return default
 
 
+def calculate_adaptive_sl_tp(
+    symbol: str,
+    is_long: bool,
+    entry: float,
+    raw_sl: float,
+    local_extreme: float,
+    spread: float,
+    atr: float
+) -> Tuple[float, float, float, bool, str]:
+    """
+    Option C: Computes adaptive SL and TP guaranteeing clearance from spread noise.
+    If raw_sl (from ORB/CRT) is tighter than max(3.5 * spread, 1.5 * atr),
+    it dynamically expands to the structural extreme (local_high/low) or the minimum floor.
+    Returns: (sl, tp, r_dist, is_valid, reason)
+    """
+    spread_val = max(0.0, spread)
+    atr_val = max(0.0, atr)
+    min_safe_dist = max(MIN_SPREAD_MULTIPLIER * spread_val, MIN_ATR_MULTIPLIER * atr_val)
+
+    if is_long:
+        r_dist = entry - raw_sl
+        sl = raw_sl
+        if r_dist < min_safe_dist:
+            # Expand to structural swing low
+            struct_dist = entry - local_extreme
+            if struct_dist >= min_safe_dist:
+                sl = local_extreme
+                r_dist = struct_dist
+            else:
+                sl = entry - min_safe_dist
+                r_dist = min_safe_dist
+
+        if r_dist <= 0 or (entry > 0 and (r_dist / entry) > MAX_STOP_PCT):
+            return (0.0, 0.0, 0.0, False, "HOLD (Stop Range Invalid)")
+
+        tp = entry + (2.5 * r_dist)
+        return (sl, tp, r_dist, True, "BUY (Adaptive Confluence)")
+    else:
+        r_dist = raw_sl - entry
+        sl = raw_sl
+        if r_dist < min_safe_dist:
+            # Expand to structural swing high
+            struct_dist = local_extreme - entry
+            if struct_dist >= min_safe_dist:
+                sl = local_extreme
+                r_dist = struct_dist
+            else:
+                sl = entry + min_safe_dist
+                r_dist = min_safe_dist
+
+        if r_dist <= 0 or (entry > 0 and (r_dist / entry) > MAX_STOP_PCT):
+            return (0.0, 0.0, 0.0, False, "HOLD (Stop Range Invalid)")
+
+        tp = entry - (2.5 * r_dist)
+        return (sl, tp, r_dist, True, "SELL (Adaptive Confluence)")
+
+
 # -------------------------------------------------------------------------
 # COMPONENT 4: STATEFUL INFERENCE ENGINE
 # -------------------------------------------------------------------------
@@ -1344,25 +1441,35 @@ class ICTFVGStrategy(BaseForexStrategy):
         if not is_kz:
             return StrategySignal(symbol=symbol, signal=0, reason="HOLD (Off-Hours)")
 
+        spread = abs(ask - bid) if (ask > 0 and bid > 0) else 0.0
+        atr = float(last.get("atr_14", 0.0))
+
+        if atr > 0 and spread > 0 and (spread / atr) > MAX_SPREAD_ATR_RATIO:
+            return StrategySignal(symbol=symbol, signal=0, reason=f"HOLD (Spread/ATR {(spread/atr):.1%} > {MAX_SPREAD_ATR_RATIO:.0%})")
+
         if trend > 0 and bull_fvg > 0:
             entry = ask
-            sl = local_low
-            r_dist = entry - sl
-            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                return StrategySignal(symbol=symbol, signal=0, reason="HOLD (Stop Range Invalid)")
+            sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
+                symbol=symbol, is_long=True, entry=entry, raw_sl=local_low,
+                local_extreme=local_low, spread=spread, atr=atr
+            )
+            if not valid:
+                return StrategySignal(symbol=symbol, signal=0, reason=reason)
             return StrategySignal(
                 symbol=symbol, signal=1, entry_price=entry, sl_price=sl,
-                tp_price=entry + (2.5 * r_dist), strategy_tag="FVG", reason="BUY (ICT FVG)"
+                tp_price=tp, strategy_tag="FVG", reason="BUY (ICT FVG)"
             )
         elif trend < 0 and bear_fvg > 0:
             entry = bid
-            sl = local_high
-            r_dist = sl - entry
-            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                return StrategySignal(symbol=symbol, signal=0, reason="HOLD (Stop Range Invalid)")
+            sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
+                symbol=symbol, is_long=False, entry=entry, raw_sl=local_high,
+                local_extreme=local_high, spread=spread, atr=atr
+            )
+            if not valid:
+                return StrategySignal(symbol=symbol, signal=0, reason=reason)
             return StrategySignal(
                 symbol=symbol, signal=-1, entry_price=entry, sl_price=sl,
-                tp_price=entry - (2.5 * r_dist), strategy_tag="FVG", reason="SELL (ICT FVG)"
+                tp_price=tp, strategy_tag="FVG", reason="SELL (ICT FVG)"
             )
 
         return StrategySignal(symbol=symbol, signal=0, reason="HOLD (No FVG Setup)")
@@ -1429,25 +1536,35 @@ class MLStrategy(BaseForexStrategy):
         if not is_kz:
             return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Off-Hours)")
 
+        spread = abs(ask - bid) if (ask > 0 and bid > 0) else 0.0
+        atr = float(feat_df.iloc[-1].get("atr_14", 0.0))
+
+        if atr > 0 and spread > 0 and (spread / atr) > MAX_SPREAD_ATR_RATIO:
+            return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=f"HOLD (Spread/ATR {(spread/atr):.1%} > {MAX_SPREAD_ATR_RATIO:.0%})")
+
         if trend > 0 and prob >= self.prob_threshold:
             entry = ask
-            sl = local_low
-            r_dist = entry - sl
-            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Stop Range Invalid)")
+            sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
+                symbol=symbol, is_long=True, entry=entry, raw_sl=local_low,
+                local_extreme=local_low, spread=spread, atr=atr
+            )
+            if not valid:
+                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=reason)
             return StrategySignal(
                 symbol=symbol, signal=1, prob=prob, entry_price=entry, sl_price=sl,
-                tp_price=entry + (2.5 * r_dist), strategy_tag="ML", reason="BUY (ML Signal)"
+                tp_price=tp, strategy_tag="ML", reason="BUY (ML Signal)"
             )
         elif trend < 0 and prob >= self.prob_threshold:
             entry = bid
-            sl = local_high
-            r_dist = sl - entry
-            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Stop Range Invalid)")
+            sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
+                symbol=symbol, is_long=False, entry=entry, raw_sl=local_high,
+                local_extreme=local_high, spread=spread, atr=atr
+            )
+            if not valid:
+                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=reason)
             return StrategySignal(
                 symbol=symbol, signal=-1, prob=prob, entry_price=entry, sl_price=sl,
-                tp_price=entry - (2.5 * r_dist), strategy_tag="ML", reason="SELL (ML Signal)"
+                tp_price=tp, strategy_tag="ML", reason="SELL (ML Signal)"
             )
 
         return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Low Probability)")
@@ -1512,28 +1629,46 @@ class CombinedStrategy(BaseForexStrategy):
         if not is_kz:
             return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Off-Hours)")
 
+        spread = abs(ask - bid) if (ask > 0 and bid > 0) else 0.0
+        atr = float(feat_df.iloc[-1].get("atr_14", 0.0))
+
+        # Option C Filter 1: Dynamic Spread-to-ATR Regime Quarantine
+        if atr > 0 and spread > 0:
+            spread_atr_ratio = spread / atr
+            if spread_atr_ratio > MAX_SPREAD_ATR_RATIO:
+                return StrategySignal(
+                    symbol=symbol, signal=0, prob=prob,
+                    reason=f"HOLD (Spread/ATR {spread_atr_ratio:.1%} > {MAX_SPREAD_ATR_RATIO:.0%})"
+                )
+
         is_long = ((trend > 0 and bull_fvg > 0) or crt["is_long_crt"]) and (prob >= self.prob_threshold)
         is_short = ((trend < 0 and bear_fvg > 0) or crt["is_short_crt"]) and (prob >= self.prob_threshold)
 
         if is_long:
             entry = ask
-            sl = crt["or_low"] if crt["is_long_crt"] and crt["or_low"] > 0 else local_low
-            r_dist = entry - sl
-            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Stop Range Invalid)")
+            raw_sl = crt["or_low"] if crt["is_long_crt"] and crt["or_low"] > 0 else local_low
+            sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
+                symbol=symbol, is_long=True, entry=entry, raw_sl=raw_sl,
+                local_extreme=local_low, spread=spread, atr=atr
+            )
+            if not valid:
+                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=reason)
             return StrategySignal(
                 symbol=symbol, signal=1, prob=prob, entry_price=entry, sl_price=sl,
-                tp_price=entry + (2.5 * r_dist), strategy_tag="COMBINED", reason="BUY (Multi-Confluence)"
+                tp_price=tp, strategy_tag="COMBINED", reason=reason
             )
         elif is_short:
             entry = bid
-            sl = crt["or_high"] if crt["is_short_crt"] and crt["or_high"] > 0 else local_high
-            r_dist = sl - entry
-            if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
-                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Stop Range Invalid)")
+            raw_sl = crt["or_high"] if crt["is_short_crt"] and crt["or_high"] > 0 else local_high
+            sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
+                symbol=symbol, is_long=False, entry=entry, raw_sl=raw_sl,
+                local_extreme=local_high, spread=spread, atr=atr
+            )
+            if not valid:
+                return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=reason)
             return StrategySignal(
                 symbol=symbol, signal=-1, prob=prob, entry_price=entry, sl_price=sl,
-                tp_price=entry - (2.5 * r_dist), strategy_tag="COMBINED", reason="SELL (Multi-Confluence)"
+                tp_price=tp, strategy_tag="COMBINED", reason=reason
             )
 
         return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (No Multi-Confluence)")
@@ -1937,9 +2072,13 @@ class ForexEngine:
                 should_trigger = (is_new_candle or once) and sig.is_active
                 already_triggered = (last_triggered_candles.get(asset) == current_candle_ts)
 
-                if should_trigger and not already_triggered:
+                governed_risk, risk_regime_desc = self.order_mgr.get_current_risk_budget()
+
+                if governed_risk <= 0.0 and sig.is_active:
+                    decision_cell = f"[bold red]FREEZE ({risk_regime_desc})[/bold red]"
+                elif should_trigger and not already_triggered:
                     r_dist = abs(sig.entry_price - sig.sl_price)
-                    calc_lots = self.order_mgr.calculate_lot_size(asset, risk_usd=sig.risk_usd, sl_dist=r_dist)
+                    calc_lots = self.order_mgr.calculate_lot_size(asset, risk_usd=governed_risk, sl_dist=r_dist)
                     action_lbl = f"{'LIVE' if live else 'DRY'}-{'BUY' if sig.is_buy else 'SELL'} ({sig.strategy_tag})"
                     color_style = "bold white on green" if sig.is_buy else "bold white on red"
                     decision_cell = f"[{color_style}] {action_lbl} ({calc_lots:.2f}L) [/{color_style}]"
@@ -1947,12 +2086,12 @@ class ForexEngine:
                     order_type = mt5.ORDER_TYPE_BUY if sig.is_buy else mt5.ORDER_TYPE_SELL
                     self.order_mgr.place_market_order(
                         asset, order_type, volume=calc_lots, sl_price=sig.sl_price,
-                        tp_price=sig.tp_price, risk_usd=sig.risk_usd, strategy_tag=sig.strategy_tag
+                        tp_price=sig.tp_price, risk_usd=governed_risk, strategy_tag=sig.strategy_tag
                     )
                     last_triggered_candles[asset] = current_candle_ts
                 elif sig.is_active:
                     action_lbl = f"{'BUY' if sig.is_buy else 'SELL'} ({sig.strategy_tag})"
-                    decision_cell = f"[bold cyan]ARMED {action_lbl}[/bold cyan]"
+                    decision_cell = f"[bold cyan]ARMED {action_lbl} ({risk_regime_desc})[/bold cyan]"
 
                 table.add_row(
                     asset, f"{tick.bid:.5f}", f"{tick.ask:.5f}", f"{(tick.ask - tick.bid):.5f}",
@@ -1966,16 +2105,22 @@ class ForexEngine:
             real_pnl_color = "bold green" if metrics['realized_pnl'] >= 0 else "bold red"
             tot_pnl_color = "bold green" if metrics['total_pnl'] >= 0 else "bold red"
 
+            governed_risk, risk_regime_desc = self.order_mgr.get_current_risk_budget()
+            regime_badge = f"[bold red]{risk_regime_desc}[/bold red]" if governed_risk <= 0.0 else (
+                f"[bold yellow]{risk_regime_desc}[/bold yellow]" if governed_risk == DEFENSE_RISK_USD else
+                f"[bold green]{risk_regime_desc}[/bold green]"
+            )
+
             account_text = (
                 f"Account: [bold cyan]#{metrics['login']}[/bold cyan] ({metrics['server']}) | "
                 f"Mode: {mode_tag} | Strategy: [bold bright_white]{strat.name.upper()}[/bold bright_white] | "
-                f"Time: [bold white]{utc_now.strftime('%Y-%m-%d %H:%M:%S UTC')}[/bold white]\n"
-                f"Equity: [bold bright_white]${metrics['equity']:,.2f} {metrics['currency']}[/bold bright_white] | "
-                f"Balance: [bold]${metrics['balance']:,.2f}[/bold] | "
+                f"Risk Regime: {regime_badge}\n"
+                f"Equity: [bold bright_white]{metrics['equity']:,.2f} {metrics['currency']}[/bold bright_white] | "
+                f"Balance: [bold]{metrics['balance']:,.2f} {metrics['currency']}[/bold] | "
                 f"Running PnL: [{pnl_color}]{metrics['running_pnl']:+,.2f} USD[/{pnl_color}] | "
                 f"Realized PnL: [{real_pnl_color}]{metrics['realized_pnl']:+,.2f} USD[/{real_pnl_color}] | "
                 f"Total Session PnL: [{tot_pnl_color}]{metrics['total_pnl']:+,.2f} USD[/{tot_pnl_color}]\n"
-                f"Margin: ${metrics['margin']:,.2f} | Free Margin: ${metrics['margin_free']:,.2f} | "
+                f"Margin: {metrics['margin']:,.2f} | Free Margin: {metrics['margin_free']:,.2f} | "
                 f"Margin Level: {metrics['margin_level']:.1f}% | DD: {metrics['drawdown_pct']:.2f}% | "
                 f"Open Positions: [bold yellow]{metrics['open_count']}/2[/bold yellow] | "
                 f"Closed: {metrics['closed_count']} (WR: {metrics['win_rate']:.1f}%)"

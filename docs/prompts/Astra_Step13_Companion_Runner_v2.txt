@@ -1,0 +1,85 @@
+CRITICAL INSTRUCTION: DO NOT GENERATE ZIP ARCHIVES, DO NOT USE SANDBOX DOWNLOAD LINKS, DO NOT TRUNCATE CODE. Print ALL code completely in markdown code blocks. No placeholders. No "[code continues...]".
+
+---
+
+## Status Update — Trailing SL Applied Locally
+
+Your updated s3_orb_ml.py was ingested. We made one architectural decision: we kept our existing working Numba kernel (which self-generates ORB signals internally from raw OHLCV data) rather than switching to the pre-computed signals interface, because our runner produces 14/20 passing OOS windows and rebuilding the signal generator externally would require rewriting 200+ lines.
+
+The trailing SL logic you provided was surgically grafted into our existing kernel:
+- trail_active = False flag added to both long and short loops
+- After Phase 1 triggers (current_gain >= 1.5R), trail_active = True
+- Each bar: trail_sl = closes[k] - 1.5 * atrs[k]  (longs) / closes[k] + 1.5 * atrs[k] (shorts)
+- current_sl = max(current_sl, trail_sl) for longs / min(current_sl, trail_sl) for shorts
+- Causal: computed on close of k, tested against lows/highs of k+1
+- Numba @njit compile test: PASSED
+
+Current state of Engine/strategy/s3_orb_ml.py:
+- 1:3 RR enforced (tp = entry +/- 3.0 * r_val, cap = 3.0)
+- Phase 0 BE lock at +0.35R (friction-aware)
+- Phase 1 profit lock at +0.80R
+- ATR trailing SL at 1.5x ATR after Phase 1 — never moves backwards
+- Institutional fees in R units: 18 bps entry, 18 bps normal exit, 23 bps stop exit
+- All @njit compatible (no Python objects, pure NumPy)
+
+---
+
+## YES to the Companion Script
+
+We want the end-to-end companion script. Here is exactly what we need it to do:
+
+### Script: scratch/run_20_oos_s3_orb_v2.py
+
+It must be a completely standalone script (no imports from files other than Engine/strategy/s3_orb_ml.py). It reads our 18 Parquet files directly:
+
+Data path: c:\Users\SIGMA\Documents\Trading\binance_backtesting_data\
+File naming: {SYMBOL}_15m_master_2020_2026.parquet
+Symbols: BTCUSDT, ETHUSDT, XRPUSDT, SOLUSDT, BNBUSDT, DOGEUSDT, ADAUSDT, TRXUSDT, LINKUSDT, AVAXUSDT, SUIUSDT, NEARUSDT, DOTUSDT, LTCUSDT, BCHUSDT, APTUSDT, OPUSDT, ARBUSDT
+
+Parquet columns available: open_time_ms, open, high, low, close, volume_base, atr_14, ema_200, rsi_14, long_liq_zs, zc_div, vwap_zscore
+
+OOS windows: Engine/oos_windows_20.json (keys: window_id, name, start_date, end_date, regime)
+
+The script must call simulate_orb_trades() using the EXISTING function signature (NOT the new signals/sides interface):
+simulate_orb_trades(opens, highs, lows, closes, volumes, timestamps, dates, hours, minutes, day_of_weeks, start_hour=9, start_minute=0, range_duration_bars=2, trade_duration_bars=40)
+
+### Walk-Forward Logic Per Window:
+1. Load in-sample data (all data before window start_date minus 72 hours quarantine purge)
+2. Run simulate_orb_trades on in-sample → get features (20 cols) + outcomes (R-multiples)
+3. Binarize outcomes: label = 1 if outcome_r >= 0.5 else 0
+4. Train GradientBoostingClassifier(n_estimators=100, max_depth=3, learning_rate=0.05) on features → labels
+5. Load OOS data for the window dates
+6. Run simulate_orb_trades on OOS → get features + outcomes
+7. ML gate: only keep trades where classifier.predict_proba(features)[:,1] >= 0.52
+8. Simulate equity curve with gated trades:
+   - Capital: 5000 USD
+   - Base risk: 40 USD per trade
+   - House money: 60 USD when equity - 5000 >= 50 USD
+   - DD defense: 20 USD when drawdown >= 2.0%
+   - Hard DD stop: 4.5% (225 USD)
+   - Max concurrent: 2 positions (use approximate exit timestamp tracking: entry_ts + trade_duration_bars*900000 ms)
+9. BTC Buy & Hold benchmark: normalize BTCUSDT price over same window dates to 5000 USD
+
+### Pass Criteria:
+Net ROI >= 10.0%, Max Drawdown < 5.0%, Win Rate >= 40.0%, Completed Trades >= 15
+
+### Outputs:
+- Print window-by-window scorecard table to console (same format as before: W# | Name | Trd | WR% | Net PnL | ROI% | MaxDD% | BTC% | Status)
+- Save JSON: scratch/oos_20_s3_orb_v2_results.json
+- Save CSV: scratch/oos_20_s3_orb_v2_scorecard.csv
+- Save equity PNG to: C:\Users\SIGMA\.gemini\antigravity\brain\ffa08070-c9a9-49d2-a394-b72ce2e0971d\s3_orb_v2_equity.png
+- Copy PNG to: C:\Users\SIGMA\Downloads\s3_orb_v2_equity.png
+
+### Monte Carlo (after all 20 windows complete):
+Run 1000 Monte Carlo simulations by randomly shuffling the per-window trade R-multiples with replacement:
+- Report: 5th percentile total PnL, 50th percentile (median) PnL, 95th percentile PnL
+- Report: probability of achieving positive cumulative PnL across all 20 windows
+- Print results to console and save to JSON
+
+### Chart:
+Two subplots:
+1. Strategy equity curve vs BTC Buy & Hold (normalized to 5000 USD start)
+2. Per-window underwater drawdown as bar chart
+Color: green bars for PASS windows, red for FAIL
+
+Print the complete script, all code, no truncation, no placeholders, no ZIP.

@@ -1,0 +1,51 @@
+DO NOT generate a mock scorecard. Mock results are banned under institutional quant rules.
+
+Stop and fix the 5 critical implementation bugs in your code before running:
+
+================================================================================
+CRITICAL FORENSIC BUG FIXES FOR OPUS 5 MULTI-POD ENGINE
+================================================================================
+
+1. BUG 1: Local Parquet Fallback Fails & Freezes on AAD Device Auth (kusto_client.py)
+   - Issue: In fetch_dataset(), you check for a single monolithic cache file:
+     cache_path = os.path.join(CACHE_DIR, f"panel_{start_dt}_{end_dt}.parquet")
+     This file does not exist. Your code then immediately calls build_client() with AAD device authentication, which hangs the execution terminal waiting for interactive browser login.
+   - Fix: Our repository already contains the full dataset stored per-symbol in binance_backtesting_data/:
+     f"binance_backtesting_data/{symbol}_15m_master_2020_2026.parquet"
+     Your fallback must iterate through symbols, load each existing parquet file, filter by open_time_ms between start_dt and end_dt, and concatenate them into full_df. Only attempt Kusto if explicit ADX credentials or forced online flag is provided.
+
+2. BUG 2: pandas apply(list).unstack() Type Crash (run_20_oos_multi_pod.py)
+   - Issue: aux["atr"] = full_df.groupby("symbol")["atr_14"].apply(list).unstack() does not return a time-indexed numeric DataFrame. It returns a single-row Series of lists, causing an immediate TypeError on numeric operations.
+   - Fix: Use standard pivot matching the other auxiliary metrics:
+     aux["atr"] = full_df.pivot(index="open_time_ms", columns="symbol", values="atr_14")
+     (Ensure open_time_ms is parsed as datetime or integer index).
+
+3. BUG 3: IndexError on Rebalance Slice (multi_pod_portfolio.py)
+   - Issue: In backtest(), price.iloc[i + rebalance_every] raises an IndexError: out-of-bounds when i approaches the end of the window.
+   - Fix: Clamp the future index:
+     next_i = min(i + rebalance_every, len(price) - 1)
+     if next_i <= i: break
+
+4. BUG 4: Missing Gate Metrics in backtest() (multi_pod_portfolio.py)
+   - Issue: backtest() only returns final equity:
+     return equity
+     You cannot verify the 20 OOS gates because Max Drawdown, Completed Trades Count, and Win Rate are not tracked or returned!
+   - Fix: Track and return a complete dictionary from backtest():
+     return {
+         "roi": (equity - self.capital) / self.capital * 100.0,
+         "max_dd": max_dd_pct,
+         "trades": completed_trades_count,
+         "win_rate": (wins / completed_trades_count * 100.0) if completed_trades_count > 0 else 0.0,
+         "final_equity": equity
+     }
+
+5. BUG 5: Causal Next-Bar Execution Invariant (multi_pod_portfolio.py)
+   - Issue: Using (price.iloc[next_i] / price.iloc[i] - 1) assumes entry at close of bar i (same bar signals are generated).
+   - Fix: Ingest opens panel (full_df.pivot(..., values="open")). Rebalance signals calculated at bar i close must execute at opens.iloc[i + 1], holding until opens.iloc[next_i + 1].
+
+--------------------------------------------------------------------------------
+MANDATE FOR THIS RESPONSE:
+--------------------------------------------------------------------------------
+1. Apply the 5 fixes directly into Engine/pipeline/kusto_client.py, Engine/strategy/multi_pod_portfolio.py, and scratch/run_20_oos_multi_pod.py.
+2. Deliver the complete, corrected, unabridged code blocks in chat.
+3. Print the verified scorecard generated from the corrected causal backtest logic.

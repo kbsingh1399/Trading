@@ -1,0 +1,91 @@
+CRITICAL INSTRUCTION: DO NOT GENERATE ZIP ARCHIVES, DO NOT USE SANDBOX DOWNLOAD LINKS, DO NOT TRUNCATE CODE. Print ALL code completely in markdown code blocks.
+
+---
+
+## Progress Report — S3 ORB/CRT ML Walk-Forward (Local Run Complete)
+
+We ran the S3 ORB/CRT ML strategy across all 20 OOS walk-forward windows on our local Binance institutional dataset (18 USDT-M perpetuals, 3.47M 15m bars, 2020-2026). Here are the verified empirical results:
+
+### Scorecard (20 OOS Windows | 5,000 USD Capital | 40 USD Base Risk)
+
+```
+W#  | Window Name                            | Trd | WR%   | Net PnL     | ROI%    | MaxDD%  | Status
+----|----------------------------------------|-----|-------|-------------|---------|---------|--------
+W1  | May 2021 Great Liquidation Crash       |  59 | 55.9% |    +271.4   |  +5.4%  |  4.07%  | FAIL
+W2  | Sep 2021 El Salvador Flash Crash       |  58 | 69.0% |  +1,112.7   | +22.3%  |  2.82%  | PASS
+W3  | Nov 2021 Cycle Peak Reversal           |  58 | 74.1% |  +2,411.1   | +48.2%  |  2.92%  | PASS
+W4  | Jan 2022 Fed Macro Tightening          |  11 | 18.2% |    -238.0   |  -4.8%  |  4.76%  | FAIL
+W5  | May 2022 Terra-Luna Shock              |  62 | 66.1% |    +670.0   | +13.4%  |  4.05%  | PASS
+W6  | Jun 2022 3AC & Celsius Capitulation    |  59 | 59.3% |     +85.9   |  +1.7%  |  4.73%  | FAIL
+W7  | Sep 2022 ETH Merge Chop               |  60 | 66.7% |    +357.7   |  +7.2%  |  3.45%  | FAIL
+W8  | Nov 2022 FTX Collapse Bottom          |  60 | 60.0% |    +606.0   | +12.1%  |  3.47%  | PASS
+W9  | Jan 2023 Short Squeeze Recovery       |  60 | 65.0% |  +1,254.7   | +25.1%  |  3.15%  | PASS
+W10 | Mar 2023 SVB Bank Run                 |  62 | 64.5% |  +1,032.4   | +20.6%  |  3.07%  | PASS
+W11 | Jun 2023 BlackRock ETF Momentum       |  60 | 58.3% |    +876.4   | +17.5%  |  4.34%  | PASS
+W12 | Aug 2023 Mid-Summer Flash Liq         |  62 | 62.9% |  +1,125.4   | +22.5%  |  3.98%  | PASS
+W13 | Oct 2023 Uptober ETF Ignition         |  62 | 59.7% |  +1,187.0   | +23.7%  |  3.42%  | PASS
+W14 | Jan 2024 Spot ETF Shakeout            |  62 | 62.9% |  +1,298.9   | +26.0%  |  3.78%  | PASS
+W15 | Mar 2024 Pre-Halving ATH             |  62 | 72.6% |  +1,824.6   | +36.5%  |  3.28%  | PASS
+W16 | Aug 2024 Carry Trade Liquidation      |  62 | 66.1% |  +1,116.8   | +22.3%  |  3.60%  | PASS
+W17 | Nov 2024 US Election Breakout         |  60 | 66.7% |  +1,291.6   | +25.8%  |  3.35%  | PASS
+W18 | Feb 2025 Post-Inauguration Chop       |  56 | 57.1% |    +391.6   |  +7.8%  |  4.36%  | FAIL
+W19 | Jul 2025 Volatility Expansion         |  27 | 48.1% |      -3.9   |  -0.1%  |  4.84%  | FAIL
+W20 | Mar 2026 Late-Cycle Microstructure    |  62 | 59.7% |  +1,118.3   | +22.4%  |  4.49%  | PASS
+```
+
+TOTAL: 14/20 Passed | 1,124 Trades | +17,790.55 USD | +355.81% Cumulative ROI
+BTC Buy & Hold over same windows: -8.65% (naive sum, strategy strongly outperforms)
+
+---
+
+## Fixes Already Applied Locally
+
+We identified and patched 3 issues in simulate_orb_trades() before this run:
+
+FIX 1 — RR was 1:2.5, not 1:3:
+  - tp = entry + 2.5 * r_val → corrected to tp = entry + 3.0 * r_val (both long and short)
+  - outcome hardcode was 2.5 → corrected to 3.0
+  - outcome cap was min(2.5, ...) → corrected to min(3.0, ...)
+
+FIX 2 — Phase 0 BE lock was friction-blind:
+  - current_sl = entry + 0.15 * r_val → corrected to entry + 0.35 * r_val
+  - At 41 bps round-trip friction, 0.15R → net -0.19R guaranteed. 0.35R clears it with 0.01R margin.
+
+FIX 3 — Flat 8 bps friction was dimensionally wrong:
+  - Was: outcome_r -= 0.08 (treats 8 bps as a fixed R deduction regardless of r_val vs notional)
+  - Now: proper institutional fee model, dynamically computed in R units:
+    Entry: 8 bps taker + 10 bps slippage = 18 bps
+    Exit TP/timeout: 8 bps taker + 10 bps slippage = 18 bps
+    Exit stop-hit: 8 bps taker + 15 bps stop slippage = 23 bps
+    entry_friction_r = (entry * 0.0018) / r_val
+    exit_friction_r = (entry * 0.0023) / r_val  [stop] or (entry * 0.0018) / r_val [normal]
+    outcome_r -= (entry_friction_r + exit_friction_r)
+
+---
+
+## What We Need From You Now
+
+The 6 failing windows (W1, W4, W6, W7, W18, W19) are all near-misses: W1=+5.4%, W6=+1.7%, W7=+7.2%, W18=+7.8%. They lose purely on the 10% ROI threshold — their WR and MaxDD are fine. The issue is that the static 3-phase ratchet leaves too much profit on the table in slow-grinding windows.
+
+### Request: Print the complete updated Engine/strategy/s3_orb_ml.py with these two additions:
+
+1. MINIMUM 1:3 RR ENFORCEMENT (already applied above — verify it is correct in your output)
+
+2. TRAILING STOP LOSS — replace / augment the static Phase 1 ratchet with a dynamic ATR-based trailing stop that:
+   - Activates only after Phase 1 lock (+1.5R gain)
+   - Trails at: current_sl = max(current_sl, closes[k] - trail_atr_mult * atrs[k])  [for longs]
+   - Suggested trail_atr_mult = 1.5 (one and a half ATR behind current close)
+   - Must remain strictly causal: trailing is evaluated on bar k close, stop moved at bar k close, tested against bar k+1 highs/lows
+   - Must never move the stop backwards (use max() for longs, min() for shorts)
+   - Must be compatible with the @njit Numba decorator (no Python objects, pure NumPy arrays)
+
+Print the ENTIRE, UNABRIDGED, runnable Engine/strategy/s3_orb_ml.py source code (all 360+ lines) in a single markdown code block. No truncation, no placeholders, no ZIP, no sandbox links.
+
+After printing s3_orb_ml.py, also print the complete updated config.yaml showing:
+  take_profit_R: 3.0
+  phase0_lock_R: 0.35
+  phase1_lock_R: 0.80
+  trail_atr_mult: 1.5
+  entry_fee_bps: 18
+  exit_fee_bps: 18
+  stop_fee_bps: 23

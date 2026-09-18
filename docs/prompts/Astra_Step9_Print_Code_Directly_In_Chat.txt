@@ -1,0 +1,28 @@
+CRITICAL INSTRUCTION: DO NOT GENERATE ZIP ARCHIVES, DO NOT USE SANDBOX DOWNLOAD LINKS, AND DO NOT TRUNCATE CODE.
+
+Print the COMPLETE, UNABRIDGED source code for all production modules directly inside markdown code blocks in your chat response right now.
+
+Specifically, print the entire, runnable code for each of the following 4 files:
+
+1. `orderflow_production_engine.py`
+   - Complete zero-lookahead execution kernel (signal at bar t close, entry at bar t+1 open).
+   - Dynamic risk distance floor: max(atr_14, entry * 0.012) to prevent notional friction blowup.
+   - 3-phase microstructure ratchet (BE Lock @ +0.8R to entry + 0.15R, Profit Lock @ +1.8R to entry + 1.0R, TP @ +3.0R) with strict bar j+1 mutation binding (stop_next).
+   - 24-bar time decay exit with explicit loop termination.
+   - Continuous 41 bps notional friction calculation: (entry_px + exit_px) * size * 0.00205.
+   - Portfolio concurrency governor (Max 2 concurrent positions across all 18 symbols).
+   - Footprint integration logic joining Binance_Footprint_15min.
+
+2. `orderflow_ml_overlay.py`
+   - Complete feature extraction from orderflow metrics: zc_div, long_liq_zs, short_liq_zs, vwap_zscore, volume_ratio, rsi_14, spot_cvd_15m.
+   - Causal forward labeling logic (+2.5R target reached before stop or timeout).
+   - In-sample training loop with 72-hour quarantine purge.
+   - Probabilistic signal gating function (prob_threshold = 0.55).
+
+3. `config.yaml`
+   - Complete institutional configuration parameters (capital, risk, friction, ratchet thresholds, 18 USDT-M perpetual symbols).
+
+4. `montecarlo_validator.py`
+   - Complete 1,000-path bootstrap resampling validator calculating VaR 95%, CVaR 95%, and 99th percentile worst-case drawdown.
+
+Format each file in its own complete fenced code block with full implementation details and zero placeholders.
