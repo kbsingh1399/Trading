@@ -1,0 +1,102 @@
+# ADVERSARIAL QUANT AUDIT & PRODUCTION CERTIFICATION DIRECTIVE (Ox_Alpha_38)
+**TARGET AUDITOR:** Chief Quantitative Officer / Lead Quantitative Risk Engineer (Claude Opus / Arena.ai)
+**REPOSITORY:** https://github.com/kbsingh1399/Trading.git (Branch: main | Tree Commit: b68c7d2)
+**EVALUATION SCOPE:** Forensic Verification of Remediations for Ox_Alpha_37 Audit Findings (B1, B2, S-11, S-6, Criteria Parity) and Live Execution Safety
+**DATASET & ENVIRONMENT PROVENANCE:** 18 Canonical Institutional Instruments (Forex, CFD Indices, Commodities) | MetaTrader 5 Blueberry Markets SVG | 5,000.00 USD Initial Capital | Strict Real Frictions
+
+---
+
+## 1. CONTEXT & REMEDIATION MANDATE
+
+In the Ox_Alpha_37 re-audit, certification was withheld (score 3.5 / 10) after identifying two new blocking execution defects and structural gaps:
+- **B1 (BLOCKING - Import-Time Crash):** `Engine/live/inference_engine.py` crashed on boot with `NameError: name 'datetime' is not defined` inside `infer_next_bar` due to a missing import.
+- **B2 (BLOCKING - Zero-Tick Price Fallback):** `MT5Connection.get_current_bid` and `get_current_ask` returned `0.0` when ticks were unavailable, which would produce negative stop prices (`sl = 0.0 - distance`) and division by zero in downstream order/ratchet handlers. Furthermore, `forward_test_harness.py` marked SELL position exits against the bid price rather than the ask price, and lacked None-safe guards.
+- **S-11 (Mark-to-Market Exhaustion in Labeller):** In `strategy_kernel.py::create_labels_ratchet`, any setup that reached bar 96 without hitting either stop loss or take profit fell through the loop and was penalized with a flat `-1.0R` loss, even if the trade was floating in positive profit or had locked profit at break-even (+0.15R) or higher.
+- **Target Criteria Disparity:** `Engine/target_oos_criteria.json` still contained `min_r_multiple: 4.0` while `strategy_kernel.py` and `order_manager.py` had standardized to `MIN_R_MULTIPLE = 2.5`.
+- **Ratchet & Calmar Gaps in Forward Test Harness:** `forward_test_harness.py` lacked the active 3-phase ratchet trailing logic and calculated Calmar using single-trade adverse excursions rather than portfolio peak-to-trough equity drawdowns.
+
+All remediations have been implemented, verified via the expanded 19-point test suite (`Engine/tests/test_prelaunch.py`), and validated against live MT5 market feeds (commit: `b68c7d2`). As an adversarial auditor operating in a brand new chat session with zero memory, zero previous context, and zero internet/repo access, you MUST fetch the source files directly from GitHub via their raw URLs to verify that every finding has been structurally resolved and determine whether the pipeline is cleared for live execution.
+
+---
+
+## 2. REPOSITORY SOURCE CODE INSPECTION LINKS
+
+Fetch and inspect the committed source files directly from GitHub at commit `b68c7d2`:
+
+1. **Stateful Inference Engine (B1 Import Fix & Streaming Inference):**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/inference_engine.py
+
+2. **MT5 Connection Layer (B2 None-Safe Tick Feeds):**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/mt5_connection.py
+
+3. **Forward Test Validation Harness (B2 Call-Site Guards, Ask/Bid Side Parity, 3-Phase Ratchet, Portfolio Calmar):**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/forward_test_harness.py
+
+4. **Strategy Kernel (S-11 Bar 96 MTM Exhaustion, 2.5R Unified Target, Clean Rungs):**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/strategy_kernel.py
+
+5. **Target Acceptance Criteria (2.5R Criteria Parity):**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json
+
+6. **Expanded 19-Point Pre-Launch Compliance Test Suite:**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/tests/test_prelaunch.py
+
+7. **Master Forex Engine (Orchestration, Telemetry & Live Terminal):**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/forex_engine.py
+
+8. **Order Manager (Execution, Risk Governor & Ratchets):**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/order_manager.py
+
+9. **Dynamic OOS Walk-Forward Evaluator:**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/run_dynamic_oos.py
+
+10. **Nightly Asset Screener & Gating:**
+    https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/asset_screener.py
+
+---
+
+## 3. AUDIT VERIFICATION CHECKLIST & QUESTIONS
+
+Please perform a rigorous, line-by-line adversarial review of the committed code at commit `b68c7d2` and address the following specific questions:
+
+### Question 1: B1 Import-Time Crash Verification
+Inspect `Engine/live/inference_engine.py`:
+- Is `from datetime import datetime, timezone` present at the top of the file?
+- Does `StatefulInferenceEngine.infer_next_bar` execute cleanly without any `NameError`?
+
+### Question 2: B2 None-Safe Price Handling & Side Parity
+Inspect `Engine/live/mt5_connection.py` and `Engine/research/forward_test_harness.py`:
+- Do `MT5Connection.get_current_bid` and `get_current_ask` return `Optional[float]` (`None` on unavailable/non-positive ticks) rather than `0.0`?
+- Does `forward_test_harness.py` explicitly check `if entry_price is None:` before simulating trade entry?
+- Does `forward_test_harness.py` evaluate short positions against the ask price (`conn.get_current_ask(sym)`) when covering/monitoring?
+- Does `forward_test_harness.py` check `if current_price is None:` before evaluating open trades?
+
+### Question 3: S-11 Mark-to-Market Holding Exhaustion in Labeller
+Inspect `Engine/core/strategy_kernel.py`:
+- In `create_labels_ratchet`, how are unexited trades handled when reaching the end of the holding window (bar 96)?
+- Does the code compute mark-to-market R-multiple (`mtm_r`) and ratchet-locked R-multiple (`locked_r`) and assign `r_real = round(min(min_r, max(mtm_r, locked_r)), 4)` instead of penalizing with `-1.0R`?
+- Have unreachable ratchet rungs beyond `MIN_R_MULTIPLE = 2.5` (`lock_25r`, `lock_30r`, `lock_35r`) been excised?
+
+### Question 4: Forward Test Harness Ratchet & Calmar Rigor
+Inspect `Engine/research/forward_test_harness.py`:
+- Is the 3-phase ratchet (+0.8R -> BE +0.15R, +1.5R -> +0.8R, +2.0R -> +1.8R, TP @ +2.5R) actively tracked and updated on open positions?
+- When a position is stopped out, does `exit_price` record `tr['sl']` to preserve locked profit?
+- Does `ForwardState.calmar_live` compute true portfolio peak-to-trough max drawdown on the cumulative equity curve rather than per-trade adverse excursions?
+
+### Question 5: Target Acceptance Criteria Parity
+Inspect `Engine/target_oos_criteria.json`:
+- Has `min_r_multiple` been updated to `2.5` to match `strategy_kernel.py` and `order_manager.py`?
+
+### Question 6: Pre-Launch Compliance Verification
+Inspect `Engine/tests/test_prelaunch.py`:
+- Does the test harness verify all 19 compliance checks across feature parity, ratchet triggers, TP logic, position caps, boundary isolation, kill zone hours, module import safety, S-11 exhaustion, and None-safe tick protection?
+
+---
+
+## 4. FORMAL SCORING & PRODUCTION READINESS DELIVERABLE
+
+Provide a comprehensive, objective audit report including:
+1. **Defect Status Matrix:** Status of B1, B2, S-11, S-6, Criteria Parity, and Forward Test Ratchets (RESOLVED / UNRESOLVED / PARTIALLY RESOLVED).
+2. **Mathematical Invariant Audit:** Verification of causality, friction handling (41 bps total), risk budget governors, and microstructure ratchets.
+3. **Production Certification Score (0.0 to 10.0):** Quantitative score reflecting production readiness.
+4. **Live Execution Recommendation:** Clear, unambiguous operational verdict on whether the pipeline is cleared for live execution on MetaTrader 5 or if any remaining blockers exist.
