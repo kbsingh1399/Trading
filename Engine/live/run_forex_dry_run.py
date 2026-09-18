@@ -279,6 +279,10 @@ def main():
             
             acc_dict = acc._asdict() if acc is not None else {"login": "UNKNOWN", "server": "UNKNOWN", "balance": 0.0, "equity": 0.0}
 
+            # Manage active positions: microstructure ratchets & 24-bar decay
+            first_candle_time = list(last_candle_times.values())[0] if last_candle_times else None
+            order_mgr.manage_open_trades(current_bar_time=first_candle_time)
+
             utc_now = datetime.now(timezone.utc)
             # London KZ: 07-10 UTC | NY KZ: 12-15 UTC
             # Use the hour of the last closed bar to prevent wall-clock race conditions
