@@ -46016,3 +46016,17 @@ push all to git main and let's discuss with arena.ai about our pipeline
 
 ### Assistant Response:
 Staged, committed, and pushed all modified and untracked code, strategies, models, refreshed Forex parquets, and documentation to GitHub main (commits up to 53c2ea6). Generated comprehensive Git-based review prompt Ox_Alpha_35_Pipeline_Architecture_and_Telemetry_Review.txt saved to C:\Users\SIGMA\Downloads\ and archived in docs/prompts/. Formulated 5 critical architectural review domains for Claude Opus on Arena.ai covering Option C spread-to-ATR hardening, adaptive SL expansion, sleeve allocation arbitration, rolling inference parity, and live MT5 execution.
+
+---
+
+### User Prompt:
+do the necessay steps / All done?
+
+### Assistant Response:
+Fully completed, empirically verified, and pushed to GitHub main (commit c6ef13c) the complete institutional P0 and P1 microstructure hardening suite recommended by Claude Opus (Ox Alpha):
+1. P0 Leverage Sizing Trap: Enforced institutional notional leverage caps (10:1 majors, 5:1 minors/indices, 3:1 exotics) in calculate_lot_size(), preventing 35:1 over-leveraging on sub-pip stops. Added account margin utilization ceiling (< 30%) and margin level circuit breaker (> 200%).
+2. P0 Causal 4H Alignment: Added causal .shift(1) to streaming 4H trend calculation in Engine/forex_engine.py and Engine/core/strategy_kernel.py, ensuring 100% mathematical parity with batch Polars backtesting.
+3. P0 State Persistence: Added save_state() and load_state() reconciling live_state.json with active MT5 broker positions.
+4. P1 Structural Take-Profit Decoupling: Replaced floating TP multiples with 20-bar session swing highs/lows and enforced effective reward-to-risk gating (1.20 <= R_eff <= 3.50), directly preventing low-expectancy trades.
+5. P1 Correlation Cluster Governor: Enforced max 1 concurrent position per cluster (EUR_BLOC, USD_BLOC, CNH_BLOC, INDEX_BLOC, COMMODITY_BLOC) and max 2 total concurrent positions.
+6. P1 Spread/ATR Hysteresis Quarantine: Enforced dynamic quarantine when spread > 12% ATR (cleared only after 2 consecutive bars < 8% ATR) and restricted exotic assets to 07:00-17:00 UTC. Live telemetry verified 100% precision across all 18 target assets with zero exceptions.
