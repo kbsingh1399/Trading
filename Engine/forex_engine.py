@@ -1086,6 +1086,18 @@ def compute_features_pandas(df: pd.DataFrame, buffer_4h: Optional[pd.DataFrame] 
     df['vwap_20'] = df['typical_price'].rolling(window=20, min_periods=20).mean()
     df['vwap_dist'] = (df['close'] - df['vwap_20']) / df['vwap_20']
 
+    # Calculate sweeps
+    if isinstance(df.index, pd.DatetimeIndex):
+        daily = df.groupby(df.index.date).agg({'high': 'max', 'low': 'min'}).shift(1)
+        dates = df.index.date
+        prev_highs = pd.Series(dates, index=df.index).map(daily['high']).ffill()
+        prev_lows = pd.Series(dates, index=df.index).map(daily['low']).ffill()
+        df['sweep_pdl'] = (df['low'] <= prev_lows).astype(int)
+        df['sweep_pdh'] = (df['high'] >= prev_highs).astype(int)
+    else:
+        df['sweep_pdl'] = 0
+        df['sweep_pdh'] = 0
+
     # 3. RSI (14 periods)
     delta = df['close'].diff()
     gain = delta.clip(lower=0.0)
@@ -1140,7 +1152,7 @@ def compute_features_pandas(df: pd.DataFrame, buffer_4h: Optional[pd.DataFrame] 
     for col in CANONICAL_FEATURES:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0.0)
-    return df[CANONICAL_FEATURES]
+    return df
 
 
 def compute_crt_orb_state(buffer: pd.DataFrame) -> dict:
@@ -1339,7 +1351,7 @@ class StatefulInferenceEngine:
                 return True, f"Quarantined (Exotic off-hours: {current_utc_hour:02d}:00 UTC outside 07-17 UTC)"
 
         if atr <= 0 or spread <= 0:
-            return False, "Active"
+            return True, "Quarantined (Invalid spread/ATR <= 0)"
 
         ratio = spread / atr
         if not self.is_quarantined:
@@ -1417,7 +1429,7 @@ class StatefulInferenceEngine:
         if self.buffer.empty:
             return 0.50
         features_df = self.compute_features()
-        latest = features_df.iloc[[-1]].copy()
+        latest = features_df.iloc[[-1]][CANONICAL_FEATURES].copy()
         for col in latest.columns:
             latest[col] = pd.to_numeric(latest[col], errors="coerce").astype(float)
         dmat = xgb.DMatrix(latest)

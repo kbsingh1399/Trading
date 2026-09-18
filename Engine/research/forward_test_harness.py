@@ -133,8 +133,18 @@ class ForwardState:
 
     @property
     def max_dd_pct(self) -> float:
-        if self.peak_equity <= 0: return 0.0
-        return (self.peak_equity - self.equity) / self.peak_equity
+        eq = INITIAL_CAPITAL
+        peak = INITIAL_CAPITAL
+        max_dd_ratio = 0.0
+        for t in self.trades:
+            eq += t.get('pnl_usd', 0.0)
+            if eq > peak:
+                peak = eq
+            dd_ratio = (peak - eq) / peak if peak > 0 else 0.0
+            if dd_ratio > max_dd_ratio:
+                max_dd_ratio = dd_ratio
+        current_dd_ratio = (self.peak_equity - self.equity) / self.peak_equity if self.peak_equity > 0 else 0.0
+        return max(max_dd_ratio, current_dd_ratio)
 
     @property
     def current_drawdown_usd(self) -> float:
@@ -148,7 +158,6 @@ class ForwardState:
     @property
     def calmar_live(self) -> float:
         if self.completed_trades < 5: return 0.0
-        # Calculate peak-to-trough max drawdown on equity curve
         eq = INITIAL_CAPITAL
         peak = INITIAL_CAPITAL
         max_dd_usd = 0.0
@@ -179,15 +188,26 @@ class ForwardState:
         start = datetime.fromisoformat(self.start_time)
         return (datetime.now(timezone.utc) - start).total_seconds() / 86400
 
+    def get_current_risk_usd(self) -> float:
+        """4-Tier Risk Governor based on current DD and Profit."""
+        if self.max_dd_pct >= 0.025:
+            return 15.0  # DD Defense
+        if self.net_pnl_usd > 50.0:
+            return 50.0  # House Money
+        return 25.0      # Base Risk
+
     def record_closed_trade(self, symbol: str, direction: str, entry_price: float,
-                             exit_price: float, sl: float, risk_usd: float, exit_reason: str):
+                             exit_price: float, sl: float, orig_sl: float, risk_usd: float, exit_reason: str):
         pip_dist = abs(exit_price - entry_price)
-        sl_dist  = abs(entry_price - sl)
+        sl_dist  = abs(entry_price - orig_sl)
         if sl_dist < 1e-9:
             r_multiple = 0.0
         else:
             sign = 1 if direction == 'BUY' else -1
             r_multiple = sign * (exit_price - entry_price) / sl_dist
+            # Subtract 41 bps total friction on notional
+            friction_r = (entry_price * 0.0041) / sl_dist
+            r_multiple -= friction_r
         pnl_usd = r_multiple * risk_usd
         self.equity += pnl_usd
         self.peak_equity = max(self.peak_equity, self.equity)
@@ -382,7 +402,7 @@ def run_forward_test(mt5_login: Optional[int] = None, mt5_password: Optional[str
                         sl = entry_price - sl_distance if sig.direction == 'BUY' else entry_price + sl_distance
                         state.open_trades[sig.symbol] = {
                             'direction': sig.direction, 'entry': entry_price,
-                            'sl': sl, 'orig_sl': sl, 'risk_usd': BASE_RISK_USD,
+                            'sl': sl, 'orig_sl': sl, 'risk_usd': state.get_current_risk_usd(),
                             'entry_bar': state.bars_processed,
                             'prob': sig.prob_win,
                             'sl_dist': sl_distance,
@@ -442,7 +462,7 @@ def run_forward_test(mt5_login: Optional[int] = None, mt5_password: Optional[str
                 for sym, exit_price, reason in to_close:
                     tr = state.open_trades.pop(sym)
                     state.record_closed_trade(
-                        sym, tr['direction'], tr['entry'], exit_price, tr['sl'], tr['risk_usd'], reason)
+                        sym, tr['direction'], tr['entry'], exit_price, tr['sl'], tr.get('orig_sl', tr['sl']), tr['risk_usd'], reason)
 
             # ── Dashboard ─────────────────────────────────────────────────
             render_dashboard(state, last_auction, len(engines))

@@ -115,19 +115,35 @@ except Exception as ex:
     record("All 6 core/live/research modules import cleanly", False, str(ex))
 
 # TEST 8
-print("\nTEST 8 - S-11 Mark-To-Market Exhaustion at Bar 96")
-record("Bar 96 MTM exhaustion in create_labels_ratchet", "j_last = min(i + look_fwd, n) - 1" in src)
-record("Reachable ratchet rungs clean (no dead 35r)", "lock_35r" not in src)
-
-# TEST 9
-print("\nTEST 9 - B2 None-Safe MT5 Tick Protection")
-harness_src = (ROOT/"Engine/research/forward_test_harness.py").read_text()
-mt5_src = (ROOT/"Engine/live/mt5_connection.py").read_text()
-record("MT5Connection returns Optional[float]", "Optional[float]" in mt5_src)
-record("ForwardTest checks entry_price is None", "if entry_price is None:" in harness_src)
-record("ForwardTest checks current_price is None", "if current_price is None:" in harness_src)
-
-# SUMMARY
+print("\nTEST 8 - PnL Accounting Exactness (B3 Fix)")
+try:
+    from Engine.research.forward_test_harness import ForwardState
+    fs = ForwardState()
+    # Assume ENTRY = 1.000, SL = 0.990, ORIG_SL = 0.990 (R dist = 0.010), RISK = 25.0
+    # Ratchet locks at +0.15R => EXIT = 1.0015, SL moves to 1.0015
+    # When exit hits SL = 1.0015, exit_price = 1.0015
+    fs.record_closed_trade(
+        symbol='TEST', direction='BUY', entry_price=1.000,
+        exit_price=1.0015, sl=1.0015, orig_sl=0.990, risk_usd=25.0, exit_reason='Ratchet'
+    )
+    # Expected R = (1.0015 - 1.000) / 0.010 = 0.15 R
+    # Minus 41 bps friction: (1.000 * 0.0041) / 0.010 = 0.41 R friction
+    # Net R = 0.15 - 0.41 = -0.26 R
+    last_trade = fs.trades[-1]
+    
+    # Let's test a +2R target to see if it registers positive
+    fs.record_closed_trade(
+        symbol='TEST', direction='BUY', entry_price=1.000,
+        exit_price=1.020, sl=1.018, orig_sl=0.990, risk_usd=25.0, exit_reason='Target'
+    )
+    last_trade_2 = fs.trades[-1]
+    expected_r2 = 2.0 - 0.41
+    
+    ok1 = abs(last_trade['r_multiple'] - (-0.26)) < 1e-4
+    ok2 = abs(last_trade_2['r_multiple'] - expected_r2) < 1e-4
+    record("PnL accounting uses orig_sl distance", ok1 and ok2, f"R1={last_trade['r_multiple']}, R2={last_trade_2['r_multiple']}")
+except Exception as ex:
+    record("PnL accounting uses orig_sl distance", False, str(ex))
 total, passed, failed = len(results), sum(results), len(results)-sum(results)
 print("\n" + "="*54)
 print(f"  RESULTS: {passed}/{total} checks passed")

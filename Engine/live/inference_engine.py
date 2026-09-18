@@ -13,7 +13,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-from Engine.core.strategy_kernel import CANONICAL_FEATURES, compute_features_pandas
+from Engine.core.strategy_kernel import CANONICAL_FEATURES, compute_features_pandas, check_setup_criteria
 
 MAX_SPREAD_ATR_RATIO_ENTER = 0.12  # Enter quarantine if spread > 12% of ATR
 MAX_SPREAD_ATR_RATIO_EXIT = 0.08   # Exit quarantine only if spread < 8% of ATR
@@ -48,7 +48,7 @@ class StatefulInferenceEngine:
                 return True, f"Quarantined (Exotic off-hours: {current_utc_hour:02d}:00 UTC outside 07-17 UTC)"
 
         if atr <= 0 or spread <= 0:
-            return False, "Active"
+            return True, "Quarantined (Invalid spread/ATR <= 0)"
 
         ratio = spread / atr
         if not self.is_quarantined:
@@ -154,7 +154,7 @@ class StatefulInferenceEngine:
             raise ValueError("Buffer is empty. Cannot predict.")
 
         features_df = self.compute_features()
-        latest_features = features_df.iloc[[-1]].copy()
+        latest_features = features_df.iloc[[-1]][CANONICAL_FEATURES].copy()
 
         # Force float64 exactly
         for col in latest_features.columns:
@@ -231,10 +231,10 @@ class StatefulInferenceEngine:
             return bar_time, "HOLD", prob, spread, atr
 
         direction = "HOLD"
-        if is_kz:
-            if trend > 0 and bull_fvg > 0:
-                direction = "BUY"
-            elif trend < 0 and bear_fvg > 0:
-                direction = "SELL"
+        is_long, is_short = check_setup_criteria(latest_row.to_dict())
+        if is_long:
+            direction = "BUY"
+        elif is_short:
+            direction = "SELL"
 
         return bar_time, direction, prob, spread, atr

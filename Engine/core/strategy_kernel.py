@@ -196,6 +196,18 @@ def compute_features_pandas(buffer_15m: pd.DataFrame, buffer_4h: Optional[pd.Dat
     vwap_20 = typical_price.rolling(window=20).mean()
     df['vwap_dist'] = (df['close'] - vwap_20) / vwap_20
 
+    # Calculate sweeps
+    if isinstance(df.index, pd.DatetimeIndex):
+        daily = df.groupby(df.index.date).agg({'high': 'max', 'low': 'min'}).shift(1)
+        dates = df.index.date
+        prev_highs = pd.Series(dates, index=df.index).map(daily['high']).ffill()
+        prev_lows = pd.Series(dates, index=df.index).map(daily['low']).ffill()
+        df['sweep_pdl'] = (df['low'] <= prev_lows).astype(int)
+        df['sweep_pdh'] = (df['high'] >= prev_highs).astype(int)
+    else:
+        df['sweep_pdl'] = 0
+        df['sweep_pdh'] = 0
+
     # 4. FVGs (Rolling Unmitigated Logic W=5)
     w = 5
     bullish_fvgs = []
@@ -239,7 +251,7 @@ def compute_features_pandas(buffer_15m: pd.DataFrame, buffer_4h: Optional[pd.Dat
 
     df['htf_4h_trend'] = htf_4h_trend_val
     df.fillna(0.0, inplace=True)
-    return df[CANONICAL_FEATURES]
+    return df
 
 
 # -------------------------------------------------------------------------
