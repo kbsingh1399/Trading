@@ -384,7 +384,8 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
             raw_sl = crt["or_low"] if crt["or_low"] > 0 else local_low
             sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
                 symbol=symbol, is_long=True, entry=entry, raw_sl=raw_sl,
-                local_extreme=local_low, spread=spread, atr=atr
+                local_extreme=local_low, spread=spread, atr=atr,
+                tp_structural=local_high
             )
             if not valid:
                 return StrategySignal(symbol=symbol, signal=0, reason=reason)
@@ -397,7 +398,7 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
                 tp_price=tp,
                 risk_usd=base_risk,
                 strategy_tag="ORB_CRT",
-                reason=f"BUY ({crt['session']} OR Adaptive Breakout)",
+                reason=reason,
                 metadata={"session": crt["session"], "body_ratio": crt["body_ratio"], "r_dist": r_dist}
             )
 
@@ -406,7 +407,8 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
             raw_sl = crt["or_high"] if crt["or_high"] > 0 else local_high
             sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
                 symbol=symbol, is_long=False, entry=entry, raw_sl=raw_sl,
-                local_extreme=local_high, spread=spread, atr=atr
+                local_extreme=local_high, spread=spread, atr=atr,
+                tp_structural=local_low
             )
             if not valid:
                 return StrategySignal(symbol=symbol, signal=0, reason=reason)
@@ -419,7 +421,7 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
                 tp_price=tp,
                 risk_usd=base_risk,
                 strategy_tag="ORB_CRT",
-                reason=f"SELL ({crt['session']} OR Adaptive Breakdown)",
+                reason=reason,
                 metadata={"session": crt["session"], "body_ratio": crt["body_ratio"], "r_dist": r_dist}
             )
 

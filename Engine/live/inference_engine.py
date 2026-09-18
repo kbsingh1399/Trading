@@ -3,7 +3,7 @@ import sys
 import pandas as pd
 import numpy as np
 import xgboost as xgb
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Tuple
 import logging
 
 # Ensure Engine core is in sys.path
@@ -13,6 +13,12 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 from Engine.core.strategy_kernel import CANONICAL_FEATURES, compute_features_pandas
+
+MAX_SPREAD_ATR_RATIO_ENTER = 0.12  # Enter quarantine if spread > 12% of ATR
+MAX_SPREAD_ATR_RATIO_EXIT = 0.08   # Exit quarantine only if spread < 8% of ATR
+EXOTIC_SESSION_RESTRICTED = {
+    'EURHUF', 'EURSEK', 'USDSEK', 'USDHKD', 'GAS', 'NICKEL', 'LEAD'
+}
 
 
 class StatefulInferenceEngine:
@@ -24,6 +30,43 @@ class StatefulInferenceEngine:
         self.is_warm = False
         self.mt5_connection = None
         self.features_order = CANONICAL_FEATURES
+        self.is_quarantined = False
+        self.consecutive_safe_bars = 0
+
+    def check_quarantine(self, spread: float, atr: float, current_utc_hour: int = 12) -> Tuple[bool, str]:
+        """
+        P1 Quarantine with Hysteresis & Session Time Filter:
+        1. Exotic assets are strictly quarantined outside 07:00-17:00 UTC.
+        2. Hysteresis band: enters quarantine if spread/atr > 0.12; exits only if spread/atr < 0.08 for 2 consecutive bars.
+        """
+        sym_clean = self.symbol.upper().replace(".PI", "").replace(".P", "").replace(".R", "")
+        if sym_clean in EXOTIC_SESSION_RESTRICTED:
+            if current_utc_hour < 7 or current_utc_hour >= 17:
+                self.is_quarantined = True
+                self.consecutive_safe_bars = 0
+                return True, f"Quarantined (Exotic off-hours: {current_utc_hour:02d}:00 UTC outside 07-17 UTC)"
+
+        if atr <= 0 or spread <= 0:
+            return False, "Active"
+
+        ratio = spread / atr
+        if not self.is_quarantined:
+            if ratio > MAX_SPREAD_ATR_RATIO_ENTER:
+                self.is_quarantined = True
+                self.consecutive_safe_bars = 0
+                return True, f"Quarantined (Spread/ATR {ratio:.1%} > {MAX_SPREAD_ATR_RATIO_ENTER:.0%})"
+            return False, "Active"
+        else:
+            if ratio < MAX_SPREAD_ATR_RATIO_EXIT:
+                self.consecutive_safe_bars += 1
+                if self.consecutive_safe_bars >= 2:
+                    self.is_quarantined = False
+                    self.consecutive_safe_bars = 0
+                    return False, "Active (Hysteresis Cleared)"
+                return True, f"Quarantined (Clearing {self.consecutive_safe_bars}/2 bars: {ratio:.1%})"
+            else:
+                self.consecutive_safe_bars = 0
+                return True, f"Quarantined (Spread/ATR {ratio:.1%} > {MAX_SPREAD_ATR_RATIO_EXIT:.0%})"
 
     def warm_start(self, mt5_connection) -> bool:
         """

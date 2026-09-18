@@ -130,9 +130,9 @@ console = Console(force_terminal=True, width=get_terminal_width())
 # -------------------------------------------------------------------------
 # CANONICAL STRATEGY CONSTANTS & OPTION C GOVERNANCE
 # -------------------------------------------------------------------------
-BASE_RISK_USD = 50.0
+BASE_RISK_USD = 25.0              # Stepped down from 50.0 to 25.0 (0.50%) as recommended by Opus for pre-live capital preservation
 DEFENSE_RISK_USD = 15.0
-HOUSE_MONEY_RISK_USD = 75.0
+HOUSE_MONEY_RISK_USD = 50.0       # Scaled down proportionally (1.00%)
 HARD_DD_LIMIT_PCT = 4.50          # 4.5% Hard DD Stop (225.00 USD on 5,000.00 USD capital)
 DEFENSE_DD_LIMIT_PCT = 2.00       # 2.0% DD Defense Mode (100.00 USD on 5,000.00 USD capital)
 HOUSE_MONEY_THRESHOLD_USD = 50.0  # Profit threshold to unlock house money risk
@@ -142,8 +142,28 @@ TIME_DECAY_THRESHOLD_R = 0.20
 MAX_STOP_PCT = 0.025              # 2.5% max stop distance
 PROBABILITY_THRESHOLD = 0.55
 MAX_SPREAD_ATR_RATIO = 0.12       # Dynamic quarantine: spread > 12% of 15m ATR
+MAX_SPREAD_ATR_RATIO_ENTER = 0.12 # Enter quarantine threshold
+MAX_SPREAD_ATR_RATIO_EXIT = 0.08  # Exit quarantine hysteresis threshold
 MIN_SPREAD_MULTIPLIER = 3.5       # Stop distance must be >= 3.5x current broker spread
 MIN_ATR_MULTIPLIER = 1.5          # Stop distance must be >= 1.5x 15m ATR
+MIN_STRUCTURAL_R_EFF = 1.20       # Minimum effective R for structural targets
+MAX_STRUCTURAL_R_EFF = 3.50       # Cap effective R to avoid tail liquidity moonshots
+MAX_MARGIN_UTILIZATION_PCT = 0.30 # Portfolio margin utilization ceiling (30%)
+MIN_MARGIN_LEVEL_PCT = 200.0      # Minimum margin level before hard freeze (200%)
+
+# Institutional Correlation Clusters (Max 1 concurrent position per cluster)
+CORRELATION_CLUSTERS = {
+    'EUR_BLOC': {'EURUSD', 'EURSEK', 'EURCNH', 'EURHUF'},
+    'USD_BLOC': {'NZDUSD', 'AUDCHF'},
+    'CNH_BLOC': {'NZDCNH', 'XAUCNH', 'GAUCNH'},
+    'INDEX_BLOC': {'GER40', 'GER30', 'FR40', 'AU200', 'US2000'},
+    'COMMODITY_BLOC': {'GAS', 'NICKEL', 'LEAD'}
+}
+
+# Exotic assets restricted to London/NY liquid overlap hours (07:00 to 17:00 UTC)
+EXOTIC_SESSION_RESTRICTED = {
+    'EURHUF', 'EURSEK', 'USDSEK', 'USDHKD', 'GAS', 'NICKEL', 'LEAD'
+}
 
 
 
@@ -342,6 +362,40 @@ class OrderManager:
         self.closed_trades: List[Dict[str, Any]] = []
         self.initial_balance: float = 5000.0
         self.realized_pnl: float = 0.0
+        self.state_file = LOG_DIR / "live_state.json"
+        self.load_state()
+
+    def save_state(self) -> None:
+        """Persists open trades and realized PnL to live_state.json so it survives restarts."""
+        try:
+            state_data = {
+                "realized_pnl": self.realized_pnl,
+                "initial_balance": self.initial_balance,
+                "open_trades": self.open_trades,
+                "timestamp": time.time()
+            }
+            with open(self.state_file, "w", encoding="utf-8") as f:
+                json.dump(state_data, f, indent=2, default=str)
+        except Exception as e:
+            logging.error(f"Failed to save live state: {e}")
+
+    def load_state(self) -> None:
+        """Reconciles persisted state with MT5 live positions on boot."""
+        if not self.state_file.exists():
+            return
+        try:
+            with open(self.state_file, "r", encoding="utf-8") as f:
+                state_data = json.load(f)
+            self.realized_pnl = float(state_data.get("realized_pnl", 0.0))
+            saved_trades = state_data.get("open_trades", {})
+            if not self.dry_run and self.conn.connected:
+                live_positions = {p.ticket: p for p in (mt5.positions_get() or [])}
+                self.open_trades = {int(k): v for k, v in saved_trades.items() if int(k) in live_positions}
+            else:
+                self.open_trades = {int(k): v for k, v in saved_trades.items()}
+            logging.info(f"Loaded live state: realized_pnl={self.realized_pnl:.2f} USD, open_trades={len(self.open_trades)}")
+        except Exception as e:
+            logging.error(f"Failed to load live state: {e}")
 
     def get_current_risk_budget(self) -> Tuple[float, str]:
         """
@@ -349,8 +403,8 @@ class OrderManager:
         - Initial Capital: 5,000.00 USD
         - Hard Drawdown Stop: 4.50% (225.00 USD) -> 0.00 USD (Hard Freeze)
         - Drawdown Defense Mode: 2.00% (100.00 USD) -> 15.00 USD
-        - House Money Mode: Cumulative Profit >= 50.00 USD -> 75.00 USD
-        - Normal Base Risk: 50.00 USD
+        - House Money Mode: Cumulative Profit >= 50.00 USD -> 50.00 USD
+        - Normal Base Risk: 25.00 USD (0.50% capital preservation)
         Returns: (governed_risk_usd, regime_label)
         """
         metrics = self.get_account_metrics()
@@ -363,11 +417,11 @@ class OrderManager:
         elif dd_pct >= DEFENSE_DD_LIMIT_PCT or dd_usd >= 100.0:
             return DEFENSE_RISK_USD, f"DEFENSE (15.00 USD | DD {dd_pct:.2f}%)"
         elif self.realized_pnl >= HOUSE_MONEY_THRESHOLD_USD:
-            return HOUSE_MONEY_RISK_USD, f"HOUSE MONEY (75.00 USD | Profit +{self.realized_pnl:.2f} USD)"
-        return BASE_RISK_USD, "NORMAL (50.00 USD)"
+            return HOUSE_MONEY_RISK_USD, f"HOUSE MONEY (50.00 USD | Profit +{self.realized_pnl:.2f} USD)"
+        return BASE_RISK_USD, f"NORMAL ({BASE_RISK_USD:.2f} USD)"
 
     def calculate_lot_size(self, symbol: str, risk_usd: float, sl_dist: float) -> float:
-        """Calculates exact lot size based on symbol contract size and currency conversion."""
+        """Calculates exact lot size based on symbol contract size and currency conversion with leverage caps."""
         if not self.conn.connected or sl_dist <= 0:
             return 0.01
 
@@ -393,6 +447,29 @@ class OrderManager:
             return vol_min
 
         raw_lot = risk_usd / loss_per_lot
+
+        # P0 FIX: Institutional Maximum Leverage & Notional Sizing Caps
+        sym_clean = symbol.upper().replace(".PI", "").replace(".P", "").replace(".R", "")
+        if sym_clean in ['EURUSD', 'NZDUSD', 'AUDCHF']:
+            max_leverage = 10.0  # Majors: 10:1 max leverage (max 50k USD on 5k account)
+        elif sym_clean in ['EURCNH', 'NZDCNH']:
+            max_leverage = 5.0   # Minors: 5:1 max leverage (max 25k USD)
+        elif sym_clean in ['GER40', 'GER30', 'FR40', 'AU200', 'US2000']:
+            max_leverage = 5.0   # Indices: 5:1 max leverage
+        else:
+            max_leverage = 3.0   # Exotics & Commodities: 3:1 max leverage (max 15k USD)
+
+        tick = self.conn.get_last_tick(symbol)
+        curr_price = tick.bid if tick and tick.bid > 0 else 1.0
+        contract_notional = trade_contract * curr_price if trade_contract > 0 else 100000.0 * curr_price
+
+        metrics = self.get_account_metrics()
+        equity = metrics.get("equity", self.initial_balance + self.realized_pnl)
+        max_notional_cap = equity * max_leverage
+        max_lots_leverage = max_notional_cap / contract_notional if contract_notional > 0 else 1.0
+
+        raw_lot = min(raw_lot, max_lots_leverage)
+
         steps = round((raw_lot - vol_min) / vol_step)
         calc_lot = vol_min + (steps * vol_step)
         return float(np.clip(calc_lot, vol_min, sym_info.volume_max))
@@ -415,6 +492,19 @@ class OrderManager:
         # Enforce governed risk level
         risk_usd = min(risk_usd, governed_risk) if risk_usd > 0 else governed_risk
 
+        # P0 FIX: Margin Level & Margin Utilization Circuit Breakers
+        metrics = self.get_account_metrics()
+        margin_level = metrics.get("margin_level", 1000.0)
+        if margin_level > 0 and margin_level < MIN_MARGIN_LEVEL_PCT:
+            logging.warning(f"[RISK VETO] Account margin level ({margin_level:.1f}%) < {MIN_MARGIN_LEVEL_PCT:.0f}%. Order for {symbol} blocked.")
+            return None
+
+        equity = metrics.get("equity", self.initial_balance + self.realized_pnl)
+        curr_margin = metrics.get("margin", 0.0)
+        if equity > 0 and (curr_margin / equity) > MAX_MARGIN_UTILIZATION_PCT:
+            logging.warning(f"[RISK VETO] Margin utilization ({(curr_margin/equity):.1%}) > {MAX_MARGIN_UTILIZATION_PCT:.0%}. Order for {symbol} blocked.")
+            return None
+
         # Risk constraint 1: Max concurrent positions across portfolio
         if len(self.open_trades) >= self.max_concurrent:
             logging.info(f"[RISK VETO] Max concurrent positions ({self.max_concurrent}) reached. Signal for {symbol} vetoed.")
@@ -425,6 +515,21 @@ class OrderManager:
             if ot["symbol"] == symbol:
                 logging.info(f"[RISK VETO] Active position already open on {symbol}. Duplicate signal vetoed.")
                 return None
+
+        # P1 FIX: Correlation Cluster Constraint (Max 1 position per cluster)
+        sym_clean = symbol.upper().replace(".PI", "").replace(".P", "").replace(".R", "")
+        symbol_cluster = None
+        for c_name, c_members in CORRELATION_CLUSTERS.items():
+            if sym_clean in c_members:
+                symbol_cluster = c_name
+                break
+
+        if symbol_cluster:
+            for ot in self.open_trades.values():
+                ot_sym = ot.get("symbol", "").upper().replace(".PI", "").replace(".P", "").replace(".R", "")
+                if ot_sym in CORRELATION_CLUSTERS.get(symbol_cluster, set()):
+                    logging.info(f"[RISK VETO] Active position already open in cluster {symbol_cluster} ({ot_sym}). Signal for {symbol} vetoed.")
+                    return None
 
         real_symbol = self.conn.resolve_symbol(symbol)
         action_name = "BUY" if order_type == mt5.ORDER_TYPE_BUY else "SELL"
@@ -459,6 +564,7 @@ class OrderManager:
                 "ratchet_desc": "Base SL (-1.00R)"
             }
             logging.info(f"[PAPER ORDER] {action_name} {volume:.2f}L {symbol} @ {fill_price:.5f} | SL={sl_price:.5f} | TP={tp_price:.5f} | #{fake_ticket}")
+            self.save_state()
             return fake_ticket
 
         # Real Live Broker Order
@@ -509,6 +615,7 @@ class OrderManager:
             "ratchet_desc": "Base SL (-1.00R)"
         }
         logging.info(f"[LIVE ORDER FILLED] {action_name} {volume:.2f}L {symbol} @ {price:.5f} | Ticket: {live_ticket}")
+        self.save_state()
         return live_ticket
 
     def modify_sl(self, ticket: int, new_sl: float) -> bool:
@@ -517,6 +624,7 @@ class OrderManager:
                 old_sl = self.open_trades[ticket]["sl"]
                 self.open_trades[ticket]["sl"] = new_sl
                 logging.info(f"[PAPER RATCHET] #{ticket} SL modified: {old_sl:.5f} -> {new_sl:.5f}")
+                self.save_state()
                 return True
             return False
 
@@ -531,7 +639,11 @@ class OrderManager:
             "tp": trade["tp"]
         }
         res = mt5.order_send(request)
-        return (res.retcode == mt5.TRADE_RETCODE_DONE)
+        if res.retcode == mt5.TRADE_RETCODE_DONE:
+            trade["sl"] = new_sl
+            self.save_state()
+            return True
+        return False
 
     def close_trade(
         self,
@@ -599,6 +711,7 @@ class OrderManager:
                     logging.warning(f"[LIVE MT5 CLOSE FAILED] #{ticket}: {res.comment} ({res.retcode})")
 
         self.closed_trades.append(closed_record)
+        self.save_state()
         logging.info(f"[TRADE CLOSED] #{ticket} {t['symbol']} | Reason: {reason} | Exit: {actual_exit:.5f} | Realized PnL: {realized_pnl:+.2f} USD ({actual_r:+.2f}R)")
 
     def manage_open_trades(self, current_bar_time: datetime) -> None:
@@ -804,12 +917,12 @@ def compute_features_pandas(df: pd.DataFrame, buffer_4h: Optional[pd.DataFrame] 
         df['hour'] = 0
         df['day_of_week'] = 1
 
-    # 8. 4H Trend Alignment (Causal: from previous closed 4H bar)
+    # 8. 4H Trend Alignment (Causal: from previous closed 4H bar via shift(1))
     htf_4h_trend_val = 0.0
     if buffer_4h is not None and not buffer_4h.empty and len(buffer_4h) >= 205:
         b4h = buffer_4h.copy()
         b4h['ema_200_4h'] = b4h['close'].ewm(span=200, adjust=False).mean()
-        b4h['htf_4h_trend'] = b4h['ema_200_4h'] - b4h['ema_200_4h'].shift(5)
+        b4h['htf_4h_trend'] = (b4h['ema_200_4h'] - b4h['ema_200_4h'].shift(5)).shift(1)
         valid = b4h['htf_4h_trend'].dropna()
         if len(valid) > 0:
             htf_4h_trend_val = float(valid.iloc[-1])
@@ -909,12 +1022,15 @@ def calculate_adaptive_sl_tp(
     raw_sl: float,
     local_extreme: float,
     spread: float,
-    atr: float
+    atr: float,
+    tp_structural: Optional[float] = None
 ) -> Tuple[float, float, float, bool, str]:
     """
-    Option C: Computes adaptive SL and TP guaranteeing clearance from spread noise.
-    If raw_sl (from ORB/CRT) is tighter than max(3.5 * spread, 1.5 * atr),
-    it dynamically expands to the structural extreme (local_high/low) or the minimum floor.
+    Option C + Institutional P1 Hardening:
+    Computes adaptive SL and decoupled structural TP.
+    Guarantees clearance from spread noise: SL is expanded to structural extreme or max(3.5*spread, 1.5*atr).
+    TP is decoupled from floating R-multiples and anchored to structural session liquidity pools (e.g. 20-bar swing extreme).
+    Enforces MIN_STRUCTURAL_R_EFF <= R_eff <= MAX_STRUCTURAL_R_EFF (1.20 to 3.50).
     Returns: (sl, tp, r_dist, is_valid, reason)
     """
     spread_val = max(0.0, spread)
@@ -937,8 +1053,21 @@ def calculate_adaptive_sl_tp(
         if r_dist <= 0 or (entry > 0 and (r_dist / entry) > MAX_STOP_PCT):
             return (0.0, 0.0, 0.0, False, "HOLD (Stop Range Invalid)")
 
-        tp = entry + (2.5 * r_dist)
-        return (sl, tp, r_dist, True, "BUY (Adaptive Confluence)")
+        # P1 FIX: Structural TP Decoupling
+        if tp_structural is not None and tp_structural > entry:
+            struct_tp_dist = tp_structural - entry
+            r_eff = struct_tp_dist / r_dist
+            if r_eff < MIN_STRUCTURAL_R_EFF:
+                return (0.0, 0.0, 0.0, False, f"HOLD (R_eff {r_eff:.2f} < {MIN_STRUCTURAL_R_EFF:.2f})")
+            elif r_eff > MAX_STRUCTURAL_R_EFF:
+                tp = entry + (MAX_STRUCTURAL_R_EFF * r_dist)
+                r_eff = MAX_STRUCTURAL_R_EFF
+            else:
+                tp = tp_structural
+            return (sl, tp, r_dist, True, f"BUY (Adaptive {r_eff:.2f}R Struct)")
+        else:
+            tp = entry + (2.5 * r_dist)
+            return (sl, tp, r_dist, True, "BUY (Adaptive Confluence)")
     else:
         r_dist = raw_sl - entry
         sl = raw_sl
@@ -955,8 +1084,21 @@ def calculate_adaptive_sl_tp(
         if r_dist <= 0 or (entry > 0 and (r_dist / entry) > MAX_STOP_PCT):
             return (0.0, 0.0, 0.0, False, "HOLD (Stop Range Invalid)")
 
-        tp = entry - (2.5 * r_dist)
-        return (sl, tp, r_dist, True, "SELL (Adaptive Confluence)")
+        # P1 FIX: Structural TP Decoupling
+        if tp_structural is not None and tp_structural < entry:
+            struct_tp_dist = entry - tp_structural
+            r_eff = struct_tp_dist / r_dist
+            if r_eff < MIN_STRUCTURAL_R_EFF:
+                return (0.0, 0.0, 0.0, False, f"HOLD (R_eff {r_eff:.2f} < {MIN_STRUCTURAL_R_EFF:.2f})")
+            elif r_eff > MAX_STRUCTURAL_R_EFF:
+                tp = entry - (MAX_STRUCTURAL_R_EFF * r_dist)
+                r_eff = MAX_STRUCTURAL_R_EFF
+            else:
+                tp = tp_structural
+            return (sl, tp, r_dist, True, f"SELL (Adaptive {r_eff:.2f}R Struct)")
+        else:
+            tp = entry - (2.5 * r_dist)
+            return (sl, tp, r_dist, True, "SELL (Adaptive Confluence)")
 
 
 # -------------------------------------------------------------------------
@@ -971,6 +1113,43 @@ class StatefulInferenceEngine:
         self.buffer_4h: pd.DataFrame = pd.DataFrame()
         self.is_warm = False
         self.mt5_conn = None
+        self.is_quarantined = False
+        self.consecutive_safe_bars = 0
+
+    def check_quarantine(self, spread: float, atr: float, current_utc_hour: int = 12) -> Tuple[bool, str]:
+        """
+        P1 Quarantine with Hysteresis & Session Time Filter:
+        1. Exotic assets are strictly quarantined outside 07:00-17:00 UTC.
+        2. Hysteresis band: enters quarantine if spread/atr > 0.12; exits only if spread/atr < 0.08 for 2 consecutive bars.
+        """
+        sym_clean = self.symbol.upper().replace(".PI", "").replace(".P", "").replace(".R", "")
+        if sym_clean in EXOTIC_SESSION_RESTRICTED:
+            if current_utc_hour < 7 or current_utc_hour >= 17:
+                self.is_quarantined = True
+                self.consecutive_safe_bars = 0
+                return True, f"Quarantined (Exotic off-hours: {current_utc_hour:02d}:00 UTC outside 07-17 UTC)"
+
+        if atr <= 0 or spread <= 0:
+            return False, "Active"
+
+        ratio = spread / atr
+        if not self.is_quarantined:
+            if ratio > MAX_SPREAD_ATR_RATIO_ENTER:
+                self.is_quarantined = True
+                self.consecutive_safe_bars = 0
+                return True, f"Quarantined (Spread/ATR {ratio:.1%} > {MAX_SPREAD_ATR_RATIO_ENTER:.0%})"
+            return False, "Active"
+        else:
+            if ratio < MAX_SPREAD_ATR_RATIO_EXIT:
+                self.consecutive_safe_bars += 1
+                if self.consecutive_safe_bars >= 2:
+                    self.is_quarantined = False
+                    self.consecutive_safe_bars = 0
+                    return False, "Active (Hysteresis Cleared)"
+                return True, f"Quarantined (Clearing {self.consecutive_safe_bars}/2 bars: {ratio:.1%})"
+            else:
+                self.consecutive_safe_bars = 0
+                return True, f"Quarantined (Spread/ATR {ratio:.1%} > {MAX_SPREAD_ATR_RATIO_EXIT:.0%})"
 
     def warm_start(self, mt5_conn: MT5Connection) -> bool:
         self.mt5_conn = mt5_conn
@@ -1451,25 +1630,27 @@ class ICTFVGStrategy(BaseForexStrategy):
             entry = ask
             sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
                 symbol=symbol, is_long=True, entry=entry, raw_sl=local_low,
-                local_extreme=local_low, spread=spread, atr=atr
+                local_extreme=local_low, spread=spread, atr=atr,
+                tp_structural=local_high
             )
             if not valid:
                 return StrategySignal(symbol=symbol, signal=0, reason=reason)
             return StrategySignal(
                 symbol=symbol, signal=1, entry_price=entry, sl_price=sl,
-                tp_price=tp, strategy_tag="FVG", reason="BUY (ICT FVG)"
+                tp_price=tp, strategy_tag="FVG", reason=reason
             )
         elif trend < 0 and bear_fvg > 0:
             entry = bid
             sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
                 symbol=symbol, is_long=False, entry=entry, raw_sl=local_high,
-                local_extreme=local_high, spread=spread, atr=atr
+                local_extreme=local_high, spread=spread, atr=atr,
+                tp_structural=local_low
             )
             if not valid:
                 return StrategySignal(symbol=symbol, signal=0, reason=reason)
             return StrategySignal(
                 symbol=symbol, signal=-1, entry_price=entry, sl_price=sl,
-                tp_price=tp, strategy_tag="FVG", reason="SELL (ICT FVG)"
+                tp_price=tp, strategy_tag="FVG", reason=reason
             )
 
         return StrategySignal(symbol=symbol, signal=0, reason="HOLD (No FVG Setup)")
@@ -1546,25 +1727,27 @@ class MLStrategy(BaseForexStrategy):
             entry = ask
             sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
                 symbol=symbol, is_long=True, entry=entry, raw_sl=local_low,
-                local_extreme=local_low, spread=spread, atr=atr
+                local_extreme=local_low, spread=spread, atr=atr,
+                tp_structural=local_high
             )
             if not valid:
                 return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=reason)
             return StrategySignal(
                 symbol=symbol, signal=1, prob=prob, entry_price=entry, sl_price=sl,
-                tp_price=tp, strategy_tag="ML", reason="BUY (ML Signal)"
+                tp_price=tp, strategy_tag="ML", reason=reason
             )
         elif trend < 0 and prob >= self.prob_threshold:
             entry = bid
             sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
                 symbol=symbol, is_long=False, entry=entry, raw_sl=local_high,
-                local_extreme=local_high, spread=spread, atr=atr
+                local_extreme=local_high, spread=spread, atr=atr,
+                tp_structural=local_low
             )
             if not valid:
                 return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=reason)
             return StrategySignal(
                 symbol=symbol, signal=-1, prob=prob, entry_price=entry, sl_price=sl,
-                tp_price=tp, strategy_tag="ML", reason="SELL (ML Signal)"
+                tp_price=tp, strategy_tag="ML", reason=reason
             )
 
         return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Low Probability)")
@@ -1649,7 +1832,8 @@ class CombinedStrategy(BaseForexStrategy):
             raw_sl = crt["or_low"] if crt["is_long_crt"] and crt["or_low"] > 0 else local_low
             sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
                 symbol=symbol, is_long=True, entry=entry, raw_sl=raw_sl,
-                local_extreme=local_low, spread=spread, atr=atr
+                local_extreme=local_low, spread=spread, atr=atr,
+                tp_structural=local_high
             )
             if not valid:
                 return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=reason)
@@ -1662,7 +1846,8 @@ class CombinedStrategy(BaseForexStrategy):
             raw_sl = crt["or_high"] if crt["is_short_crt"] and crt["or_high"] > 0 else local_high
             sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
                 symbol=symbol, is_long=False, entry=entry, raw_sl=raw_sl,
-                local_extreme=local_high, spread=spread, atr=atr
+                local_extreme=local_high, spread=spread, atr=atr,
+                tp_structural=local_low
             )
             if not valid:
                 return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=reason)

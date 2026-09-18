@@ -171,7 +171,8 @@ class FVGMLForexCFDStrategy(BaseForexStrategy):
             entry = ask
             sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
                 symbol=symbol, is_long=True, entry=entry, raw_sl=local_low,
-                local_extreme=local_low, spread=spread, atr=atr
+                local_extreme=local_low, spread=spread, atr=atr,
+                tp_structural=local_high
             )
             if not valid:
                 return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=reason)
@@ -184,7 +185,7 @@ class FVGMLForexCFDStrategy(BaseForexStrategy):
                 tp_price=tp,
                 risk_usd=base_risk,
                 strategy_tag="FVG_ML",
-                reason="BUY (ICT FVG + ML)",
+                reason=reason,
                 metadata={"r_dist": r_dist, "target_r": self.target_r}
             )
 
@@ -192,7 +193,8 @@ class FVGMLForexCFDStrategy(BaseForexStrategy):
             entry = bid
             sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
                 symbol=symbol, is_long=False, entry=entry, raw_sl=local_high,
-                local_extreme=local_high, spread=spread, atr=atr
+                local_extreme=local_high, spread=spread, atr=atr,
+                tp_structural=local_low
             )
             if not valid:
                 return StrategySignal(symbol=symbol, signal=0, prob=prob, reason=reason)
@@ -205,7 +207,7 @@ class FVGMLForexCFDStrategy(BaseForexStrategy):
                 tp_price=tp,
                 risk_usd=base_risk,
                 strategy_tag="FVG_ML",
-                reason="SELL (ICT FVG + ML)",
+                reason=reason,
                 metadata={"r_dist": r_dist, "target_r": self.target_r}
             )
 

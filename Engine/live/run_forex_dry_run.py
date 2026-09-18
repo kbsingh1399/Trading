@@ -38,6 +38,12 @@ from Engine.live.mt5_connection import MT5Connection
 from Engine.live.inference_engine import StatefulInferenceEngine
 from Engine.live.order_manager import OrderManager
 from Engine.core.strategy_kernel import CANONICAL_FEATURES, CANONICAL_18_ASSETS
+from Engine.forex_engine import (
+    calculate_adaptive_sl_tp,
+    BASE_RISK_USD,
+    CORRELATION_CLUSTERS,
+    EXOTIC_SESSION_RESTRICTED
+)
 
 ASSETS = CANONICAL_18_ASSETS
 DATA_DIR = os.path.abspath(os.path.join(PROJECT_ROOT, "Forex_Backtesting_Data"))
@@ -417,49 +423,75 @@ def main():
                     is_long_sig = (trend_val > 0 and bull_fvg > 0 and prob >= 0.55)
                     is_short_sig = (trend_val < 0 and bear_fvg > 0 and prob >= 0.55)
 
+                atr = float(features.get('atr_14', 0.0))
+                current_utc_hour = datetime.now(timezone.utc).hour
+
+                # P1 Check: Spread/ATR Hysteresis Quarantine & Exotic Session Filter
+                is_quarantined, q_reason = engine.check_quarantine(spread, atr, current_utc_hour)
+
                 # 1. GATING LOGIC FIRST
-                if not is_kz:
+                if is_quarantined:
+                    decision_cell = f"[dim red]{q_reason}[/dim red]"
+                elif not is_kz:
                     decision_cell = "[dim yellow]HOLD (Off-Hours)[/dim yellow]"
 
                 # 2. EVALUATE LONG SETUP
                 elif is_long_sig:
                     entry = ask
-                    sl = local_low
-                    r_dist = entry - sl
-                    if r_dist <= 0:
-                        decision_cell = "[dim red]HOLD (Invalid SL)[/dim red]"
-                    elif (r_dist / entry) > 0.025:
-                        decision_cell = "[dim red]HOLD (SL > 2.5%)[/dim red]"
+                    sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
+                        symbol=asset,
+                        is_long=True,
+                        entry=entry,
+                        raw_sl=local_low,
+                        local_extreme=local_low,
+                        spread=spread,
+                        atr=atr,
+                        tp_structural=local_high
+                    )
+                    if not valid:
+                        decision_cell = f"[dim red]{reason}[/dim red]"
                     else:
-                        tp = entry + (4.0 * r_dist)
+                        can_open, veto_reason = order_mgr.can_open_trade(asset)
                         calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
-                        action_label = f"DRY-BUY ({strat_tag})" if is_dry_run else f"LIVE-BUY ({strat_tag})"
-                        decision_cell = f"[bold white on green] {action_label} ({calc_lots:.2f}L) [/bold white on green]"
-                        signals_count += 1
-                        log_msg = f"[{'DRY-RUN' if is_dry_run else 'LIVE'} SIGNAL: {asset} | BUY ({strat_tag}) | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
-                        logging.info(log_msg)
-                        if not is_dry_run:
-                            order_mgr.place_market_order(asset, mt5.ORDER_TYPE_BUY, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD)
+                        if not can_open:
+                            decision_cell = f"[dim yellow]HOLD ({veto_reason})[/dim yellow]"
+                        else:
+                            action_label = f"DRY-BUY ({strat_tag})" if is_dry_run else f"LIVE-BUY ({strat_tag})"
+                            decision_cell = f"[bold white on green] {action_label} ({calc_lots:.2f}L) [/bold white on green]"
+                            signals_count += 1
+                            log_msg = f"[{'DRY-RUN' if is_dry_run else 'LIVE'} SIGNAL: {asset} | BUY ({strat_tag}) | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots} | REASON={reason}]"
+                            logging.info(log_msg)
+                            if not is_dry_run:
+                                order_mgr.place_market_order(asset, mt5.ORDER_TYPE_BUY, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD)
 
                 # 3. EVALUATE SHORT SETUP
                 elif is_short_sig:
                     entry = bid
-                    sl = local_high
-                    r_dist = sl - entry
-                    if r_dist <= 0:
-                        decision_cell = "[dim red]HOLD (Invalid SL)[/dim red]"
-                    elif (r_dist / entry) > 0.025:
-                        decision_cell = "[dim red]HOLD (SL > 2.5%)[/dim red]"
+                    sl, tp, r_dist, valid, reason = calculate_adaptive_sl_tp(
+                        symbol=asset,
+                        is_long=False,
+                        entry=entry,
+                        raw_sl=local_high,
+                        local_extreme=local_high,
+                        spread=spread,
+                        atr=atr,
+                        tp_structural=local_low
+                    )
+                    if not valid:
+                        decision_cell = f"[dim red]{reason}[/dim red]"
                     else:
-                        tp = entry - (4.0 * r_dist)
+                        can_open, veto_reason = order_mgr.can_open_trade(asset)
                         calc_lots = order_mgr.calculate_lot_size(asset, risk_usd=BASE_RISK_USD, sl_dist=r_dist)
-                        action_label = f"DRY-SELL ({strat_tag})" if is_dry_run else f"LIVE-SELL ({strat_tag})"
-                        decision_cell = f"[bold white on red] {action_label} ({calc_lots:.2f}L) [/bold white on red]"
-                        signals_count += 1
-                        log_msg = f"[{'DRY-RUN' if is_dry_run else 'LIVE'} SIGNAL: {asset} | SELL ({strat_tag}) | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots}]"
-                        logging.info(log_msg)
-                        if not is_dry_run:
-                            order_mgr.place_market_order(asset, mt5.ORDER_TYPE_SELL, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD)
+                        if not can_open:
+                            decision_cell = f"[dim yellow]HOLD ({veto_reason})[/dim yellow]"
+                        else:
+                            action_label = f"DRY-SELL ({strat_tag})" if is_dry_run else f"LIVE-SELL ({strat_tag})"
+                            decision_cell = f"[bold white on red] {action_label} ({calc_lots:.2f}L) [/bold white on red]"
+                            signals_count += 1
+                            log_msg = f"[{'DRY-RUN' if is_dry_run else 'LIVE'} SIGNAL: {asset} | SELL ({strat_tag}) | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots} | REASON={reason}]"
+                            logging.info(log_msg)
+                            if not is_dry_run:
+                                order_mgr.place_market_order(asset, mt5.ORDER_TYPE_SELL, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD)
 
                 # 4. DIAGNOSTIC REASON FOR NO SIGNAL
                 else:
@@ -508,8 +540,8 @@ def main():
             strat_label = f"[bold cyan]{strat_mode.upper()}[/bold cyan] ({'Rule-Based ICT FVG' if strat_mode == 'fvg' else ('Pure XGBoost ML' if strat_mode == 'ml' else 'Dual Confluence: FVG + ML')})"
             header_text = (
                 f"[bold white]Account:[/bold white] #{acc_dict.get('login')} ({acc_dict.get('server')})  |  "
-                f"[bold white]Balance:[/bold white] ${acc_dict.get('balance'):,.2f} USD  |  "
-                f"[bold white]Equity:[/bold white] ${acc_dict.get('equity'):,.2f} USD\n"
+                f"[bold white]Balance:[/bold white] {acc_dict.get('balance'):,.2f} USD  |  "
+                f"[bold white]Equity:[/bold white] {acc_dict.get('equity'):,.2f} USD\n"
                 f"[bold white]Strategy:[/bold white] {strat_label}  |  "
                 f"[bold white]Kill Zone:[/bold white] {kz_display}  |  "
                 f"[bold white]Signals Logged:[/bold white] {signals_count}  |  "

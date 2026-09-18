@@ -232,7 +232,7 @@ def compute_features_pandas(buffer_15m: pd.DataFrame, buffer_4h: Optional[pd.Dat
     if buffer_4h is not None and not buffer_4h.empty and len(buffer_4h) >= 205:
         b4h = buffer_4h.copy()
         b4h['ema_200_4h'] = b4h['close'].ewm(span=200, adjust=False).mean()
-        b4h['htf_4h_trend'] = b4h['ema_200_4h'] - b4h['ema_200_4h'].shift(5)
+        b4h['htf_4h_trend'] = (b4h['ema_200_4h'] - b4h['ema_200_4h'].shift(5)).shift(1)
         valid_trends = b4h['htf_4h_trend'].dropna()
         if len(valid_trends) > 0:
             htf_4h_trend_val = float(valid_trends.iloc[-1])
