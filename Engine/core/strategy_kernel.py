@@ -212,14 +212,22 @@ def compute_features_pandas(buffer_15m: pd.DataFrame, buffer_4h: Optional[pd.Dat
         bd_avail['prev_day_high'] = bd['high'].values
         bd_avail['prev_day_low'] = bd['low'].values
         
-        # Backward join
+        # Backward join — normalize datetime resolution to avoid MergeError
+        left = df.reset_index()
+        left_dt_col = [c for c in left.columns if c not in df.columns][0]  # whatever reset_index named it
+        left = left.rename(columns={left_dt_col: '_dt'})
+        left['_dt'] = pd.to_datetime(left['_dt'], utc=True).astype('datetime64[us, UTC]')
+        right = bd_avail.reset_index()
+        right_dt_col = [c for c in right.columns if c not in bd_avail.columns][0]
+        right = right.rename(columns={right_dt_col: '_dt'})
+        right['_dt'] = pd.to_datetime(right['_dt'], utc=True).astype('datetime64[us, UTC]')
         merged = pd.merge_asof(
-            df.reset_index(),
-            bd_avail.reset_index().rename(columns={'index': 'datetime'}),
-            on='datetime',
+            left, right,
+            on='_dt',
             direction='backward'
         )
-        merged.set_index('datetime', inplace=True)
+        merged.set_index('_dt', inplace=True)
+        merged.index.name = df.index.name  # restore original index name
         
         df['sweep_pdl'] = (df['low'] <= merged['prev_day_low']).astype(int)
         df['sweep_pdh'] = (df['high'] >= merged['prev_day_high']).astype(int)
@@ -277,14 +285,22 @@ def compute_features_pandas(buffer_15m: pd.DataFrame, buffer_4h: Optional[pd.Dat
         # Availability time = start of next 4H window (+4 hours)
         b4h_avail = pd.DataFrame(index=b4h.index + pd.Timedelta(hours=4))
         b4h_avail['htf_4h_trend'] = b4h['htf_4h_trend'].values
-        
+        # Normalize datetime resolution to avoid MergeError
+        left_4h = df.reset_index()
+        left_4h_dt_col = [c for c in left_4h.columns if c not in df.columns][0]
+        left_4h = left_4h.rename(columns={left_4h_dt_col: '_dt'})
+        left_4h['_dt'] = pd.to_datetime(left_4h['_dt'], utc=True).astype('datetime64[us, UTC]')
+        right_4h = b4h_avail.reset_index()
+        right_4h_dt_col = [c for c in right_4h.columns if c not in b4h_avail.columns][0]
+        right_4h = right_4h.rename(columns={right_4h_dt_col: '_dt'})
+        right_4h['_dt'] = pd.to_datetime(right_4h['_dt'], utc=True).astype('datetime64[us, UTC]')
         merged_4h = pd.merge_asof(
-            df.reset_index(),
-            b4h_avail.reset_index().rename(columns={'index': 'datetime'}),
-            on='datetime',
+            left_4h, right_4h,
+            on='_dt',
             direction='backward'
         )
-        merged_4h.set_index('datetime', inplace=True)
+        merged_4h.set_index('_dt', inplace=True)
+        merged_4h.index.name = df.index.name
         df['htf_4h_trend'] = merged_4h['htf_4h_trend'].fillna(0.0)
     elif buffer_4h is not None and not buffer_4h.empty and len(buffer_4h) >= 205:
         b4h = buffer_4h.copy()
