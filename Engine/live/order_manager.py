@@ -21,6 +21,13 @@ CORRELATION_CLUSTERS = {
     'COMMODITY_BLOC': {'GAS', 'NICKEL', 'LEAD'}
 }
 
+from Engine.forex_engine import (
+    is_broker_rollover_window,
+    is_friday_weekend_lockout,
+    is_friday_closeout_window,
+    RECONCILE_HEARTBEAT_INTERVAL_SEC
+)
+
 class OrderManager:
     def __init__(self, connection):
         self.conn = connection
@@ -29,11 +36,21 @@ class OrderManager:
 
     def can_open_trade(self, symbol: str) -> tuple:
         """
-        Validates portfolio limits and correlation cluster rules before order entry:
-        1. Max concurrent positions across portfolio (<= 2).
-        2. Single active position per asset (no duplicates).
-        3. Correlation cluster restriction (max 1 active position per cluster).
+        Validates portfolio limits, correlation clusters, and operational safeguards before order entry:
+        1. Operational Safeguard 1: Rollover spread lockout (21:55-22:15 UTC).
+        2. Operational Safeguard 2: Friday weekend gap protection (>= 18:00 UTC).
+        3. Max concurrent positions across portfolio (<= 3).
+        4. Single active position per asset (no duplicates).
+        5. Correlation cluster restriction (max 1 active position per cluster).
         """
+        # Operational Safeguard 1: Rollover Lockout (21:55 - 22:15 UTC)
+        if is_broker_rollover_window():
+            return False, "Rollover Lockout (21:55-22:15 UTC)"
+
+        # Operational Safeguard 2: Friday Weekend Cutoff (>= 18:00 UTC)
+        if is_friday_weekend_lockout():
+            return False, "Friday Cutoff (>= 18:00 UTC)"
+
         if len(self.open_trades) >= MAX_CONCURRENT_POSITIONS:
             return False, f"Max Positions ({MAX_CONCURRENT_POSITIONS})"
 
@@ -56,6 +73,27 @@ class OrderManager:
                     return False, f"Cluster Veto: {symbol_cluster} ({ot_sym})"
 
         return True, "OK"
+
+    def reconcile_with_broker(self):
+        """
+        Broker Position Reconciliation Heartbeat (runs every 30 seconds).
+        Cross-verifies MT5 broker-side tickets against local open_trades memory.
+        Detects positions closed externally by broker-side SL/TP or terminal disconnects.
+        """
+        if not self.conn.connected:
+            return
+        try:
+            live_pos = mt5.positions_get()
+            live_positions = {p.ticket: p for p in (live_pos or [])}
+            missing_tickets = [t for t in list(self.open_trades.keys()) if t not in live_positions]
+            for t in missing_tickets:
+                closed = self.open_trades.pop(t)
+                logging.info(f"[RECONCILE HEARTBEAT] Detected external/broker closure for ticket #{t} ({closed.get('symbol')}). State reconciled.")
+            if missing_tickets:
+                self.save_state()
+        except Exception as e:
+            logging.error(f"[RECONCILE HEARTBEAT ERROR] Failed to cross-verify MT5 positions: {e}")
+
         
     def save_state(self):
         """Persists active open trades to live_state.json so positions survive restarts."""
@@ -314,8 +352,19 @@ class OrderManager:
         """
         if not self.conn.connected:
             return
-            
+
+        # Operational Safeguard 2b: Friday Weekend Gap Defense - Liquidate open positions at 20:30 UTC Friday
+        if is_friday_closeout_window():
+            for ticket in list(self.open_trades.keys()):
+                logging.info(f"[FRIDAY CLOSEOUT] Closing #{ticket} for weekend gap defense.")
+                self.close_position(ticket)
+            return
+
+        # Operational Safeguard 1b: Pause ratchet modifications during 21:55-22:15 UTC daily rollover
+        in_rollover = is_broker_rollover_window()
+
         tickets_to_check = list(self.open_trades.keys())
+
         
         for ticket in tickets_to_check:
             position = mt5.positions_get(ticket=ticket)
@@ -371,14 +420,18 @@ class OrderManager:
                 new_sl_r = 0.15
                 
             if new_sl_r is not None:
-                # Calculate new SL price
-                if pos.type == mt5.POSITION_TYPE_BUY:
-                    new_sl_price = entry + (new_sl_r * r_dist)
-                    # Ensure we only move SL up
-                    if new_sl_price > pos.sl:
-                        self.modify_sl(ticket, new_sl_price)
+                if in_rollover:
+                    logging.info(f"[ROLLOVER LOCKOUT] Suppressing SL modification for #{ticket} during 21:55-22:15 UTC bank settlement.")
                 else:
-                    new_sl_price = entry - (new_sl_r * r_dist)
-                    # Ensure we only move SL down (for short, SL is above entry)
-                    if new_sl_price < pos.sl or pos.sl == 0:
-                        self.modify_sl(ticket, new_sl_price)
+                    # Calculate new SL price
+                    if pos.type == mt5.POSITION_TYPE_BUY:
+                        new_sl_price = entry + (new_sl_r * r_dist)
+                        # Ensure we only move SL up
+                        if new_sl_price > pos.sl:
+                            self.modify_sl(ticket, new_sl_price)
+                    else:
+                        new_sl_price = entry - (new_sl_r * r_dist)
+                        # Ensure we only move SL down (for short, SL is above entry)
+                        if new_sl_price < pos.sl or pos.sl == 0:
+                            self.modify_sl(ticket, new_sl_price)
+

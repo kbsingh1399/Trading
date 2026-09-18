@@ -42,7 +42,8 @@ from Engine.forex_engine import (
     calculate_adaptive_sl_tp,
     BASE_RISK_USD,
     CORRELATION_CLUSTERS,
-    EXOTIC_SESSION_RESTRICTED
+    EXOTIC_SESSION_RESTRICTED,
+    RECONCILE_HEARTBEAT_INTERVAL_SEC
 )
 
 ASSETS = CANONICAL_18_ASSETS
@@ -273,10 +274,17 @@ def main():
 
     start_time = datetime.now()
     signals_count = 0
+    last_reconcile_time = 0.0
 
     try:
         while True:
+            # Operational Safeguard 3: Broker Position Reconciliation Heartbeat (every 30 seconds)
+            if time.time() - last_reconcile_time >= RECONCILE_HEARTBEAT_INTERVAL_SEC:
+                order_mgr.reconcile_with_broker()
+                last_reconcile_time = time.time()
+
             # Reconnection logic & dynamic account updates
+
             acc = mt5.account_info()
             if acc is None:
                 logging.warning("MT5 connection lost in telemetry loop. Attempting to reconnect...")

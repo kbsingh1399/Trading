@@ -166,6 +166,49 @@ EXOTIC_SESSION_RESTRICTED = {
     'EURHUF', 'EURSEK', 'USDSEK', 'USDHKD', 'GAS', 'NICKEL', 'LEAD'
 }
 
+# -------------------------------------------------------------------------
+# INSTITUTIONAL OPERATIONAL SAFEGUARDS (OPUS AUDIT MANDATES)
+# -------------------------------------------------------------------------
+ROLLOVER_LOCKOUT_START_MINUTE = 21 * 60 + 55  # 21:55 UTC (Bank Rollover Settlement)
+ROLLOVER_LOCKOUT_END_MINUTE = 22 * 60 + 15    # 22:15 UTC (Spread Stabilization)
+FRIDAY_ENTRY_CUTOFF_HOUR = 18                 # 18:00 UTC Friday: No new trade entries
+FRIDAY_CLOSEOUT_HOUR = 20                     # 20:30 UTC Friday: Weekend Gap Defense liquidation
+FRIDAY_CLOSEOUT_MINUTE = 30
+RECONCILE_HEARTBEAT_INTERVAL_SEC = 30.0       # 30-second MT5 broker position reconciliation
+
+
+def is_broker_rollover_window(dt_utc: Optional[datetime] = None) -> bool:
+    """
+    Enforces hard temporal lockout between 21:55 UTC and 22:15 UTC (Daily Bank Settlement).
+    During this 20-minute window, interbank spreads widen by 10x-50x.
+    All new orders and broker-side ratchet modifications are strictly frozen.
+    """
+    dt = dt_utc or datetime.now(timezone.utc)
+    minute_of_day = dt.hour * 60 + dt.minute
+    return ROLLOVER_LOCKOUT_START_MINUTE <= minute_of_day <= ROLLOVER_LOCKOUT_END_MINUTE
+
+
+def is_friday_weekend_lockout(dt_utc: Optional[datetime] = None) -> bool:
+    """
+    Bans new trade entries after Friday 18:00 UTC to prevent weekend gap exposure
+    in commodities (GAS, NICKEL) and index CFDs (GER40, US2000).
+    """
+    dt = dt_utc or datetime.now(timezone.utc)
+    return dt.weekday() == 4 and dt.hour >= FRIDAY_ENTRY_CUTOFF_HOUR
+
+
+def is_friday_closeout_window(dt_utc: Optional[datetime] = None) -> bool:
+    """
+    Signals weekend closeout starting Friday 20:30 UTC for all CFD/Forex holdings.
+    """
+    dt = dt_utc or datetime.now(timezone.utc)
+    if dt.weekday() != 4:
+        return False
+    return (dt.hour > FRIDAY_CLOSEOUT_HOUR) or (
+        dt.hour == FRIDAY_CLOSEOUT_HOUR and dt.minute >= FRIDAY_CLOSEOUT_MINUTE
+    )
+
+
 
 
 # -------------------------------------------------------------------------
@@ -398,6 +441,27 @@ class OrderManager:
         except Exception as e:
             logging.error(f"Failed to load live state: {e}")
 
+    def reconcile_with_broker(self) -> None:
+        """
+        Broker Position Reconciliation Heartbeat (runs every 30s during live telemetry).
+        Cross-verifies MT5 broker-side tickets against local open_trades memory.
+        Detects positions closed externally by broker-side SL/TP or terminal disconnects.
+        """
+        if self.dry_run or not self.conn.connected:
+            return
+        try:
+            live_pos = mt5.positions_get()
+            live_positions = {p.ticket: p for p in (live_pos or [])}
+            missing_tickets = [t for t in list(self.open_trades.keys()) if t not in live_positions]
+            for t in missing_tickets:
+                closed_trade = self.open_trades.pop(t)
+                logging.info(f"[RECONCILE HEARTBEAT] Detected external/broker closure for ticket #{t} ({closed_trade['symbol']}). State reconciled.")
+            if missing_tickets:
+                self.save_state()
+        except Exception as e:
+            logging.error(f"[RECONCILE HEARTBEAT ERROR] Failed to cross-verify MT5 positions: {e}")
+
+
     def get_current_risk_budget(self) -> Tuple[float, str]:
         """
         3-Tier Calmar-Optimised Risk Governor (research: Avg Calmar 40.41, peak 138.59 across 20 OOS windows):
@@ -504,6 +568,17 @@ class OrderManager:
             return None
         # Enforce governed risk level
         risk_usd = min(risk_usd, governed_risk) if risk_usd > 0 else governed_risk
+
+        # Operational Safeguard 1: Broker Rollover Spread Trap Lockout (21:55 - 22:15 UTC)
+        if is_broker_rollover_window():
+            logging.warning(f"[ROLLOVER VETO] 21:55-22:15 UTC interbank rollover settlement active. Order for {symbol} blocked.")
+            return None
+
+        # Operational Safeguard 2: Friday Weekend Gap Protection (No new entries after 18:00 UTC Friday)
+        if is_friday_weekend_lockout():
+            logging.warning(f"[WEEKEND VETO] Friday >= {FRIDAY_ENTRY_CUTOFF_HOUR}:00 UTC weekend gap cutoff active. Order for {symbol} blocked.")
+            return None
+
 
         # P0 FIX: Margin Level & Margin Utilization Circuit Breakers
         metrics = self.get_account_metrics()
@@ -729,6 +804,15 @@ class OrderManager:
 
     def manage_open_trades(self, current_bar_time: datetime) -> None:
         """Applies 7-stage microstructure ratchets, running PnL calculations, and time-decay exits."""
+        # Operational Safeguard 2b: Friday Weekend Gap Defense - Liquidate open positions at 20:30 UTC Friday
+        if is_friday_closeout_window():
+            for ticket in list(self.open_trades.keys()):
+                self.close_trade(ticket, reason="FRIDAY CLOSEOUT (Weekend Gap Defense at 20:30 UTC)")
+            return
+
+        # Operational Safeguard 1b: Pause ratchet modifications during 21:55-22:15 UTC daily rollover
+        in_rollover = is_broker_rollover_window()
+
         for ticket, trade in list(self.open_trades.items()):
             sym = trade["symbol"]
             tick = self.conn.get_last_tick(sym)
@@ -812,14 +896,18 @@ class OrderManager:
                 trade["ratchet_desc"] = "BE Lock (+0.15R)"
 
             if new_sl_r is not None:
-                if is_long:
-                    candidate_sl = entry + (new_sl_r * r_dist)
-                    if candidate_sl > trade["sl"]:
-                        self.modify_sl(ticket, candidate_sl)
+                if in_rollover:
+                    logging.info(f"[ROLLOVER LOCKOUT] Suppressing SL ratchet modification for {sym} during 21:55-22:15 UTC settlement.")
                 else:
-                    candidate_sl = entry - (new_sl_r * r_dist)
-                    if candidate_sl < trade["sl"] or trade["sl"] == 0:
-                        self.modify_sl(ticket, candidate_sl)
+                    if is_long:
+                        candidate_sl = entry + (new_sl_r * r_dist)
+                        if candidate_sl > trade["sl"]:
+                            self.modify_sl(ticket, candidate_sl)
+                    else:
+                        candidate_sl = entry - (new_sl_r * r_dist)
+                        if candidate_sl < trade["sl"] or trade["sl"] == 0:
+                            self.modify_sl(ticket, candidate_sl)
+
 
     def get_account_metrics(self) -> Dict[str, Any]:
         """Aggregates real-time broker/paper account metrics, running PnL, equity, and drawdowns."""
@@ -2430,11 +2518,18 @@ class ForexEngine:
                 console.print(frame)
                 return
 
+            last_reconcile_time = 0.0
             with Live(console=console, screen=False, auto_refresh=False) as live_ui:
                 while True:
+                    # Operational Safeguard 3: Broker Position Reconciliation Heartbeat (every 30 seconds)
+                    if time.time() - last_reconcile_time >= RECONCILE_HEARTBEAT_INTERVAL_SEC:
+                        self.order_mgr.reconcile_with_broker()
+                        last_reconcile_time = time.time()
+
                     frame = build_dashboard_frame()
                     live_ui.update(frame, refresh=True)
                     time.sleep(interval)
+
 
         except KeyboardInterrupt:
             console.print("[yellow]Telemetry stopped by user.[/yellow]")
