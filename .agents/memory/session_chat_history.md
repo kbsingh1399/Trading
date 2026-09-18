@@ -46052,3 +46052,15 @@ and which we choose...do we choose highest probabilty first
 2. Two-Pass Candidate Arbitration Implemented: Refactored Engine/live/run_forex_dry_run.py to decouple signal detection from immediate execution. All candidate signals across the 18 assets are collected on each bar, sorted descending by P*, and processed top-down against the 2 concurrent position limits and correlation cluster rules.
 3. Live Execution Telemetry: Tested with --ignore-kz, confirming that high-probability candidates receive first priority while structural reward-to-risk (R_eff >= 1.20) and FVG confluence protect against suboptimal fills.
 4. Git Persistence: Committed and pushed to GitHub main (commit 1fbcedd).
+
+---
+
+### User Prompt:
+it show no trade / done? / continue
+
+### Assistant Response:
+1. Live Position Verification: Verified via direct MetaTrader 5 API query that a live trade IS ACTIVE on the account: Ticket #17559113 on USDSEK.pi (BUY 0.01 Lots @ 9.82184, SL 9.79743, TP 9.88286).
+2. Active Positions Table Added: Resolved the visibility issue where the terminal was only displaying the 18-asset candidate scanner without rendering active open trades. Implemented a dedicated 'LIVE ACTIVE BROKER POSITIONS' table directly in Engine/live/run_forex_dry_run.py displaying Ticket #, Symbol, Direction, Volume, Entry Price, Live Price, Floating PnL, Current R, SL/TP, Time Decay Bars (1/24), and Ratchet Status.
+3. Telemetry Highlighting: Updated the scanner table so holding assets display 'ACTIVE TRADE: BUY 0.01L' in bold white-on-blue instead of generic new-entry gating reasons.
+4. MT5 View Reset: Instructed user on revealing the MT5 bottom Toolbox via Ctrl + T to inspect live floating equity, margin, and order status in the broker GUI.
+5. Git Persistence: Committed and pushed changes to GitHub main.
