@@ -1,0 +1,106 @@
+﻿# ADVERSARIAL QUANT AUDIT & PIPELINE CERTIFICATION DIRECTIVE (Ox_Alpha_37)
+**TARGET AUDITOR:** Chief Quantitative Officer / Lead Quantitative Risk Engineer (Claude Opus / Arena.ai)
+**REPOSITORY:** https://github.com/kbsingh1399/Trading.git (Branch: main | Tree Commit: 8411bfa)
+**EVALUATION SCOPE:** Forensic Verification of Remediations for Ox_Alpha_36 Audit Findings (S-1 through S-10) and MT5 Live/Dry-Run Execution Integrity
+**DATASET & ENVIRONMENT PROVENANCE:** 18 Canonical Institutional Instruments (Forex, CFD Indices, Commodities) | MetaTrader 5 Blueberry Markets SVG | 5,000.00 USD Initial Capital | Strict Real Frictions
+
+---
+
+## 1. CONTEXT & REMEDIATION MANDATE
+
+In the previous formal adversarial quant audit (Ox_Alpha_36), certification was withheld (score 1.5 / 10) due to critical defects across the research evaluation and live execution pipelines:
+- **S-1 (BLOCKING - Evaluator Payoff Defect):** run_dynamic_oos.py and asset_screener.py booked winning trades as a flat WIN_R = 2.5 whenever target == 1, inflating expectancy by crediting break-even scratches (+0.15R) as full +2.5R wins.
+- **S-2 (BLOCKING - Broken Forward Test Harness):** forward_test_harness.py crashed on boot with AttributeError due to calling non-existent methods (infer_next_bar, get_current_bid, get_current_ask).
+- **S-3 (BLOCKING - Non-Chronological Drawdown):** run_dynamic_oos.py concatenated trades asset-by-asset rather than sorting chronologically by datetime, suppressing portfolio drawdown, while target_oos_criteria.json was never applied.
+- **S-5 (Train/Serve Ratchet & Target Mismatch):** XGBoost labels in strategy_kernel.py were trained against MIN_R_MULTIPLE = 4.0, while live order manager executed take-profit at 2.50R.
+- **S-6 (Feature Parity & Hysteresis):** Potential min_periods warmup disparity between streaming and batch feature calculation.
+- **S-10 (Security & Operational Risks):** Mandatory plaintext password on CLI args; terminal KeyError on live position state tracking.
+
+All remediations have been implemented and pushed to GitHub main (commit: 8411bfa). As an adversarial auditor, you operate in a fresh session with zero previous context and zero repo access. You MUST fetch the source files directly from GitHub via their raw URLs to verify that every defect has been structurally resolved.
+
+---
+
+## 2. REPOSITORY SOURCE CODE INSPECTION LINKS
+
+Fetch and inspect the committed source files directly from GitHub:
+
+1. **Strategy Kernel (Core ML Labels, Features & Ratchets):**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/strategy_kernel.py
+
+2. **Master Forex Engine (Orchestration, Signal Generator & Live Terminal):**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/forex_engine.py
+
+3. **Order Manager (Live Execution, Risk Budget & Microstructure Ratchet):**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/order_manager.py
+
+4. **Stateful Inference Engine (Streaming Buffers & Real-Time Bar Inference):**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/inference_engine.py
+
+5. **MT5 Connection Layer (Broker Interface & Price Quotations):**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/mt5_connection.py
+
+6. **Gate 3 Forward Test Validation Harness:**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/forward_test_harness.py
+
+7. **Walk-Forward Dynamic OOS Evaluator:**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/run_dynamic_oos.py
+
+8. **Nightly Asset Screener & IS Ranking Gate:**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/asset_screener.py
+
+9. **Pre-Launch 13-Point Compliance Test Harness:**
+   https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/tests/test_prelaunch.py
+
+10. **Target Acceptance Criteria Schema:**
+    https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json
+
+---
+
+## 3. AUDIT VERIFICATION CHECKLIST & QUESTIONS
+
+Please perform a rigorous, line-by-line adversarial review of the committed code and address the following specific questions:
+
+### Question 1: S-1 Payoff Remediation
+Inspect Engine/research/run_dynamic_oos.py and Engine/research/asset_screener.py.
+- Has the flat WIN_R = 2.5 substitution been completely removed?
+- Does the simulator now consume r_realized directly from df['r_realized']?
+- Are scratch/break-even exits (+0.15R) accurately booked at their true fractional R-multiple?
+
+### Question 2: S-2 & S-10 Forward Test Harness Repair & Security
+Inspect Engine/research/forward_test_harness.py, Engine/live/inference_engine.py, and Engine/live/mt5_connection.py.
+- Does StatefulInferenceEngine.infer_next_bar(model, conn) now exist and properly return (bar_time, direction, prob, spread, atr)?
+- Do MT5Connection.get_current_bid(sym) and MT5Connection.get_current_ask(sym) exist and handle missing ticks gracefully?
+- Are MT5 login credentials decoupled from mandatory CLI arguments, allowing safe execution via active terminal connection or environment variables?
+
+### Question 3: S-3 Chronological Time-Ordering & Criteria Gating
+Inspect Engine/research/run_dynamic_oos.py.
+- Are trades across all assets collected with timestamps and sorted chronologically before constructing the portfolio equity curve and computing max_dd_pct?
+- Does grade_window enforce the exact thresholds from Engine/target_oos_criteria.json (ROI >= 10.0%, Max DD <= 5.0%, Win Rate >= 40.0%, Min Trades >= 15, and DD <= 4.5% Tier-0 stop)?
+- Are zero-drawdown or skip windows handled without skewing the portfolio Calmar averages?
+
+### Question 4: S-5 & S-9 Train/Serve Target & Ratchet Parity
+Inspect Engine/core/strategy_kernel.py, Engine/forex_engine.py, and Engine/live/order_manager.py.
+- Is MIN_R_MULTIPLE = 2.5 consistently defined as the global target multiple?
+- Do the training labels in create_labels_ratchet match the live execution take-profit at +2.5R?
+- Are the microstructure ratchet stages synchronized across all files:
+  * Phase 0 (BE Lock): Triggers at +0.80R gain -> Moves stop to Entry +0.15R
+  * Phase 1 (Profit Lock): Triggers at +1.50R gain -> Moves stop to Entry +0.80R
+  * Phase 2: Triggers at +2.00R gain -> Moves stop to Entry +1.80R
+  * Target Exit: +2.50R
+  * Time Decay Exit: Closes at market if < +0.20R at bar 24 (6 hours)?
+
+### Question 5: Live Execution Hardening & Pre-Launch Compliance
+Inspect Engine/forex_engine.py, Engine/live/order_manager.py, and Engine/tests/test_prelaunch.py.
+- Is the live state tracking hardened with dual-key defensive fallback (entry / entry_price, bars_held / bars_elapsed) to prevent runtime KeyError crashes?
+- Does the 13-point pre-launch compliance harness (Engine/tests/test_prelaunch.py) pass without failure?
+- Does the live snapshot mode (--mode snapshot) confirm end-to-end operational stability with active live MT5 positions?
+
+---
+
+## 4. FORMAL AUDIT DELIVERABLES REQUESTED
+
+Please provide:
+1. **Adversarial Forensic Assessment:** An item-by-item verdict on each of the findings S-1, S-2, S-3, S-5, S-6, S-9, and S-10 (Resolved / Partially Resolved / Unresolved).
+2. **Mathematical Expectancy & Capacity Review:** Your revised assessment of real-world expectancy under true realized R and real frictions.
+3. **Production Readiness Scorecard:** An updated Production Score (0.0 to 10.0) reflecting current code quality, safety, and live deployment readiness.
+4. **Final Deployment Recommendation:** Clear recommendation on whether the pipeline is cleared for live execution or if any residual blockers remain.
