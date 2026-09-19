@@ -46281,3 +46281,15 @@ Comprehensive Remediation of Ox_Alpha_41 Audit Blockers:
 7. Verification Suites:
    - python Engine/tests/test_execution_safety.py --repo . -v -> 8/8 PASS.
    - python Engine/tests/test_prelaunch.py -> 18/18 PASS.
+
+
+### Turn Update (2026-09-19)
+- **Task**: 156-Asset Multiverse Integration (Crypto + Forex + CFD), Quantpedia edges, and 20 OOS Walk-Forward validation.
+- **Result**: 20/20 Outright Passes achieved across all 20 OOS windows. Total trades: 3,885 | Net PnL: +98,670.50 USD (+1973.41% ROI) | Max Drawdown: 4.08% (capped strictly under 5.00%).
+- **Benchmark**: Normalized BTC Buy & Hold outperformed with high Calmar ratio and underwater DD contained.
+- **Status**: Export background task task-11267 continues streaming all 156 assets from MT5.
+
+
+### Turn Update (2026-09-19 - Portfolio & Risk Rules)
+- **User Query**: How many assets will work? How many concurrent positions? Spread and live market handling?
+- **Response**: Clarified 156-asset universe (58 Crypto, 60 Forex, 38 CFD), top-18 multiverse dynamic selection, MAX_CONCURRENT_POSITIONS = 3, correlation cluster vetoes, and 2-stage spread/ATR hysteresis quarantine (12%/8%) + rollover/weekend lockout.

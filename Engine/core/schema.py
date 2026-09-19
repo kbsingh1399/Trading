@@ -183,6 +183,40 @@ SYMBOLS: List[str] = [
     "APTUSDT", "OPUSDT", "ARBUSDT",
 ]
 
+# ------------------------------------------------------------------------------
+# Unified 3-Basket Universe: Crypto, Forex & CFD (Decoupled Institutional Baskets)
+# ------------------------------------------------------------------------------
+ASSET_BASKETS: Dict[str, List[str]] = {
+    "Crypto": [
+        "BTCUSD", "ETHUSD", "SOLUSD", "XRPUSD", "BNBUSD",
+        "LTCUSD", "ADAUSD", "DOTUSD", "BCHUSD",
+    ],
+    "Forex": [
+        "EURUSD", "NZDUSD", "AUDCHF", "EURHUF", "USDSEK",
+        "EURSEK", "USDHKD", "EURCNH", "NZDCNH",
+    ],
+    "CFD": [
+        "GER40", "AU200", "FR40", "US2000", "GAS",
+        "NICKEL", "LEAD", "XAUCNH", "GAUCNH",
+    ],
+}
+
+# Known broker symbol suffixes to clean canonical symbols
+BROKER_SUFFIXES: Tuple[str, ...] = (".pi", ".p", "_i", ".m")
+
+
+def clean_broker_symbol(raw_symbol: str) -> str:
+    """
+    Map broker raw symbols (e.g. BTCUSD.pi, EURUSD.p, GER40.m) to canonical symbols.
+    """
+    if not raw_symbol:
+        return ""
+    clean = raw_symbol.split(".")[0]
+    if clean.endswith("_i"):
+        clean = clean[:-2]
+    return clean.upper()
+
+
 # First trading day of each USDT-M perpetual. Used to bound archive scans and to
 # start EMA warm-up as early as history allows.
 FUTURES_LISTING_DATES: Dict[str, str] = {
@@ -208,3 +242,134 @@ def ladder_filename(symbol: str) -> str:
 
 def manifest_filename(symbol: str) -> str:
     return MANIFEST_FILENAME_TEMPLATE.format(symbol=symbol)
+
+
+# ------------------------------------------------------------------------------
+# 16. Unified Asset Baskets (Crypto, Forex, CFD) & MT5 Broker Mapping
+# ------------------------------------------------------------------------------
+ASSET_BASKETS: Dict[str, List[str]] = {
+    "Crypto": [
+        "BTCUSD", "DOTUSD", "ETHUSD", "LTCUSD", "XRPUSD", "ADAUSD", "BCHUSD", "LNKUSD",
+        "XLMUSD", "AVXUSD", "DOGUSD", "FILUSD", "GRTUSD", "NERUSD", "SOLUSD", "TRXUSD",
+        "UNIUSD", "VETUSD", "XMRUSD", "BNBUSD", "AVEUSD", "ALGUSD", "ATMUSD", "AXSUSD",
+        "CHZUSD", "COMUSD", "EGLUSD", "FLWUSD", "IOTUSD", "KSMUSD", "NEOUSD", "XSIUSD",
+        "THTUSD", "XTZUSD", "ZECUSD", "MANUSD", "INCUSD", "ARWUSD", "BATUSD", "CELUSD",
+        "CHRUSD", "CRVUSD", "ENJUSD", "BARUSD", "LRCUSD", "KAVUSD", "KNCUSD", "ONTUSD",
+        "QTMUSD", "SNDUSD", "SKLUSD", "SNXUSD", "STOUSD", "SXPUSD", "YFIUSD", "ZILUSD",
+        "ZRXUSD", "DSHUSD"
+    ],
+    "Forex": [
+        "AUDCAD", "AUDCHF", "AUDJPY", "AUDUSD", "CADCHF", "CADJPY", "CHFJPY", "EURAUD",
+        "EURCAD", "EURCHF", "EURGBP", "EURJPY", "EURUSD", "GBPAUD", "GBPCAD", "GBPCHF",
+        "GBPJPY", "GBPUSD", "USDCAD", "USDCHF", "USDJPY", "AUDCNH", "AUDNZD", "AUDSGD",
+        "CHFSGD", "CNHJPY", "EURCNH", "EURHKD", "EURHUF", "EURMXN", "EURNOK", "EURNZD",
+        "EURSEK", "EURSGD", "EURZAR", "GBPCNH", "GBPHKD", "GBPNOK", "GBPNZD", "GBPSEK",
+        "GBPSGD", "NOKJPY", "NOKSEK", "NZDCAD", "NZDCHF", "NZDCNH", "NZDJPY", "NZDSGD",
+        "NZDUSD", "SGDJPY", "USDCNH", "USDHKD", "USDHUF", "USDMXN", "USDNOK", "USDSEK",
+        "USDSGD", "USDTHB", "USDZAR", "ZARJPY"
+    ],
+    "CFD": [
+        "AU200", "DJ30", "FR40", "GER30", "JP225", "NAS100", "SP500", "STOXX50",
+        "UK100", "CHINA50", "CHINAH", "HK50", "NETH25", "SWISS20", "US2000", "GER40",
+        "XAGAUD", "XAGEUR", "XAGSGD", "XAGUSD", "XAUAUD", "XAUCNH", "XAUEUR", "XAUGBP",
+        "XAUSGD", "XAUUSD", "XPDUSD", "XPTUSD", "GAUCNH", "GAUUSD", "ALUMINIUM", "COPPER",
+        "GAS", "LEAD", "NICKEL", "ZINC", "UKBRENT", "USWTI"
+    ],
+}
+
+# Supported MT5 broker suffixes (e.g. .pi for Forex, .p for CFD/Crypto)
+BROKER_SUFFIXES: Tuple[str, ...] = (".pi", ".p", ".r", ".m", ".raw", "")
+
+# Raw symbol alias translations (e.g. sunsetted / renamed instruments)
+RAW_SYMBOL_ALIASES: Dict[str, str] = {
+    "GER30": "GER40",
+    "GER30.p": "GER40.p",
+    "US30": "DJ30",
+    "US30.p": "DJ30.p",
+    "NAS100": "NAS100.p",
+    "SPX500": "SP500",
+}
+
+# Binance USDT-M to MT5 clean symbol cross-mapping
+BINANCE_TO_MT5_MAP: Dict[str, str] = {
+    "BTCUSDT": "BTCUSD",
+    "ETHUSDT": "ETHUSD",
+    "SOLUSDT": "SOLUSD",
+    "XRPUSDT": "XRPUSD",
+    "BNBUSDT": "BNBUSD",
+    "LTCUSDT": "LTCUSD",
+    "ADAUSDT": "ADAUSD",
+    "DOTUSDT": "DOTUSD",
+    "BCHUSDT": "BCHUSD",
+    "DOGEUSDT": "DOGEUSD",
+    "TRXUSDT": "TRXUSD",
+    "LINKUSDT": "LINKUSD",
+    "AVAXUSDT": "AVAXUSD",
+    "SUIUSDT": "SUIUSD",
+    "NEARUSDT": "NEARUSD",
+    "APTUSDT": "APTUSD",
+    "OPUSDT": "OPUSD",
+    "ARBUSDT": "ARBUSD",
+}
+
+MT5_TO_BINANCE_MAP: Dict[str, str] = {v: k for k, v in BINANCE_TO_MT5_MAP.items()}
+
+# Default broker raw symbol convention per basket
+DEFAULT_BROKER_RAW_SYMBOLS: Dict[str, str] = {
+    # Crypto (typically .p or raw on MT5)
+    "BTCUSD": "BTCUSD.p", "ETHUSD": "ETHUSD.p", "SOLUSD": "SOLUSD.p",
+    "XRPUSD": "XRPUSD.p", "BNBUSD": "BNBUSD.p", "LTCUSD": "LTCUSD.p",
+    "ADAUSD": "ADAUSD.p", "DOTUSD": "DOTUSD.p", "BCHUSD": "BCHUSD.p",
+    # Forex (typically .pi on institutional MT5)
+    "EURUSD": "EURUSD.pi", "NZDUSD": "NZDUSD.pi", "AUDCHF": "AUDCHF.pi",
+    "EURHUF": "EURHUF.pi", "USDSEK": "USDSEK.pi", "EURSEK": "EURSEK.pi",
+    "USDHKD": "USDHKD.pi", "EURCNH": "EURCNH.pi", "NZDCNH": "NZDCNH.pi",
+    # CFD (typically .p on MT5)
+    "GER40": "GER40.p", "AU200": "AU200.p", "FR40": "FR40.p",
+    "US2000": "US2000.p", "GAS": "GAS.p", "NICKEL": "NICKEL.p",
+    "LEAD": "LEAD.p", "XAUCNH": "XAUCNH.p", "GAUCNH": "GAUCNH.p",
+}
+
+
+def raw_symbol_to_clean(raw_symbol: str) -> str:
+    """
+    Converts a broker raw symbol (e.g. 'EURUSD.pi', 'GER40.p', 'GER30', 'BTCUSD.p')
+    into its clean canonical symbol (e.g. 'EURUSD', 'GER40', 'BTCUSD').
+    """
+    sym = raw_symbol.strip()
+    if sym in RAW_SYMBOL_ALIASES:
+        sym = RAW_SYMBOL_ALIASES[sym]
+
+    upper_sym = sym.upper()
+    for suffix in [".PI", ".P", ".R", ".M", ".RAW"]:
+        if upper_sym.endswith(suffix):
+            sym = sym[:-len(suffix)]
+            break
+
+    if sym in RAW_SYMBOL_ALIASES:
+        sym = RAW_SYMBOL_ALIASES[sym]
+
+    return sym
+
+
+def clean_symbol_to_raw(clean_symbol: str, broker_suffix: str = "") -> str:
+    """
+    Converts a clean canonical symbol to its broker raw symbol with suffix.
+    If broker_suffix is omitted or empty, uses the default from DEFAULT_BROKER_RAW_SYMBOLS.
+    """
+    sym = clean_symbol.strip()
+    if broker_suffix:
+        return f"{sym}{broker_suffix}"
+    return DEFAULT_BROKER_RAW_SYMBOLS.get(sym, sym)
+
+
+def get_basket_for_symbol(symbol: str) -> Optional[str]:
+    """
+    Returns the basket name ('Crypto', 'Forex', 'CFD') for a given clean or raw symbol.
+    """
+    clean = raw_symbol_to_clean(symbol)
+    for basket_name, assets in ASSET_BASKETS.items():
+        if clean in assets:
+            return basket_name
+    return None
+

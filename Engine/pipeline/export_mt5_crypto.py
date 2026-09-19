@@ -1,8 +1,17 @@
 """
-MT5 High-Fidelity Multi-Timeframe Data Exporter
-=================================================
-Exports genuine non-synthetic candlestick data from MetaTrader 5 into Parquet format.
-Excludes Cryptocurrencies. Covers Forex, Commodities/Metals, and Indices.
+MT5 High-Fidelity Crypto Multi-Timeframe Data Exporter
+======================================================
+Exports genuine crypto candlestick data from MetaTrader 5 into Parquet format.
+Target Crypto Basket:
+  - BTCUSD (.pi / .p)
+  - ETHUSD (.pi / .p)
+  - SOLUSD (.pi / .p)
+  - XRPUSD (.pi / .p)
+  - BNBUSD (.pi / .p)
+  - LTCUSD (.pi / .p)
+  - ADAUSD (.pi / .p)
+  - DOTUSD (.pi / .p)
+  - BCHUSD (.pi / .p)
 
 Timeframes exported per symbol:
   - 15m  (primary intraday — ICT kill zones, FVG, OB detection)
@@ -10,13 +19,11 @@ Timeframes exported per symbol:
   - 4h   (institutional candle structure, HTF order blocks)
   - D1   (PDH/PDL, daily bias, weekly range context)
 
-Run modes:
-  - First run (no existing file): full history from HISTORY_START to now.
-  - Subsequent runs (file exists): incremental — only fetches new bars since last save,
-    appends, deduplicates, and re-saves. No re-download of existing history.
+Output Directory: Forex_Backtesting_Data/
+File naming: {clean_name}_{tf_suffix}_real.parquet (e.g. BTCUSD_15m_real.parquet)
 
 ICT session columns precomputed at export:
-  - day_of_week (0=Mon..4=Fri)
+  - day_of_week (0=Mon..6=Sun for Crypto 24/7)
   - session (asian / london / new_york / london_close / off_hours)
   - is_kill_zone (london open + NY open kill zones)
 """
@@ -29,8 +36,8 @@ from datetime import datetime, timezone
 import MetaTrader5 as mt5
 import polars as pl
 
-# Earliest date to pull history from (MT5 server typically has data from ~2015)
-HISTORY_START = datetime(2010, 1, 1, tzinfo=timezone.utc)
+# Earliest date to pull history from
+HISTORY_START = datetime(2015, 1, 1, tzinfo=timezone.utc)
 
 # Timeframes to export: (label, MT5 constant, file suffix)
 TIMEFRAMES = [
@@ -39,6 +46,14 @@ TIMEFRAMES = [
     ("4h",  mt5.TIMEFRAME_H4,  "4h"),
     ("D1",  mt5.TIMEFRAME_D1,  "d1"),
 ]
+
+# Target crypto base pairs and expected raw symbols
+TARGET_CRYPTO_BASE = [
+    "BTCUSD", "ETHUSD", "SOLUSD", "XRPUSD", "BNBUSD",
+    "LTCUSD", "ADAUSD", "DOTUSD", "BCHUSD"
+]
+
+CANDIDATE_SUFFIXES = [".pi", ".p", "", "_i", ".m"]
 
 # ICT Session boundaries in UTC hour (inclusive start, exclusive end)
 SESSION_LONDON_KZ_START = 7
@@ -99,9 +114,19 @@ def _fetch_incremental(sym_name: str, tf_const, out_file: str) -> tuple:
     date_to = datetime.now(timezone.utc)
 
     if os.path.exists(out_file):
-        last_ts = pl.scan_parquet(out_file).select(pl.col("time").max()).collect().item()
-        date_from = datetime.fromtimestamp(last_ts + 1, tz=timezone.utc)
-        mode = "incremental"
+        try:
+            last_ts = pl.scan_parquet(out_file).select(pl.col("time").max()).collect().item()
+            if last_ts is not None:
+                date_from = datetime.fromtimestamp(last_ts + 1, tz=timezone.utc)
+                mode = "incremental"
+            else:
+                last_ts = None
+                date_from = HISTORY_START
+                mode = "full"
+        except Exception:
+            last_ts = None
+            date_from = HISTORY_START
+            mode = "full"
     else:
         last_ts = None
         date_from = HISTORY_START
@@ -114,8 +139,9 @@ def _fetch_incremental(sym_name: str, tf_const, out_file: str) -> tuple:
     rates = None
     for attempt in range(3):
         if mode == "full":
-            # Bypass MT5 date range limit by using from_pos to fetch everything available
             rates = mt5.copy_rates_from_pos(sym_name, tf_const, 0, 99999)
+            if rates is None or len(rates) == 0:
+                rates = mt5.copy_rates_range(sym_name, tf_const, date_from, date_to)
         else:
             rates = mt5.copy_rates_range(sym_name, tf_const, date_from, date_to)
             
@@ -128,9 +154,12 @@ def _fetch_incremental(sym_name: str, tf_const, out_file: str) -> tuple:
         new_df = _rates_to_polars(rates)
         new_bars = len(new_df)
         if mode == "incremental" and os.path.exists(out_file):
-            existing = pl.read_parquet(out_file)
-            combined = pl.concat([existing, new_df])
-            combined = combined.unique(subset=["time"], keep="last").sort("time")
+            try:
+                existing = pl.read_parquet(out_file)
+                combined = pl.concat([existing, new_df])
+                combined = combined.unique(subset=["time"], keep="last").sort("time")
+            except Exception:
+                combined = new_df
         else:
             combined = new_df
         return combined, mode, new_bars
@@ -165,37 +194,65 @@ def _safe_write(pldf: pl.DataFrame, out_file: str):
         except Exception:
             pass
 
-def export_all_mt5(output_dir: str = "Forex_Backtesting_Data", include_crypto: bool = True):
+def resolve_crypto_symbols() -> dict[str, str]:
+    """
+    Map clean base name (e.g. BTCUSD) to detected MT5 raw symbol name (e.g. BTCUSD.pi).
+    """
+    all_symbols = mt5.symbols_get()
+    if not all_symbols:
+        return {}
+
+    available_names = {s.name: s for s in all_symbols}
+    resolved = {}
+
+    for base in TARGET_CRYPTO_BASE:
+        # Check specific candidates first
+        found = False
+        for suffix in CANDIDATE_SUFFIXES:
+            cand = f"{base}{suffix}"
+            if cand in available_names:
+                resolved[base] = cand
+                found = True
+                break
+        
+        # If not found, fuzzy match symbol whose clean name matches
+        if not found:
+            for name in available_names:
+                clean = name.split(".")[0].upper()
+                if clean == base.upper():
+                    resolved[base] = name
+                    found = True
+                    break
+
+    return resolved
+
+def export_all_mt5_crypto(output_dir: str = "Forex_Backtesting_Data"):
     if not mt5.initialize():
         print(f"[ERROR] Failed to initialize MT5: {mt5.last_error()}", file=sys.stderr)
         return False
 
     account = mt5.account_info()
-    terminal = mt5.terminal_info()
     print("=" * 70)
-    print(f"MT5 Connected: {account.company} | Server: {account.server}")
+    print(f"MT5 Connected: {account.company if account else 'Unknown'} | Server: {account.server if account else 'Unknown'}")
+    print(f"Target Crypto Assets: {', '.join(TARGET_CRYPTO_BASE)}")
     print(f"Timeframes: {', '.join(label for label, _, _ in TIMEFRAMES)}")
     print("=" * 70)
 
-    symbols = mt5.symbols_get()
-    if not symbols:
-        print("[ERROR] No symbols returned from MT5.", file=sys.stderr)
-        mt5.shutdown()
-        return False
+    resolved_map = resolve_crypto_symbols()
+    print(f"Detected {len(resolved_map)} / {len(TARGET_CRYPTO_BASE)} Crypto Assets:")
+    for base, raw in resolved_map.items():
+        print(f"  - {base:8} -> {raw}")
 
-    if include_crypto:
-        target_symbols = list(symbols)
-    else:
-        target_symbols = [s for s in symbols if "crypto" not in s.path.lower()]
-    seen_clean_names: set[str] = set()
+    missing = set(TARGET_CRYPTO_BASE) - set(resolved_map.keys())
+    if missing:
+        print(f"[WARN] Missing crypto assets on MT5 server: {missing}")
 
-    print(f"Total Export Target Assets: {len(target_symbols)} x {len(TIMEFRAMES)} timeframes")
     os.makedirs(output_dir, exist_ok=True)
 
-    manifest = {
+    manifest_crypto = {
         "export_timestamp": datetime.now(timezone.utc).isoformat(),
-        "broker": account.company,
-        "server": account.server,
+        "broker": account.company if account else "Unknown",
+        "server": account.server if account else "Unknown",
         "timeframes": [label for label, _, _ in TIMEFRAMES],
         "history_start": HISTORY_START.isoformat(),
         "ict_session_columns": ["day_of_week", "session", "is_kill_zone"],
@@ -205,26 +262,15 @@ def export_all_mt5(output_dir: str = "Forex_Backtesting_Data", include_crypto: b
 
     successful = 0
     failed = 0
-    skipped = 0
     start_all = time.time()
 
-    for idx, s in enumerate(target_symbols, 1):
-        sym_name = s.name
-        clean_name = sym_name.split(".")[0]
-        category = s.path.split("\\")[0] if "\\" in s.path else "Other"
-
-        if clean_name in seen_clean_names:
-            print(f"[{idx:02d}/{len(target_symbols):02d}] {clean_name:10} SKIP: duplicate base name (raw={sym_name})")
-            skipped += 1
-            continue
-        seen_clean_names.add(clean_name)
-
-        sym_info = mt5.symbol_info(sym_name)
-        mt5.symbol_select(sym_name, True)
+    for idx, (clean_name, raw_symbol) in enumerate(resolved_map.items(), 1):
+        sym_info = mt5.symbol_info(raw_symbol)
+        mt5.symbol_select(raw_symbol, True)
 
         sym_manifest = {
-            "raw_symbol": sym_name,
-            "category": category,
+            "raw_symbol": raw_symbol,
+            "category": "Crypto",
             "digits": sym_info.digits if sym_info else None,
             "point": sym_info.point if sym_info else None,
             "trade_tick_size": sym_info.trade_tick_size if sym_info else None,
@@ -238,13 +284,14 @@ def export_all_mt5(output_dir: str = "Forex_Backtesting_Data", include_crypto: b
 
         for tf_label, tf_const, tf_suffix in TIMEFRAMES:
             out_file = os.path.join(output_dir, f"{clean_name}_{tf_suffix}_real.parquet")
-            pldf, mode, new_bars = _fetch_incremental(sym_name, tf_const, out_file)
+            pldf, mode, new_bars = _fetch_incremental(raw_symbol, tf_const, out_file)
 
-            if pldf is None:
+            if pldf is None or len(pldf) == 0:
                 sym_manifest["timeframes"][tf_label] = {"status": "FAIL", "bars": 0}
                 continue
 
-            _safe_write(pldf, out_file)
+            if not (mode == "incremental" and new_bars == 0 and os.path.exists(out_file)):
+                _safe_write(pldf, out_file)
             bar_count = len(pldf)
             file_size_kb = os.path.getsize(out_file) / 1024
             min_dt = pldf["datetime"].min().isoformat()
@@ -256,12 +303,13 @@ def export_all_mt5(output_dir: str = "Forex_Backtesting_Data", include_crypto: b
                 "start_time": min_dt,
                 "end_time": max_dt,
                 "file_size_kb": round(file_size_kb, 2),
-                "mode": mode
+                "mode": mode,
+                "file_path": out_file
             }
             sym_ok = True
 
         elapsed = time.time() - t0
-        manifest["symbols"][clean_name] = sym_manifest
+        manifest_crypto["symbols"][clean_name] = sym_manifest
 
         if sym_ok:
             successful += 1
@@ -269,26 +317,26 @@ def export_all_mt5(output_dir: str = "Forex_Backtesting_Data", include_crypto: b
                 f"{tf}: {sym_manifest['timeframes'].get(tf, {}).get('bars', 0)}"
                 for tf, _, _ in TIMEFRAMES
             )
-            print(f"[{idx:02d}/{len(target_symbols):02d}] {clean_name:10} ({category:15}) -> {bars_summary} [{elapsed:4.1f}s]")
+            print(f"[{idx:02d}/{len(resolved_map):02d}] {clean_name:8} ({raw_symbol:12}) -> {bars_summary} [{elapsed:4.1f}s]")
         else:
             failed += 1
-            print(f"[{idx:02d}/{len(target_symbols):02d}] {clean_name:10} ({category:15}) | FAIL: No data [{elapsed:4.1f}s]")
+            print(f"[{idx:02d}/{len(resolved_map):02d}] {clean_name:8} ({raw_symbol:12}) | FAIL: No data [{elapsed:4.1f}s]")
 
     mt5.shutdown()
     total_time = time.time() - start_all
 
-    manifest["assets_count"] = successful
-    manifest["total_export_time_seconds"] = round(total_time, 2)
+    manifest_crypto["assets_count"] = successful
+    manifest_crypto["total_export_time_seconds"] = round(total_time, 2)
 
-    manifest_path = os.path.join(output_dir, "manifest.json")
+    manifest_path = os.path.join(output_dir, "manifest_crypto.json")
     with open(manifest_path, "w", encoding="utf-8") as f:
-        json.dump(manifest, f, indent=2)
+        json.dump(manifest_crypto, f, indent=2)
 
     print("=" * 70)
-    print(f"EXPORT COMPLETE: {successful} ok, {failed} failed, {skipped} skipped in {total_time:.1f}s")
+    print(f"CRYPTO EXPORT COMPLETE: {successful} ok, {failed} failed in {total_time:.1f}s")
     print(f"Manifest: {manifest_path}")
     print("=" * 70)
-    return True
+    return successful > 0
 
 if __name__ == "__main__":
-    export_all_mt5()
+    export_all_mt5_crypto()
