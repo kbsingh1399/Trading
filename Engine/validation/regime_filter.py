@@ -221,3 +221,19 @@ def mean_reversion_allowed(
     price structure (high Hurst) -- the W13 failure mode.
     """
     return (adx <= max_adx) & (hurst <= max_hurst)
+
+
+def trend_allowed(
+    adx: np.ndarray,
+    hurst: np.ndarray,
+    min_adx: float = 25.0,
+    min_hurst: float = 0.50,
+) -> np.ndarray:
+    """
+    Inverse of `mean_reversion_allowed`: admit only persistent, directional bars.
+
+    A momentum sleeve needs the opposite regime to a fade sleeve. Gating the two
+    on the same statistics with opposite inequalities is what makes their return
+    streams structurally uncorrelated rather than merely differently-parameterised.
+    """
+    return (adx >= min_adx) & (hurst >= min_hurst)

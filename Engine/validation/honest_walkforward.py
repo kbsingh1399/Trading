@@ -68,7 +68,8 @@ if str(REPO_ROOT) not in sys.path:
 
 from Engine.core.correlation_clusters import get_cluster  # noqa: E402
 from Engine.core.schema import ASSET_BASKETS, MT5_TO_BINANCE_MAP  # noqa: E402
-from Engine.validation.regime_filter import (  # noqa: E402
+from Engine.validation.regime_filter import (
+    trend_allowed,  # noqa: E402
     mean_reversion_allowed, regime_features,
 )
 
@@ -424,6 +425,7 @@ def build_candidate_pool(
     regime_veto: bool = False,
     max_adx: float = 35.0,
     max_hurst: float = 0.58,
+    regime_mode: str = "fade",
 ) -> pd.DataFrame:
     frames = []
     for a in assets:
@@ -448,9 +450,14 @@ def build_candidate_pool(
         sub["cluster"] = get_cluster(a.symbol)
         sub = sub.dropna()
         if regime_veto and len(sub):
-            ok = mean_reversion_allowed(
-                sub["adx"].values, sub["hurst"].values, max_adx, max_hurst,
-            )
+            if regime_mode == "trend":
+                ok = trend_allowed(
+                    sub["adx"].values, sub["hurst"].values, max_adx, max_hurst,
+                )
+            else:
+                ok = mean_reversion_allowed(
+                    sub["adx"].values, sub["hurst"].values, max_adx, max_hurst,
+                )
             sub = sub.loc[ok]
         frames.append(sub)
         if verbose:

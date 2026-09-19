@@ -1,0 +1,369 @@
+{
+  "n_configs": 324,
+  "oracle_pass": 19,
+  "oracle_total": 19,
+  "per_window": {
+    "2": {
+      "status": "PASS",
+      "roi": 14.286393057569658,
+      "dd": 4.7588362420763834,
+      "wr": 43.13725490196079,
+      "n": 153,
+      "config": {
+        "baskets": [
+          "Forex",
+          "CFD"
+        ],
+        "target_r": 2.0,
+        "quantile": 0.85,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": [
+          35.0,
+          0.58
+        ]
+      }
+    },
+    "3": {
+      "status": "PASS",
+      "roi": 25.13942187160248,
+      "dd": 2.2955594075692347,
+      "wr": 53.5,
+      "n": 200,
+      "config": {
+        "baskets": [
+          "Forex",
+          "CFD"
+        ],
+        "target_r": 1.5,
+        "quantile": 0.85,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": null
+      }
+    },
+    "4": {
+      "status": "PASS",
+      "roi": 32.23014671199391,
+      "dd": 2.5755053324435226,
+      "wr": 59.411764705882355,
+      "n": 170,
+      "config": {
+        "baskets": [
+          "Forex",
+          "CFD"
+        ],
+        "target_r": 1.5,
+        "quantile": 0.92,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": null
+      }
+    },
+    "5": {
+      "status": "PASS",
+      "roi": 28.821699743944084,
+      "dd": 2.4053250436885825,
+      "wr": 53.191489361702125,
+      "n": 141,
+      "config": {
+        "baskets": [
+          "Forex",
+          "CFD"
+        ],
+        "target_r": 2.0,
+        "quantile": 0.92,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": null
+      }
+    },
+    "6": {
+      "status": "PASS",
+      "roi": 28.999144606398442,
+      "dd": 1.3394573409150954,
+      "wr": 62.295081967213115,
+      "n": 122,
+      "config": {
+        "baskets": [
+          "Forex",
+          "CFD"
+        ],
+        "target_r": 1.5,
+        "quantile": 0.92,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": null
+      }
+    },
+    "7": {
+      "status": "PASS",
+      "roi": 21.024162725549488,
+      "dd": 2.0063943644944393,
+      "wr": 52.94117647058824,
+      "n": 85,
+      "config": {
+        "baskets": [
+          "Forex"
+        ],
+        "target_r": 2.0,
+        "quantile": 0.92,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": [
+          35.0,
+          0.58
+        ]
+      }
+    },
+    "8": {
+      "status": "PASS",
+      "roi": 14.431411124757723,
+      "dd": 2.8541057404369643,
+      "wr": 52.03252032520326,
+      "n": 123,
+      "config": {
+        "baskets": [
+          "Forex",
+          "CFD"
+        ],
+        "target_r": 1.5,
+        "quantile": 0.85,
+        "cost": 0.05,
+        "risk": 25.0,
+        "regime": [
+          35.0,
+          0.58
+        ]
+      }
+    },
+    "9": {
+      "status": "PASS",
+      "roi": 19.102286059633535,
+      "dd": 1.5425033252460167,
+      "wr": 62.33766233766234,
+      "n": 77,
+      "config": {
+        "baskets": [
+          "Forex"
+        ],
+        "target_r": 1.5,
+        "quantile": 0.92,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": [
+          28.0,
+          0.54
+        ]
+      }
+    },
+    "10": {
+      "status": "PASS",
+      "roi": 21.64193988742405,
+      "dd": 1.8172354472910783,
+      "wr": 61.79775280898876,
+      "n": 89,
+      "config": {
+        "baskets": [
+          "Forex"
+        ],
+        "target_r": 1.5,
+        "quantile": 0.92,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": [
+          35.0,
+          0.58
+        ]
+      }
+    },
+    "11": {
+      "status": "PASS",
+      "roi": 17.72726504306276,
+      "dd": 2.476678431665627,
+      "wr": 58.92857142857143,
+      "n": 112,
+      "config": {
+        "baskets": [
+          "Forex",
+          "CFD"
+        ],
+        "target_r": 1.5,
+        "quantile": 0.92,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": [
+          28.0,
+          0.54
+        ]
+      }
+    },
+    "12": {
+      "status": "PASS",
+      "roi": 13.741265466809818,
+      "dd": 2.6941960380744514,
+      "wr": 55.00000000000001,
+      "n": 80,
+      "config": {
+        "baskets": [
+          "Forex",
+          "CFD"
+        ],
+        "target_r": 1.5,
+        "quantile": 0.92,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": [
+          28.0,
+          0.54
+        ]
+      }
+    },
+    "13": {
+      "status": "PASS",
+      "roi": 14.668312341544132,
+      "dd": 4.949401763389136,
+      "wr": 43.96551724137931,
+      "n": 232,
+      "config": {
+        "baskets": [
+          "Forex",
+          "CFD"
+        ],
+        "target_r": 2.5,
+        "quantile": 0.85,
+        "cost": 0.05,
+        "risk": 21.0,
+        "regime": null
+      }
+    },
+    "14": {
+      "status": "PASS",
+      "roi": 30.128546377749625,
+      "dd": 2.2300198696281606,
+      "wr": 59.006211180124225,
+      "n": 161,
+      "config": {
+        "baskets": [
+          "Forex"
+        ],
+        "target_r": 1.5,
+        "quantile": 0.85,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": null
+      }
+    },
+    "15": {
+      "status": "PASS",
+      "roi": 17.624324336073315,
+      "dd": 1.4466750406046893,
+      "wr": 65.21739130434783,
+      "n": 69,
+      "config": {
+        "baskets": [
+          "Forex"
+        ],
+        "target_r": 1.5,
+        "quantile": 0.92,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": [
+          28.0,
+          0.54
+        ]
+      }
+    },
+    "16": {
+      "status": "PASS",
+      "roi": 37.02680898747216,
+      "dd": 1.2274000379082781,
+      "wr": 74.11764705882354,
+      "n": 85,
+      "config": {
+        "baskets": [
+          "Forex"
+        ],
+        "target_r": 2.0,
+        "quantile": 0.92,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": [
+          35.0,
+          0.58
+        ]
+      }
+    },
+    "17": {
+      "status": "PASS",
+      "roi": 20.537256072631536,
+      "dd": 1.4018215002517245,
+      "wr": 74.19354838709677,
+      "n": 62,
+      "config": {
+        "baskets": [
+          "Forex"
+        ],
+        "target_r": 1.5,
+        "quantile": 0.92,
+        "cost": 0.05,
+        "risk": 25.0,
+        "regime": null
+      }
+    },
+    "18": {
+      "status": "PASS",
+      "roi": 42.111510894634016,
+      "dd": 2.1905431792250876,
+      "wr": 65.02732240437157,
+      "n": 183,
+      "config": {
+        "baskets": [
+          "Forex"
+        ],
+        "target_r": 1.5,
+        "quantile": 0.85,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": null
+      }
+    },
+    "19": {
+      "status": "PASS",
+      "roi": 27.96649129780146,
+      "dd": 3.0326065387218963,
+      "wr": 59.79381443298969,
+      "n": 97,
+      "config": {
+        "baskets": [
+          "Forex"
+        ],
+        "target_r": 2.0,
+        "quantile": 0.92,
+        "cost": 0.1,
+        "risk": 25.0,
+        "regime": [
+          35.0,
+          0.58
+        ]
+      }
+    },
+    "20": {
+      "status": "PASS",
+      "roi": 22.763371634343912,
+      "dd": 1.2787014367227176,
+      "wr": 65.0,
+      "n": 60,
+      "config": {
+        "baskets": [
+          "Forex"
+        ],
+        "target_r": 2.5,
+        "quantile": 0.92,
+        "cost": 0.05,
+        "risk": 25.0,
+        "regime": null
+      }
+    }
+  }
+}
