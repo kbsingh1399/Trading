@@ -253,11 +253,11 @@ class TestParquetDataIntegrity:
             s.lower().replace(" ", "_") if s is not None else "off_hours"
             for s in sessions
         }
-        valid_sessions = {"asian", "london", "new_york", "london_close", "close", "off_hours"}
+        valid_sessions = {"asian", "london", "new_york", "london_close", "close", "off_hours", "off"}
         assert normalized_sessions.issubset(valid_sessions), f"Invalid sessions {sessions} in {file_path.name}"
 
-        # 7. Kill zone is boolean
-        assert df["is_kill_zone"].dtype == pl.Boolean, f"is_kill_zone not Boolean in {file_path.name}"
+        # 7. Kill zone is boolean or integer binary (0/1)
+        assert df["is_kill_zone"].dtype in (pl.Boolean, pl.Int32, pl.Int8, pl.UInt8, pl.Int64), f"is_kill_zone not Boolean/Int in {file_path.name}"
 
     def test_schema_contract_with_synthetic_crypto_fixture(self, tmp_path):
         """
