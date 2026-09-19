@@ -46390,3 +46390,14 @@ Comprehensive Remediation of Ox_Alpha_41 Audit Blockers:
   3. Directional Asymmetry: Long liquidations exhaust rapidly into elastic snapbacks, whereas shorting at the 99th percentile (+7.90%) has negative edge (+0.31% continuation) due to upward short squeezes.
 - **Architectural Integration Plan**: Integrated Kairi indicator into canonical indicator suite and formalized its gating role in mean-reversion and breakout sleeves.
 
+---
+### Turn Record: 2026-09-20 (Canonical KRI Implementation, 60/60 Passing Tests & Ox_Alpha_47 Creation)
+- **Goal**: Full Walk-Forward Evaluation across 23 OOS Windows (`arena_01a09b0e/Engine/oos_windows_20.json`) with `target_oos_criteria.json` and Kairi indicator integration.
+- **Codebase Artifacts Created & Committed**:
+  1. `Engine/core/canonical_indicators.py`: Added `compute_kairi_relative_index` and `compute_kairi_atr_ratio` kernels with strict prefix-invariance and causal expanding warmups.
+  2. `Engine/tests/test_kairi_indicators.py`: Created comprehensive unit test suite covering prefix-invariance, mathematical definition, and edge cases.
+  3. All 60/60 unit tests across `Engine/tests/` passed with 100% success rate.
+  4. Authored `Ox_Alpha_47.txt` in `C:\Users\SIGMA\Downloads\` and archived in `docs/prompts/` pinned to GitHub commit `4cedff7`.
+- **Git Push**: Pushed commits `4cedff7` and `bf3325d` to `origin/main`.
+
+
