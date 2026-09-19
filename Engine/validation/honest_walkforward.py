@@ -68,6 +68,9 @@ if str(REPO_ROOT) not in sys.path:
 
 from Engine.core.correlation_clusters import get_cluster  # noqa: E402
 from Engine.core.schema import ASSET_BASKETS, MT5_TO_BINANCE_MAP  # noqa: E402
+from Engine.validation.regime_filter import (  # noqa: E402
+    mean_reversion_allowed, regime_features,
+)
 
 FOREX_DIR = REPO_ROOT / "Forex_Backtesting_Data"
 CRYPTO_DIR = REPO_ROOT / "binance_backtesting_data"
@@ -210,6 +213,9 @@ def load_universe(limit_per_basket: Optional[int] = None) -> List[AssetSeries]:
 FEATURES = [
     "ret_4", "ret_16", "ret_64", "atr_pct", "rsi_14", "ema_dist",
     "range_pct", "body_ratio", "vol_ratio", "hour_sin", "hour_cos", "dow",
+    # Regime diagnostics (causal). ADX and Hurst tell the model whether mean
+    # reversion is the right hypothesis for the current tape at all.
+    "adx", "hurst", "vol_ratio_rg",
 ]
 
 
@@ -251,6 +257,11 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     f["hour_sin"] = np.sin(2 * np.pi * hr / 24)
     f["hour_cos"] = np.cos(2 * np.pi * hr / 24)
     f["dow"] = dt.dt.dayofweek.astype(float)
+
+    rg = regime_features(df)
+    f["adx"] = rg["adx"].values
+    f["hurst"] = rg["hurst"].values
+    f["vol_ratio_rg"] = rg["vol_ratio_rg"].values
 
     f["time"] = df["time"].values
     return f
@@ -410,6 +421,9 @@ def build_candidate_pool(
     cost_frac: Optional[float] = None,
     breakout_lookback: int = 20,
     direction: int = 1,
+    regime_veto: bool = False,
+    max_adx: float = 35.0,
+    max_hurst: float = 0.58,
 ) -> pd.DataFrame:
     frames = []
     for a in assets:
@@ -432,7 +446,13 @@ def build_candidate_pool(
         sub["symbol"] = a.symbol
         sub["basket"] = a.basket
         sub["cluster"] = get_cluster(a.symbol)
-        frames.append(sub.dropna())
+        sub = sub.dropna()
+        if regime_veto and len(sub):
+            ok = mean_reversion_allowed(
+                sub["adx"].values, sub["hurst"].values, max_adx, max_hurst,
+            )
+            sub = sub.loc[ok]
+        frames.append(sub)
         if verbose:
             print(f"  {a.symbol:<10} {a.basket:<7} {len(sub):>6} candidates  "
                   f"(15m from {a.first_true_15m.date()}, cost {c_frac:.4f}R)")

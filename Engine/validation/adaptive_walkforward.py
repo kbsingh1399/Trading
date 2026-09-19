@@ -70,6 +70,8 @@ CAND_TARGET_R = [1.5, 2.0, 2.5]
 CAND_QUANTILE = [0.70, 0.85, 0.92]
 CAND_COST = [0.05, 0.10]
 CAND_RISK = [18.0, 21.0, 25.0]
+# Regime veto settings: None = off, tuples are (max_adx, max_hurst).
+CAND_REGIME = [None, (35.0, 0.58), (28.0, 0.54)]
 
 MIN_TUNING_WINDOWS = 4
 
@@ -115,24 +117,29 @@ def main() -> None:
     # Pre-build one candidate pool per (cost, target_R). Pools are independent
     # of window and of basket, so this is pure caching, not leakage.
     print("\nPre-building candidate pools...")
-    pools: Dict[Tuple[float, float], pd.DataFrame] = {}
-    for cost, tr in itertools.product(CAND_COST, CAND_TARGET_R):
+    pools: Dict[Tuple[float, float, object], pd.DataFrame] = {}
+    for cost, tr, rg in itertools.product(CAND_COST, CAND_TARGET_R, CAND_REGIME):
         assets = [a for a in all_assets if a.cost_frac <= cost]
         if not assets:
             continue
-        pools[(cost, tr)] = build_candidate_pool(
+        pools[(cost, tr, rg)] = build_candidate_pool(
             assets, tr, 24, verbose=False, direction=-1,
+            regime_veto=rg is not None,
+            max_adx=rg[0] if rg else 35.0,
+            max_hurst=rg[1] if rg else 0.58,
         )
-        print(f"  cost<={cost}  R={tr}: {len(assets)} assets, "
-              f"{len(pools[(cost, tr)]):,} candidates")
+        print(f"  cost<={cost}  R={tr}  regime={rg}: "
+              f"{len(pools[(cost, tr, rg)]):,} candidates")
 
     risk_grid = CAND_RISK if args.risk_sweep else [args.base_risk]
     configs = [
-        {"baskets": b, "target_r": tr, "quantile": q, "cost": c, "risk": rk}
-        for b, tr, q, c, rk in itertools.product(
-            CAND_BASKETS, CAND_TARGET_R, CAND_QUANTILE, CAND_COST, risk_grid
+        {"baskets": b, "target_r": tr, "quantile": q, "cost": c, "risk": rk,
+         "regime": rg}
+        for b, tr, q, c, rk, rg in itertools.product(
+            CAND_BASKETS, CAND_TARGET_R, CAND_QUANTILE, CAND_COST, risk_grid,
+            CAND_REGIME
         )
-        if (c, tr) in pools
+        if (c, tr, rg) in pools
     ]
     print(f"\nCandidate configurations per window: {len(configs)}")
 
@@ -145,7 +152,7 @@ def main() -> None:
         c_cfg = (flat_risk_config(capital, c["risk"]) if args.risk_mode == "flat"
                  else RiskConfig(capital=capital, base_risk=c["risk"]))
         res, _ = run_walkforward(
-            pools[(c["cost"], c["target_r"])], windows, c_cfg, criteria,
+            pools[(c["cost"], c["target_r"], c["regime"])], windows, c_cfg, criteria,
             baskets=list(c["baskets"]), threshold_quantile=c["quantile"],
             seed=42, verbose=False,
         )
@@ -196,8 +203,9 @@ def main() -> None:
             final.append(WindowResult(wid, w["name"], 0, 0, 0, 0, 0, 0, 0, "NO_DATA"))
             continue
         final.append(r)
+        rgt = "off" if c["regime"] is None else f"{c['regime'][0]:.0f}/{c['regime'][1]:.2f}"
         tag = (f"{'+'.join(c['baskets'])} R{c['target_r']} q{c['quantile']} "
-               f"c{c['cost']} k{c['risk']:.0f}")
+               f"k{c['risk']:.0f} rg{rgt}")
         chosen_log.append({"window_id": wid, **{k: (list(v) if isinstance(v, tuple) else v)
                                                 for k, v in c.items()}})
         print(f"W{wid:02d}  {w['name'][:34]:<34} {tag:<30} {r.trades:>5} "
