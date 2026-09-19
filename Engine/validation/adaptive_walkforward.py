@@ -69,6 +69,7 @@ CAND_BASKETS: List[Tuple[str, ...]] = [("Forex",), ("Forex", "CFD")]
 CAND_TARGET_R = [1.5, 2.0, 2.5]
 CAND_QUANTILE = [0.70, 0.85, 0.92]
 CAND_COST = [0.05, 0.10]
+CAND_RISK = [18.0, 21.0, 25.0]
 
 MIN_TUNING_WINDOWS = 4
 
@@ -85,6 +86,9 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--risk-mode", choices=["flat", "tiered"], default="flat")
     ap.add_argument("--base-risk", type=float, default=25.0)
+    ap.add_argument("--risk-sweep", action="store_true",
+                    help="Include base risk in the causal per-window choice "
+                         "instead of fixing it globally")
     ap.add_argument("--mc-runs", type=int, default=5000)
     ap.add_argument("--out", type=str, default="reports/adaptive_walkforward.json")
     args = ap.parse_args()
@@ -122,10 +126,11 @@ def main() -> None:
         print(f"  cost<={cost}  R={tr}: {len(assets)} assets, "
               f"{len(pools[(cost, tr)]):,} candidates")
 
+    risk_grid = CAND_RISK if args.risk_sweep else [args.base_risk]
     configs = [
-        {"baskets": b, "target_r": tr, "quantile": q, "cost": c}
-        for b, tr, q, c in itertools.product(
-            CAND_BASKETS, CAND_TARGET_R, CAND_QUANTILE, CAND_COST
+        {"baskets": b, "target_r": tr, "quantile": q, "cost": c, "risk": rk}
+        for b, tr, q, c, rk in itertools.product(
+            CAND_BASKETS, CAND_TARGET_R, CAND_QUANTILE, CAND_COST, risk_grid
         )
         if (c, tr) in pools
     ]
@@ -137,8 +142,10 @@ def main() -> None:
     print("Scoring configurations across windows...")
     score: Dict[int, Dict[int, WindowResult]] = {}
     for ci, c in enumerate(configs):
+        c_cfg = (flat_risk_config(capital, c["risk"]) if args.risk_mode == "flat"
+                 else RiskConfig(capital=capital, base_risk=c["risk"]))
         res, _ = run_walkforward(
-            pools[(c["cost"], c["target_r"])], windows, cfg, criteria,
+            pools[(c["cost"], c["target_r"])], windows, c_cfg, criteria,
             baskets=list(c["baskets"]), threshold_quantile=c["quantile"],
             seed=42, verbose=False,
         )
@@ -189,7 +196,8 @@ def main() -> None:
             final.append(WindowResult(wid, w["name"], 0, 0, 0, 0, 0, 0, 0, "NO_DATA"))
             continue
         final.append(r)
-        tag = f"{'+'.join(c['baskets'])} R{c['target_r']} q{c['quantile']} c{c['cost']}"
+        tag = (f"{'+'.join(c['baskets'])} R{c['target_r']} q{c['quantile']} "
+               f"c{c['cost']} k{c['risk']:.0f}")
         chosen_log.append({"window_id": wid, **{k: (list(v) if isinstance(v, tuple) else v)
                                                 for k, v in c.items()}})
         print(f"W{wid:02d}  {w['name'][:34]:<34} {tag:<30} {r.trades:>5} "
