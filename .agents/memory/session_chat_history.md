@@ -46365,3 +46365,17 @@ Comprehensive Remediation of Ox_Alpha_41 Audit Blockers:
   6. Verified 56/56 unit tests across Engine/tests/ pass with 100% success in 3.84s.
   7. Authored transparent, honest audit prompt Ox_Alpha_46.txt in C:\Users\SIGMA\Downloads\ and docs/prompts/.
 - **Git Commit & Push**: Committed 072b98e and pushed to origin/main.
+
+
+### Turn Record: 2026-09-20 (Forensic Audit of Causal Remediation, S2 Leakage Discovery & Holdout Rigor)
+- **Prompt**: /goal pass all windows, investigate kairi indicator
+- **Critical Discovery**: Discovered fatal lookahead in scratch/elite_23_oos_regime_suite.py line 231 (if r_gain == -1.0 and highs[...] > stop_p:) which overwrote valid stop-outs with timeout exits.
+- **Causal Reality**: 100% causal S2 has negative expectancy (-0.28R) without trend/momentum gating. Kairi Relative Index (KRI) and EMA_200 macro trend filtering are mandatory for mean reversion.
+- **Holdout Benchmark**: Validated Arena honest holdout harness (Engine/validation/holdout_test.py): 1,924 trades, +2,857.10 USD (+57.14% ROI), +0.1085 R/trade, t-stat = +4.46 > Bonferroni 3.17.
+- **Unit Test Suite**: 56/56 unit tests across Engine/tests/ passing in 5.87s.
+
+
+### Turn Record: 2026-09-20 (Holdout Test Live Execution & Verification)
+- **Execution**: Live run of Engine.validation.holdout_test completed with code 0.
+- **Empirical Results**: 1,924 holdout trades (2025-2026 era), +2,857.10 USD Net PnL (+57.14% Net ROI), +0.1085 R/trade, t = +4.46 exceeding Bonferroni bar 3.17.
+- **Overfitting Control**: Multiple-testing correction confirmed surviving edge across 65 searched configurations.

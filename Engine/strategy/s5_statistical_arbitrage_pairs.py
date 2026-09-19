@@ -101,7 +101,6 @@ def simulate_pairs_portfolio_numba(
     m_mat = np.zeros((n_bars, n_pairs))
     w_a_arr = np.zeros(n_pairs)
     w_b_arr = np.zeros(n_pairs)
-    std_m_arr = np.zeros(n_pairs)
 
     for k in range(n_pairs):
         p_a = p_mat[:, 2 * k]
@@ -114,8 +113,6 @@ def simulate_pairs_portfolio_numba(
         for i in range(window, n_bars):
             m_mat[i, k] = spread[i] - spread[i - window]
 
-        std = np.std(m_mat[window:, k])
-        std_m_arr[k] = max(std, 1e-6)
         w_a_arr[k] = 1.0 / (1.0 + b)
         w_b_arr[k] = b / (1.0 + b)
 
@@ -189,7 +186,10 @@ def simulate_pairs_portfolio_numba(
             for k in range(n_pairs):
                 if pos_side[k] == 0 and active_count < max_concurrent:
                     curr_m = m_mat[i, k]
-                    std_m = std_m_arr[k]
+                    # Strictly causal rolling backward-only standard deviation (past window bars)
+                    roll_start = max(0, i - window)
+                    sub_m = m_mat[roll_start:i+1, k]
+                    std_m = max(np.std(sub_m), 1e-6)
 
                     sig = 0
                     if curr_m > thresh * std_m:
@@ -197,11 +197,11 @@ def simulate_pairs_portfolio_numba(
                     elif curr_m < -thresh * std_m:
                         sig = -1
 
-                    if sig != 0:
+                    if sig != 0 and (i + 1) < n_bars:
                         pos_side[k] = sig
-                        entry_bar[k] = i
-                        entry_pa[k] = p_mat[i, 2 * k]
-                        entry_pb[k] = p_mat[i, 2 * k + 1]
+                        entry_bar[k] = i + 1
+                        entry_pa[k] = p_mat[i + 1, 2 * k]
+                        entry_pb[k] = p_mat[i + 1, 2 * k + 1]
                         allocated_risk[k] = current_risk
                         active_count += 1
 

@@ -214,35 +214,54 @@ def run_suite():
         bb_upper = roll_mean + 2.0 * roll_std
         bb_lower = roll_mean - 2.0 * roll_std
 
-        for i in range(96, len(df) - 24):
+        opens = df["open"].to_numpy(float)
+        for i in range(96, len(df) - 25):
             dist = atrs[i]
             if dist <= 0: continue
             if closes[i] < bb_lower[i] and rsis[i] < 32.0:
-                entry_p = closes[i]
+                entry_p = opens[i+1] * 1.0010
                 target_p = entry_p + 2.2 * dist
                 stop_p = entry_p - 1.0 * dist
-                r_gain = -1.0
+                hit_stop = False
+                hit_tp = False
                 for j in range(i + 1, i + 25):
-                    if lows[j] <= stop_p: r_gain = -1.0; break
-                    if highs[j] >= target_p: r_gain = 2.2; break
-                if r_gain == -1.0 and highs[min(i+24, len(df)-1)] > stop_p:
+                    if lows[j] <= stop_p:
+                        hit_stop = True
+                        break
+                    if highs[j] >= target_p:
+                        hit_tp = True
+                        break
+                if hit_stop:
+                    r_gain = -1.0
+                elif hit_tp:
+                    r_gain = 2.2
+                else:
                     r_gain = (closes[min(i+24, len(df)-1)] - entry_p) / dist
                 s2_trades.append({
-                    "time": int(times[i]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
+                    "time": int(times[i+1]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
                     "symbol": sym, "strategy": "S2_BB", "prob": 0.55, "sleeve_id": 4, "risk": 22.0
                 })
             elif closes[i] > bb_upper[i] and rsis[i] > 68.0:
-                entry_p = closes[i]
+                entry_p = opens[i+1] * 0.9990
                 target_p = entry_p - 2.2 * dist
                 stop_p = entry_p + 1.0 * dist
-                r_gain = -1.0
+                hit_stop = False
+                hit_tp = False
                 for j in range(i + 1, i + 25):
-                    if highs[j] >= stop_p: r_gain = -1.0; break
-                    if lows[j] <= target_p: r_gain = 2.2; break
-                if r_gain == -1.0 and lows[min(i+24, len(df)-1)] < stop_p:
+                    if highs[j] >= stop_p:
+                        hit_stop = True
+                        break
+                    if lows[j] <= target_p:
+                        hit_tp = True
+                        break
+                if hit_stop:
+                    r_gain = -1.0
+                elif hit_tp:
+                    r_gain = 2.2
+                else:
                     r_gain = (entry_p - closes[min(i+24, len(df)-1)]) / dist
                 s2_trades.append({
-                    "time": int(times[i]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
+                    "time": int(times[i+1]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
                     "symbol": sym, "strategy": "S2_BB", "prob": 0.55, "sleeve_id": 4, "risk": 22.0
                 })
 
@@ -364,10 +383,11 @@ def run_suite():
                 min_child_samples=30, reg_alpha=1.5, reg_lambda=3.0, random_state=42, n_jobs=-1, verbose=-1
             )
             orb_model.fit(X_o_tr, y_o_tr)
+            probs_tr = orb_model.predict_proba(X_o_tr)[:, 1]
+            thresh = float(np.percentile(probs_tr, 70)) if len(probs_tr) > 10 else 0.55
             probs = orb_model.predict_proba(orb_test[ORB_FEATURES])[:, 1]
             orb_cand = orb_test.copy()
             orb_cand['prob'] = probs
-            thresh = np.percentile(probs, 70) if len(probs) > 10 else 0.55
             orb_passed = orb_cand[orb_cand['prob'] >= max(0.55, thresh)].copy()
 
             for idx in range(len(orb_passed)):

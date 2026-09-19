@@ -199,10 +199,11 @@ def main():
                 reg_lambda=3.0, random_state=42, n_jobs=-1, verbose=-1
             )
             orb_model.fit(X_o_tr, y_o_tr)
+            probs_tr = orb_model.predict_proba(X_o_tr)[:, 1]
+            thresh = float(np.percentile(probs_tr, 70)) if len(probs_tr) > 10 else 0.55
             probs = orb_model.predict_proba(orb_test[FEATURES])[:, 1]
             orb_cand = orb_test.copy()
             orb_cand['prob'] = probs
-            thresh = np.percentile(probs, 70) if len(probs) > 10 else 0.55
             orb_passed = orb_cand[orb_cand['prob'] >= max(0.55, thresh)].copy()
 
             orb_formatted = pd.DataFrame({
