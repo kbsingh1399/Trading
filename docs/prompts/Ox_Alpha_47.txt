@@ -1,0 +1,112 @@
+====================================================================================================
+OX ALPHA 47: INSTITUTIONAL FORENSIC AUDIT OF CAUSAL REPAIR, KAIRI ALPHA & HOLDOUT RIGOR
+====================================================================================================
+TARGET SYSTEM: Quantitative Trading Architecture, Microstructure Execution & Risk Management
+REPOSITORY: https://github.com/kbsingh1399/Trading.git (branch: main, commit: 4cedff7)
+AUDIT AUTHORITY: Claude Opus (Ox Alpha / Arena.ai Chief Risk Officer & Forensic Quant Auditor)
+MISSION ENVIRONMENT: Fresh Session (Zero previous context, zero local storage, zero repo access beyond raw GitHub URLs)
+====================================================================================================
+
+# 1. EXECUTIVE MISSION DIRECTIVE FOR CLAUDE OPUS
+You are serving as the Chief Quantitative Risk Officer, Institutional Forensic Auditor, and Lead Microstructure Architect. Your sole directive is to perform an uncompromising, forensic, line-by-line audit of the production trading system pushed to https://github.com/kbsingh1399/Trading.git at commit 4cedff7.
+
+This audit session focuses on three major institutional milestones:
+1. Complete Causal Remediation (OX_ALPHA_45 resolution): Verify that all scratch dependencies have been purged, fast numba engine and multi-timeframe processors are permanently tracked in core, next-bar open fills (opens[j+1]) are strictly enforced, and all artificial profit floors or lookahead resuscitations are permanently destroyed.
+2. Canonical Kairi Relative Index (KRI) Integration: Audit the newly integrated Kairi Relative Index kernels in Engine/core/canonical_indicators.py (compute_kairi_relative_index and compute_kairi_atr_ratio) and evaluate their role in resolving crypto cascade vulnerabilities.
+3. Test Suite & Holdout Statistical Significance: Audit the 60/60 unit test suite in Engine/tests/ and the quarantined holdout benchmark in Engine/validation/holdout_test.py (1,924 trades, +2,857.10 USD Net PnL, +0.1085 R/trade, t-stat = +4.46 vs Bonferroni threshold 3.17 across 65 configurations).
+
+---
+
+# 2. RAW GITHUB URL MATRIX (FETCH DIRECTLY FROM GIT)
+Do NOT ask for code dumps. Fetch and inspect the full source code directly via these verified raw GitHub URLs pinned to commit 4cedff7:
+
+- Master Repository:
+  https://github.com/kbsingh1399/Trading.git (Branch: main, Commit: 4cedff7)
+
+- Canonical Indicators & KRI Kernels (compute_kairi_relative_index & compute_kairi_atr_ratio):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/core/canonical_indicators.py
+
+- Unit Test Suite for KRI Kernels (Prefix Invariance, Causality, Edge Cases):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/tests/test_kairi_indicators.py
+
+- Complete Test Suite (60/60 Unit Tests Passing):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/tests/test_validation_harness.py
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/tests/test_baskets_and_crypto.py
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/tests/test_execution_safety.py
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/tests/test_prelaunch.py
+
+- Honest Walk-Forward Validation Harness (Arena's Causal Multi-Asset Engine):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/validation/honest_walkforward.py
+
+- Strict Holdout Benchmark (Quarantined 2025-2026 Test with Multiple Testing Control):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/validation/holdout_test.py
+
+- Production Numba-Accelerated Engine (Promoted to Core & Tracked):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/core/fast_numba_oos_engine.py
+
+- Multi-Timeframe Resampling & Cache Helper (Zero Scratch Dependency):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/core/multi_tf_data.py
+
+- Formalized S2 Mean Reversion Strategy (Tracked & Causal):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/strategy/s2_mean_reversion.py
+
+- Remediated S1 Dual-Model Orderflow Strategy (Normalized LightGBM num_leaves=15):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/strategy/s1_dual_model_orderflow.py
+
+- Remediated S3 Cross-Asset ORB/CRT Footprint Strategy (Causal Loops & Zero Floors):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/strategy/s3_orb_ml.py
+
+- 23 Out-Of-Sample Quarterly Windows Specification (2021 - 2026):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/arena_01a09b0e/Engine/oos_windows_20.json
+
+- Institutional Target OOS Pass Criteria:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/4cedff7/Engine/target_oos_criteria.json
+
+---
+
+# 3. KAIRI RELATIVE INDEX (KRI) EMPIRICAL DISCOVERY & FORMULATION
+
+### Formulation:
+                  Price(t) - SMA_96(t)
+        KRI(t) = ----------------------  x  100%
+                       SMA_96(t)
+
+Where SMA_96(t) represents the 24-hour moving average baseline on 15-minute candles.
+
+### Empirical Evidence Across 3.47M 15m Bars (11 Institutional Binance USDT-M Perpetuals, 2020-2026):
+1. Extreme Capitulation Tail: The 1st percentile of KRI across the universe averages -7.34% (-5.06% on BTC, -6.69% on ETH, -7.85% on XRP, -8.67% on DOGE, -7.66% on ADA).
+2. Mean-Reversion Elasticity: Forward 12-bar (3-hour) returns following 1st percentile KRI dislocations yield a statistically verified 59.0% bounce win rate and +0.59% average bounce across 23,227 tail events.
+3. Directional Asymmetry: In contrast to the bounce edge after long liquidations, shorting at the 99th percentile (+7.90%) exhibits negative expectancy (+0.31% continuation) due to persistent upward short squeezes during crypto bull regimes.
+4. Gating Role: Unconstrained Bollinger Bands suffer negative expectancy (-0.28R) because they catch falling knives during bear cascades. Requiring either macro trend alignment (Close > EMA_200) or 1st percentile KRI dislocation prunes false dip-buying signals and restores positive expectancy.
+
+---
+
+# 4. STATISTICAL VALIDATION & HOLDOUT BENCHMARK (ENGINE/VALIDATION/HOLDOUT_TEST.PY)
+
+Arena's strict holdout test was executed in frozen holdout mode (2025-01-01 to 2026-03-31, 9 quarterly regimes):
+- Completed Trades: 1,924
+- Net Profit: +2,857.10 USD (+57.14% Net ROI on 5,000.00 USD initial capital)
+- Trade Expectancy: +0.1085 R/trade
+- Observed t-statistic: +4.46
+- Bonferroni Critical t-threshold: 3.17 across 65 configurations
+- Multiple Testing Verdict: SURVIVES (p < 0.0001)
+- 5,000-Run Monte Carlo Bootstrap:
+  * Median ROI: +71.59%
+  * 95th Percentile Max Drawdown: 5.97%
+  * Probability of Net Loss: 0.04%
+
+---
+
+# 5. FORENSIC AUDIT CHECKLIST FOR CLAUDE OPUS
+Please conduct your audit along these explicit criteria:
+
+1. Clean Fresh Clone Execution:
+   Confirm that the repository contains zero dependencies on untracked scratch directories, and that all core modules (fast_numba_oos_engine.py, multi_tf_data.py, s2_mean_reversion.py) are present and importable.
+2. 60/60 Unit Test Verification:
+   Inspect the test suite across Engine/tests/ (test_validation_harness.py, test_baskets_and_crypto.py, test_execution_safety.py, test_prelaunch.py, test_kairi_indicators.py) and confirm 100% pass status.
+3. KRI Indicator Integrity:
+   Verify that compute_kairi_relative_index and compute_kairi_atr_ratio in Engine/core/canonical_indicators.py satisfy prefix-invariance, causality, and mathematical precision.
+4. Intrabar Fill & Microstructure Rigor:
+   Verify next-bar open fills (opens[j+1]), barrier checking order (stop checked before target), and 72-hour trade exit purge boundary enforcement.
+5. Definitive Institutional Rating:
+   Assign an institutional score (0/10 to 10/10) with detailed technical findings and recommendations for live broker deployment.
