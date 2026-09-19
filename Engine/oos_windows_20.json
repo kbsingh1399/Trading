@@ -1,162 +1,186 @@
 [
   {
     "window_id": 1,
-    "name": "May 2021 Great Liquidation Crash",
-    "start_date": "2021-05-01",
-    "end_date": "2021-05-31",
-    "regime": "Bearish Extreme Liquidation Shock",
-    "description": "Historical $64k to $30k capitulation cascade with record long liquidations and cascading margin calls."
+    "name": "Q1 2021 Crypto Bull Run & Stimulus Ignition",
+    "start_date": "2021-01-01",
+    "end_date": "2021-03-31",
+    "regime": "Macro Stimulus Bull Expansion",
+    "description": "Massive institutional liquidity influx, Tesla Bitcoin purchase, and historic stimulus-driven bull expansion."
   },
   {
     "window_id": 2,
-    "name": "September 2021 El Salvador Flash Crash",
-    "start_date": "2021-09-01",
-    "end_date": "2021-09-30",
-    "regime": "Flash Crash & High Volatility Rebound",
-    "description": "Rapid multi-billion dollar long flush on 'legal tender' announcement followed by institutional absorption."
+    "name": "Q2 2021 May Liquidation Crash & China Ban",
+    "start_date": "2021-04-01",
+    "end_date": "2021-06-30",
+    "regime": "Bearish Extreme Liquidation Shock",
+    "description": "Record long liquidations, China mining ban, and severe capitulation cascade from $64k down to $30k."
   },
   {
     "window_id": 3,
-    "name": "November 2021 Cycle Peak Reversal",
-    "start_date": "2021-11-01",
-    "end_date": "2021-11-30",
-    "regime": "Blowoff Top & Distribution Reversal",
-    "description": "Bitcoin reaches $69k cycle ATH with massive short liquidation squeeze followed by aggressive spot distribution."
+    "name": "Q3 2021 El Salvador Tender & Summer Rebound",
+    "start_date": "2021-07-01",
+    "end_date": "2021-09-30",
+    "regime": "Flash Crash & High Volatility Rebound",
+    "description": "Institutional absorption, legal tender announcement in El Salvador, and multi-asset recovery."
   },
   {
     "window_id": 4,
-    "name": "January 2022 Fed Macro Tightening",
-    "start_date": "2022-01-01",
-    "end_date": "2022-01-31",
-    "regime": "Macro Trending Bear Cascade",
-    "description": "Macro-driven selloff from $47k to $33k with continuous open interest destruction."
+    "name": "Q4 2021 ATH Blowoff & Distribution Peak",
+    "start_date": "2021-10-01",
+    "end_date": "2021-12-31",
+    "regime": "Blowoff Top & Distribution Reversal",
+    "description": "First Bitcoin futures ETF launch, cycle ATH at $69k, followed by aggressive smart-money distribution."
   },
   {
     "window_id": 5,
-    "name": "May 2022 Terra-Luna Systemic Shock",
-    "start_date": "2022-05-01",
-    "end_date": "2022-05-31",
-    "regime": "Systemic Credit Contagion Cascade",
-    "description": "Unprecedented algorithmic stablecoin death spiral causing multi-billion dollar cascading long liquidations."
+    "name": "Q1 2022 Fed Rate Hike Cycle & Macro Shock",
+    "start_date": "2022-01-01",
+    "end_date": "2022-03-31",
+    "regime": "Macro Trending Bear Cascade",
+    "description": "Geopolitical conflict, commodity shock, and the start of the Federal Reserve aggressive tightening cycle."
   },
   {
     "window_id": 6,
-    "name": "June 2022 3AC & Celsius Capitulation",
-    "start_date": "2022-06-01",
+    "name": "Q2 2022 Terra-Luna Collapse & 3AC Insolvency",
+    "start_date": "2022-04-01",
     "end_date": "2022-06-30",
-    "regime": "Major Institutional Capitulation Flush",
-    "description": "Cascading liquidation of crypto hedge funds driving BTC from $30k down to $17.5k with extreme volume."
+    "regime": "Systemic Credit Contagion Cascade",
+    "description": "Algorithmic stablecoin death spiral triggering systemic contagion across crypto hedge funds and lenders."
   },
   {
     "window_id": 7,
-    "name": "September 2022 ETH Merge Chop & Grind",
-    "start_date": "2022-09-01",
+    "name": "Q3 2022 ETH Merge & Dollar Index Surge",
+    "start_date": "2022-07-01",
     "end_date": "2022-09-30",
     "regime": "Low-Volatility Rangebound Grind",
-    "description": "Sideways compression around $19k-$20k with frequent false breakout traps and range mean-reversion."
+    "description": "DXY breaks 114, global currency depreciation, and Ethereum Proof-of-Stake transition amid chop."
   },
   {
     "window_id": 8,
-    "name": "November 2022 FTX Collapse Bottom",
-    "start_date": "2022-11-01",
-    "end_date": "2022-11-30",
+    "name": "Q4 2022 FTX Bankruptcy & Cycle Capitulation",
+    "start_date": "2022-10-01",
+    "end_date": "2022-12-31",
     "regime": "Exchange Insolvency Black Swan",
     "description": "FTX bankruptcy crash to $15.5k cycle low with massive negative funding and peak panic."
   },
   {
     "window_id": 9,
-    "name": "January 2023 Bullish Short Squeeze Recovery",
+    "name": "Q1 2023 SVB Bank Run & Short Squeeze Recovery",
     "start_date": "2023-01-01",
-    "end_date": "2023-01-31",
-    "regime": "Aggressive Mean Reversion Short Squeeze",
-    "description": "V-shaped recovery from $16.5k to $23k driving massive short liquidation cascade across perpetuals."
+    "end_date": "2023-03-31",
+    "regime": "Banking Shock to Flight-to-Quality",
+    "description": "US regional banking crisis sparks aggressive flight to safety and massive short liquidation squeeze."
   },
   {
     "window_id": 10,
-    "name": "March 2023 SVB Bank Run & USDC Depeg",
-    "start_date": "2023-03-01",
-    "end_date": "2023-03-31",
-    "regime": "Banking Shock to Massive Flight-to-Quality",
-    "description": "Initial panic drop to $19.5k followed by historic short squeeze to $28k on bank bailout news."
+    "name": "Q2 2023 BlackRock Spot ETF Filing & Compression",
+    "start_date": "2023-04-01",
+    "end_date": "2023-06-30",
+    "regime": "Institutional Narrative Breakout",
+    "description": "SEC regulatory lawsuits against exchanges followed by landmark BlackRock spot ETF filing breakout."
   },
   {
     "window_id": 11,
-    "name": "June 2023 BlackRock Spot ETF Momentum",
-    "start_date": "2023-06-01",
-    "end_date": "2023-06-30",
-    "regime": "Institutional Narrative Breakout",
-    "description": "Breakout from $25k to $31k on BlackRock spot ETF filing with sustained positive CVD."
+    "name": "Q3 2023 Mid-Summer Flash Flush & Yield Spike",
+    "start_date": "2023-07-01",
+    "end_date": "2023-09-30",
+    "regime": "Extreme Flash Liquidation Flush",
+    "description": "US 10-year yield surges toward 5%, triggering flash liquidations and low-volume consolidation."
   },
   {
     "window_id": 12,
-    "name": "August 2023 Mid-Summer Flash Liquidation",
-    "start_date": "2023-08-01",
-    "end_date": "2023-08-31",
-    "regime": "Extreme Flash Liquidation Flush",
-    "description": "August 17 sudden $29k to $25k flush wiping out over $1B in long open interest in a single 4-hour window."
+    "name": "Q4 2023 Uptober Spot ETF Pre-Run & Rally",
+    "start_date": "2023-10-01",
+    "end_date": "2023-12-31",
+    "regime": "Pre-Approval Momentum Expansion",
+    "description": "Explosive breakout from $27k to $44k on imminent spot ETF approval expectations."
   },
   {
     "window_id": 13,
-    "name": "October 2023 Uptober Spot ETF Ignition",
-    "start_date": "2023-10-01",
-    "end_date": "2023-10-31",
-    "regime": "Strong Trending Momentum Breakout",
-    "description": "Explosive breakout from $27k to $35k on Cointelegraph fake ETF tweet followed by genuine institutional buying."
+    "name": "Q1 2024 Spot ETF Inflows & Pre-Halving ATH",
+    "start_date": "2024-01-01",
+    "end_date": "2024-03-31",
+    "regime": "Institutional Capital Explosion",
+    "description": "Historic institutional capital inflows via spot ETFs driving Bitcoin to new all-time high of $73.7k."
   },
   {
     "window_id": 14,
-    "name": "January 2024 Spot ETF Approval Shakeout",
-    "start_date": "2024-01-01",
-    "end_date": "2024-01-31",
-    "regime": "Sell-the-News Cascade & Rotation",
-    "description": "Bitcoin ETF launch day peak ($48.9k) followed by Grayscale GBTC redemption selloff to $38.5k."
+    "name": "Q2 2024 Bitcoin Halving & Post-ATH Re-Accumulation",
+    "start_date": "2024-04-01",
+    "end_date": "2024-06-30",
+    "regime": "Post-Halving Supply Shock Range",
+    "description": "4th Bitcoin halving, mining reward reduction, and high-timeframe re-accumulation range."
   },
   {
     "window_id": 15,
-    "name": "March 2024 Pre-Halving All-Time High Run",
-    "start_date": "2024-03-01",
-    "end_date": "2024-03-31",
-    "regime": "High-Volatility Euphoric Bull Expansion",
-    "description": "Rapid acceleration through prior ATH to $73.7k with intense intraday volatility and 10%+ daily swings."
+    "name": "Q3 2024 Global Carry Trade Unwind & 50bps Cut",
+    "start_date": "2024-07-01",
+    "end_date": "2024-09-30",
+    "regime": "Global Macro Liquidity Shock",
+    "description": "Nikkei crash, yen carry-trade unwind, and Federal Reserve initiation of 50bps jumbo rate cuts."
   },
   {
     "window_id": 16,
-    "name": "August 2024 Global Carry Trade Liquidation",
-    "start_date": "2024-08-01",
-    "end_date": "2024-08-31",
-    "regime": "Global Macro Liquidity Shock",
-    "description": "August 5 'Black Monday' Japanese Yen carry trade unwind crashing BTC from $65k to $49k in 72 hours."
+    "name": "Q4 2024 US Presidential Election & Mega Breakout",
+    "start_date": "2024-10-01",
+    "end_date": "2024-12-31",
+    "regime": "Macro Political Euphoria & Breakout",
+    "description": "Pro-crypto presidential election outcome sparking explosive cross-asset bull rally to $100k+."
   },
   {
     "window_id": 17,
-    "name": "November 2024 US Election Mega Breakout",
-    "start_date": "2024-11-01",
-    "end_date": "2024-11-30",
-    "regime": "Historic Unidirectional Bull Trend",
-    "description": "Record-breaking post-election rally from $68k to $98k with massive institutional ETF inflows."
+    "name": "Q1 2025 Strategic Reserve & Institutional Wave",
+    "start_date": "2025-01-01",
+    "end_date": "2025-03-31",
+    "regime": "Sovereign & Treasury Adoption",
+    "description": "Institutional sovereign adoption narratives and corporate treasury diversification wave."
   },
   {
     "window_id": 18,
-    "name": "February 2025 Post-Inauguration Consolidation",
-    "start_date": "2025-02-01",
-    "end_date": "2025-02-28",
-    "regime": "High-Level Range Chop & False Breakouts",
-    "description": "Consolidation near all-time highs with frequent stop-hunts above and below value area boundaries."
+    "name": "Q2 2025 Regulatory Clarity & Altcoin Momentum",
+    "start_date": "2025-04-01",
+    "end_date": "2025-06-30",
+    "regime": "Altcoin Expansion & Legislative Framework",
+    "description": "Comprehensive legislative crypto framework passed, sparking broad-based altcoin momentum."
   },
   {
     "window_id": 19,
-    "name": "July 2025 Mid-Year Volatility Expansion",
+    "name": "Q3 2025 Summer Microstructure Volatility",
     "start_date": "2025-07-01",
-    "end_date": "2025-07-31",
-    "regime": "Derivative Expiry Volatility Shakeout",
-    "description": "Quarterly options/futures expiry rollover creating localized liquidation cascades and microstructure resets."
+    "end_date": "2025-09-30",
+    "regime": "Range Distribution & Liquidity Sweeps",
+    "description": "High-frequency market making liquidity sweeps and range-bound volatility compression."
   },
   {
     "window_id": 20,
-    "name": "March 2026 Late-Cycle Microstructure Shock",
-    "start_date": "2026-03-01",
+    "name": "Q4 2025 Year-End Macro Flow Rebalancing",
+    "start_date": "2025-10-01",
+    "end_date": "2025-12-31",
+    "regime": "Holiday Liquidity Contraction & Mean Reversion",
+    "description": "Year-end fiscal rebalancing and cross-currency macro flows."
+  },
+  {
+    "window_id": 21,
+    "name": "Q1 2026 New Year Cross-Asset Flow",
+    "start_date": "2026-01-01",
     "end_date": "2026-03-31",
-    "regime": "Mature Cycle Cascade & Absorption",
-    "description": "High-frequency liquidation cascade testing modern algorithmic absorption and delta divergence."
+    "regime": "Cross-Asset Rotation & Opening Range Breakouts",
+    "description": "Post-holiday positioning and cross-asset opening range breakouts across crypto, forex, and CFD markets."
+  },
+  {
+    "window_id": 22,
+    "name": "Q2 2026 Modern Microstructure Flow",
+    "start_date": "2026-04-01",
+    "end_date": "2026-06-30",
+    "regime": "Deep Algorithmic Liquidity",
+    "description": "Deep algorithmic liquidity and high-precision ICT footprint execution."
+  },
+  {
+    "window_id": 23,
+    "name": "Q3 2026 Live Production Regime",
+    "start_date": "2026-07-01",
+    "end_date": "2026-09-19",
+    "regime": "Real-Time Forward Execution",
+    "description": "Current real-time market regime and live forward testing across all 156 assets."
   }
 ]
