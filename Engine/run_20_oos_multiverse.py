@@ -18,7 +18,9 @@ from scratch.fast_numba_oos_engine import compile_dataset_with_numba, WINDOWS_PA
 from Engine.strategy.s1_dual_model_orderflow import InstitutionalDualModelEngine
 from Engine.strategy.s3_orb_ml import simulate_orb_trades
 
-CRYPTO_DIR = REPO_ROOT / "Engine" / "binance_backtesting_data"
+CRYPTO_DIR = REPO_ROOT / "binance_backtesting_data"
+if not CRYPTO_DIR.exists():
+    CRYPTO_DIR = REPO_ROOT / "Engine" / "binance_backtesting_data"
 FOREX_DIR = REPO_ROOT / "Forex_Backtesting_Data"
 
 CRYPTO_ASSETS = ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'BNBUSDT', 'DOGEUSDT', 'ADAUSDT', 'TRXUSDT', 'LINKUSDT', 'DOTUSDT', 'LTCUSDT', 'BCHUSDT']
