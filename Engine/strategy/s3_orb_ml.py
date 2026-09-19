@@ -217,7 +217,7 @@ def simulate_orb_trades(
                             features[trade_idx, 19] = judas_sweep
                             
                             # Dynamic BE trigger for compressed ATR regimes (Upgrade #4 for W18)
-                            phase0_trigger = 1.0 if atr_pct < 0.0045 else 0.8
+                            phase0_trigger = 0.8
 
                             outcome_r = -1.0  # default: expired at market
                             exit_is_stop = False
@@ -225,7 +225,7 @@ def simulate_orb_trades(
                             phase_1_locked = False
                             trail_active = False
 
-                            for k in range(entry_bar, trade_end):
+                            for k in range(entry_bar + 1, trade_end):
                                 # Time decay: exit at market after 24 bars if < 0.2R gain
                                 if k - entry_bar >= 24:
                                     current_r = (closes[k] - entry) / (r_val + 1e-9)
@@ -263,12 +263,7 @@ def simulate_orb_trades(
                                         current_sl = trail_sl
 
                             if outcome_r == -1.0:
-                                cur_r = (closes[trade_end-1] - entry) / (r_val + 1e-9)
-                                # Upgrade #1 & #6: credit partial gain for Phase 0 locked expired trades
-                                if phase_0_locked:
-                                    outcome_r = max(cur_r, 0.15)
-                                else:
-                                    outcome_r = cur_r
+                                outcome_r = (closes[trade_end-1] - entry) / (r_val + 1e-9)
 
                             # Calibrated flat friction: 0.08R per trade
                             # (institutional bps model produces 0.45R+ per trade due to
@@ -352,7 +347,7 @@ def simulate_orb_trades(
                             features[trade_idx, 19] = judas_sweep
                             
                             # Dynamic BE trigger for compressed ATR regimes (Upgrade #4 for W18)
-                            phase0_trigger = 1.0 if atr_pct < 0.0045 else 0.8
+                            phase0_trigger = 0.8
 
                             outcome_r = -1.0
                             exit_is_stop = False
@@ -360,7 +355,7 @@ def simulate_orb_trades(
                             phase_1_locked = False
                             trail_active = False
 
-                            for k in range(entry_bar, trade_end):
+                            for k in range(entry_bar + 1, trade_end):
                                 # Time decay: exit at market after 24 bars if < 0.2R gain
                                 if k - entry_bar >= 24:
                                     current_r = (entry - closes[k]) / (r_val + 1e-9)
@@ -398,17 +393,7 @@ def simulate_orb_trades(
                                         current_sl = trail_sl
 
                             if outcome_r == -1.0:
-                                cur_r = (entry - closes[trade_end-1]) / (r_val + 1e-9)
-                                # Upgrade #1 & #6: credit partial gain for Phase 0 locked expired trades
-                                if phase_0_locked:
-                                    outcome_r = max(cur_r, 0.15)
-                                else:
-                                    outcome_r = cur_r
-                                # Upgrade #1 & #6: credit partial gain for Phase 0 locked expired trades
-                                if phase_0_locked:
-                                    outcome_r = max(cur_r, 0.15)
-                                else:
-                                    outcome_r = cur_r
+                                outcome_r = (entry - closes[trade_end-1]) / (r_val + 1e-9)
 
                             # Calibrated flat friction: 0.08R per trade
                             outcome_r -= 0.08

@@ -117,19 +117,19 @@ class InstitutionalDualModelEngine:
         X_tr_s = np.nan_to_num(((X_train - mu) / sd).clip(-5.0, 5.0).to_numpy(float), nan=0.0)
 
         # 1. L2 Regularized Ridge Foundation (C=0.028746)
-        ridge = LogisticRegression(C=0.02874565597723325, max_iter=200, random_state=self.random_state)
+        ridge = LogisticRegression(C=0.03, max_iter=200, random_state=self.random_state)
         ridge.fit(X_tr_s, y_train)
 
-        # 2. Regularized LightGBM Classifier (Trial #24641 Champion: 10 Passes, +4,629.28 USD)
+        # 2. Regularized LightGBM Classifier with depth-constrained leaves
         clf = lgb.LGBMClassifier(
             n_estimators=160,
             max_depth=4,
-            num_leaves=1023,
-            learning_rate=0.041505933280628474,
+            num_leaves=15,
+            learning_rate=0.04,
             subsample=0.8,
             colsample_bytree=0.8,
-            reg_alpha=2.1330083458796363,
-            reg_lambda=0.47695776438584003,
+            reg_alpha=2.0,
+            reg_lambda=0.5,
             random_state=self.random_state,
             verbose=-1,
             n_jobs=2
