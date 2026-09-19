@@ -186,6 +186,39 @@ def compute_rolling_zscore(values: np.ndarray, window: int) -> np.ndarray:
     return z.replace([np.inf, -np.inf], np.nan).fillna(0.0).to_numpy()
 
 
+def compute_kairi_relative_index(closes: np.ndarray, period: int = 96) -> np.ndarray:
+    """
+    Canonical Kairi Relative Index (KRI):
+        KRI_t = (Price_t - SMA_period(t)) / SMA_period(t) * 100.0
+    Quantifies percentage disparity from the moving average baseline.
+    Prefix-invariant and causal (uses causal rolling SMA with min_periods=1).
+    """
+    c = np.asarray(closes, dtype=np.float64)
+    if c.size == 0:
+        return c.copy()
+    sma = compute_sma_series(c, period)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        kri = np.where(sma > _EPS, (c - sma) / sma * 100.0, 0.0)
+    return kri
+
+
+def compute_kairi_atr_ratio(closes: np.ndarray, atrs: np.ndarray, period: int = 96) -> np.ndarray:
+    """
+    ATR-normalized Kairi Disparity:
+        KRI_ATR_t = (Price_t - SMA_period(t)) / ATR_t
+    Measures disparity normalized by local asset volatility.
+    """
+    c = np.asarray(closes, dtype=np.float64)
+    a = np.asarray(atrs, dtype=np.float64)
+    if c.size == 0:
+        return c.copy()
+    sma = compute_sma_series(c, period)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        kri_atr = np.where(a > _EPS, (c - sma) / a, 0.0)
+    return kri_atr
+
+
+
 # ------------------------------------------------------------------------------
 # Session (00:00 UTC anchored) accumulators
 # ------------------------------------------------------------------------------
