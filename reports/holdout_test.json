@@ -1,0 +1,160 @@
+{
+  "selection_era_end": "2024-12-31",
+  "holdout_era_start": "2025-01-01",
+  "config": {
+    "max_cost_frac": 0.05,
+    "target_r": 2.0,
+    "hold_bars": 24,
+    "direction": -1,
+    "mc_runs": 5000,
+    "n_configs_searched": 60,
+    "out": "reports/holdout_test.json"
+  },
+  "selection_scores": {
+    "Full Multiverse": 1865.2498665336752,
+    "Forex only": 2433.417962101834,
+    "Crypto only": 235.1129222951604,
+    "CFD only": -72.78364982043877,
+    "Forex + CFD": 351.7458459710133
+  },
+  "selected_variant": "Forex only",
+  "holdout": {
+    "trades": 1915,
+    "net_pnl": 3007.588065174532,
+    "net_roi_pct": 60.15176130349064,
+    "expectancy_r": 0.13925201235401388,
+    "t_stat": 5.687365215540468,
+    "windows_pass": 3,
+    "windows_profitable": 6,
+    "windows_total": 9,
+    "scorecard": [
+      {
+        "window_id": 12,
+        "name": "Post-Inauguration Trade Policy Realignment",
+        "trades": 227,
+        "win_rate": 39.20704845814978,
+        "net_pnl": -100.31217069993909,
+        "net_roi": -2.0062434139987815,
+        "max_dd": 4.041779803835383,
+        "rejected_concurrency": 47,
+        "rejected_cluster": 56,
+        "status": "FAIL"
+      },
+      {
+        "window_id": 13,
+        "name": "Spring 2025 Precious Metals All-Time High",
+        "trades": 241,
+        "win_rate": 36.51452282157676,
+        "net_pnl": -81.13004985902353,
+        "net_roi": -1.6226009971804705,
+        "max_dd": 4.954991300732843,
+        "rejected_concurrency": 36,
+        "rejected_cluster": 82,
+        "status": "FAIL"
+      },
+      {
+        "window_id": 14,
+        "name": "Late-Cycle Yield Curve Steepening",
+        "trades": 235,
+        "win_rate": 41.27659574468085,
+        "net_pnl": 320.5687568129042,
+        "net_roi": 6.4113751362580835,
+        "max_dd": 4.284740348640301,
+        "rejected_concurrency": 29,
+        "rejected_cluster": 58,
+        "status": "PROFIT"
+      },
+      {
+        "window_id": 15,
+        "name": "European Macro Slowdown & CNH Divergence",
+        "trades": 208,
+        "win_rate": 41.82692307692308,
+        "net_pnl": 74.44649140094498,
+        "net_roi": 1.4889298280188996,
+        "max_dd": 3.8137152161966696,
+        "rejected_concurrency": 34,
+        "rejected_cluster": 58,
+        "status": "PROFIT"
+      },
+      {
+        "window_id": 16,
+        "name": "Late-Summer Commodity Volatility Expansion",
+        "trades": 160,
+        "win_rate": 54.37499999999999,
+        "net_pnl": 597.5524751115217,
+        "net_roi": 11.951049502230434,
+        "max_dd": 2.724240428202247,
+        "rejected_concurrency": 30,
+        "rejected_cluster": 47,
+        "status": "PASS"
+      },
+      {
+        "window_id": 17,
+        "name": "Autumn 2025 Global Liquidity Injection",
+        "trades": 195,
+        "win_rate": 49.23076923076923,
+        "net_pnl": 323.1211086670546,
+        "net_roi": 6.462422173341093,
+        "max_dd": 3.531715412671816,
+        "rejected_concurrency": 24,
+        "rejected_cluster": 61,
+        "status": "PROFIT"
+      },
+      {
+        "window_id": 18,
+        "name": "Q4 2025 Industrial Metals & Indices Momentum",
+        "trades": 227,
+        "win_rate": 47.57709251101321,
+        "net_pnl": 524.8415030290635,
+        "net_roi": 10.496830060581269,
+        "max_dd": 2.9749813498761335,
+        "rejected_concurrency": 39,
+        "rejected_cluster": 80,
+        "status": "PASS"
+      },
+      {
+        "window_id": 19,
+        "name": "Q1 2026 New Year Cross-Asset Range Shift",
+        "trades": 219,
+        "win_rate": 38.81278538812785,
+        "net_pnl": -167.93871320608105,
+        "net_roi": -3.358774264121621,
+        "max_dd": 4.150851229243045,
+        "rejected_concurrency": 32,
+        "rejected_cluster": 71,
+        "status": "FAIL"
+      },
+      {
+        "window_id": 20,
+        "name": "March 2026 Modern Microstructure Shock",
+        "trades": 203,
+        "win_rate": 52.70935960591133,
+        "net_pnl": 1516.4386639180866,
+        "net_roi": 30.32877327836173,
+        "max_dd": 2.8778542734604273,
+        "rejected_concurrency": 46,
+        "rejected_cluster": 60,
+        "status": "PASS"
+      }
+    ]
+  },
+  "multiple_testing": {
+    "n_configs_searched": 65,
+    "bonferroni_t_bar": 3.1687822382319006,
+    "survives": true
+  },
+  "monte_carlo": {
+    "n_runs": 5000,
+    "n_trades_per_run": 2805,
+    "roi_p05": 55.703044532104485,
+    "roi_p50": 117.53750622336659,
+    "roi_p95": 190.9641463343925,
+    "dd_p50": 4.238118031698212,
+    "dd_p95": 5.276200293666037,
+    "dd_p99": 5.924355799455942,
+    "dd_worst": 7.872237824114289,
+    "prob_dd_gt_5pct": 9.32,
+    "prob_dd_gt_10pct": 0.0,
+    "prob_loss": 0.0
+  }
+}

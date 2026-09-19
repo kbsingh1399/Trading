@@ -16,7 +16,7 @@ monitor. New features are only ever APPENDED after ``is_imputed_metrics``.
 ================================================================================
 """
 
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 BAR_MS: int = 900_000                      # 15 minutes
 DAY_MS: int = 86_400_000
@@ -184,25 +184,13 @@ SYMBOLS: List[str] = [
 ]
 
 # ------------------------------------------------------------------------------
-# Unified 3-Basket Universe: Crypto, Forex & CFD (Decoupled Institutional Baskets)
+# NOTE (audit Ox_Alpha_43, finding B3): a 27-symbol ASSET_BASKETS definition used
+# to live here and was silently shadowed by the canonical 156-asset definition
+# further down this file. Python kept the later binding, so the small universe
+# was unreachable dead config that would have flipped behaviour on any reorder.
+# The duplicate has been removed; ASSET_BASKETS is now defined exactly once, in
+# section 16 below. Do not reintroduce a second binding.
 # ------------------------------------------------------------------------------
-ASSET_BASKETS: Dict[str, List[str]] = {
-    "Crypto": [
-        "BTCUSD", "ETHUSD", "SOLUSD", "XRPUSD", "BNBUSD",
-        "LTCUSD", "ADAUSD", "DOTUSD", "BCHUSD",
-    ],
-    "Forex": [
-        "EURUSD", "NZDUSD", "AUDCHF", "EURHUF", "USDSEK",
-        "EURSEK", "USDHKD", "EURCNH", "NZDCNH",
-    ],
-    "CFD": [
-        "GER40", "AU200", "FR40", "US2000", "GAS",
-        "NICKEL", "LEAD", "XAUCNH", "GAUCNH",
-    ],
-}
-
-# Known broker symbol suffixes to clean canonical symbols
-BROKER_SUFFIXES: Tuple[str, ...] = (".pi", ".p", "_i", ".m")
 
 
 def clean_broker_symbol(raw_symbol: str) -> str:
@@ -301,15 +289,18 @@ BINANCE_TO_MT5_MAP: Dict[str, str] = {
     "ADAUSDT": "ADAUSD",
     "DOTUSDT": "DOTUSD",
     "BCHUSDT": "BCHUSD",
-    "DOGEUSDT": "DOGEUSD",
+    # Audit Ox_Alpha_43 finding B4: these five previously mapped to invented
+    # tickers (DOGEUSD, LINKUSD, AVAXUSD, NEARUSD) that appear nowhere in
+    # ASSET_BASKETS["Crypto"], so the Binance history on disk could never be
+    # joined to the MT5 basket. Corrected to the actual Blueberry MT5 symbols.
+    "DOGEUSDT": "DOGUSD",
     "TRXUSDT": "TRXUSD",
-    "LINKUSDT": "LINKUSD",
-    "AVAXUSDT": "AVAXUSD",
-    "SUIUSDT": "SUIUSD",
-    "NEARUSDT": "NEARUSD",
-    "APTUSDT": "APTUSD",
-    "OPUSDT": "OPUSD",
-    "ARBUSDT": "ARBUSD",
+    "LINKUSDT": "LNKUSD",
+    "AVAXUSDT": "AVXUSD",
+    "NEARUSDT": "NERUSD",
+    # No MT5 counterpart in the 156-asset Blueberry universe. Kept out of the
+    # map deliberately rather than mapped to a symbol the broker does not list:
+    #   SUIUSDT, APTUSDT, OPUSDT, ARBUSDT
 }
 
 MT5_TO_BINANCE_MAP: Dict[str, str] = {v: k for k, v in BINANCE_TO_MT5_MAP.items()}

@@ -1,0 +1,558 @@
+{
+  "book": [
+    {
+      "name": "S1_FADE_MR",
+      "direction": -1,
+      "target_r": 1.5,
+      "quantile": 0.92,
+      "cost_cap": 0.1,
+      "regime_veto": true,
+      "regime_mode": "fade",
+      "adx": 28.0,
+      "hurst": 0.54,
+      "baskets": [
+        "Forex"
+      ],
+      "max_hold": 24
+    },
+    {
+      "name": "S2_TREND_MOM",
+      "direction": 1,
+      "target_r": 2.0,
+      "quantile": 0.92,
+      "cost_cap": 0.1,
+      "regime_veto": true,
+      "regime_mode": "trend",
+      "adx": 25.0,
+      "hurst": 0.5,
+      "baskets": [
+        "Forex",
+        "CFD"
+      ],
+      "max_hold": 24
+    },
+    {
+      "name": "S3_FADE_WIDE",
+      "direction": -1,
+      "target_r": 2.5,
+      "quantile": 0.85,
+      "cost_cap": 0.05,
+      "regime_veto": false,
+      "regime_mode": "fade",
+      "adx": 35.0,
+      "hurst": 0.58,
+      "baskets": [
+        "Forex"
+      ],
+      "max_hold": 24
+    },
+    {
+      "name": "S4_TREND_FAST",
+      "direction": 1,
+      "target_r": 1.5,
+      "quantile": 0.85,
+      "cost_cap": 0.1,
+      "regime_veto": true,
+      "regime_mode": "trend",
+      "adx": 22.0,
+      "hurst": 0.48,
+      "baskets": [
+        "Forex",
+        "CFD"
+      ],
+      "max_hold": 24
+    }
+  ],
+  "risk": {
+    "capital": 5000.0,
+    "base_risk": 25.0,
+    "tier1_risk": 25.0,
+    "tier2_risk": 25.0,
+    "tier3_risk": 25.0,
+    "tier1_dd": 1.4,
+    "tier2_dd": 2.0,
+    "tier3_dd": 3.2,
+    "max_concurrent": 3,
+    "max_per_cluster": 1
+  },
+  "pass": 4,
+  "evaluated": 19,
+  "profitable": 14,
+  "net_pnl": 8762.07138460056,
+  "net_roi_pct": 175.2414276920112,
+  "scorecard": [
+    {
+      "window_id": 1,
+      "name": "Late 2023 Fed Higher-for-Longer Pause",
+      "trades": 0,
+      "win_rate": 0,
+      "net_pnl": 0,
+      "net_roi": 0,
+      "max_dd": 0,
+      "rejected_concurrency": 0,
+      "rejected_cluster": 0,
+      "status": "NO_DATA"
+    },
+    {
+      "window_id": 2,
+      "name": "Q4 2023 Year-End Soft Landing Rally",
+      "trades": 135,
+      "win_rate": 39.25925925925926,
+      "net_pnl": -112.20714883792516,
+      "net_roi": -2.244142976758503,
+      "max_dd": 8.930630237682932,
+      "rejected_concurrency": 5,
+      "rejected_cluster": 28,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 3,
+      "name": "Q1 2024 Global Disinflation Surge",
+      "trades": 188,
+      "win_rate": 43.61702127659575,
+      "net_pnl": 297.26133151554404,
+      "net_roi": 5.945226630310881,
+      "max_dd": 8.083938554290265,
+      "rejected_concurrency": 7,
+      "rejected_cluster": 42,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 4,
+      "name": "Early 2024 Tech & Index Expansion",
+      "trades": 181,
+      "win_rate": 48.06629834254144,
+      "net_pnl": 533.7389600794932,
+      "net_roi": 10.674779201589864,
+      "max_dd": 3.8513253503047626,
+      "rejected_concurrency": 23,
+      "rejected_cluster": 64,
+      "status": "PASS"
+    },
+    {
+      "window_id": 5,
+      "name": "Spring 2024 Geopolitical Energy Spike",
+      "trades": 215,
+      "win_rate": 48.372093023255815,
+      "net_pnl": 960.6565181096876,
+      "net_roi": 19.213130362193752,
+      "max_dd": 5.881773175024737,
+      "rejected_concurrency": 37,
+      "rejected_cluster": 53,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 6,
+      "name": "ECB Rate Cut Pivot & Dollar Strength",
+      "trades": 204,
+      "win_rate": 42.64705882352941,
+      "net_pnl": 170.9730459229022,
+      "net_roi": 3.4194609184580442,
+      "max_dd": 8.143474227182601,
+      "rejected_concurrency": 39,
+      "rejected_cluster": 66,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 7,
+      "name": "Mid-2024 High-Beta Equity Distribution",
+      "trades": 211,
+      "win_rate": 45.023696682464454,
+      "net_pnl": 444.16197180328436,
+      "net_roi": 8.883239436065688,
+      "max_dd": 8.096099625200374,
+      "rejected_concurrency": 47,
+      "rejected_cluster": 73,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 8,
+      "name": "August 2024 Global Carry Trade Flash Unwind",
+      "trades": 220,
+      "win_rate": 38.18181818181819,
+      "net_pnl": -316.6207721307301,
+      "net_roi": -6.332415442614601,
+      "max_dd": 12.372847143000977,
+      "rejected_concurrency": 102,
+      "rejected_cluster": 79,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 9,
+      "name": "Fed 50bps Jumbo Rate Cut Ignition",
+      "trades": 304,
+      "win_rate": 47.69736842105263,
+      "net_pnl": 1512.8250649450456,
+      "net_roi": 30.25650129890091,
+      "max_dd": 6.999652005544481,
+      "rejected_concurrency": 79,
+      "rejected_cluster": 102,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 10,
+      "name": "US Presidential Election Mega Breakout",
+      "trades": 303,
+      "win_rate": 44.884488448844884,
+      "net_pnl": 423.8919338219439,
+      "net_roi": 8.477838676438878,
+      "max_dd": 9.622241512654183,
+      "rejected_concurrency": 67,
+      "rejected_cluster": 116,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 11,
+      "name": "Year-End Cross-Currency Flow Rebalancing",
+      "trades": 280,
+      "win_rate": 39.64285714285714,
+      "net_pnl": -575.6664792070178,
+      "net_roi": -11.513329584140356,
+      "max_dd": 15.57570125855088,
+      "rejected_concurrency": 91,
+      "rejected_cluster": 93,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 12,
+      "name": "Post-Inauguration Trade Policy Realignment",
+      "trades": 260,
+      "win_rate": 37.69230769230769,
+      "net_pnl": -639.923941209413,
+      "net_roi": -12.798478824188258,
+      "max_dd": 18.35035429839133,
+      "rejected_concurrency": 114,
+      "rejected_cluster": 91,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 13,
+      "name": "Spring 2025 Precious Metals All-Time High",
+      "trades": 302,
+      "win_rate": 42.384105960264904,
+      "net_pnl": 103.04123520760186,
+      "net_roi": 2.060824704152037,
+      "max_dd": 10.26134498961197,
+      "rejected_concurrency": 98,
+      "rejected_cluster": 112,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 14,
+      "name": "Late-Cycle Yield Curve Steepening",
+      "trades": 279,
+      "win_rate": 47.67025089605735,
+      "net_pnl": 891.2117045292507,
+      "net_roi": 17.824234090585016,
+      "max_dd": 6.7301765793295125,
+      "rejected_concurrency": 103,
+      "rejected_cluster": 110,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 15,
+      "name": "European Macro Slowdown & CNH Divergence",
+      "trades": 260,
+      "win_rate": 41.15384615384615,
+      "net_pnl": -19.76149530904695,
+      "net_roi": -0.395229906180939,
+      "max_dd": 7.853804288129006,
+      "rejected_concurrency": 85,
+      "rejected_cluster": 100,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 16,
+      "name": "Late-Summer Commodity Volatility Expansion",
+      "trades": 255,
+      "win_rate": 48.627450980392155,
+      "net_pnl": 1018.8907882380217,
+      "net_roi": 20.377815764760435,
+      "max_dd": 3.6817912229028975,
+      "rejected_concurrency": 95,
+      "rejected_cluster": 96,
+      "status": "PASS"
+    },
+    {
+      "window_id": 17,
+      "name": "Autumn 2025 Global Liquidity Injection",
+      "trades": 262,
+      "win_rate": 53.43511450381679,
+      "net_pnl": 1571.704774859747,
+      "net_roi": 31.434095497194942,
+      "max_dd": 2.9924503462405525,
+      "rejected_concurrency": 84,
+      "rejected_cluster": 109,
+      "status": "PASS"
+    },
+    {
+      "window_id": 18,
+      "name": "Q4 2025 Industrial Metals & Indices Momentum",
+      "trades": 315,
+      "win_rate": 47.3015873015873,
+      "net_pnl": 757.841487702316,
+      "net_roi": 15.156829754046322,
+      "max_dd": 6.421923178588234,
+      "rejected_concurrency": 167,
+      "rejected_cluster": 124,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 19,
+      "name": "Q1 2026 New Year Cross-Asset Range Shift",
+      "trades": 265,
+      "win_rate": 46.0377358490566,
+      "net_pnl": 718.9413908208599,
+      "net_roi": 14.378827816417198,
+      "max_dd": 10.400973495234188,
+      "rejected_concurrency": 103,
+      "rejected_cluster": 109,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 20,
+      "name": "March 2026 Modern Microstructure Shock",
+      "trades": 264,
+      "win_rate": 48.484848484848484,
+      "net_pnl": 1021.111013738996,
+      "net_roi": 20.42222027477992,
+      "max_dd": 4.176128983090965,
+      "rejected_concurrency": 126,
+      "rejected_cluster": 95,
+      "status": "PASS"
+    }
+  ],
+  "sleeve_mix": {
+    "1": {},
+    "2": {
+      "S3_FADE_WIDE": 65,
+      "S4_TREND_FAST": 61,
+      "S1_FADE_MR": 35,
+      "S2_TREND_MOM": 7
+    },
+    "3": {
+      "S4_TREND_FAST": 91,
+      "S3_FADE_WIDE": 74,
+      "S1_FADE_MR": 52,
+      "S2_TREND_MOM": 20
+    },
+    "4": {
+      "S3_FADE_WIDE": 97,
+      "S4_TREND_FAST": 77,
+      "S1_FADE_MR": 71,
+      "S2_TREND_MOM": 23
+    },
+    "5": {
+      "S3_FADE_WIDE": 104,
+      "S4_TREND_FAST": 96,
+      "S1_FADE_MR": 77,
+      "S2_TREND_MOM": 28
+    },
+    "6": {
+      "S4_TREND_FAST": 115,
+      "S3_FADE_WIDE": 90,
+      "S1_FADE_MR": 65,
+      "S2_TREND_MOM": 39
+    },
+    "7": {
+      "S4_TREND_FAST": 123,
+      "S3_FADE_WIDE": 95,
+      "S1_FADE_MR": 89,
+      "S2_TREND_MOM": 24
+    },
+    "8": {
+      "S4_TREND_FAST": 214,
+      "S3_FADE_WIDE": 115,
+      "S2_TREND_MOM": 40,
+      "S1_FADE_MR": 32
+    },
+    "9": {
+      "S4_TREND_FAST": 180,
+      "S3_FADE_WIDE": 157,
+      "S1_FADE_MR": 106,
+      "S2_TREND_MOM": 42
+    },
+    "10": {
+      "S4_TREND_FAST": 217,
+      "S3_FADE_WIDE": 124,
+      "S1_FADE_MR": 95,
+      "S2_TREND_MOM": 50
+    },
+    "11": {
+      "S4_TREND_FAST": 179,
+      "S3_FADE_WIDE": 150,
+      "S1_FADE_MR": 111,
+      "S2_TREND_MOM": 24
+    },
+    "12": {
+      "S3_FADE_WIDE": 158,
+      "S4_TREND_FAST": 157,
+      "S1_FADE_MR": 119,
+      "S2_TREND_MOM": 31
+    },
+    "13": {
+      "S4_TREND_FAST": 197,
+      "S3_FADE_WIDE": 166,
+      "S1_FADE_MR": 80,
+      "S2_TREND_MOM": 69
+    },
+    "14": {
+      "S4_TREND_FAST": 193,
+      "S3_FADE_WIDE": 137,
+      "S1_FADE_MR": 101,
+      "S2_TREND_MOM": 61
+    },
+    "15": {
+      "S3_FADE_WIDE": 156,
+      "S4_TREND_FAST": 155,
+      "S1_FADE_MR": 92,
+      "S2_TREND_MOM": 42
+    },
+    "16": {
+      "S4_TREND_FAST": 169,
+      "S3_FADE_WIDE": 132,
+      "S1_FADE_MR": 89,
+      "S2_TREND_MOM": 56
+    },
+    "17": {
+      "S4_TREND_FAST": 172,
+      "S3_FADE_WIDE": 141,
+      "S1_FADE_MR": 97,
+      "S2_TREND_MOM": 45
+    },
+    "18": {
+      "S4_TREND_FAST": 231,
+      "S3_FADE_WIDE": 172,
+      "S1_FADE_MR": 137,
+      "S2_TREND_MOM": 66
+    },
+    "19": {
+      "S4_TREND_FAST": 195,
+      "S3_FADE_WIDE": 140,
+      "S1_FADE_MR": 93,
+      "S2_TREND_MOM": 49
+    },
+    "20": {
+      "S4_TREND_FAST": 183,
+      "S3_FADE_WIDE": 168,
+      "S1_FADE_MR": 78,
+      "S2_TREND_MOM": 56
+    }
+  },
+  "sleeve_roi": {
+    "S1_FADE_MR": {
+      "1": 0.0,
+      "2": -1.7452554923812387,
+      "3": 11.506541054166156,
+      "4": 8.107996168228384,
+      "5": 15.100523430826252,
+      "6": 17.027543792288018,
+      "7": 14.037056092368566,
+      "8": -2.108916503918954,
+      "9": 19.102286059633535,
+      "10": 12.04611434200331,
+      "11": 7.076725732465075,
+      "12": -2.2775786835223517,
+      "13": 2.0795451207841507,
+      "14": 13.847375679935721,
+      "15": 17.624324336073315,
+      "16": 26.15844490460642,
+      "17": 16.47388891939732,
+      "18": 22.15788006345827,
+      "19": 7.715797855947221,
+      "20": 19.88821119617509
+    },
+    "S2_TREND_MOM": {
+      "1": 0.0,
+      "2": 1.3409171145940126,
+      "3": -0.6022733980298653,
+      "4": 2.6260498058371557,
+      "5": -0.0795589644631218,
+      "6": -9.384937027528613,
+      "7": 3.0384592149260428,
+      "8": -4.448478495771378,
+      "9": -8.259965458622537,
+      "10": -4.141231731679746,
+      "11": -1.7772149625618658,
+      "12": -0.788243909386165,
+      "13": 4.102639840035499,
+      "14": 3.716928401332716,
+      "15": -6.55063931783403,
+      "16": -3.7946469417744266,
+      "17": -0.5541527329933706,
+      "18": -3.1107069830714864,
+      "19": -3.1461616503047845,
+      "20": 0.2668732585488215
+    },
+    "S3_FADE_WIDE": {
+      "1": 0.0,
+      "2": 1.581077163267746,
+      "3": 2.4404942908670453,
+      "4": -4.192936614360897,
+      "5": 9.165321848025979,
+      "6": 4.565661917536145,
+      "7": 1.1903441340125573,
+      "8": 3.566153840058778,
+      "9": 17.943834310442742,
+      "10": 9.218092931461468,
+      "11": -1.9883551543626345,
+      "12": 1.3366331447860467,
+      "13": 1.1068646202605668,
+      "14": 14.957816486248321,
+      "15": 1.351621291267147,
+      "16": 16.870843611872644,
+      "17": 16.64614230989282,
+      "18": 17.518770792367487,
+      "19": 5.798867954190627,
+      "20": 24.220574169734938
+    },
+    "S4_TREND_FAST": {
+      "1": 0.0,
+      "2": -2.9868685839187674,
+      "3": -7.751797349995049,
+      "4": 0.9399102879196835,
+      "5": 8.521554224052833,
+      "6": -7.569994309811336,
+      "7": -2.181612554284875,
+      "8": -4.458177644657208,
+      "9": 2.3046215006504096,
+      "10": -4.676740761478014,
+      "11": -6.505556425870764,
+      "12": -7.908894429180127,
+      "13": -10.451497169685135,
+      "14": 3.1899475401135713,
+      "15": -11.033937891315999,
+      "16": -4.997514462341533,
+      "17": 8.35587990513466,
+      "18": 0.3350744803061389,
+      "19": 4.84985243744708,
+      "20": -9.209490094414633
+    }
+  },
+  "sleeve_corr": {
+    "S1_FADE_MR": {
+      "S1_FADE_MR": 1.0,
+      "S2_TREND_MOM": -0.34731901596354847,
+      "S3_FADE_WIDE": 0.6937742321173254,
+      "S4_TREND_FAST": 0.13664458735181373
+    },
+    "S2_TREND_MOM": {
+      "S1_FADE_MR": -0.34731901596354847,
+      "S2_TREND_MOM": 1.0,
+      "S3_FADE_WIDE": -0.1923373138962839,
+      "S4_TREND_FAST": 0.14218521504966025
+    },
+    "S3_FADE_WIDE": {
+      "S1_FADE_MR": 0.6937742321173254,
+      "S2_TREND_MOM": -0.1923373138962839,
+      "S3_FADE_WIDE": 1.0,
+      "S4_TREND_FAST": 0.27592644858632837
+    },
+    "S4_TREND_FAST": {
+      "S1_FADE_MR": 0.13664458735181373,
+      "S2_TREND_MOM": 0.14218521504966025,
+      "S3_FADE_WIDE": 0.27592644858632837,
+      "S4_TREND_FAST": 1.0
+    }
+  }
+}
