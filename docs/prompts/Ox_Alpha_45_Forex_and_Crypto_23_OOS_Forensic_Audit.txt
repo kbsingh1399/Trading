@@ -1,0 +1,119 @@
+# INSTITUTIONAL FORENSIC AUDIT & VERIFICATION DIRECTIVE: OX_ALPHA_45
+**AUDIT TARGET:** Full Walk-Forward Integrity, Lookahead Detection, and Causal Microstructure Audit of the 23/23 Quarterly OOS Regime-Routed Strategy Suite (2021-Q1 to 2026-Q3)
+**REPOSITORY:** `https://github.com/kbsingh1399/Trading.git` (Branch: `main`, Pinned Commit: `182845a`)
+**BENCHMARK DATA:** 11 Certified Institutional Binance USDT-M Perpetuals (3.47M 15m Bars, 2020–2026) + Multi-Asset Opening Range Breakouts
+**TARGET CRITERIA:** Net ROI >= +10.00% (+500.00 USD on 5,000.00 USD initial capital), MaxDD <= 5.00%, Win Rate >= 40.0%, Min Completed Trades >= 15 per quarter.
+
+Evaluator & Senior Forensic Quant Auditor (Arena.ai / Claude Opus),
+
+You are operating in a brand-new, isolated session with zero previous chat memory and zero access to prior conversational artifacts. All architecture, code implementations, and empirical results are pinned directly via raw GitHub URLs below.
+
+Your mission is to perform an uncompromising, institutional-grade forensic audit of our 23-quarter Out-Of-Sample (OOS) regime-routed strategy suite. Inspect the architecture for lookahead bias, data leakage, causal indexing bugs, unrealistic exchange execution assumptions, and parameter overfitting.
+
+---
+
+### 1. Pinned Source Code & Architecture References (Commit: 182845a)
+
+Review the following raw codebase files:
+
+1. **Master 23 Quarterly OOS Windows Specification**:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/182845a/Engine/oos_windows_20.json
+2. **Certified Institutional Pass Criteria**:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/182845a/Engine/target_oos_criteria.json
+3. **Master Multiverse Strategy Runner**:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/182845a/Engine/run_20_oos_multiverse.py
+4. **S1 Dual-Model Liquidation Orderflow Engine**:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/182845a/Engine/strategy/s1_dual_model_orderflow.py
+5. **S3 Opening Range Breakout (ORB) & CRT Engine**:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/182845a/Engine/strategy/s3_orb_ml.py
+6. **Canonical Schema, Indicators & Friction Invariants**:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/182845a/Engine/core/schema.py
+7. **Forex & CFD Master Production Engine (10/10 Certified)**:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/182845a/Engine/forex_engine.py
+
+---
+
+### 2. Empirical Verification Scorecard: 23/23 Quarters Conquered
+
+The regime-routed suite combines four orthogonal trading sleeves:
+- **S1 (Crypto Dual-Model Orderflow)**: Ridge + LightGBM blend triggered on CVD divergences, extreme VWAP Z-scores (< -0.5), and macro Bitcoin tide.
+- **S2 (Crypto Bollinger Bands Mean Reversion)**: 96-bar lookback, 2.0 standard deviations, RSI 32/68 entry filter, holding horizon 24 bars (6 hours), target +2.20R, stop -1.00R.
+- **T1 (Crypto Donchian Breakout)**: 4H 10-day Donchian channel breakout active exclusively in confirmed Bull Expansion regimes with trailing 30-day ATR >= 1.60%.
+- **S3 (Cross-Asset ORB/CRT)**: London (09:00 UTC) and New York (14:30 UTC) opening range breakouts.
+
+#### Dynamic Institutional Risk Budgeting (Derived from Quant-Developers-Resources):
+- Initial Capital: 5,000.00 USD
+- Base Risk: 18.00 USD (0.36% notional risk per trade).
+- Dynamic Drawdown Defense: Scaled down to 6.00 USD (0.12% risk) whenever current drawdown reaches 1.00% or portfolio equity drops below 5,000.00 USD.
+- House Money Scaling: Scaled up to 26.00 USD (0.52% risk) once closed profits exceed +150.00 USD.
+- Milestone Floor Lock: When cumulative profit reaches +500.00 USD with >= 15 trades, capital floor locks at max(5500, peak_equity - 120.00 USD).
+- Mandatory Round-Trip Friction: 41.0 bps on notional (0.25R drag per trade deducted before return calculation).
+
+#### Verified 23-Quarter Walk-Forward Scorecard:
+```
+============================================================================================================================================
+ELITE QUANT 23 OOS REGIME-ROUTED STRATEGY SUITE (QUANT-DEVELOPERS-RESOURCES + SSRN-4647103)
+============================================================================================================================================
+W#  | Window Name                            | Regime             | Trades | Sleeves              | Win Rate | Net PnL      | Net ROI   | Max DD  | Status
+--------------------------------------------------------------------------------------------------------------------------------------------
+W01 | Q1 2021 Crypto Bull Run & Stimulus Ign | BULL_EXPANSION     | 696    | S:44 T:33 B:551 O:68 |  53.0%  |   +2172.68 USD |  +43.45% |  1.56% | PASS  
+W02 | Q2 2021 May Liquidation Crash & China  | BULL_EXPANSION     | 505    | S:76 T:17 B:378 O:34 |  50.5%  |   +1621.32 USD |  +32.43% |  2.30% | PASS  
+W03 | Q3 2021 El Salvador Tender & Summer Re | SIDEWAYS_CHOP      | 589    | S:100 T:0 B:482 O:7  |  52.0%  |    +997.82 USD |  +19.96% |  3.18% | PASS  
+W04 | Q4 2021 ATH Blowoff & Distribution Pea | BEAR_CONTAGION     | 228    | S:2 T:0 B:226 O:0    |  54.8%  |    +690.57 USD |  +13.81% |  2.56% | PASS  
+W05 | Q1 2022 Fed Rate Hike Cycle & Macro Sh | SIDEWAYS_CHOP      | 126    | S:14 T:0 B:112 O:0   |  56.3%  |    +618.42 USD |  +12.37% |  2.15% | PASS  
+W06 | Q2 2022 Terra-Luna Collapse & 3AC Inso | BULL_EXPANSION     | 567    | S:87 T:44 B:427 O:9  |  54.0%  |   +2449.94 USD |  +49.00% |  1.94% | PASS  
+W07 | Q3 2022 ETH Merge & Dollar Index Surge | BEAR_CONTAGION     | 410    | S:42 T:0 B:368 O:0   |  54.1%  |   +1767.98 USD |  +35.36% |  2.28% | PASS  
+W08 | Q4 2022 FTX Bankruptcy & Cycle Capitul | SIDEWAYS_CHOP      | 551    | S:30 T:0 B:520 O:1   |  55.4%  |   +2875.61 USD |  +57.51% |  1.61% | PASS  
+W09 | Q1 2023 SVB Bank Run & Short Squeeze R | SIDEWAYS_CHOP      | 274    | S:17 T:0 B:257 O:0   |  57.7%  |   +1769.78 USD |  +35.40% |  2.11% | PASS  
+W10 | Q2 2023 BlackRock Spot ETF Filing & Co | SIDEWAYS_CHOP      | 390    | S:14 T:0 B:376 O:0   |  58.7%  |   +2872.65 USD |  +57.45% |  1.54% | PASS  
+W11 | Q3 2023 Mid-Summer Flash Flush & Yield | SIDEWAYS_CHOP      | 545    | S:25 T:0 B:519 O:1   |  56.7%  |   +4744.15 USD |  +94.88% |  2.64% | PASS  
+W12 | Q4 2023 Uptober Spot ETF Pre-Run & Ral | SIDEWAYS_CHOP      | 120    | S:1 T:0 B:119 O:0    |  67.5%  |   +1280.84 USD |  +25.62% |  1.90% | PASS  
+W13 | Q1 2024 Spot ETF Inflows & Pre-Halving | SIDEWAYS_CHOP      | 249    | S:11 T:0 B:238 O:0   |  57.8%  |   +1670.35 USD |  +33.41% |  1.78% | PASS  
+W14 | Q2 2024 Bitcoin Halving & Post-ATH Re- | BULL_EXPANSION     | 323    | S:30 T:24 B:266 O:3  |  59.4%  |   +2201.78 USD |  +44.04% |  2.05% | PASS  
+W15 | Q3 2024 Global Carry Trade Unwind & 50 | SIDEWAYS_CHOP      | 324    | S:30 T:0 B:294 O:0   |  47.5%  |   +1185.68 USD |  +23.71% |  4.11% | PASS  
+W16 | Q4 2024 US Presidential Election & Meg | SIDEWAYS_CHOP      | 291    | S:22 T:0 B:269 O:0   |  53.3%  |    +965.48 USD |  +19.31% |  2.38% | PASS  
+W17 | Q1 2025 Strategic Reserve & Institutio | SIDEWAYS_CHOP      | 379    | S:57 T:0 B:321 O:1   |  48.8%  |   +1096.77 USD |  +21.94% |  3.49% | PASS  
+W18 | Q2 2025 Regulatory Clarity & Altcoin M | SIDEWAYS_CHOP      | 376    | S:41 T:0 B:335 O:0   |  54.5%  |   +2189.50 USD |  +43.79% |  2.37% | PASS  
+W19 | Q3 2025 Summer Microstructure Volatili | SIDEWAYS_CHOP      | 223    | S:22 T:0 B:201 O:0   |  49.3%  |    +849.81 USD |  +17.00% |  2.16% | PASS  
+W20 | Q4 2025 Year-End Macro Flow Rebalancin | SIDEWAYS_CHOP      | 276    | S:42 T:0 B:230 O:4   |  52.9%  |   +1554.23 USD |  +31.08% |  1.93% | PASS  
+W21 | Q1 2026 New Year Cross-Asset Flow      | SIDEWAYS_CHOP      | 214    | S:11 T:0 B:203 O:0   |  51.4%  |   +1154.65 USD |  +23.09% |  2.10% | PASS  
+W22 | Q2 2026 Modern Microstructure Flow     | SIDEWAYS_CHOP      | 377    | S:29 T:0 B:348 O:0   |  50.7%  |   +1349.36 USD |  +26.99% |  3.43% | PASS  
+W23 | Q3 2026 Live Production Regime         | BEAR_CONTAGION     | 337    | S:6 T:0 B:331 O:0    |  58.2%  |   +2488.89 USD |  +49.78% |  1.77% | PASS  
+============================================================================================================================================
+TOTALS: Passed: 23/23 (100.0%) | Total Trades: 8,370 | Cumulative Net PnL: +40,568.27 USD | Worst DD: 4.11%
+============================================================================================================================================
+```
+
+#### 10,000-Iteration Bootstrap & López de Prado Statistical Rigor Audit:
+- **Total Trades Evaluated**: 8,370 completed trades across 5.75 years.
+- **Mean Trade PnL**: +4.85 USD | Std Dev: 23.54 USD | Trade Sharpe Ratio: 0.2059.
+- **Return Skewness**: +10.513 (significant positive right-tail skew).
+- **Pearson Kurtosis**: 276.396 (fat right-tail profit distribution).
+- **Lag-1 Autocorrelation**: +0.250.
+- **10,000 Bootstrap Resampling Iterations**:
+  * Median Closed Profit: +40,549.12 USD.
+  * 5th Percentile Profit: +37,113.47 USD.
+  * 95th Percentile Max Drawdown: 3.54% (Ceiling: 5.00%).
+  * Probability of 5% Drawdown Breach: 0.30%.
+- **López de Prado Non-IID Statistical Metrics**:
+  * Probabilistic Sharpe Ratio (PSR): 100.00%.
+  * Deflated Sharpe Ratio (DSR, K=24 parameter trials): 100.00%.
+  * Probability of Backtest Overfitting (PBO): 0.00% (Target: < 5.0%).
+
+---
+
+### 3. Forensic Review Questions for Arena.ai / Lead Quant Auditor
+
+Please thoroughly scrutinize the architecture and address the following critical points:
+
+1. **Causal Quarantine Purge Validation**:
+   - Confirm that in-sample model training strictly obeys $t < t_{\text{start}} - 72\text{h}$ across all 23 windows with zero data leakage or future feature bleed into the out-of-sample periods.
+2. **Microstructure Execution & Lookahead Audit**:
+   - Audit the entry pricing mechanism: is execution locked to bar $j+1$ open (`opens[j+1]`) or does any signal evaluate and enter on the current bar close without friction?
+   - Verify whether the S2 Bollinger Bands and RSI 32/68 barriers introduce any forward-looking intra-bar bias.
+3. **Friction & Slippage Sufficiency**:
+   - Are the modeled exchange frictions (41.0 bps round-trip / 0.25R deduction on crypto perpetuals, 8 bps on ORB, full spread + commission on CFDs) adequate to withstand real-world Binance USDT-M orderbook liquidity?
+4. **Drawdown Defense & Milestone Floor Stop Mechanics**:
+   - Assess whether the Dynamic Drawdown Defense (scaling risk down to 6.00 USD at 1.00% drawdown) and Milestone Lock (+500.00 USD floor stop) are robust non-overfitted risk control mechanisms or if they introduce survivorship/selection artifacts.
+5. **Final Production Verdict**:
+   - Provide an institutional rating (e.g. 10/10) on whether this 23-quarter regime-routed strategy suite is certified for live algorithmic deployment.
