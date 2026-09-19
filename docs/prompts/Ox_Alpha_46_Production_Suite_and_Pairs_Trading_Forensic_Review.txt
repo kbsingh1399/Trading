@@ -1,0 +1,165 @@
+====================================================================================================
+OX ALPHA 46: FORENSIC AUDIT & LOOKAHEAD VERIFICATION OF THE MASTER 23-QUARTER OOS QUANT SUITE
+AND MULTI-ASSET STATISTICAL ARBITRAGE / PAIRS TRADING SYSTEM
+====================================================================================================
+TARGET SYSTEM: Quantitative Trading Architecture, Microstructure Execution & Risk Management
+REPOSITORY: https://github.com/kbsingh1399/Trading.git (branch: main, commit: 7e494fc)
+AUDIT AUTHORITY: Claude Opus (Ox Alpha / Arena.ai Chief Risk Officer & Forensic Quant Auditor)
+MISSION ENVIRONMENT: Fresh Session (Zero previous context, zero internet/repo access beyond raw GitHub URLs)
+====================================================================================================
+
+# 1. EXECUTIVE MISSION DIRECTIVE FOR CLAUDE OPUS
+You are serving as the Chief Quantitative Risk Officer, Institutional Forensic Auditor, and Lead Microstructure Architect. Your sole directive is to perform an uncompromising, forensic, line-by-line audit of the latest production code and empirical results pushed to https://github.com/kbsingh1399/Trading.git.
+
+Specifically, you must inspect the system for:
+1. Lookahead Bias & Causal Data Snooping: Verify that every single signal, indicator, machine learning prediction, and stop ratchet uses strictly past data available at time t, with execution occurring strictly at opens[j+1].
+2. Causal Train/Test Isolation: Verify that the 72-hour purge window (t_purge = t_start - 72h) strictly prevents autocorrelation leakage between training data and out-of-sample (OOS) testing windows.
+3. Multi-Sleeve Confluence Overfitting vs. Generalization: Audit the 4-sleeve elite strategy suite that achieved 23 out of 23 quarterly OOS passes (2021-2026) across bull runs, bear crashes, and sideways chop.
+4. Statistical Arbitrage / Pairs Trading Viability: Audit the empirical discoveries in multi-asset pairs trading across CFDs, Forex, and Crypto, specifically evaluating why classical mean-reversion fails on macro currency pairs while Spread Momentum captures persistent relative-strength divergence on crypto pairs.
+5. Microstructure Friction & Slippage Realism: Verify that all trades deduct realistic institutional taker fees and execution slippage (6.0 bps on crypto perpetuals, 3.0 to 5.0 bps on Forex and CFD instruments).
+6. Risk Budgeting & Underwater Drawdown Guardrails: Audit mark-to-market intra-day drawdown calculations to ensure the account equity never breaches the institutional 4.50% / 5.00% max drawdown ceiling on a 5,000.00 USD capital account.
+
+---
+
+# 2. CODEBASE AUDIT REPOSITORY & RAW GITHUB URL MATRIX
+Do NOT ask for code dumps or local file inspection. Fetch and inspect the full source code directly via these verified raw GitHub URLs:
+
+- Master Repository:
+  https://github.com/kbsingh1399/Trading.git (Branch: main, Commit: 7e494fc)
+
+- Master 23-Quarter OOS Elite Suite Runner (Production Multi-Sleeve Engine):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_23_oos_elite_suite.py
+
+- Statistical Arbitrage & Spread Momentum Pairs Trading Engine (Sleeve S5):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/s5_statistical_arbitrage_pairs.py
+
+- Dual-Model Orderflow Pullback Strategy (Sleeve S1 - Ridge + LightGBM):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/s1_dual_model_orderflow.py
+
+- Cross-Asset ORB / CRT Footprint Strategy (Sleeve S3 - Opening Range + Candle Range Theory):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/s3_orb_ml.py
+
+- Master 20/23 Multiverse Production Runner:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/run_20_oos_multiverse.py
+
+- Master Forex & CFD Production Engine:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/forex_engine.py
+
+- Canonical Indicators & Mathematical Contracts:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/canonical_indicators.py
+
+- Data Schema & Verification Rules:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/schema.py
+
+- 23 Out-Of-Sample Quarterly Windows Specification (2021 - 2026):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/arena_01a09b0e/Engine/oos_windows_20.json
+
+- Institutional Target OOS Pass Criteria:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json
+
+- Verified Empirical 23-Quarter Scorecard:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/reports/elite_23_oos_regime_scorecard.csv
+
+- Verified Monthly Return Matrix (2021 - 2026 YTD):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/reports/elite_23_oos_monthly_matrix.csv
+
+- Calibrated Crypto Pairs Trading Scorecard:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/main/reports/calibrated_pairs_23_oos_scorecard.csv
+
+---
+
+# 3. EMPIRICAL BENCHMARKS & 23-QUARTER SCORECARD TO AUDIT
+The system was evaluated against the institutional criteria defined in `target_oos_criteria.json`:
+- Initial Capital: 5,000.00 USD
+- Minimum Net ROI per Quarter: >= +10.00% (+500.00 USD net)
+- Maximum Drawdown per Quarter: <= 5.00% (250.00 USD)
+- Minimum Win Rate: >= 40.0%
+- Minimum Completed Trades: >= 15 trades per quarter
+
+Here is the exact scorecard achieved across all 23 consecutive quarters (2021 Q1 to 2026 Q3):
+
+Window | Quarter & Regime Name | Trades | Win Rate | Net PnL (USD) | Net ROI (%) | Max DD (%) | Status
+W01 | Q1 2021 Crypto Bull Run & Stimulus Ignition (Bull)   | 696 | 53.0% | +2,172.68 USD | +43.45% | 1.56% | PASS
+W02 | Q2 2021 May Liquidation Crash & China Ban (Bull)     | 505 | 50.5% | +1,621.32 USD | +32.43% | 2.30% | PASS
+W03 | Q3 2021 El Salvador Tender & Summer Rebound (Chop)   | 589 | 52.0% |   +997.82 USD | +19.96% | 3.18% | PASS
+W04 | Q4 2021 ATH Blowoff & Distribution Peak (Bear)       | 228 | 54.8% |   +690.57 USD | +13.81% | 2.56% | PASS
+W05 | Q1 2022 Fed Rate Hike Cycle & Macro Shock (Chop)     | 126 | 56.3% |   +618.42 USD | +12.37% | 2.15% | PASS
+W06 | Q2 2022 Terra-Luna Collapse & 3AC Insolvency (Bull)  | 567 | 54.0% | +2,449.94 USD | +49.00% | 1.94% | PASS
+W07 | Q3 2022 ETH Merge & Dollar Index Surge (Bear)        | 410 | 54.1% | +1,767.98 USD | +35.36% | 2.28% | PASS
+W08 | Q4 2022 FTX Bankruptcy & Cycle Capitulation (Chop)   | 551 | 55.4% | +2,875.61 USD | +57.51% | 1.61% | PASS
+W09 | Q1 2023 SVB Bank Run & Short Squeeze (Chop)          | 274 | 57.7% | +1,769.78 USD | +35.40% | 2.11% | PASS
+W10 | Q2 2023 BlackRock Spot ETF Filing (Chop)             | 390 | 58.7% | +2,872.65 USD | +57.45% | 1.54% | PASS
+W11 | Q3 2023 Mid-Summer Flash Flush & Yield Spike (Chop)  | 545 | 56.7% | +4,744.15 USD | +94.88% | 2.64% | PASS
+W12 | Q4 2023 Uptober Spot ETF Pre-Run & Rally (Chop)      | 120 | 67.5% | +1,280.84 USD | +25.62% | 1.90% | PASS
+W13 | Q1 2024 Spot ETF Inflows & Pre-Halving ATH (Chop)    | 249 | 57.8% | +1,670.35 USD | +33.41% | 1.78% | PASS
+W14 | Q2 2024 Bitcoin Halving & Post-ATH Re-Accum (Bull)   | 323 | 59.4% | +2,201.78 USD | +44.04% | 2.05% | PASS
+W15 | Q3 2024 Global Carry Trade Unwind & 50bps Cut (Chop) | 324 | 47.5% | +1,185.68 USD | +23.71% | 4.11% | PASS
+W16 | Q4 2024 US Presidential Election Breakout (Chop)     | 291 | 53.3% |   +965.48 USD | +19.31% | 2.38% | PASS
+W17 | Q1 2025 Strategic Reserve Institutional Wave (Chop)  | 379 | 48.8% | +1,096.77 USD | +21.94% | 3.49% | PASS
+W18 | Q2 2025 Regulatory Clarity & Altcoin Momentum (Chop) | 376 | 54.5% | +2,189.50 USD | +43.79% | 2.37% | PASS
+W19 | Q3 2025 Summer Microstructure Volatility (Chop)      | 223 | 49.3% |   +849.81 USD | +17.00% | 2.16% | PASS
+W20 | Q4 2025 Year-End Macro Flow Rebalancing (Chop)       | 276 | 52.9% | +1,554.23 USD | +31.08% | 1.93% | PASS
+W21 | Q1 2026 New Year Cross-Asset Flow (Chop)             | 214 | 51.4% | +1,154.65 USD | +23.09% | 2.10% | PASS
+W22 | Q2 2026 Modern Microstructure Flow (Chop)            | 377 | 50.7% | +1,349.36 USD | +26.99% | 3.43% | PASS
+W23 | Q3 2026 Live Production Forward Regime (Bear)        | 337 | 58.2% | +2,488.89 USD | +49.78% | 1.77% | PASS
+
+TOTAL EMPIRICAL SCORECARD:
+- Passed Windows: 23 / 23 (100% Outright Pass Rate)
+- Total Completed Trades: 7,887 trades
+- Overall Win Rate: 53.8%
+- Total Cumulative Net PnL: +40,707.31 USD (Net ROI: +814.15% on 5,000.00 USD Capital)
+- Maximum Drawdown Encountered: 4.11% (Strictly within institutional 5.00% ceiling across all 5.75 years)
+
+---
+
+# 4. MONTHLY PERFORMANCE MATRIX TO AUDIT (2021 – 2026 YTD)
+Year | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec | YTD (%)
+2021 | +13.91% | +19.12% | +10.43% | +10.38% | +14.27% | +7.78% | +6.39% | +8.78% | +4.79% | +4.42% | +6.08% | +3.31% | +109.65%
+2022 |  +3.96% |  +5.44% |  +2.97% | +15.68% | +21.56% | +11.76% | +11.32% | +15.56% | +8.49% | +18.40% | +25.31% | +13.80% | +154.24%
+2023 | +11.33% | +15.57% |  +8.49% | +18.38% | +25.28% | +13.79% | +30.36% | +41.75% | +22.77% |  +8.20% | +11.27% |  +6.15% | +213.35%
+2024 | +10.69% | +14.70% |  +8.02% | +14.09% | +19.38% | +10.57% |  +7.59% | +10.43% |  +5.69% |  +6.18% |  +8.50% |  +4.63% | +120.47%
+2025 |  +7.02% |  +9.65% |  +5.26% | +14.01% | +19.27% | +10.51% |  +5.44% |  +7.48% |  +4.08% |  +9.95% | +13.68% |  +7.46% | +113.81%
+2026 |  +7.39% | +10.16% |  +5.54% |  +8.64% | +11.87% |  +6.48% | +15.93% | +21.90% | +11.95% |      -- |      -- |      -- |  +99.86%
+
+---
+
+# 5. SPECIFIC FORENSIC AUDIT CHECKPOINTS REQUIRED FROM CLAUDE OPUS
+
+Please structure your forensic audit into the following 6 sections:
+
+### CHECKPOINT 1: Lookahead Bias & Causal Execution Integrity
+- Verify bar-level causality in `Engine/run_23_oos_elite_suite.py` and `Engine/strategy/s5_statistical_arbitrage_pairs.py`.
+- Does any feature calculation (VWAP Z-score, RSI, EMA slope, Bollinger Bands, ATR) utilize future bar data?
+- Does execution occur at current bar close or next bar open (`opens[j+1]`)?
+- Does the 72-hour purge (`purge_ms = start_ms - 72 * 3600 * 1000`) completely eliminate autocorrelation leakage between the in-sample training window and the out-of-sample testing window?
+
+### CHECKPOINT 2: Machine Learning Model Calibration & Data Snooping Gate
+- Inspect the Ridge regression and LightGBM model training in `InstitutionalDualModelEngine` (`Engine/strategy/s1_dual_model_orderflow.py`).
+- Are the standard scaling parameters (mean mu, standard deviation sd) computed strictly on in-sample data (`train_set`) and causally applied to out-of-sample data (`test_set`)?
+- Is there any test-set calibration or dynamic target tuning that touches future test bars?
+- Is the classification threshold calibrated strictly using in-sample quantiles?
+
+### CHECKPOINT 3: Microstructure Ratchets & Anti-Retracement Exits
+- Inspect the 3-phase ratchet logic (Phase 0 Breakeven lock, Phase 1 Profit lock, Target lock, and 24-bar time decay).
+- In backtesting, does the simulated exit check if intra-bar low breached the stop before intra-bar high reached the target?
+- Are trailing ratchets applied to bar j+1 or retroactively to bar j?
+
+### CHECKPOINT 4: Multi-Asset Statistical Arbitrage & Pairs Trading Forensics
+- Audit the empirical findings on multi-asset pairs trading in `Engine/strategy/s5_statistical_arbitrage_pairs.py`:
+  1. Why did classical mean-reversion (ADF test, Ornstein-Uhlenbeck half-life) produce win rates below 15% and severe losses across Forex (AUDUSD/NZDUSD, EURUSD/GBPUSD) and CFDs (GER40/FR40, Gold/Silver)?
+  2. Is the "Spread Momentum" breakthrough (trading WITH the relative-strength divergence after |Z| >= 1.5) theoretically sound or curve-fitted?
+  3. Does the position sizing invariant (max 2 concurrent pairs, max 1 position per pair, intra-trade stop at -0.85R) successfully prevent cross-asset correlation spikes?
+
+### CHECKPOINT 5: Risk Budgeting & Underwater Drawdown Forensics
+- Audit the Dynamic Institutional Risk Budgeting model:
+  * Capital: 5,000.00 USD
+  * Base Risk: 24.00 USD (0.48%)
+  * Drawdown Defense: Risk scaled down to 6.00 USD (0.12%) when DD >= 1.00% or equity < 5,000.00 USD.
+  * Milestone Lock: Once net profit reaches 500.00 USD with >= 15 trades, locking a trailing floor stop at peak - 120.00 USD.
+- Does this risk model introduce survivorship bias or trade starvation in high-volatility regimes?
+- How does the system survive catastrophic liquidation cascades like W02 (May 2021 Crash), W06 (Terra-Luna Collapse), and W08 (FTX Bankruptcy)?
+
+### CHECKPOINT 6: Final Institutional Production Verdict & Deployment Readiness
+- Provide an objective 10-point audit verdict on whether this architecture is cleared for live institutional broker deployment (Binance USDT-M and MT5 Forex/CFDs).
+- Highlight any hidden fragility, latency assumptions, execution bottlenecks, or recommendations for live dry-run paper trading.
+====================================================================================================
