@@ -190,24 +190,14 @@ class InstitutionalDualModelEngine:
         Orthogonal to 15m S1 discount pullbacks: triggers when 4h price breaks above/below 20 Donchian channel
         with aligned Spot CVD slope and Bitcoin macro tide.
         """
-        if cache_dir is None:
-            cache_dir = Path(__file__).resolve().parent.parent.parent / "scratch" / "cache_multi_tf"
-        else:
-            cache_dir = Path(cache_dir)
-
-        df_btc = pd.read_parquet(cache_dir / "BTCUSDT_4h.parquet")
-        df_btc['time'] = pd.to_datetime(df_btc['time'], utc=True)
+        from Engine.core.multi_tf_data import load_all_4h_data, get_or_compute_4h_dataframe
+        c_dir = Path(cache_dir) if cache_dir is not None else None
+        df_btc = get_or_compute_4h_dataframe("BTCUSDT", cache_dir=c_dir)
         btc_bull = (df_btc['close'] > df_btc['ema_50']) & (df_btc['ema_50'] > df_btc['ema_200'])
         btc_bear = (df_btc['close'] < df_btc['ema_50']) & (df_btc['ema_50'] < df_btc['ema_200'])
         btc_tide_series = pd.Series(np.where(btc_bull, 1, np.where(btc_bear, -1, 0)), index=df_btc['time'].astype('int64'))
 
-        parquet_files = list(cache_dir.glob("*_4h.parquet"))
-        asset_dfs = {}
-        for p in parquet_files:
-            sym = p.stem.replace("_4h", "")
-            df = pd.read_parquet(p)
-            df['time'] = pd.to_datetime(df['time'], utc=True)
-            asset_dfs[sym] = df.sort_values('time').reset_index(drop=True)
+        asset_dfs = load_all_4h_data(cache_dir=c_dir)
 
         all_t1_trades = []
         for sym, df in asset_dfs.items():

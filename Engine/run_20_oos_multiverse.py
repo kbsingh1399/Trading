@@ -14,7 +14,7 @@ import lightgbm as lgb
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
-from scratch.fast_numba_oos_engine import compile_dataset_with_numba, WINDOWS_PATH, CRITERIA_PATH
+from Engine.core.fast_numba_oos_engine import compile_dataset_with_numba, WINDOWS_PATH, CRITERIA_PATH
 from Engine.strategy.s1_dual_model_orderflow import InstitutionalDualModelEngine
 from Engine.strategy.s3_orb_ml import simulate_orb_trades
 
@@ -146,11 +146,8 @@ def main():
         random_state=42
     )
 
-    cache_dir = REPO_ROOT / "scratch" / "cache_multi_tf"
-    df_btc = pd.read_parquet(cache_dir / "BTCUSDT_4h.parquet")
-    df_btc['time'] = pd.to_datetime(df_btc['time'], utc=True)
-    df_btc.sort_values('time', inplace=True)
-    df_btc.reset_index(drop=True, inplace=True)
+    from Engine.core.multi_tf_data import get_or_compute_4h_dataframe
+    df_btc = get_or_compute_4h_dataframe("BTCUSDT")
     df_btc['atr_pct'] = (df_btc['atr'] / df_btc['close']) * 100.0
     df_btc['trailing_30d_atr_pct'] = df_btc['atr_pct'].rolling(180).mean()
 

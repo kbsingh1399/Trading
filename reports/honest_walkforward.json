@@ -1,0 +1,340 @@
+{
+  "generated_utc": "2026-09-19T19:56:19.127341+00:00",
+  "config": {
+    "target_r": 2.5,
+    "hold_bars": 24,
+    "threshold_quantile": 0.7,
+    "seed": 42,
+    "purge_hours": 72,
+    "quick": true,
+    "cost_frac": null,
+    "direction": 1,
+    "max_cost_frac": null,
+    "breakout_lookback": 20,
+    "max_concurrent": 3,
+    "max_per_cluster": 1
+  },
+  "edge": {
+    "raw_base_rate_pct": 31.98488949701062,
+    "breakeven_rate_pct": 28.57142857142857,
+    "raw_expectancy_r": -0.1467256909017438
+  },
+  "universe": {
+    "declared": 156,
+    "loaded": 18,
+    "by_basket": {
+      "Crypto": 6,
+      "Forex": 6,
+      "CFD": 6
+    }
+  },
+  "candidates": 33619,
+  "scorecard": [
+    {
+      "window_id": 1,
+      "name": "Late 2023 Fed Higher-for-Longer Pause",
+      "trades": 0,
+      "win_rate": 0,
+      "net_pnl": 0,
+      "net_roi": 0,
+      "max_dd": 0,
+      "rejected_concurrency": 0,
+      "rejected_cluster": 0,
+      "status": "NO_DATA"
+    },
+    {
+      "window_id": 2,
+      "name": "Q4 2023 Year-End Soft Landing Rally",
+      "trades": 250,
+      "win_rate": 25.6,
+      "net_pnl": -500.8033879863433,
+      "net_roi": -10.016067759726866,
+      "max_dd": 10.016067759726866,
+      "rejected_concurrency": 43,
+      "rejected_cluster": 62,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 3,
+      "name": "Q1 2024 Global Disinflation Surge",
+      "trades": 202,
+      "win_rate": 33.663366336633665,
+      "net_pnl": 79.553731201745,
+      "net_roi": 1.5910746240348999,
+      "max_dd": 6.090334896942931,
+      "rejected_concurrency": 12,
+      "rejected_cluster": 119,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 4,
+      "name": "Early 2024 Tech & Index Expansion",
+      "trades": 217,
+      "win_rate": 40.55299539170507,
+      "net_pnl": 174.32009038414617,
+      "net_roi": 3.4864018076829235,
+      "max_dd": 3.9367930346055866,
+      "rejected_concurrency": 12,
+      "rejected_cluster": 103,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 5,
+      "name": "Spring 2024 Geopolitical Energy Spike",
+      "trades": 215,
+      "win_rate": 38.139534883720934,
+      "net_pnl": -37.011565461868486,
+      "net_roi": -0.7402313092373697,
+      "max_dd": 5.046630535498088,
+      "rejected_concurrency": 53,
+      "rejected_cluster": 80,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 6,
+      "name": "ECB Rate Cut Pivot & Dollar Strength",
+      "trades": 261,
+      "win_rate": 37.547892720306514,
+      "net_pnl": -224.42445743511507,
+      "net_roi": -4.4884891487023015,
+      "max_dd": 5.696182519189471,
+      "rejected_concurrency": 57,
+      "rejected_cluster": 100,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 7,
+      "name": "Mid-2024 High-Beta Equity Distribution",
+      "trades": 245,
+      "win_rate": 39.59183673469388,
+      "net_pnl": -149.73956975129568,
+      "net_roi": -2.9947913950259135,
+      "max_dd": 3.9641374730447994,
+      "rejected_concurrency": 43,
+      "rejected_cluster": 91,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 8,
+      "name": "August 2024 Global Carry Trade Flash Unwind",
+      "trades": 163,
+      "win_rate": 33.12883435582822,
+      "net_pnl": -238.56035437552146,
+      "net_roi": -4.771207087510429,
+      "max_dd": 4.9916309384971465,
+      "rejected_concurrency": 40,
+      "rejected_cluster": 76,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 9,
+      "name": "Fed 50bps Jumbo Rate Cut Ignition",
+      "trades": 223,
+      "win_rate": 34.52914798206278,
+      "net_pnl": -248.8313227775352,
+      "net_roi": -4.976626455550704,
+      "max_dd": 7.080232386638451,
+      "rejected_concurrency": 35,
+      "rejected_cluster": 73,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 10,
+      "name": "US Presidential Election Mega Breakout",
+      "trades": 286,
+      "win_rate": 37.41258741258741,
+      "net_pnl": -240.35175741354578,
+      "net_roi": -4.8070351482709155,
+      "max_dd": 5.444806826827771,
+      "rejected_concurrency": 61,
+      "rejected_cluster": 172,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 11,
+      "name": "Year-End Cross-Currency Flow Rebalancing",
+      "trades": 278,
+      "win_rate": 34.89208633093525,
+      "net_pnl": -97.06359037066977,
+      "net_roi": -1.9412718074133954,
+      "max_dd": 5.8485266642746145,
+      "rejected_concurrency": 78,
+      "rejected_cluster": 118,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 12,
+      "name": "Post-Inauguration Trade Policy Realignment",
+      "trades": 229,
+      "win_rate": 33.18777292576419,
+      "net_pnl": -221.01899219951338,
+      "net_roi": -4.4203798439902675,
+      "max_dd": 7.056687449197021,
+      "rejected_concurrency": 87,
+      "rejected_cluster": 93,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 13,
+      "name": "Spring 2025 Precious Metals All-Time High",
+      "trades": 261,
+      "win_rate": 34.099616858237546,
+      "net_pnl": -218.29120474754927,
+      "net_roi": -4.365824094950986,
+      "max_dd": 6.236374166532064,
+      "rejected_concurrency": 115,
+      "rejected_cluster": 88,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 14,
+      "name": "Late-Cycle Yield Curve Steepening",
+      "trades": 251,
+      "win_rate": 37.45019920318725,
+      "net_pnl": -118.46661385345033,
+      "net_roi": -2.369332277069007,
+      "max_dd": 4.5618065949090285,
+      "rejected_concurrency": 81,
+      "rejected_cluster": 96,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 15,
+      "name": "European Macro Slowdown & CNH Divergence",
+      "trades": 257,
+      "win_rate": 38.52140077821012,
+      "net_pnl": -116.9482148396246,
+      "net_roi": -2.3389642967924917,
+      "max_dd": 4.595190228428681,
+      "rejected_concurrency": 50,
+      "rejected_cluster": 148,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 16,
+      "name": "Late-Summer Commodity Volatility Expansion",
+      "trades": 236,
+      "win_rate": 39.40677966101695,
+      "net_pnl": 136.5346100760462,
+      "net_roi": 2.730692201520924,
+      "max_dd": 5.296311605211633,
+      "rejected_concurrency": 62,
+      "rejected_cluster": 119,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 17,
+      "name": "Autumn 2025 Global Liquidity Injection",
+      "trades": 249,
+      "win_rate": 35.34136546184739,
+      "net_pnl": -270.8638976312686,
+      "net_roi": -5.417277952625373,
+      "max_dd": 5.5764481329162665,
+      "rejected_concurrency": 76,
+      "rejected_cluster": 87,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 18,
+      "name": "Q4 2025 Industrial Metals & Indices Momentum",
+      "trades": 282,
+      "win_rate": 33.33333333333333,
+      "net_pnl": -309.4389901556333,
+      "net_roi": -6.1887798031126655,
+      "max_dd": 6.4161696864409254,
+      "rejected_concurrency": 77,
+      "rejected_cluster": 136,
+      "status": "FAIL"
+    },
+    {
+      "window_id": 19,
+      "name": "Q1 2026 New Year Cross-Asset Range Shift",
+      "trades": 234,
+      "win_rate": 39.31623931623932,
+      "net_pnl": 348.2971298166467,
+      "net_roi": 6.965942596332934,
+      "max_dd": 5.316870590384236,
+      "rejected_concurrency": 95,
+      "rejected_cluster": 98,
+      "status": "PROFIT"
+    },
+    {
+      "window_id": 20,
+      "name": "March 2026 Modern Microstructure Shock",
+      "trades": 234,
+      "win_rate": 27.350427350427353,
+      "net_pnl": -336.00678584836896,
+      "net_roi": -6.720135716967379,
+      "max_dd": 8.315644887643838,
+      "rejected_concurrency": 108,
+      "rejected_cluster": 100,
+      "status": "FAIL"
+    }
+  ],
+  "summary": {
+    "windows_evaluated": 19,
+    "windows_passed": 0,
+    "total_trades": 4573,
+    "total_pnl": -2589.115143368719,
+    "rejected_concurrency": 1185,
+    "rejected_cluster": 1959
+  },
+  "decomposition": {
+    "Crypto Only": {
+      "trades": 1630,
+      "win_rate": 33.9151497431388,
+      "net_pnl": -1800.3044150781316,
+      "max_dd": 5.41686054511041
+    },
+    "Forex Only": {
+      "trades": 1985,
+      "win_rate": 33.67697809844021,
+      "net_pnl": -968.9168728573359,
+      "max_dd": 6.248120969775191
+    },
+    "CFD Only": {
+      "trades": 1414,
+      "win_rate": 40.38379959022464,
+      "net_pnl": 1666.712109727122,
+      "max_dd": 5.177056594187723
+    },
+    "Crypto + Forex": {
+      "trades": 3420,
+      "win_rate": 34.67692153249504,
+      "net_pnl": -2205.5641461834202,
+      "max_dd": 6.965587565090391
+    },
+    "Crypto + CFD": {
+      "trades": 3028,
+      "win_rate": 37.351979323741986,
+      "net_pnl": 315.22606599594747,
+      "max_dd": 5.75650964145043
+    },
+    "Forex + CFD": {
+      "trades": 3290,
+      "win_rate": 35.92544213633799,
+      "net_pnl": -1619.3978876341662,
+      "max_dd": 7.291791307922467
+    },
+    "Full Multiverse": {
+      "trades": 4573,
+      "win_rate": 35.42449563351249,
+      "net_pnl": -2589.115143368719,
+      "max_dd": 10.016067759726866
+    }
+  },
+  "monte_carlo": {
+    "n_runs": 10000,
+    "n_trades_per_run": 7717,
+    "roi_p05": -51.49910993097431,
+    "roi_p50": -35.23231154704628,
+    "roi_p95": -17.65782423216907,
+    "dd_p50": 38.29509331736226,
+    "dd_p95": 53.279326374814254,
+    "dd_p99": 60.004812702022136,
+    "dd_worst": 71.38189926245532,
+    "prob_dd_gt_5pct": 100.0,
+    "prob_dd_gt_10pct": 100.0,
+    "prob_loss": 99.92999999999999
+  }
+}

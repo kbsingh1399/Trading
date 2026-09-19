@@ -20,7 +20,7 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, Set
 
-REPO = None
+REPO = Path(__file__).resolve().parents[2]
 
 def selected_definitions(path, names, namespace, method_names=None):
     tree = ast.parse(path.read_text(encoding='utf-8-sig'), filename=str(path))
