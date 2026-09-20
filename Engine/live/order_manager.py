@@ -50,7 +50,7 @@ class OrderManager:
         Validates portfolio limits, correlation clusters, and operational safeguards before order entry:
         1. Operational Safeguard 1: Rollover spread lockout (21:55-22:15 UTC).
         2. Operational Safeguard 2: Friday weekend gap protection (>= 18:00 UTC).
-        3. Max concurrent positions across portfolio (<= 3).
+        3. Max concurrent positions across portfolio (<= 2).
         4. Single active position per asset (no duplicates).
         5. Correlation cluster restriction (max 1 active position per cluster).
         """

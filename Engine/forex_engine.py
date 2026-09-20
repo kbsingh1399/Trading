@@ -228,6 +228,9 @@ class MT5Connection:
         self._last_offset_fetch = 0.0
 
     def connect(self) -> bool:
+        if mt5 is None:
+            logging.error("MetaTrader5 python module is not available on this platform/environment.")
+            return False
         if not mt5.initialize():
             logging.error(f"MT5 initialize() failed, error code: {mt5.last_error()}")
             return False
@@ -421,6 +424,7 @@ class OrderManager:
                 "realized_pnl": self.realized_pnl,
                 "initial_balance": self.initial_balance,
                 "peak_equity": self.peak_equity,
+                "in_defense_mode": self.in_defense_mode,
                 "open_trades": self.open_trades,
                 "timestamp": time.time()
             }
@@ -438,6 +442,7 @@ class OrderManager:
                 state_data = json.load(f)
             self.realized_pnl = float(state_data.get("realized_pnl", 0.0))
             self.peak_equity = float(state_data.get("peak_equity", self.initial_balance + max(0.0, self.realized_pnl)))
+            self.in_defense_mode = bool(state_data.get("in_defense_mode", False))
             saved_trades = state_data.get("open_trades", {})
 
             raw_trades: Dict[int, Dict[str, Any]] = {}

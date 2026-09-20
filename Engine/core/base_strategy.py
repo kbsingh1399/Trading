@@ -581,6 +581,7 @@ class ParallelForexStrategy(BaseForexStrategy):
         w_eq = initial_capital
         w_peak = initial_capital
         w_curve = [w_eq]
+        w_in_defense = False
 
         for _, row in candidates.iterrows():
             t_entry = row["datetime"]
@@ -611,19 +612,24 @@ class ParallelForexStrategy(BaseForexStrategy):
             # Institutional Dynamic Risk State Machine (100% Parity with Live Governor)
             if curr_dd >= 4.50 or dd_usd >= 225.0:
                 # Hard Freeze: Portfolio hit 4.5% / $225 limit - freeze further execution
+                w_in_defense = True
                 continue
             elif current_pnl >= 500.0 and n_done >= 15:
                 risk = base_risk * pass_lock_mult
             elif curr_dd >= 3.0:
+                w_in_defense = True
                 risk = base_risk * dd_mult * 0.60
-            elif curr_dd >= 1.8:
+            elif curr_dd >= 1.8 or (w_in_defense and curr_dd >= 1.50):
+                w_in_defense = True
                 risk = base_risk * dd_mult
-            elif current_pnl >= 80.0 and curr_dd < 1.0:
-                risk = base_risk * house_mult
             else:
-                risk = base_risk
+                w_in_defense = False
+                if current_pnl >= 80.0 and curr_dd < 1.0:
+                    risk = base_risk * house_mult
+                else:
+                    risk = base_risk
 
-            # 8 bps real friction on notional
+            # Transaction friction (8 bps on risk allocation)
             pnl = r_real * risk - (risk * 0.0008)
             w_eq += pnl
             if w_eq > w_peak:
