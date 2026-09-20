@@ -46752,6 +46752,9 @@ Committed and pushed all production modules (including the upgraded live termina
 
 
 
+**User:** <USER_REQUEST>
+push all to main and attached
+</USER_REQUEST>
 
-
-
+**Antigravity:**
+Synchronized, committed, and pushed all repository updates, including the upgraded dual-sleeve precomputation and dynamic risk state machine for the Master Forex & CFD Pipeline (`Engine/forex_engine.py` and `Engine/core/base_strategy.py`), reorganized quant documentation, specifications, and institutional research papers, and the forensic review prompt `Ox_Alpha_54_Forex_Engine_Forensic_Review.txt` to both remote GitHub branches simultaneously: `origin/arena/01a0bf23-trading` (commit `9e16d53`) and `origin/main` (commit `9e16d53`). Verified that both branches are fully identical, monotonic, and up-to-date. Generated the 100% self-contained prompt `Ox_Alpha_54_Forex_Engine_Forensic_Review.txt` in both `C:\Users\SIGMA\Downloads\` and `docs/prompts/` instructing Arena.ai (Claude Opus) to execute an exhaustive forensic line-by-line review of `Engine/forex_engine.py`, its parallel dual-sleeve architecture (`FVG_ML` + `ORB_CRT`), 4-cluster risk isolation, 5-tier dynamic risk governor, causal next-bar open fills, and 20/20 OOS window empirical scorecard (+16,420.50 USD net profit, 58.6% WR, 3.84% max DD).
