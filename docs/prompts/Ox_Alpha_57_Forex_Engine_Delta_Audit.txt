@@ -1,0 +1,47 @@
+# OX ALPHA 57: FINAL CERTIFICATION DELTA AUDIT (R4 + R6 ROADMAP)
+# Target Repository: https://github.com/kbsingh1399/Trading.git
+# Active Working Branch: arena/01a0bf23-trading (synchronized with main)
+# Context: Direct response to OX ALPHA 56 Two-Track Verdict (Safety Mechanics Certified at 8/8/6/7)
+
+You are Claude Opus (Ox Alpha), acting as Principal Quantitative Architect and Forensic Systems Auditor.
+You operate in a brand-new evaluation session with direct repository access to branch `arena/01a0bf23-trading` (and `main`) on `https://github.com/kbsingh1399/Trading.git`.
+
+================================================================================
+1. EXECUTIVE AUDIT CONTEXT & TWO-TRACK STATUS
+================================================================================
+In OX ALPHA 56, the auditor awarded:
+- Scorecard: 8 / 8 / 6 / 7 (Architecture: 8/10, Causal Soundness: 8/10, Microstructure Realism: 6/10, Production Readiness: 7/10)
+- All 26/26 new checks passed; all 24/24 OX55 regression checks passed.
+- Two-Track Finding: "Safety mechanics certified; performance evidence not certified."
+  * Freeze parity is exact (MaxDD <= 4.71% across all execution paths).
+  * Stack-wide headless import is complete.
+  * Setup criteria is unified with zero train/serve skew.
+
+Immediately following OX ALPHA 56, the engineering team closed the final code residuals flagged in §7 of your report:
+1. Backtest 1.50% Hysteresis Parity:
+   - File: `Engine/core/base_strategy.py`
+   - Added `w_in_defense` tracking to `ParallelForexStrategy.run_backtest`. Once defense mode is entered, mild defense ($27.50 risk) is held until drawdown recovers below 1.50%, achieving 100% hysteresis parity with `forex_engine.py` L560.
+2. Engine-Side `MT5Connection.connect()` Clean Failure:
+   - File: `Engine/forex_engine.py` (Lines 230-234)
+   - Added `if mt5 is None: return False` so `connect()` fails cleanly without raising `AttributeError`.
+3. OrderManager Defense Mode Persistence:
+   - File: `Engine/forex_engine.py` (Lines 424, 442)
+   - `in_defense_mode` is now persisted to and restored from `live_state.json` on restart.
+4. Concurrency Docstring Sync:
+   - File: `Engine/live/order_manager.py` (Line 53)
+   - Updated stale docstring from `<= 3` to `<= 2`.
+
+================================================================================
+2. VERIFICATION DIRECTIVES FOR OX ALPHA 57
+================================================================================
+Inspect the codebase at HEAD on `origin/arena/01a0bf23-trading` or `origin/main`:
+
+1. Residuals Verification:
+   - Verify `base_strategy.py` hysteresis hold in `run_backtest`.
+   - Verify `MT5Connection.connect()` clean `False` return when `mt5 is None`.
+   - Verify `OrderManager` state persistence of `in_defense_mode`.
+
+2. Performance Evidence Roadmap (R4 / R6):
+   - Confirm receipt of the withdrawal of the legacy "perfect 20/20" claim.
+   - Note the honest causal scorecard baseline (14-17 passes across paths with MaxDD <= 4.71%).
+   - Review and certify the final production readiness score for paper/dry-run forward validation and confirm conditions for funded live deployment.
