@@ -1,6 +1,6 @@
 # INSTITUTIONAL ARCHITECTURE AUDIT & LIVE PRODUCTION READINESS DIRECTIVE: OX_ALPHA_51
 **DIRECTIVE TARGET:** Forensic Architecture Audit, Live Microstructure Failure Modes, Model Quantization Budget, and Phased Production Deployment Roadmap
-**REPOSITORY:** https://github.com/kbsingh1399/Trading.git (Branch: main, Pinned Commit: f73acaa)
+**REPOSITORY:** https://github.com/kbsingh1399/Trading.git (Branch: main, Pinned Commit: 006283d)
 **DATASET:** Certified Genuine 11 Institutional Binance USDT-M Perpetuals (BTC, ETH, XRP, BNB, DOGE, ADA, TRX, LINK, DOT, LTC, BCH) spanning 3,467,571 15m bars (2020–2026), 0 nulls, monotonic timestamps in Engine/binance_backtesting_data/.
 **PASS CRITERIA:** Net ROI >= +10.00% (+500.00 USD on 5,000.00 USD initial capital), Max Drawdown <= 5.00%, Win Rate >= 40.0%, Min Completed Trades >= 15 per quarter across all 23 quarterly OOS windows.
 
