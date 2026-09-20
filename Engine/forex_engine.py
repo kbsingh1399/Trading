@@ -2897,15 +2897,15 @@ def run_verify() -> None:
     """Verifies numerical parity between streaming and batch feature calculation."""
     console.print("[bold cyan]Running numerical parity assertions (< 1e-9 error)...[/bold cyan]")
     test_asset = "EURUSD"
-    parquet_path = DATA_DIR / f"{test_asset}.parquet"
-    if not parquet_path.exists():
+    parquet_path = resolve_parquet_file(test_asset)
+    if not parquet_path or not parquet_path.exists():
         console.print(f"[bold yellow]Test asset {test_asset} parquet not found, using first available...[/bold yellow]")
-        parquets = list(DATA_DIR.glob("*.parquet"))
+        parquets = list(DATA_DIR.glob("*_15m_real.parquet")) or list(DATA_DIR.glob("*.parquet"))
         if not parquets:
             console.print("[bold red]No parquet files found for verification.[/bold red]")
             return
         parquet_path = parquets[0]
-        test_asset = parquet_path.stem
+        test_asset = parquet_path.stem.replace("_15m_real", "")
 
     df = pl.read_parquet(parquet_path).tail(250).to_pandas()
     df['datetime'] = pd.to_datetime(df['datetime'], utc=True)
@@ -2917,9 +2917,10 @@ def run_verify() -> None:
     eng.buffer = df.copy()
     stream_feat = eng.compute_features()
 
-    diff = (batch_feat.iloc[-1] - stream_feat.iloc[-1]).abs().max()
+    numeric_cols = [c for c in CANONICAL_FEATURES if c in batch_feat.columns]
+    diff = (batch_feat[numeric_cols].iloc[-1] - stream_feat[numeric_cols].iloc[-1]).abs().max()
     if diff < 1e-9:
-        console.print(f"[bold green]PASS: Feature parity verified! Max difference: {diff:.2e}[/bold green]")
+        console.print(f"[bold green]PASS: Feature parity verified across {len(numeric_cols)} canonical features! Max difference: {diff:.2e}[/bold green]")
     else:
         console.print(f"[bold red]FAIL: Feature mismatch detected! Max difference: {diff:.2e}[/bold red]")
 
