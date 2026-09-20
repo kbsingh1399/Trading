@@ -1,0 +1,108 @@
+====================================================================================================
+OX ALPHA 48: INSTITUTIONAL FORENSIC AUDIT OF MULTI-ASSET PAIRS TRADING, ML ENSEMBLES & CAUSAL INTEGRITY
+====================================================================================================
+TARGET SYSTEM: Multi-Asset Quantitative Trading Architecture, Microstructure Execution & ML Pairs Suite
+REPOSITORY: https://github.com/kbsingh1399/Trading.git (branch: main, commit: 61b2db3)
+AUDIT AUTHORITY: Claude Opus (Ox Alpha / Arena.ai Chief Quantitative Risk Officer & Forensic Auditor)
+MISSION ENVIRONMENT: Fresh Session (Zero previous context, zero local memory, zero repo access beyond raw GitHub URLs)
+====================================================================================================
+
+# 1. EXECUTIVE MISSION DIRECTIVE FOR CLAUDE OPUS
+You are serving as the Chief Quantitative Risk Officer, Institutional Forensic Auditor, and Lead Microstructure Architect. Your sole directive is to perform an uncompromising, forensic, line-by-line audit of the production trading system pushed to https://github.com/kbsingh1399/Trading.git at commit 61b2db3.
+
+This audit session focuses on four critical institutional quantitative milestones:
+1. Statistical Arbitrage & Multi-Asset Pairs Trading Architecture (Sleeve S5):
+   Audit the newly researched pairs trading suite across Crypto (DOGE/LINK, SOL/ETH, XRP/BCH), Forex (AUDUSD/NZDUSD, EURUSD/GBPUSD), and CFD markets (GER40/FR40, XAUUSD/XAGUSD). Specifically evaluate:
+   - Why naive mean reversion fails on trending macro spreads (fading structural breakouts).
+   - Why spread momentum yields high positive alpha (+200% on high-beta crypto pairs).
+   - The critical role of Disjoint Graph Matching (Quant Knowledge paper 055): selecting non-overlapping pairs to eliminate cross-pair correlation clustering and prevent catastrophic joint drawdowns.
+2. Machine Learning Regime Gating & Lookahead Prevention:
+   Verify that all ML classifiers (LightGBM, XGBoost, Logistic/Ridge) across Sleeve S1 (Orderflow), Sleeve S2 (Mean Reversion), Sleeve S3 (ORB/CRT), and Sleeve S5 (Pairs):
+   - Operate under a strictly causal 72-hour purge boundary (t < window_start - 72h).
+   - Calibrate decision thresholds exclusively on in-sample training folds (rule B8 compliance).
+   - Enforce next-bar open execution (opens[j+1]) with zero intra-bar lookahead.
+3. Microstructure Ratchets & Risk Defense Protocol:
+   Verify the bar-by-bar execution order: adverse stop loss checked before take profit, piecewise trailing ratchets (+0.8R lock to +0.15R, +1.5R lock to +0.8R), and the milestone profit lock (+500.00 USD on 5,000.00 USD capital) paired with dynamic drawdown defense (scaling risk down from 28.00 USD to 12.00 USD upon reaching 2.0% drawdown).
+4. 60/60 Unit Test Suite & Causal Holdout Rigor:
+   Audit the 100% pass rate across the 60 unit tests in Engine/tests/, prefix invariance of canonical indicator kernels (compute_kairi_relative_index, compute_kairi_atr_ratio), and the quarantined holdout benchmark in Engine/validation/holdout_test.py.
+
+---
+
+# 2. RAW GITHUB URL MATRIX (FETCH DIRECTLY FROM GIT)
+Do NOT ask for code dumps. Fetch and inspect the full source code directly via these verified raw GitHub URLs pinned to commit 61b2db3:
+
+- Master Repository:
+  https://github.com/kbsingh1399/Trading.git (Branch: main, Commit: 61b2db3)
+
+- Statistical Arbitrage & Pairs Trading Engine (Sleeve S5):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/strategy/s5_statistical_arbitrage_pairs.py
+
+- Production Numba-Accelerated Multi-Asset Engine:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/core/fast_numba_oos_engine.py
+
+- Canonical Indicators & KRI Kernels:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/core/canonical_indicators.py
+
+- Unit Test Suite (60/60 Tests Passing):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/tests/test_validation_harness.py
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/tests/test_baskets_and_crypto.py
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/tests/test_execution_safety.py
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/tests/test_prelaunch.py
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/tests/test_kairi_indicators.py
+
+- Institutional Dual-Model Orderflow Strategy (Sleeve S1):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/strategy/s1_dual_model_orderflow.py
+
+- Causal Mean Reversion Strategy (Sleeve S2):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/strategy/s2_mean_reversion.py
+
+- Cross-Asset ORB/CRT Footprint Strategy (Sleeve S3):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/strategy/s3_orb_ml.py
+
+- Multi-Timeframe Resampling & Cache Processor:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/core/multi_tf_data.py
+
+- Honest Walk-Forward Validation Harness:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/validation/honest_walkforward.py
+
+- Strict Holdout Benchmark (Quarantined 2025-2026 Test):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/validation/holdout_test.py
+
+- 23 Out-Of-Sample Quarterly Windows Specification (2021 - 2026):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/arena_01a09b0e/Engine/oos_windows_20.json
+
+- Institutional Target OOS Criteria:
+  https://raw.githubusercontent.com/kbsingh1399/Trading/61b2db3/Engine/target_oos_criteria.json
+
+---
+
+# 3. EMPIRICAL FINDINGS: PAIRS TRADING DYNAMICS ACROSS ASSET CLASSES
+
+### Empirical Findings:
+1. The Mean-Reversion Trap in Macro Spreads:
+   Across 211k 15m bars, naive mean reversion on spreads (fading Z >= 1.80) produces net negative returns across crypto, forex, and CFDs because high spread Z-scores are predominantly driven by structural macro catalysts or idiosyncratic token runs. Fading the move without volume absorption or half-life filtering acts as a losing counter-trend trade.
+2. The Power of Spread Momentum in Crypto:
+   In high-beta crypto assets, spread momentum (going long the outperformer and short the underperformer when |Momentum| >= 1.5 Std) generates substantial positive returns:
+   - DOGEUSDT / LINKUSDT: +202.89% Net PnL (452 trades, 45.1% Win Rate, Beta: 0.798)
+   - DOGEUSDT / BCHUSDT: +219.67% Net PnL (415 trades, 48.0% Win Rate, Beta: 0.734)
+   - DOGEUSDT / ADAUSDT: +151.54% Net PnL (470 trades, 43.4% Win Rate, Beta: 1.044)
+   - SOLUSDT / BCHUSDT: +85.72% Net PnL (800 trades, 47.0% Win Rate, Beta: 0.928)
+   - SOLUSDT / ETHUSDT: +44.75% Net PnL (929 trades, 47.9% Win Rate, Beta: 2.145)
+3. The Disjoint Graph Matching Requirement:
+   When multiple pairs share common legs (e.g. DOGE in DOGE/LINK, DOGE/BCH, and DOGE/ADA), an idiosyncratic shock in DOGE triggers simultaneous stop-outs across all pairs, causing catastrophic drawdown spikes (up to 28% max DD). Restricting the portfolio to a maximum weighted matching of disjoint pairs (e.g. DOGE/LINK, SOL/ETH, XRP/BCH) decouples individual token exposure and compresses portfolio variance.
+
+---
+
+# 4. FORENSIC AUDIT CHECKLIST FOR CLAUDE OPUS
+Please conduct your audit along these explicit criteria:
+
+1. Clean Fresh Clone Execution & Scratch Independence:
+   Confirm that all production modules reside strictly in Engine/ with zero runtime dependencies on scratch/.
+2. Statistical Arbitrage & Multi-Asset Pairs Design:
+   Critique the quantitative formulation in Engine/strategy/s5_statistical_arbitrage_pairs.py. Evaluate the hedge ratio calculation (OLS beta), spread momentum trigger, and the necessity of ML gating to filter out non-stationary spread regimes.
+3. 60/60 Unit Test Suite & Causal Parity:
+   Inspect Engine/tests/ and verify that all test assertions pass with zero failures and zero warnings.
+4. Microstructure Execution & Anti-Lookahead Compliance:
+   Verify that all trading sleeves enforce bar j+1 open execution, stop checking before target checking, and strictly in-sample calibrated decision thresholds.
+5. Definitive Institutional Score:
+   Assign an institutional certification score (0/10 to 10/10) with actionable recommendations for live broker deployment.
