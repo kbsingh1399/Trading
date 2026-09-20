@@ -1,0 +1,62 @@
+/tmp/ox58_unp/Engine/runners/run_23_oos_altcoin_suite.py:610: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+============================================================================================================================================
+ELITE QUANT 23 OOS REGIME-ROUTED STRATEGY SUITE (QUANT-DEVELOPERS-RESOURCES + SSRN-4647103)
+Multi-Sleeve Confluence: S1 Liquidity Pullbacks + S2 BB Mean Reversion (32/68) + T1 Trend Breakout + Cross-Asset ORB
+============================================================================================================================================
+[Numba Core] JIT Compiler initialized and warm in 1069.1 ms.
+
+Processing 11 institutional perpetual assets using Numba JIT Ratchet Engine...
+  [BTCUSDT ] Numba Labeled: 211,189 bars -> 4,229 candidates in 256.74 ms
+  [ETHUSDT ] Numba Labeled: 211,195 bars -> 3,914 candidates in 0.89 ms
+  [XRPUSDT ] Numba Labeled: 211,201 bars -> 2,994 candidates in 0.67 ms
+  [BNBUSDT ] Numba Labeled: 211,206 bars -> 3,118 candidates in 0.76 ms
+  [DOGEUSDT] Numba Labeled: 211,208 bars -> 3,174 candidates in 0.77 ms
+  [ADAUSDT ] Numba Labeled: 211,211 bars -> 2,880 candidates in 0.77 ms
+  [TRXUSDT ] Numba Labeled: 211,213 bars -> 2,419 candidates in 0.68 ms
+  [LINKUSDT] Numba Labeled: 211,214 bars -> 3,180 candidates in 0.73 ms
+  [DOTUSDT ] Numba Labeled: 211,220 bars -> 3,212 candidates in 0.70 ms
+  [LTCUSDT ] Numba Labeled: 211,221 bars -> 3,206 candidates in 0.79 ms
+  [BCHUSDT ] Numba Labeled: 211,226 bars -> 3,062 candidates in 0.78 ms
+
+Completed Multi-Asset Numba Compilation: 35,388 candidates in 2.95 seconds!
+Pre-compiling Cross-Asset (Crypto + Forex) ORB + CRT candidates...
+Generated 54,629 Cross-Asset ORB+CRT candidates in 10.23s.
+Generating S2 (Enhanced BB with Bandwidth Z & ADX) and S4 (KRI Disparity) candidates...
+Pre-compiled 29,035 S2 BB trades (filtered by Z_BW <= 1.85 & ADX <= 32).
+Pre-compiled 20,445 S4 KRI Disparity trades.
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+W#  | Window Name                            | Regime             | Trades | Sleeves        | Win Rate | Net PnL      | Net ROI   | Max DD  | Status
+--------------------------------------------------------------------------------------------------------------------------------------------
+W01 | Q1 2021 Crypto Bull Run & Stimulus Ign | BULL_EXPANSION     | 251    | S:29 T:18 B:174 O:30 |  59.0%  |   +1410.04 USD |  +28.20% |  1.95% | PASS  
+W02 | Q2 2021 May Liquidation Crash & China  | BULL_EXPANSION     | 414    | S:80 T:33 B:287 O:14 |  53.1%  |   +1689.93 USD |  +33.80% |  3.82% | PASS  
+W03 | Q3 2021 El Salvador Tender & Summer Re | SIDEWAYS_CHOP      | 350    | S:92 T:0 B:256 O:2 |  48.9%  |    +852.61 USD |  +17.05% |  2.20% | PASS  
+W04 | Q4 2021 ATH Blowoff & Distribution Pea | BEAR_CONTAGION     | 193    | S:8 T:0 B:184 O:1 |  54.9%  |   +1048.83 USD |  +20.98% |  2.12% | PASS  
+W05 | Q1 2022 Fed Rate Hike Cycle & Macro Sh | SIDEWAYS_CHOP      | 90     | S:15 T:0 B:75 O:0 |  50.0%  |    +534.82 USD |  +10.70% |  2.17% | PASS  
+W06 | Q2 2022 Terra-Luna Collapse & 3AC Inso | BULL_EXPANSION     | 130    | S:23 T:10 B:96 O:1 |  56.2%  |    +795.74 USD |  +15.91% |  2.17% | PASS  
+W07 | Q3 2022 ETH Merge & Dollar Index Surge | BEAR_CONTAGION     | 373    | S:49 T:0 B:324 O:0 |  48.8%  |    +991.47 USD |  +19.83% |  2.62% | PASS  
+W08 | Q4 2022 FTX Bankruptcy & Cycle Capitul | SIDEWAYS_CHOP      | 300    | S:28 T:0 B:271 O:1 |  47.3%  |   +1023.74 USD |  +20.47% |  2.55% | PASS  
+W09 | Q1 2023 SVB Bank Run & Short Squeeze R | SIDEWAYS_CHOP      | 353    | S:44 T:0 B:308 O:1 |  51.3%  |   +1827.19 USD |  +36.54% |  1.82% | PASS  
+W10 | Q2 2023 BlackRock Spot ETF Filing & Co | SIDEWAYS_CHOP      | 169    | S:12 T:0 B:157 O:0 |  53.3%  |   +1085.94 USD |  +21.72% |  2.05% | PASS  
+W11 | Q3 2023 Mid-Summer Flash Flush & Yield | SIDEWAYS_CHOP      | 438    | S:24 T:0 B:414 O:0 |  46.8%  |   +2201.67 USD |  +44.03% |  4.27% | PASS  
+W12 | Q4 2023 Uptober Spot ETF Pre-Run & Ral | SIDEWAYS_CHOP      | 128    | S:2 T:0 B:126 O:0 |  46.1%  |    +769.86 USD |  +15.40% |  2.20% | PASS  
+W13 | Q1 2024 Spot ETF Inflows & Pre-Halving | SIDEWAYS_CHOP      | 174    | S:13 T:0 B:161 O:0 |  46.0%  |    +688.36 USD |  +13.77% |  2.20% | PASS  
+W14 | Q2 2024 Bitcoin Halving & Post-ATH Re- | BULL_EXPANSION     | 242    | S:29 T:18 B:192 O:3 |  52.9%  |   +1006.12 USD |  +20.12% |  2.63% | PASS  
+W15 | Q3 2024 Global Carry Trade Unwind & 50 | SIDEWAYS_CHOP      | 372    | S:46 T:0 B:325 O:1 |  44.1%  |   +1249.96 USD |  +25.00% |  3.31% | PASS  
+W16 | Q4 2024 US Presidential Election & Meg | SIDEWAYS_CHOP      | 277    | S:49 T:0 B:228 O:0 |  54.9%  |   +1013.85 USD |  +20.28% |  2.12% | PASS  
+W17 | Q1 2025 Strategic Reserve & Institutio | SIDEWAYS_CHOP      | 463    | S:92 T:0 B:369 O:2 |  45.8%  |    +608.57 USD |  +12.17% |  3.73% | PASS  
+W18 | Q2 2025 Regulatory Clarity & Altcoin M | SIDEWAYS_CHOP      | 270    | S:37 T:0 B:233 O:0 |  48.1%  |    +557.51 USD |  +11.15% |  2.72% | PASS  
+W19 | Q3 2025 Summer Microstructure Volatili | SIDEWAYS_CHOP      | 302    | S:32 T:0 B:270 O:0 |  47.7%  |    +872.73 USD |  +17.45% |  2.01% | PASS  
+W20 | Q4 2025 Year-End Macro Flow Rebalancin | SIDEWAYS_CHOP      | 218    | S:38 T:0 B:177 O:3 |  48.6%  |   +1454.00 USD |  +29.08% |  2.86% | PASS  
+W21 | Q1 2026 New Year Cross-Asset Flow      | SIDEWAYS_CHOP      | 429    | S:48 T:0 B:381 O:0 |  45.7%  |    +500.10 USD |  +10.00% |  2.15% | PASS  
+W22 | Q2 2026 Modern Microstructure Flow     | SIDEWAYS_CHOP      | 234    | S:23 T:0 B:211 O:0 |  42.3%  |    +545.41 USD |  +10.91% |  3.55% | PASS  
+W23 | Q3 2026 Live Production Regime         | BEAR_CONTAGION     | 314    | S:9 T:0 B:303 O:2 |  49.0%  |   +1169.98 USD |  +23.40% |  2.02% | PASS  
+============================================================================================================================================
+ELITE 23-QUARTER SCORECARD: Passed: 23/23 | Total Trades: 6,484 | Total Net PnL: +23,898.46 USD (ROI: +477.97%)
+Total Execution Time: 38.39 seconds
+============================================================================================================================================
+Saved 6,484 executed trades to: /tmp/ox58_unp/reports/elite_23_oos_all_trades.parquet
+Equity curve chart saved to: /tmp/ox58_unp/reports/elite_23_oos_equity_vs_benchmark.png
+Chart copied to conversation artifacts: C:\Users\SIGMA\.gemini\antigravity\brain\ffa08070-c9a9-49d2-a394-b72ce2e0971d\elite_23_oos_equity_vs_benchmark.png
+EXIT:0
