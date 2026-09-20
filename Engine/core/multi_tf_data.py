@@ -41,24 +41,33 @@ def get_or_compute_4h_dataframe(symbol: str, cache_dir: Optional[Path] = None) -
         return pd.DataFrame()
 
     raw_df = pd.read_parquet(p_15m)
-    use_cols = [c for c in ['open_time_ms', 'open', 'high', 'low', 'close', 'volume_base', 'spot_cvd_15m'] if c in raw_df.columns]
+    use_cols = [c for c in ['open_time_ms', 'open', 'high', 'low', 'close', 'volume_base', 'spot_cvd_15m', 'taker_buy_vol_btc'] if c in raw_df.columns]
     df = raw_df[use_cols].copy()
     df['time'] = pd.to_datetime(df['open_time_ms'], unit='ms', utc=True)
     agg_dict = {'open': 'first', 'high': 'max', 'low': 'min', 'close': 'last', 'volume_base': 'sum'}
     if 'spot_cvd_15m' in df.columns:
         agg_dict['spot_cvd_15m'] = 'sum'
+    if 'taker_buy_vol_btc' in df.columns:
+        agg_dict['taker_buy_vol_btc'] = 'sum'
     df_4h = df.set_index('time').resample('4h').agg(agg_dict).dropna().reset_index()
 
     tr = np.maximum(df_4h['high'] - df_4h['low'], np.maximum((df_4h['high'] - df_4h['close'].shift()).abs(), (df_4h['low'] - df_4h['close'].shift()).abs()))
     df_4h['atr'] = tr.rolling(14).mean()
-    df_4h['donchian_high'] = df_4h['high'].rolling(20).max()
-    df_4h['donchian_low'] = df_4h['low'].rolling(20).min()
+    df_4h['donchian_high'] = df_4h['high'].shift(1).rolling(20).max()
+    df_4h['donchian_low'] = df_4h['low'].shift(1).rolling(20).min()
     df_4h['ema_20'] = df_4h['close'].ewm(span=20, adjust=False).mean()
     df_4h['ema_50'] = df_4h['close'].ewm(span=50, adjust=False).mean()
     df_4h['ema_200'] = df_4h['close'].ewm(span=200, adjust=False).mean()
     df_4h['ema_200_slope'] = ((df_4h['ema_200'] - df_4h['ema_200'].shift(12)) / df_4h['atr']).fillna(0.0)
-    df_4h['buy_vol_ratio'] = 1.0
-    df_4h['spot_cvd_slope'] = 0.0
+    if 'taker_buy_vol_btc' in df_4h.columns:
+        df_4h['buy_vol_ratio'] = (df_4h['taker_buy_vol_btc'] / df_4h['volume_base'].replace(0, np.nan)).fillna(0.5)
+    else:
+        df_4h['buy_vol_ratio'] = 0.5
+    if 'spot_cvd_15m' in df_4h.columns:
+        cvd_cum = df_4h['spot_cvd_15m'].cumsum()
+        df_4h['spot_cvd_slope'] = (cvd_cum - cvd_cum.shift(3)).fillna(0.0)
+    else:
+        df_4h['spot_cvd_slope'] = 0.0
     df_4h['next_open'] = df_4h['open'].shift(-1).fillna(df_4h['close'])
     return df_4h.sort_values('time').reset_index(drop=True)
 
