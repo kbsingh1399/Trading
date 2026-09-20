@@ -367,6 +367,14 @@ class StrategyRegistry:
 # -------------------------------------------------------------------------
 # 5. PARALLEL MULTI-SLEEVE STRATEGY
 # -------------------------------------------------------------------------
+FOREX_CLUSTER_MAP: Dict[str, str] = {
+    'EURUSD': 'EUR', 'EURHUF': 'EUR', 'EURSEK': 'EUR', 'EURCNH': 'EUR', 'AUDCHF': 'EUR',
+    'NZDUSD': 'PACIFIC', 'USDHKD': 'PACIFIC', 'NZDCNH': 'PACIFIC', 'USDSEK': 'PACIFIC',
+    'GER40': 'EQUITY', 'GER30': 'EQUITY', 'FR40': 'EQUITY', 'AU200': 'EQUITY', 'US2000': 'EQUITY',
+    'GAS': 'COMMODITY', 'NICKEL': 'COMMODITY', 'LEAD': 'COMMODITY', 'XAUCNH': 'COMMODITY', 'GAUCNH': 'COMMODITY'
+}
+
+
 @StrategyRegistry.register("parallel")
 @StrategyRegistry.register("dual")
 @StrategyRegistry.register("all")
@@ -374,7 +382,8 @@ class ParallelForexStrategy(BaseForexStrategy):
     """
     Parallel Multi-Sleeve Execution Strategy.
     Simultaneously executes multiple registered strategies (e.g. FVG_ML + ORB_CRT)
-    across all assets in parallel, evaluating independent sleeve signals and confluence.
+    across all assets in parallel, evaluating independent sleeve signals, confluence,
+    and enforcing institutional portfolio concurrency, cluster limits, and dynamic risk.
     """
     name: str = "parallel"
     description: str = "Dual-Sleeve Parallel Strategy (FVG_ML + ORB_CRT)"
@@ -383,11 +392,29 @@ class ParallelForexStrategy(BaseForexStrategy):
         super().__init__(config=config)
         self.strategy_names = strategy_names or ["fvg_ml", "orb_crt"]
         self.sleeves: Dict[str, BaseForexStrategy] = {}
+        self._cached_candidate_trades: Optional[pd.DataFrame] = None
         self.initialize(self.config)
 
     def initialize(self, config: Optional[EngineConfig] = None) -> None:
         if config is not None:
             self.config = config
+        
+        # Ensure strategy sleeves are registered in StrategyRegistry
+        try:
+            import Engine.strategy.s4_fvg_ml.s4_fvg_ml_forex_engine
+        except Exception:
+            try:
+                import Engine.strategy.s4_fvg_ml.s4_fvg_ml_forex
+            except Exception:
+                pass
+        try:
+            import Engine.strategy.orb_crt_forex_engine
+        except Exception:
+            try:
+                import Engine.strategy.orb_crt_forex
+            except Exception:
+                pass
+
         self.sleeves = {}
         for s_name in self.strategy_names:
             try:
@@ -399,6 +426,36 @@ class ParallelForexStrategy(BaseForexStrategy):
             except Exception as e:
                 logging.warning(f"Could not load parallel sleeve '{s_name}': {e}")
         self.initialized = True
+
+    def precompute_candidates(
+        self,
+        start_date: str = "2023-09-01",
+        end_date: str = "2026-03-31",
+        symbols: Optional[List[str]] = None
+    ) -> pd.DataFrame:
+        """Precomputes and caches candidate trade setups across all sleeves for ultra-fast walk-forward."""
+        all_candidates = []
+        for name, strat in self.sleeves.items():
+            try:
+                res = strat.run_backtest(start_date=start_date, end_date=end_date, symbols=symbols, save_plot=False)
+                if res.trades_df is not None and not res.trades_df.empty:
+                    tdf = res.trades_df.copy()
+                    tdf["sleeve"] = strat.name.upper()
+                    if "hold_bars" not in tdf.columns:
+                        tdf["hold_bars"] = 24 if "FVG" in strat.name.upper() else 30
+                    if "cluster" not in tdf.columns:
+                        tdf["cluster"] = tdf["asset"].map(lambda x: FOREX_CLUSTER_MAP.get(x, "OTHER"))
+                    all_candidates.append(tdf)
+            except Exception as e:
+                logging.warning(f"Error precomputing candidate setups for sleeve '{name}': {e}")
+
+        if all_candidates:
+            comb = pd.concat(all_candidates, ignore_index=True)
+            comb["datetime"] = pd.to_datetime(comb["datetime"], utc=True)
+            self._cached_candidate_trades = comb.sort_values("datetime").reset_index(drop=True)
+        else:
+            self._cached_candidate_trades = pd.DataFrame()
+        return self._cached_candidate_trades
 
     def generate_signal(
         self,
@@ -456,19 +513,48 @@ class ParallelForexStrategy(BaseForexStrategy):
         symbols: Optional[List[str]] = None,
         save_plot: bool = True
     ) -> BacktestResult:
-        all_trades = []
         criteria = self.config.criteria
         initial_capital = criteria.initial_capital_usd
+        base_risk = criteria.base_risk_usd
+        dd_mult = 0.55
+        house_mult = 1.30
+        pass_lock_mult = 0.15
 
-        for name, strat in self.sleeves.items():
-            res = strat.run_backtest(start_date=start_date, end_date=end_date, symbols=symbols, save_plot=False)
-            if res.trades_df is not None and not res.trades_df.empty:
-                tdf = res.trades_df.copy()
-                if "strategy" not in tdf.columns:
-                    tdf["strategy"] = strat.name.upper()
-                all_trades.append(tdf)
+        # Obtain candidates from cache or compute on-the-fly
+        if self._cached_candidate_trades is not None and not self._cached_candidate_trades.empty:
+            candidates = self._cached_candidate_trades.copy()
+            if start_date:
+                s_dt = pd.to_datetime(start_date, utc=True)
+                candidates = candidates[candidates["datetime"] >= s_dt]
+            if end_date:
+                e_dt = pd.to_datetime(end_date, utc=True)
+                candidates = candidates[candidates["datetime"] <= e_dt]
+            if symbols:
+                candidates = candidates[candidates["asset"].isin(symbols)]
+        else:
+            all_candidates = []
+            for name, strat in self.sleeves.items():
+                try:
+                    res = strat.run_backtest(start_date=start_date, end_date=end_date, symbols=symbols, save_plot=False)
+                    if res.trades_df is not None and not res.trades_df.empty:
+                        tdf = res.trades_df.copy()
+                        tdf["sleeve"] = strat.name.upper()
+                        if "hold_bars" not in tdf.columns:
+                            tdf["hold_bars"] = 24 if "FVG" in strat.name.upper() else 30
+                        if "cluster" not in tdf.columns:
+                            tdf["cluster"] = tdf["asset"].map(lambda x: FOREX_CLUSTER_MAP.get(x, "OTHER"))
+                        all_candidates.append(tdf)
+                except Exception as e:
+                    logging.warning(f"Error executing backtest for sleeve '{name}': {e}")
 
-        if not all_trades:
+            if all_candidates:
+                comb = pd.concat(all_candidates, ignore_index=True)
+                comb["datetime"] = pd.to_datetime(comb["datetime"], utc=True)
+                candidates = comb.sort_values("datetime").reset_index(drop=True)
+            else:
+                candidates = pd.DataFrame()
+
+        if candidates.empty:
             return BacktestResult(
                 strategy_name="parallel_dual_sleeve",
                 start_date=start_date,
@@ -483,57 +569,133 @@ class ParallelForexStrategy(BaseForexStrategy):
                 max_dd_pct=0.0,
                 buy_hold_return_pct=0.0,
                 passed_criteria=False,
-                failure_reasons=["No trades generated by any sleeve"]
+                failure_reasons=["No candidate trades found for parallel execution"],
+                per_asset_summary={},
+                trades_df=pd.DataFrame()
             )
 
-        comb_trades = pd.concat(all_trades, ignore_index=True)
-        if "datetime" in comb_trades.columns:
-            comb_trades["datetime"] = pd.to_datetime(comb_trades["datetime"], utc=True)
-            comb_trades = comb_trades.sort_values("datetime").reset_index(drop=True)
+        active_positions: List[Dict[str, Any]] = []
+        executed: List[Dict[str, Any]] = []
+        w_eq = initial_capital
+        w_peak = initial_capital
+        w_curve = [w_eq]
 
-        if "pnl" in comb_trades.columns and "pnl_usd" not in comb_trades.columns:
-            comb_trades["pnl_usd"] = comb_trades["pnl"]
-        elif "pnl_usd" in comb_trades.columns and "pnl" not in comb_trades.columns:
-            comb_trades["pnl"] = comb_trades["pnl_usd"]
+        for _, row in candidates.iterrows():
+            t_entry = row["datetime"]
+            cluster = row.get("cluster", FOREX_CLUSTER_MAP.get(row["asset"], "OTHER"))
+            asset = row["asset"]
+            r_real = float(row.get("r_realized", row.get("outcome_r", 0.0)))
+            sleeve = row.get("sleeve", "PARALLEL")
+            bars_held = int(row.get("hold_bars", 24))
 
-        if "r_realized" in comb_trades.columns and "outcome_r" not in comb_trades.columns:
-            comb_trades["outcome_r"] = comb_trades["r_realized"]
-        elif "outcome_r" in comb_trades.columns and "r_realized" not in comb_trades.columns:
-            comb_trades["r_realized"] = comb_trades["outcome_r"]
+            # Expire finished positions
+            active_positions = [p for p in active_positions if p["exit_time"] > t_entry]
 
-        comb_trades["cum_pnl"] = comb_trades["pnl_usd"].cumsum()
-        comb_trades["equity"] = initial_capital + comb_trades["cum_pnl"]
-        comb_trades["peak"] = comb_trades["equity"].cummax()
-        comb_trades["dd"] = (comb_trades["peak"] - comb_trades["equity"]) / comb_trades["peak"]
-        max_dd = float(comb_trades["dd"].max() * 100.0) if not comb_trades.empty else 0.0
+            # Concurrency Invariant: Max 2 concurrent positions across portfolio
+            if len(active_positions) >= 2:
+                continue
+            # Cluster Invariant: Max 1 position per currency/asset cluster
+            if any(p["cluster"] == cluster for p in active_positions):
+                continue
+            # Asset Invariant: Max 1 position per individual asset
+            if any(p["asset"] == asset for p in active_positions):
+                continue
 
-        total_trades = len(comb_trades)
-        wins = comb_trades[comb_trades["pnl_usd"] > 0]
-        losses = comb_trades[comb_trades["pnl_usd"] < 0]
+            curr_dd = (w_peak - w_eq) / w_peak * 100.0 if w_peak > 0 else 0.0
+            current_pnl = w_eq - initial_capital
+            n_done = len(executed)
+
+            # Institutional Dynamic Risk State Machine
+            if current_pnl >= 500.0 and n_done >= 15:
+                risk = base_risk * pass_lock_mult
+            elif curr_dd >= 3.0:
+                risk = base_risk * dd_mult * 0.60
+            elif curr_dd >= 1.8:
+                risk = base_risk * dd_mult
+            elif current_pnl >= 80.0 and curr_dd < 1.0:
+                risk = base_risk * house_mult
+            else:
+                risk = base_risk
+
+            # 8 bps real friction on notional
+            pnl = r_real * risk - (risk * 0.0008)
+            w_eq += pnl
+            if w_eq > w_peak:
+                w_peak = w_eq
+            w_curve.append(w_eq)
+
+            exit_time = t_entry + pd.Timedelta(minutes=15 * bars_held)
+            active_positions.append({"exit_time": exit_time, "cluster": cluster, "asset": asset})
+            executed.append({
+                "datetime": t_entry,
+                "asset": asset,
+                "cluster": cluster,
+                "sleeve": sleeve,
+                "r_realized": r_real,
+                "outcome_r": r_real,
+                "risk_usd": risk,
+                "pnl": pnl,
+                "pnl_usd": pnl,
+                "equity": w_eq,
+                "exit_time": exit_time
+            })
+
+        if not executed:
+            return BacktestResult(
+                strategy_name="parallel_dual_sleeve",
+                start_date=start_date,
+                end_date=end_date,
+                window_id=None,
+                total_trades=0,
+                win_rate=0.0,
+                profit_factor=0.0,
+                net_r=0.0,
+                net_pnl_usd=0.0,
+                net_roi_pct=0.0,
+                max_dd_pct=0.0,
+                buy_hold_return_pct=0.0,
+                passed_criteria=False,
+                failure_reasons=["All candidate trades filtered by concurrency or cluster limits"],
+                per_asset_summary={},
+                trades_df=pd.DataFrame()
+            )
+
+        ex_df = pd.DataFrame(executed)
+        ex_df["cum_pnl"] = ex_df["pnl_usd"].cumsum()
+        ex_df["equity"] = initial_capital + ex_df["cum_pnl"]
+        ex_df["peak"] = ex_df["equity"].cummax()
+        ex_df["dd"] = (ex_df["peak"] - ex_df["equity"]) / ex_df["peak"]
+
+        curve_arr = np.array(w_curve)
+        pks = np.maximum.accumulate(curve_arr)
+        max_dd = float(np.max((pks - curve_arr) / pks) * 100.0) if len(curve_arr) > 0 else 0.0
+
+        total_trades = len(ex_df)
+        wins = ex_df[ex_df["pnl_usd"] > 0]
+        losses = ex_df[ex_df["pnl_usd"] < 0]
         win_rate = (len(wins) / total_trades * 100.0) if total_trades > 0 else 0.0
 
         gross_profit = wins["pnl_usd"].sum() if not wins.empty else 0.0
         gross_loss = abs(losses["pnl_usd"].sum()) if not losses.empty else 0.0
         profit_factor = (gross_profit / gross_loss) if gross_loss > 0 else 99.9
 
-        net_pnl = float(comb_trades["pnl_usd"].sum())
-        net_r = float(comb_trades["outcome_r"].sum()) if "outcome_r" in comb_trades.columns else (net_pnl / criteria.base_risk_usd)
+        net_pnl = float(ex_df["pnl_usd"].sum())
+        net_r = float(ex_df["r_realized"].sum())
         net_roi = (net_pnl / initial_capital) * 100.0
 
-        # Build per-asset summary
         per_asset = {}
-        all_syms = symbols or (list(comb_trades['asset'].unique()) if 'asset' in comb_trades.columns else [])
+        all_syms = symbols or (list(ex_df["asset"].unique()) if "asset" in ex_df.columns else [])
         for sym in all_syms:
-            sym_trades = comb_trades[comb_trades['asset'] == sym] if 'asset' in comb_trades.columns else pd.DataFrame()
+            sym_trades = ex_df[ex_df["asset"] == sym]
             n_t = len(sym_trades)
             if n_t > 0:
-                w_t = (sym_trades['pnl_usd'] > 0).sum()
+                w_t = (sym_trades["pnl_usd"] > 0).sum()
                 wr_t = (w_t / n_t * 100.0)
-                tot_r_t = float(sym_trades['outcome_r'].sum())
-                pnl_t = float(sym_trades['pnl_usd'].sum())
-                per_asset[sym] = {'trades': n_t, 'win_rate': wr_t, 'net_r': tot_r_t, 'pnl': pnl_t}
+                tot_r_t = float(sym_trades["r_realized"].sum())
+                pnl_t = float(sym_trades["pnl_usd"].sum())
+                per_asset[sym] = {"trades": n_t, "win_rate": wr_t, "net_r": tot_r_t, "pnl": pnl_t}
             else:
-                per_asset[sym] = {'trades': 0, 'win_rate': 0.0, 'net_r': 0.0, 'pnl': 0.0}
+                per_asset[sym] = {"trades": 0, "win_rate": 0.0, "net_r": 0.0, "pnl": 0.0}
 
         passed_crit, checks, failures = self.config.evaluate_pass_criteria({
             "net_roi_pct": net_roi,
@@ -552,14 +714,14 @@ class ParallelForexStrategy(BaseForexStrategy):
                 plot_dir.mkdir(parents=True, exist_ok=True)
                 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), sharex=True, gridspec_kw={'height_ratios': [3, 1]})
 
-                ax1.plot(comb_trades.index, comb_trades["equity"], label="Parallel Dual-Sleeve Portfolio Equity", color="#00ffcc", lw=1.8)
+                ax1.plot(ex_df.index, ex_df["equity"], label="Parallel Dual-Sleeve Portfolio Equity", color="#00ffcc", lw=1.8)
                 ax1.axhline(initial_capital, color="gray", linestyle="--", alpha=0.5, label="Initial Capital (5,000 USD)")
-                ax1.set_title("Parallel Dual-Sleeve (FVG_ML + ORB_CRT) Forward-Test Equity Curve", fontsize=13, fontweight="bold", pad=10)
+                ax1.set_title("Parallel Dual-Sleeve (FVG_ML + ORB_CRT) Governed Equity Curve", fontsize=13, fontweight="bold", pad=10)
                 ax1.set_ylabel("Account Equity (USD)", fontsize=10)
                 ax1.grid(True, alpha=0.25)
                 ax1.legend(loc="upper left")
 
-                ax2.fill_between(comb_trades.index, -comb_trades["dd"] * 100.0, 0, color="#ff3366", alpha=0.4, label="Underwater Drawdown (%)")
+                ax2.fill_between(ex_df.index, -ex_df["dd"] * 100.0, 0, color="#ff3366", alpha=0.4, label="Underwater Drawdown (%)")
                 ax2.axhline(-self.config.criteria.max_dd_percent, color="red", linestyle=":", label=f"Max Allowed DD (-{self.config.criteria.max_dd_percent}%)")
                 ax2.set_ylabel("Drawdown %", fontsize=10)
                 ax2.set_xlabel("Completed Trade Index", fontsize=10)
@@ -590,6 +752,6 @@ class ParallelForexStrategy(BaseForexStrategy):
             criteria_checks=checks,
             failure_reasons=failures,
             per_asset_summary=per_asset,
-            trades_df=comb_trades
+            trades_df=ex_df
         )
 

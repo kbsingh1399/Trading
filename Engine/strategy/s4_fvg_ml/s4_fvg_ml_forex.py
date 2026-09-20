@@ -41,7 +41,7 @@ import matplotlib.pyplot as plt
 # PATH CONFIGURATION & IMPORTS
 # -------------------------------------------------------------------------
 CURRENT_FILE = Path(__file__).resolve()
-ENGINE_DIR = CURRENT_FILE.parent if CURRENT_FILE.parent.name == "Engine" else CURRENT_FILE.parents[1]
+ENGINE_DIR = next((p for p in CURRENT_FILE.parents if p.name == "Engine"), CURRENT_FILE.parent)
 PROJECT_ROOT = ENGINE_DIR.parent
 
 for p in [str(PROJECT_ROOT), str(ENGINE_DIR)]:

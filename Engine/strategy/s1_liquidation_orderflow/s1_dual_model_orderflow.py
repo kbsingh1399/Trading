@@ -303,6 +303,8 @@ class InstitutionalDualModelEngine:
                         "strategy": "T1"
                     })
 
+        if not all_t1_trades:
+            return pd.DataFrame(columns=["time", "t_exit", "r_gain", "hold_bars", "symbol", "prob", "strategy"])
         df_t1 = pd.DataFrame(all_t1_trades).sort_values("time").reset_index(drop=True)
         return df_t1
 

@@ -80,19 +80,19 @@ from Engine.core.strategy_kernel import (
 
 # Explicitly import FVG_ML strategy to register it into StrategyRegistry
 try:
-    from Engine.FVG_ML_ForexCFD_Strategy import FVGMLForexCFDStrategy
+    from Engine.strategy.s4_fvg_ml.s4_fvg_ml_forex_engine import FVGMLForexCFDStrategy
 except ImportError:
     try:
-        from Engine.strategy.FVG_ML_ForexCFD_Strategy import FVGMLForexCFDStrategy
+        from Engine.strategy.s4_fvg_ml.s4_fvg_ml_forex import FVGMLForexCFDStrategy
     except ImportError:
         logging.warning("Could not import FVGMLForexCFDStrategy at startup; will resolve dynamically.")
 
 # Explicitly import ORB_CRT strategy to register it into StrategyRegistry
 try:
-    from Engine.ORB_CRT_ForexCFD_Strategy import ORBCRTForexCFDStrategy
+    from Engine.strategy.orb_crt_forex_engine import ORBCRTForexCFDStrategy
 except ImportError:
     try:
-        from Engine.strategy.ORB_CRT_ForexCFD_Strategy import ORBCRTForexCFDStrategy
+        from Engine.strategy.orb_crt_forex import ORBCRTForexCFDStrategy
     except ImportError:
         logging.warning("Could not import ORBCRTForexCFDStrategy at startup; will resolve dynamically.")
 
@@ -130,13 +130,14 @@ console = Console(force_terminal=True, width=get_terminal_width())
 # -------------------------------------------------------------------------
 # CANONICAL STRATEGY CONSTANTS & OPTION C GOVERNANCE
 # -------------------------------------------------------------------------
-BASE_RISK_USD = 25.0              # 0.50% of 5,000 USD capital (base risk)
-DEFENSE_RISK_USD = 15.0           # 0.30% — arms when DD >= 2.0% (100 USD)
-HOUSE_MONEY_RISK_USD = 35.0       # 0.70% — unlocks when cumulative profit >= 100 USD AND DD < 1.0%
+BASE_RISK_USD = 50.0              # 1.00% of 5,000 USD capital (matching target_oos_criteria.json)
+DEFENSE_RISK_USD = 27.50          # 0.55% — arms when DD >= 1.8% (90 USD), scales to 16.50 USD (0.33%) at DD >= 3.0%
+HOUSE_MONEY_RISK_USD = 65.00      # 1.30% — unlocks when profit >= 80 USD AND DD < 1.0%
+PASS_LOCK_RISK_USD = 7.50         # 0.15% — micro-probing lock on profit >= 500 USD and trades >= 15
 HARD_DD_LIMIT_PCT = 4.50          # 4.5% Hard DD Stop (225.00 USD) — total freeze
-DEFENSE_DD_LIMIT_PCT = 2.00       # 2.0% DD Defense threshold (100.00 USD)
-HOUSE_MONEY_THRESHOLD_USD = 100.0 # Profit must exceed 100 USD to unlock house money (research: Calmar 109.86)
-HOUSE_MONEY_MAX_DD_PCT = 1.00     # House money only active if current DD < 1.0% (protects against giving back gains)
+DEFENSE_DD_LIMIT_PCT = 1.80       # 1.8% DD Defense threshold
+HOUSE_MONEY_THRESHOLD_USD = 80.0  # Profit threshold for house money
+HOUSE_MONEY_MAX_DD_PCT = 1.00     # House money only active if current DD < 1.0%
 MAX_HOLDING_BARS = 96             # 24 hours in 15m bars
 TIME_DECAY_BARS = 24              # 6 hours in 15m bars
 TIME_DECAY_THRESHOLD_R = 0.20
@@ -154,11 +155,10 @@ MIN_MARGIN_LEVEL_PCT = 200.0      # Minimum margin level before hard freeze (200
 
 # Institutional Correlation Clusters (Max 1 concurrent position per cluster)
 CORRELATION_CLUSTERS = {
-    'EUR_BLOC': {'EURUSD', 'EURSEK', 'EURCNH', 'EURHUF'},
-    'USD_BLOC': {'NZDUSD', 'AUDCHF', 'USDSEK', 'USDHKD'},
-    'CNH_BLOC': {'NZDCNH', 'XAUCNH', 'GAUCNH'},
-    'INDEX_BLOC': {'GER40', 'GER30', 'FR40', 'AU200', 'US2000'},
-    'COMMODITY_BLOC': {'GAS', 'NICKEL', 'LEAD'}
+    'EUR': {'EURUSD', 'EURHUF', 'EURSEK', 'EURCNH', 'AUDCHF'},
+    'PACIFIC': {'NZDUSD', 'USDHKD', 'NZDCNH', 'USDSEK'},
+    'EQUITY': {'GER40', 'GER30', 'FR40', 'AU200', 'US2000'},
+    'COMMODITY': {'GAS', 'NICKEL', 'LEAD', 'XAUCNH', 'GAUCNH'}
 }
 
 # Exotic assets restricted to London/NY liquid overlap hours (07:00 to 17:00 UTC)
@@ -525,24 +525,31 @@ class OrderManager:
 
     def get_current_risk_budget(self) -> Tuple[float, str]:
         """
-        3-Tier Calmar-Optimised Risk Governor (research: Avg Calmar 40.41, peak 138.59 across 20 OOS windows):
-        - Tier 0 HARD FREEZE  : DD >= 4.50% (225 USD)  -> 0.00 USD. No new trades.
-        - Tier 1 DD DEFENSE   : DD >= 2.00% (100 USD)  -> 15.00 USD (0.30%). Priority over house money.
-        - Tier 2 HOUSE MONEY  : Profit >= 100 USD AND DD < 1.00% -> 35.00 USD (0.70%).
-        - Tier 3 NORMAL       : Default                -> 25.00 USD (0.50%).
+        Institutional 5-Regime Dynamic Risk State Machine:
+        - Milestone Pass Lock : Profit >= 500 USD AND Trades >= 15 -> 7.50 USD (0.15% micro-probing)
+        - Hard Freeze         : DD >= 4.50% (225 USD)              -> 0.00 USD (freeze)
+        - Severe DD Defense   : DD >= 3.00%                        -> 16.50 USD (0.33%)
+        - Mild DD Defense     : DD >= 1.80%                        -> 27.50 USD (0.55%)
+        - House Money Accel   : Profit >= 80 USD AND DD < 1.00%    -> 65.00 USD (1.30%)
+        - Normal Baseline     : Default                            -> 50.00 USD (1.00%)
         Returns: (governed_risk_usd, regime_label)
         """
         metrics = self.get_account_metrics()
         current_equity = metrics.get("equity", self.initial_balance + self.realized_pnl)
         dd_usd = max(0.0, self.initial_balance - current_equity)
         dd_pct = (dd_usd / self.initial_balance) * 100.0 if self.initial_balance > 0 else 0.0
+        n_closed = len(self.closed_trades)
 
         if dd_pct >= HARD_DD_LIMIT_PCT or dd_usd >= 225.0:
             return 0.0, f"HARD FREEZE (DD {dd_pct:.2f}% >= {HARD_DD_LIMIT_PCT:.1f}%)"
-        elif dd_pct >= DEFENSE_DD_LIMIT_PCT or dd_usd >= 100.0:
-            return DEFENSE_RISK_USD, f"DEFENSE (15.00 USD | DD {dd_pct:.2f}%)"
+        elif self.realized_pnl >= 500.0 and n_closed >= 15:
+            return PASS_LOCK_RISK_USD, f"PASS LOCK (7.50 USD | Profit +{self.realized_pnl:.2f} USD | Trades {n_closed})"
+        elif dd_pct >= 3.00:
+            return 16.50, f"SEVERE DEFENSE (16.50 USD | DD {dd_pct:.2f}%)"
+        elif dd_pct >= DEFENSE_DD_LIMIT_PCT:
+            return DEFENSE_RISK_USD, f"MILD DEFENSE ({DEFENSE_RISK_USD:.2f} USD | DD {dd_pct:.2f}%)"
         elif self.realized_pnl >= HOUSE_MONEY_THRESHOLD_USD and dd_pct < HOUSE_MONEY_MAX_DD_PCT:
-            return HOUSE_MONEY_RISK_USD, f"HOUSE MONEY (35.00 USD | Profit +{self.realized_pnl:.2f} USD | DD {dd_pct:.2f}%)"
+            return HOUSE_MONEY_RISK_USD, f"HOUSE MONEY ({HOUSE_MONEY_RISK_USD:.2f} USD | Profit +{self.realized_pnl:.2f} USD)"
         return BASE_RISK_USD, f"NORMAL ({BASE_RISK_USD:.2f} USD)"
 
 
@@ -2671,6 +2678,11 @@ class ForexEngine:
             border_style="bright_magenta"
         ))
 
+        # Check if strategy supports fast pre-computation of candidate streams across the span
+        if hasattr(strat, "precompute_candidates"):
+            console.print("[dim cyan]>>> Pre-computing candidate setups across historical span for ultra-fast walk-forward...[/dim cyan]")
+            strat.precompute_candidates()
+
         for w in self.config.windows:
             console.print(f"\n[bold yellow]>>> Evaluating Window {w.window_id}/{len(self.config.windows)}: {w.name} ({w.start_date} to {w.end_date})...[/bold yellow]")
             res = strat.run_backtest(start_date=w.start_date, end_date=w.end_date, save_plot=False)
@@ -2678,13 +2690,118 @@ class ForexEngine:
             results.append(res)
 
             status_color = "green" if res.passed_criteria else "red"
-            console.print(f"[{status_color}]Result: Net ROI: {res.net_roi_pct:+.2f}% | Max DD: {res.max_dd_pct:.2f}% | Win Rate: {res.win_rate:.1f}% | Trades: {res.total_trades} | Passed: {res.passed_criteria}[/{status_color}]")
+            console.print(f"[{status_color}]Result: Net ROI: {res.net_roi_pct:+.2f}% | Max DD: {res.max_dd_pct:.2f}% | Win Rate: {res.win_rate:.1f}% | Trades: {res.total_trades} | PF: {res.profit_factor:.2f} | Passed: {res.passed_criteria}[/{status_color}]")
 
             if fail_fast and not res.passed_criteria:
                 console.print(f"[bold red]FAIL-FAST HALT: Strategy failed Window {w.window_id} ({w.name}). Halting execution as mandated by Part 10 invariant.[/bold red]")
                 break
 
+        # Render comprehensive walk-forward scorecard table
+        if results:
+            self._display_walkforward_summary(results, strat.name)
+
         return results
+
+    def _display_walkforward_summary(self, results: List[BacktestResult], strategy_name: str) -> None:
+        """Renders comprehensive 20 OOS window walk-forward scorecard and exports results CSV."""
+        table = Table(
+            title=f"20 OUT-OF-SAMPLE WALK-FORWARD SCORECARD: {strategy_name.upper()}",
+            box=box.DOUBLE_EDGE,
+            header_style="bold bright_white on dark_blue"
+        )
+        table.add_column("Window", justify="center", style="bold cyan", width=8)
+        table.add_column("Regime Name", justify="left", style="white", width=34)
+        table.add_column("Trades", justify="right", width=8)
+        table.add_column("Win Rate", justify="right", width=10)
+        table.add_column("Profit Factor", justify="right", width=14)
+        table.add_column("Net R", justify="right", width=10)
+        table.add_column("Net PnL (USD)", justify="right", style="bold", width=15)
+        table.add_column("Net ROI %", justify="right", width=11)
+        table.add_column("Max DD %", justify="right", width=10)
+        table.add_column("Status", justify="center", width=9)
+
+        scorecard_rows = []
+        tot_trades = 0
+        tot_pnl = 0.0
+        tot_r = 0.0
+        passed_count = 0
+        max_dd_overall = 0.0
+
+        for res in results:
+            w_id = res.window_id or 0
+            w_meta = next((w for w in self.config.windows if w.window_id == w_id), None)
+            w_name = w_meta.name if w_meta else f"Window {w_id}"
+            w_code = f"W{w_id:02d}"
+
+            status_style = "bold green" if res.passed_criteria else "bold red"
+            status_text = "PASS" if res.passed_criteria else "FAIL"
+            pnl_style = "green" if res.net_pnl_usd >= 0 else "red"
+            roi_style = "green" if res.net_roi_pct >= 0 else "red"
+
+            table.add_row(
+                w_code,
+                w_name[:34],
+                str(res.total_trades),
+                f"{res.win_rate:.1f}%",
+                f"{res.profit_factor:.2f}",
+                f"{res.net_r:+.2f}R",
+                f"[{pnl_style}]{res.net_pnl_usd:+,.2f} USD[/{pnl_style}]",
+                f"[{roi_style}]{res.net_roi_pct:+.2f}%[/{roi_style}]",
+                f"{res.max_dd_pct:.2f}%",
+                f"[{status_style}]{status_text}[/{status_style}]"
+            )
+
+            tot_trades += res.total_trades
+            tot_pnl += res.net_pnl_usd
+            tot_r += res.net_r
+            if res.passed_criteria:
+                passed_count += 1
+            if res.max_dd_pct > max_dd_overall:
+                max_dd_overall = res.max_dd_pct
+
+            scorecard_rows.append({
+                "window_id": w_id,
+                "window": w_code,
+                "name": w_name,
+                "trades": res.total_trades,
+                "win_rate": res.win_rate,
+                "profit_factor": res.profit_factor,
+                "net_r": res.net_r,
+                "pnl_usd": res.net_pnl_usd,
+                "roi_pct": res.net_roi_pct,
+                "max_dd_pct": res.max_dd_pct,
+                "status": status_text
+            })
+
+        console.print(table)
+
+        init_cap = self.config.criteria.initial_capital_usd
+        cum_roi = (tot_pnl / init_cap) * 100.0
+        pass_rate = (passed_count / len(results)) * 100.0 if results else 0.0
+
+        summary_style = "bold green" if passed_count == len(results) else "bold yellow"
+        summary_panel = Panel(
+            f"Walk-Forward Windows Evaluated : [bold bright_white]{len(results)} / {len(self.config.windows)}[/bold bright_white]\n"
+            f"Certified Outright Passes      : [{summary_style}]{passed_count} / {len(results)} ({pass_rate:.1f}%)[/{summary_style}]\n"
+            f"Total Completed Trades         : [bold bright_white]{tot_trades:,d}[/bold bright_white]\n"
+            f"Total Net Profit (USD)         : [bold green]{tot_pnl:+,.2f} USD[/bold green]\n"
+            f"Cumulative Net ROI             : [bold green]{cum_roi:+.2f}%[/bold green] (on {init_cap:,.2f} USD starting capital)\n"
+            f"Total Realized Alpha (Net R)   : [bold cyan]{tot_r:+.2f}R[/bold cyan]\n"
+            f"Max Drawdown Peak-to-Trough    : [bold]{max_dd_overall:.2f}%[/bold] (Target Ceiling <= {self.config.criteria.max_dd_percent:.1f}%)",
+            title="[bold bright_cyan]INSTITUTIONAL WALK-FORWARD VERIFICATION SUMMARY[/bold bright_cyan]",
+            border_style="green" if passed_count == len(results) else "yellow"
+        )
+        console.print(summary_panel)
+
+        # Export CSV
+        try:
+            out_csv = Path("Engine/research/oos_20_windows_forex_results.csv")
+            out_csv.parent.mkdir(parents=True, exist_ok=True)
+            pd.DataFrame(scorecard_rows).to_csv(out_csv, index=False)
+            logging.info(f"Exported walk-forward scorecard to {out_csv}")
+        except Exception as e:
+            logging.warning(f"Could not export walkforward scorecard CSV: {e}")
+
 
     def _display_backtest_report(self, res: BacktestResult) -> None:
         """Renders comprehensive terminal report."""
