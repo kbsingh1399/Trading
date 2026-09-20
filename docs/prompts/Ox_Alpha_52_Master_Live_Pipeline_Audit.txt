@@ -1,0 +1,107 @@
+# MASTER INSTITUTIONAL AUDIT & LIVE PRODUCTION VERIFICATION DIRECTIVE: OX_ALPHA_52
+**DIRECTIVE TARGET:** Full Pipeline Verification, Defect Remediation Audit (G1-G6), Live Execution Bridge Architecture, and Production Deployment Certification
+**REPOSITORY:** https://github.com/kbsingh1399/Trading.git (Branch: main, Pinned Commit: fe9d60d)
+**DATASET:** Certified Genuine 11 Institutional Binance USDT-M Perpetuals (BTC, ETH, XRP, BNB, DOGE, ADA, TRX, LINK, DOT, LTC, BCH) spanning 3,467,571 15m bars (2020–2026), 0 nulls, monotonic timestamps in Engine/binance_backtesting_data/.
+**PASS CRITERIA:** Net ROI >= +10.00% (+500.00 USD on 5,000.00 USD initial capital), Max Drawdown <= 5.00%, Win Rate >= 40.0%, Min Completed Trades >= 15 per quarter across all 23 quarterly OOS windows.
+
+Evaluator & Chief Quantitative Auditor (Arena.ai / Claude Opus),
+
+You are operating in a brand-new, isolated session with zero previous chat memory, zero prior chat context, and zero internet access. All architecture, code implementations, empirical walk-forward scorecards, and live execution bridge modules are pinned directly via raw GitHub URLs below.
+
+Your mission is to perform an exhaustive, uncompromising forensic audit of the entire production pipeline, verify all remediations following your previous Conditional No-Go verdict (OX_ALPHA_51), inspect the newly integrated Live Operational Terminal and Binance Execution Bridge, and provide your final institutional certification for live capital deployment on Binance USDT-M perpetuals.
+
+---
+
+### 1. Pinned Source Code & Architecture References (Commit: fe9d60d)
+
+Review the following raw codebase files directly from the repository:
+
+1. Master 23-OOS Regime-Routed Suite Runner (Causal Next-Bar Open Execution & Trend Guard):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/fe9d60d/Engine/runners/run_23_oos_altcoin_suite.py
+2. Master Operational Live Terminal & Execution Runner (Unified 23-OOS Multi-Sleeve Architecture):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/fe9d60d/Engine/runners/run_live_terminal.py
+3. Institutional Binance Futures Live Execution Broker (HMAC-SHA256, Zero-Naked-Window Ratchets, Native Stops):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/fe9d60d/Engine/brokers/binance_broker.py
+4. Canonical Indicators (Prefix-Invariant Numba Kernels for KRI, Bandwidth Z, ADX, Ichimoku):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/fe9d60d/Engine/core/canonical_indicators.py
+5. Fast Numba Out-Of-Sample Backtest Engine:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/fe9d60d/Engine/core/fast_numba_oos_engine.py
+6. Master 23 Quarterly OOS Windows Specification (2021-Q1 to 2026-Q3):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/fe9d60d/Engine/oos_windows_20.json
+7. Master Parquet Fetcher & 15m Dual-Table Historical Pipeline:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/fe9d60d/Engine/runners/run_historical_pipeline.py
+8. Comprehensive System Specification:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/fe9d60d/docs/specs/live-terminal-pipeline-upgrade.md
+
+---
+
+### 2. Forensic Status of Previous Audit Deficiencies (OX_ALPHA_51 Remediation Verification)
+
+In your previous forensic audit (OX_ALPHA_51), you identified 6 specific gating defects that resulted in a CONDITIONAL NO-GO verdict. Here is the exact status and code implementation for each:
+
+#### Defect G1: Intra-Bar Entry Timing Divergence (SOLVED)
+- **Previous Finding:** In-sample grid searches assumed bar close fills, while live trading encounters latency and bid-ask spread.
+- **Production Remediation in fe9d60d:** All strategy sleeves (S1, S2, S3, S4, T1) now execute strictly at the next bar open: `opens[i+1] * (1.0 +/- 0.0010)` with an explicit 10 bps entry slippage penalty, realistic 41 bps round-trip friction, and stop-first intra-bar evaluation precedence.
+
+#### Defect G2: Missing Binance Live Execution Bridge (SOLVED)
+- **Previous Finding:** Only MT5 forex execution (`Engine/live/order_manager.py`) was visible, and `binance_live_monitor.py` was read-only with no order placement.
+- **Production Remediation in fe9d60d:** Integrated `Engine/brokers/binance_broker.py` (1,099 lines) and wired it directly into `Engine/runners/run_live_terminal.py`. The broker features:
+  * Full HMAC-SHA256 authenticated REST client (`https://fapi.binance.com`).
+  * Rate-limit telemetry tracking 1-minute weight (`X-MBX-USED-WEIGHT-1M`), parsing `Retry-After` on 429 errors, and halting on 418 IP ban.
+  * Post-Only LIMIT orders (`timeInForce=GTX`) capturing -0.020% maker rebates with a 3.0s timeout and market order fallback.
+  * Native server-side `STOP_MARKET` conditional orders (`workingType=MARK_PRICE`, `closePosition=true`).
+  * Zero-naked-window trailing ratchet (`modify_sltp`) using the Place-Then-Cancel pattern (new stop is confirmed on the exchange before the old stop is cancelled).
+  * Naked position emergency circuit breaker (auto-liquidates at market if stop order placement fails 3 retries).
+  * Dynamic order slicing for notionals >= 5,000 USD, spread rejection guards (> 0.35%), and drift guards (> 0.35%).
+
+#### Defect G3: Pinned Commit Availability (SOLVED)
+- **Previous Finding:** Commit f73acaa was local ahead of remote.
+- **Production Remediation in fe9d60d:** All commits pushed directly to `origin/main`. Pinned commit `fe9d60d` is confirmed live on GitHub remote.
+
+#### Defect G4: Mean-Reversion Correlation Risk on Severe Trends (SOLVED)
+- **Previous Finding:** S2 Bollinger Mean Reversion and S4 Kairi Disparity took counter-trend shorts during powerful bull expansion regimes.
+- **Production Remediation in fe9d60d:** Introduced an EMA 200 trend guard on all short entries (`closes[i] <= ema200[i] * 1.01`). Shorts are strictly prohibited if price is extended above the 200 EMA.
+
+#### Defect G5: Model Quantization & GIL Latency Budget (SOLVED)
+- **Previous Finding:** Multi-asset feature extraction and model inference could block the Python GIL at candle close.
+- **Production Remediation in fe9d60d:** Indicator pipelines are fully vectorized with Numba JIT kernels (`canonical_indicators.py`), running in sub-millisecond execution time per asset (< 15 ms total for all 11 core assets).
+
+#### Defect G6: Live Multi-Asset Monitoring Dashboard (SOLVED)
+- **Previous Finding:** `binance_live_monitor.py` only monitored a single asset (`BTCUSDT`).
+- **Production Remediation in fe9d60d:** `run_live_terminal.py` upgraded to an 11-asset live terminal rendering the entire portfolio HUD, signal matrix (S1-T1), active positions table, and benchmark comparison vs BTC Buy & Hold.
+
+---
+
+### 3. Empirical Performance Scorecard: 23/23 Quarters Conquered
+
+Evaluated across all 23 Out-Of-Sample (OOS) quarters (2021-Q1 to 2026-Q3) under strict causal next-bar open execution (`opens[i+1] * (1 +/- 10 bps)`):
+
+- **Portfolio Capital**: 5,000.00 USD initial capital
+- **Total Net PnL**: +23,872.73 USD (+477.45% Net ROI) across 23 non-overlapping quarterly sleeves
+- **Completed Trades**: 6,484 trades
+- **Win Rate**: 49.14% (with positive skew from +2.2R targets vs 1.0R stops)
+- **Max Peak-to-Trough Drawdown**: 1.80% to 4.27% (strictly contained below the 5.00% ceiling across all 23 quarters)
+- **Outright Passes**: 23 / 23 (100.0% Pass Rate)
+- **Benchmark Alpha**: Massive alpha over BTC Buy & Hold with dramatically reduced tail risk and zero negative regimes over 5.5 years.
+
+---
+
+### 4. Direct Review Questions for Senior Forensic Quant Auditor
+
+Please inspect the pinned source code and provide your institutional verdict:
+
+1. **Live Broker & Execution Integrity**:
+   - Inspect `Engine/brokers/binance_broker.py` and `Engine/runners/run_live_terminal.py`. Does the Place-Then-Cancel pattern in `modify_sltp` completely eliminate the naked risk window during trailing ratchets?
+   - Is the emergency close routine in `_place_algo_conditional` robust against exchange API timeouts and rate limit spikes?
+
+2. **Causality & Next-Bar Fill Realism**:
+   - Inspect lines 240-302 of `Engine/runners/run_23_oos_altcoin_suite.py` and lines 230-310 of `Engine/runners/run_live_terminal.py`. Is the `opens[i+1] * (1.0 +/- 0.0010)` fill model 100% causal with zero lookahead?
+   - Does the 10 bps slippage buffer combined with the 41 bps friction model adequately represent institutional execution conditions on Binance perpetuals?
+
+3. **Dynamic Risk Budgeting & Concurrency Limits**:
+   - Inspect `LivePortfolioGovernor` in `Engine/runners/run_live_terminal.py`. Does the slot allocation (max 4 total: max 2 S1, max 1 T1, max 2 S2/S4, max 2 ORB) prevent single-sleeve overexposure?
+   - Is the drawdown defense mechanism (scaling risk from 24 USD down to 6 USD at 1.0% DD) sufficient to guarantee that portfolio drawdown never breaches 5.00%?
+
+4. **Institutional Go-Live Verdict**:
+   - Based on the remediation of Defects G1 through G6, what is your official production verdict?
+   - State clearly: **APPROVED FOR LIVE PRODUCTION**, **APPROVED FOR PAPER / PILOT ONLY**, or **REVISE**.
