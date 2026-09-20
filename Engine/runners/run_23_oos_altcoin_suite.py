@@ -212,13 +212,15 @@ def run_elite_suite():
     for sym in CORE_SYMBOLS:
         p = DATA_DIR / f"{sym}_15m_master_2020_2026.parquet"
         if not p.exists(): continue
-        df = pd.read_parquet(p, columns=["open_time_ms", "open", "high", "low", "close", "rsi_14", "atr_14"]).dropna().reset_index(drop=True)
+        df = pd.read_parquet(p, columns=["open_time_ms", "open", "high", "low", "close", "rsi_14", "atr_14", "ema_200"]).dropna().reset_index(drop=True)
         closes = df["close"].to_numpy(float)
+        opens = df["open"].to_numpy(float)
         highs = df["high"].to_numpy(float)
         lows = df["low"].to_numpy(float)
         rsis = df["rsi_14"].to_numpy(float)
         atrs = df["atr_14"].to_numpy(float)
         times = df["open_time_ms"].to_numpy(np.int64)
+        ema200 = df["ema_200"].to_numpy(float) if "ema_200" in df.columns else pd.Series(closes).ewm(span=200).mean().to_numpy(float)
 
         # Canonical indicators
         upper, lower, bw, zbw = compute_bollinger_bandwidth_zscore(closes, period=96, std_mult=2.0, z_window=96)
@@ -226,7 +228,7 @@ def run_elite_suite():
         zkri_20 = compute_kairi_zscore(closes, atrs, period=20, z_window=96)
 
         n_bars = len(df)
-        for i in range(96, n_bars - 24):
+        for i in range(200, n_bars - 25):
             dist = atrs[i]
             if dist <= 0: continue
 
@@ -234,9 +236,9 @@ def run_elite_suite():
             if zbw[i] > 1.85 or adx[i] > 32.0:
                 continue
 
-            # 1. S2 Bollinger Mean Reversion
+            # 1. S2 Bollinger Mean Reversion (Next-Bar Open Execution + 10 bps slippage)
             if closes[i] < lower[i] and rsis[i] < 32.0:
-                entry_p = closes[i]
+                entry_p = opens[i + 1] * (1.0 + 0.0010)
                 target_p = entry_p + 2.2 * dist
                 stop_p = entry_p - 1.0 * dist
                 r_gain = -1.0
@@ -246,11 +248,13 @@ def run_elite_suite():
                 if r_gain == -1.0 and highs[min(i+24, n_bars-1)] > stop_p:
                     r_gain = (closes[min(i+24, n_bars-1)] - entry_p) / dist
                 s2_trades.append({
-                    "time": int(times[i]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
+                    "time": int(times[i + 1]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
                     "symbol": sym, "strategy": "S2_BB", "prob": 0.58, "sleeve_id": 4, "risk": 22.0
                 })
             elif closes[i] > upper[i] and rsis[i] > 68.0:
-                entry_p = closes[i]
+                if closes[i] > ema200[i] * 1.01:
+                    continue  # Guard: do not short in strong uptrend
+                entry_p = opens[i + 1] * (1.0 - 0.0010)
                 target_p = entry_p - 2.2 * dist
                 stop_p = entry_p + 1.0 * dist
                 r_gain = -1.0
@@ -260,13 +264,13 @@ def run_elite_suite():
                 if r_gain == -1.0 and lows[min(i+24, n_bars-1)] < stop_p:
                     r_gain = (entry_p - closes[min(i+24, n_bars-1)]) / dist
                 s2_trades.append({
-                    "time": int(times[i]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
+                    "time": int(times[i + 1]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
                     "symbol": sym, "strategy": "S2_BB", "prob": 0.58, "sleeve_id": 4, "risk": 22.0
                 })
 
-            # 2. S4 Kairi Relative Index Disparity
+            # 2. S4 Kairi Relative Index Disparity (Next-Bar Open Execution + 10 bps slippage)
             if zkri_20[i] < -1.75 and rsis[i] < 32.0 and closes[i] >= lower[i]:
-                entry_p = closes[i]
+                entry_p = opens[i + 1] * (1.0 + 0.0010)
                 target_p = entry_p + 2.0 * dist
                 stop_p = entry_p - 1.0 * dist
                 r_gain = -1.0
@@ -276,11 +280,13 @@ def run_elite_suite():
                 if r_gain == -1.0 and highs[min(i+24, n_bars-1)] > stop_p:
                     r_gain = (closes[min(i+24, n_bars-1)] - entry_p) / dist
                 s4_trades.append({
-                    "time": int(times[i]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
+                    "time": int(times[i + 1]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
                     "symbol": sym, "strategy": "S4_KRI", "prob": 0.57, "sleeve_id": 4, "risk": 20.0
                 })
             elif zkri_20[i] > 1.75 and rsis[i] > 68.0 and closes[i] <= upper[i]:
-                entry_p = closes[i]
+                if closes[i] > ema200[i] * 1.01:
+                    continue  # Guard: do not short in strong uptrend
+                entry_p = opens[i + 1] * (1.0 - 0.0010)
                 target_p = entry_p - 2.0 * dist
                 stop_p = entry_p + 1.0 * dist
                 r_gain = -1.0
@@ -290,7 +296,7 @@ def run_elite_suite():
                 if r_gain == -1.0 and lows[min(i+24, n_bars-1)] < stop_p:
                     r_gain = (entry_p - closes[min(i+24, n_bars-1)]) / dist
                 s4_trades.append({
-                    "time": int(times[i]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
+                    "time": int(times[i + 1]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
                     "symbol": sym, "strategy": "S4_KRI", "prob": 0.57, "sleeve_id": 4, "risk": 20.0
                 })
 
