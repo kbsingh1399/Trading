@@ -218,6 +218,172 @@ def compute_kairi_atr_ratio(closes: np.ndarray, atrs: np.ndarray, period: int = 
     return kri_atr
 
 
+def compute_kairi_zscore(closes: np.ndarray, atrs: np.ndarray, period: int = 20, z_window: int = 96) -> np.ndarray:
+    """
+    Rolling Z-score of ATR-normalized Kairi Disparity:
+        kri_atr = (Close - SMA(period)) / ATR
+        z_kri = (kri_atr - Mean_z(kri_atr)) / Std_z(kri_atr)
+    Guarantees strict stationarity across changing crypto volatility regimes.
+    """
+    kri_atr = compute_kairi_atr_ratio(closes, atrs, period=period)
+    return compute_rolling_zscore(kri_atr, window=z_window)
+
+
+def compute_ichimoku_cloud(
+    highs: np.ndarray,
+    lows: np.ndarray,
+    closes: np.ndarray,
+    tenkan_period: int = 10,
+    kijun_period: int = 30,
+    senkou_b_period: int = 60,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Causal, prefix-invariant Ichimoku Kinko Hyo components:
+        Tenkan-sen = (Rolling_Max(High, tenkan) + Rolling_Min(Low, tenkan)) / 2.0
+        Kijun-sen  = (Rolling_Max(High, kijun) + Rolling_Min(Low, kijun)) / 2.0
+        Senkou Span A = (Tenkan + Kijun) / 2.0
+        Senkou Span B = (Rolling_Max(High, senkou_b) + Rolling_Min(Low, senkou_b)) / 2.0
+    Returns: (tenkan, kijun, span_a, span_b)
+    """
+    h = pd.Series(np.asarray(highs, dtype=np.float64))
+    l = pd.Series(np.asarray(lows, dtype=np.float64))
+    
+    tenkan_h = h.rolling(tenkan_period, min_periods=1).max().to_numpy()
+    tenkan_l = l.rolling(tenkan_period, min_periods=1).min().to_numpy()
+    tenkan = (tenkan_h + tenkan_l) / 2.0
+    
+    kijun_h = h.rolling(kijun_period, min_periods=1).max().to_numpy()
+    kijun_l = l.rolling(kijun_period, min_periods=1).min().to_numpy()
+    kijun = (kijun_h + kijun_l) / 2.0
+    
+    span_a = (tenkan + kijun) / 2.0
+    
+    span_b_h = h.rolling(senkou_b_period, min_periods=1).max().to_numpy()
+    span_b_l = l.rolling(senkou_b_period, min_periods=1).min().to_numpy()
+    span_b = (span_b_h + span_b_l) / 2.0
+    
+    return tenkan, kijun, span_a, span_b
+
+
+def compute_bollinger_bandwidth_zscore(
+    closes: np.ndarray,
+    period: int = 96,
+    std_mult: float = 2.0,
+    z_window: int = 96,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Bollinger Bands and standardized Bandwidth Z-score:
+        Upper = SMA + std_mult * Std
+        Lower = SMA - std_mult * Std
+        Bandwidth = (Upper - Lower) / SMA
+        Z_Bandwidth = (Bandwidth - Mean_z(Bandwidth)) / Std_z(Bandwidth)
+    Returns: (upper, lower, bandwidth, z_bandwidth)
+    """
+    c = np.asarray(closes, dtype=np.float64)
+    s = pd.Series(c)
+    sma = s.rolling(period, min_periods=1).mean().to_numpy()
+    std = s.rolling(period, min_periods=period).std(ddof=0).fillna(0.0).to_numpy()
+    upper = sma + std_mult * std
+    lower = sma - std_mult * std
+    with np.errstate(divide="ignore", invalid="ignore"):
+        bandwidth = np.where(sma > _EPS, (upper - lower) / sma, 0.0)
+    z_bandwidth = compute_rolling_zscore(bandwidth, window=z_window)
+    return upper, lower, bandwidth, z_bandwidth
+
+
+def compute_liquidation_decay_velocity(liq_zscores: np.ndarray) -> np.ndarray:
+    """
+    First difference of liquidation z-score:
+        decay_velocity[t] = liq_zscores[t] - liq_zscores[t-1]
+    Negative values indicate decelerating liquidation pressure (exhaustion).
+    """
+    z = np.asarray(liq_zscores, dtype=np.float64)
+    if z.size == 0:
+        return z.copy()
+    out = np.zeros_like(z)
+    out[1:] = z[1:] - z[:-1]
+    return out
+
+
+def compute_wick_absorption_ratio(
+    opens: np.ndarray,
+    highs: np.ndarray,
+    lows: np.ndarray,
+    closes: np.ndarray,
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Calculates lower wick and upper wick ratios relative to total candle range:
+        lower_wick = Min(Open, Close) - Low
+        upper_wick = High - Max(Open, Close)
+        total_range = High - Low
+    Returns: (lower_wick_ratio, upper_wick_ratio)
+    """
+    o = np.asarray(opens, dtype=np.float64)
+    h = np.asarray(highs, dtype=np.float64)
+    l = np.asarray(lows, dtype=np.float64)
+    c = np.asarray(closes, dtype=np.float64)
+    
+    total_range = np.maximum(h - l, _EPS)
+    lower_wick = np.maximum(np.minimum(o, c) - l, 0.0)
+    upper_wick = np.maximum(h - np.maximum(o, c), 0.0)
+    
+    return lower_wick / total_range, upper_wick / total_range
+
+
+def compute_adx_series(
+    highs: np.ndarray,
+    lows: np.ndarray,
+    closes: np.ndarray,
+    period: int = 14,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Wilder Average Directional Index (ADX) with +DI and -DI:
+        +DM = High[t] - High[t-1] if > (Low[t-1] - Low[t]) and > 0, else 0
+        -DM = Low[t-1] - Low[t] if > (High[t] - High[t-1]) and > 0, else 0
+        Smoothed with Wilder RMA(period).
+        DX = 100 * Abs(+DI - -DI) / (+DI + -DI)
+        ADX = Wilder RMA(DX, period)
+    Returns: (plus_di, minus_di, adx)
+    """
+    h = np.asarray(highs, dtype=np.float64)
+    l = np.asarray(lows, dtype=np.float64)
+    c = np.asarray(closes, dtype=np.float64)
+    n = c.size
+    if n < 2:
+        zero = np.zeros(n, dtype=np.float64)
+        return zero, zero.copy(), zero.copy()
+    
+    up_move = h[1:] - h[:-1]
+    down_move = l[:-1] - l[1:]
+    
+    plus_dm = np.where((up_move > down_move) & (up_move > 0.0), up_move, 0.0)
+    minus_dm = np.where((down_move > up_move) & (down_move > 0.0), down_move, 0.0)
+    
+    tr = compute_true_range(h, l, c)[1:]
+    
+    smooth_tr = compute_wilder_rma_series(tr, period)
+    smooth_plus_dm = compute_wilder_rma_series(plus_dm, period)
+    smooth_minus_dm = compute_wilder_rma_series(minus_dm, period)
+    
+    with np.errstate(divide="ignore", invalid="ignore"):
+        plus_di_tail = np.where(smooth_tr > _EPS, 100.0 * smooth_plus_dm / smooth_tr, 0.0)
+        minus_di_tail = np.where(smooth_tr > _EPS, 100.0 * smooth_minus_dm / smooth_tr, 0.0)
+        di_sum = plus_di_tail + minus_di_tail
+        dx = np.where(di_sum > _EPS, 100.0 * np.abs(plus_di_tail - minus_di_tail) / di_sum, 0.0)
+    
+    adx_tail = compute_wilder_rma_series(dx, period)
+    
+    plus_di = np.zeros(n, dtype=np.float64)
+    minus_di = np.zeros(n, dtype=np.float64)
+    adx = np.zeros(n, dtype=np.float64)
+    
+    plus_di[1:] = plus_di_tail
+    minus_di[1:] = minus_di_tail
+    adx[1:] = adx_tail
+    
+    return plus_di, minus_di, adx
+
+
 
 # ------------------------------------------------------------------------------
 # Session (00:00 UTC anchored) accumulators
