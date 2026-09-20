@@ -582,9 +582,8 @@ def main():
                     signals_count += 1
                     log_msg = f"[{'DRY-RUN' if is_dry_run else 'LIVE'} SIGNAL: {asset} | {'BUY' if is_long else 'SELL'} ({strat_tag}) | P*={prob:.3f} | ENTRY={entry:.5f} | SL={sl:.5f} | TP={tp:.5f} | LOTS={calc_lots} | REASON={cand['reason']}]"
                     logging.info(log_msg)
-                    if not is_dry_run:
-                        order_type = mt5.ORDER_TYPE_BUY if is_long else mt5.ORDER_TYPE_SELL
-                        order_mgr.place_market_order(asset, order_type, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD)
+                    order_type = getattr(mt5, "ORDER_TYPE_BUY", 0) if is_long else getattr(mt5, "ORDER_TYPE_SELL", 1)
+                    order_mgr.place_market_order(asset, order_type, volume=calc_lots, sl_price=sl, tp_price=tp, risk_usd=BASE_RISK_USD, strategy_tag=strat_tag)
 
             # Mark active open positions directly in scanner decision cell
             for ticket, trade_info in order_mgr.open_trades.items():
@@ -617,6 +616,12 @@ def main():
                     ed['decision_cell']
                 )
 
+            # Manage active positions (ratchets, time decay, stops)
+            try:
+                order_mgr.manage_open_trades(current_bar_time=datetime.now(timezone.utc))
+            except Exception as e:
+                logging.error(f"[MANAGE TRADES ERROR] {e}")
+
             # Build Live Open Positions Table if positions exist
             pos_table = None
             if order_mgr.open_trades:
@@ -640,14 +645,25 @@ def main():
                 pos_table.add_column("Ratchet Status", justify="left")
 
                 for ticket, trade_info in order_mgr.open_trades.items():
-                    pos_mt5 = mt5.positions_get(ticket=ticket)
+                    pos_mt5 = mt5.positions_get(ticket=ticket) if (hasattr(mt5, "positions_get") and not is_dry_run) else None
                     if pos_mt5 and len(pos_mt5) > 0:
                         p = pos_mt5[0]
                         current_p = p.price_current
                         profit_usd = p.profit
                     else:
-                        current_p = trade_info["entry_price"]
-                        profit_usd = 0.0
+                        sym_clean = trade_info["symbol"]
+                        resolved = mt5_conn.resolve_symbol(sym_clean) if hasattr(mt5_conn, "resolve_symbol") else sym_clean
+                        tick_sim = mt5_conn.get_last_tick(resolved) if hasattr(mt5_conn, "get_last_tick") else None
+                        if tick_sim is not None:
+                            current_p = tick_sim.bid if trade_info["type"] == 0 else tick_sim.ask
+                        else:
+                            current_p = trade_info.get("entry_price", 0.0)
+                        r_dist = trade_info.get("r_dist", 0.0001)
+                        if trade_info["type"] == 0:
+                            calc_r = (current_p - trade_info.get("entry_price", 0.0)) / r_dist if r_dist > 0 else 0.0
+                        else:
+                            calc_r = (trade_info.get("entry_price", 0.0) - current_p) / r_dist if r_dist > 0 else 0.0
+                        profit_usd = calc_r * trade_info.get("risk_usd", BASE_RISK_USD)
 
                     direction = "BUY" if trade_info["type"] == 0 else "SELL"
                     dir_style = "[bold green]BUY[/bold green]" if trade_info["type"] == 0 else "[bold red]SELL[/bold red]"

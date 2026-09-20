@@ -364,6 +364,7 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
     lows = df['low'].values
     highs = df['high'].values
     closes = df['close'].values
+    opens = df['open'].values
     sweep_pdl = df['sweep_pdl'].values
     sweep_pdh = df['sweep_pdh'].values
     bullish_fvg = df['bullish_fvg'].values
@@ -376,7 +377,9 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
     for i in range(n - look_fwd):
         # 1. LONG SETUP
         if is_kz[i] and sweep_pdl[i] == 1 and bullish_fvg[i] > 0 and htf_4h[i] > 0:
-            entry = closes[i]
+            if i + 1 >= n:
+                continue
+            entry = opens[i + 1]
             orig_sl = local_low[i]
             r_dist = entry - orig_sl
             if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
@@ -392,7 +395,7 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
             exited = False
 
             for j in range(i + 1, min(i + look_fwd, n)):
-                # Check Stop Loss hit
+                # Check Stop Loss hit first (conservative microstructure)
                 if lows[j] <= sl:
                     r_real = round((sl - entry) / r_dist, 4)
                     exited = True
@@ -425,12 +428,16 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
                 locked_r = (sl - entry) / r_dist
                 r_real = round(min(min_r, max(mtm_r, locked_r)), 4)
 
+            # Deduct -0.08R transaction friction
+            r_real = round(r_real - 0.08, 4)
             targets[i] = 1 if r_real > 0 else 0
             r_reals[i] = r_real
 
         # 2. SHORT SETUP
         elif is_kz[i] and sweep_pdh[i] == 1 and bearish_fvg[i] > 0 and htf_4h[i] < 0:
-            entry = closes[i]
+            if i + 1 >= n:
+                continue
+            entry = opens[i + 1]
             orig_sl = local_high[i]
             r_dist = orig_sl - entry
             if r_dist <= 0 or (r_dist / entry) > MAX_STOP_PCT:
@@ -446,7 +453,7 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
             exited = False
 
             for j in range(i + 1, min(i + look_fwd, n)):
-                # Check Stop Loss hit
+                # Check Stop Loss hit first (conservative microstructure)
                 if highs[j] >= sl:
                     r_real = round((entry - sl) / r_dist, 4)
                     exited = True
@@ -479,6 +486,8 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
                 locked_r = (entry - sl) / r_dist
                 r_real = round(min(min_r, max(mtm_r, locked_r)), 4)
 
+            # Deduct -0.08R transaction friction
+            r_real = round(r_real - 0.08, 4)
             targets[i] = 1 if r_real > 0 else 0
             r_reals[i] = r_real
 

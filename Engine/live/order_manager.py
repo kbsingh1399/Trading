@@ -13,15 +13,14 @@ DRY_RUN_STATE_FILE = Path(__file__).resolve().parent / "dry_run_state.json"
 STATE_FILE = LIVE_STATE_FILE  # default backward-compatible alias
 MAX_MARGIN_UTILIZATION_PCT = 0.30  # Portfolio margin utilization ceiling (30%)
 MIN_MARGIN_LEVEL_PCT = 200.0       # Minimum account margin level before hard freeze (200%)
-MAX_CONCURRENT_POSITIONS = 3       # Max 3 concurrent positions across portfolio
+MAX_CONCURRENT_POSITIONS = 2       # Max 2 concurrent positions across portfolio
 
 # Institutional Correlation Clusters (Max 1 concurrent position per cluster)
 CORRELATION_CLUSTERS = {
-    'EUR_BLOC': {'EURUSD', 'EURSEK', 'EURCNH', 'EURHUF'},
-    'USD_BLOC': {'NZDUSD', 'AUDCHF', 'USDSEK', 'USDHKD'},
-    'CNH_BLOC': {'NZDCNH', 'XAUCNH', 'GAUCNH'},
-    'INDEX_BLOC': {'GER40', 'GER30', 'FR40', 'AU200', 'US2000'},
-    'COMMODITY_BLOC': {'GAS', 'NICKEL', 'LEAD'}
+    'EUR': {'EURUSD', 'EURHUF', 'EURSEK', 'EURCNH', 'AUDCHF'},
+    'PACIFIC': {'NZDUSD', 'USDHKD', 'NZDCNH', 'USDSEK'},
+    'EQUITY': {'GER40', 'GER30', 'FR40', 'AU200', 'US2000'},
+    'COMMODITY': {'GAS', 'NICKEL', 'LEAD', 'XAUCNH', 'GAUCNH'}
 }
 
 from Engine.forex_engine import (
@@ -220,11 +219,15 @@ class OrderManager:
         Fails safe and returns 0.0 (abstain) if symbol specs are unavailable, sl_dist <= 0,
         or affordable lots < broker volume_min.
         """
-        if self.conn is None:
+        if self.conn is None or not getattr(self.conn, "connected", False):
+            if getattr(self, "dry_run", False):
+                return 0.01
             return 0.0
         real_symbol = self.conn.resolve_symbol(symbol) if hasattr(self.conn, "resolve_symbol") else symbol
         info = mt5.symbol_info(real_symbol) if hasattr(mt5, "symbol_info") else None
         if info is None or sl_dist <= 0:
+            if getattr(self, "dry_run", False):
+                return 0.01
             return 0.0
             
         tick_value = info.trade_tick_value if getattr(info, "trade_tick_value", 0) > 0 else 1.0
@@ -316,10 +319,14 @@ class OrderManager:
             
         tick = self.conn.get_last_tick(real_symbol) if hasattr(self.conn, "get_last_tick") else None
         if tick is None:
-            logging.error(f"Cannot get tick for {real_symbol}")
-            return None
-            
-        entry_price = tick.ask if order_type == getattr(mt5, "ORDER_TYPE_BUY", 0) else tick.bid
+            if getattr(self, "dry_run", False):
+                entry_price = float(sl_price + 0.0020) if sl_price else 1.0000
+                logging.info(f"[DRY RUN] Simulating entry price {entry_price:.5f} for {real_symbol} (MT5 offline)")
+            else:
+                logging.error(f"Cannot get tick for {real_symbol}")
+                return None
+        else:
+            entry_price = tick.ask if order_type == getattr(mt5, "ORDER_TYPE_BUY", 0) else tick.bid
         
         # Determine Stop-Loss Distance (r_dist)
         r_dist = abs(entry_price - sl_price) if sl_price else 0.0
@@ -431,6 +438,13 @@ class OrderManager:
         return result.order
         
     def close_position(self, ticket):
+        if getattr(self, "dry_run", False):
+            logging.info(f"[DRY RUN] Simulating close for position {ticket}")
+            if ticket in self.open_trades:
+                del self.open_trades[ticket]
+                self.save_state()
+            return True
+
         if self.conn is not None and not getattr(self.conn, "connected", True):
             return False
             
@@ -460,13 +474,6 @@ class OrderManager:
             "type_time": getattr(mt5, "ORDER_TIME_GTC", 0),
             "type_filling": getattr(mt5, "ORDER_FILLING_IOC", 1),
         }
-        
-        if getattr(self, "dry_run", False):
-            logging.info(f"[DRY RUN] Simulating close for position {ticket}")
-            if ticket in self.open_trades:
-                del self.open_trades[ticket]
-                self.save_state()
-            return True
 
         result = mt5.order_send(request)
         if result is None or getattr(result, "retcode", None) != getattr(mt5, "TRADE_RETCODE_DONE", 10009):
@@ -481,6 +488,13 @@ class OrderManager:
         return True
         
     def modify_sl(self, ticket, new_sl):
+        if getattr(self, "dry_run", False):
+            logging.info(f"[DRY RUN] Simulating SL modify for {ticket} to {new_sl}")
+            if ticket in self.open_trades:
+                self.open_trades[ticket]["sl"] = float(new_sl)
+                self.save_state()
+            return True
+
         if self.conn is not None and not getattr(self.conn, "connected", True):
             return False
             
@@ -508,13 +522,6 @@ class OrderManager:
             "sl": float(new_sl),
             "tp": pos.tp
         }
-        
-        if getattr(self, "dry_run", False):
-            logging.info(f"[DRY RUN] Simulating SL modify for {ticket} to {new_sl}")
-            if ticket in self.open_trades:
-                self.open_trades[ticket]["sl"] = new_sl
-                self.save_state()
-            return True
 
         result = mt5.order_send(request)
         if result is None or getattr(result, "retcode", None) != getattr(mt5, "TRADE_RETCODE_DONE", 10009):

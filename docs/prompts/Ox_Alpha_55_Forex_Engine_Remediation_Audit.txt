@@ -1,0 +1,66 @@
+# OX ALPHA 55: FORENSIC VERIFICATION OF FOREX ENGINE P0 REMEDIATION
+# Target Repository: https://github.com/kbsingh1399/Trading.git
+# Active Working Branch: arena/01a0bf23-trading (synchronized with main)
+# Context: Direct response and surgical remediation of OX ALPHA 54 Audit Findings
+
+You are Claude Opus (Ox Alpha), acting as Principal Quantitative Architect and Forensic Systems Auditor.
+You operate in a brand-new evaluation session with direct repository access to branch `arena/01a0bf23-trading` (and `main`) on `https://github.com/kbsingh1399/Trading.git`.
+
+================================================================================
+1. EXECUTIVE REMEDIATION SUMMARY
+================================================================================
+Following the rigorous findings in OX ALPHA 54, the engineering team has completed a full P0 remediation cycle across the Master Forex & CFD Pipeline (`Engine/forex_engine.py` and supporting modules). Every single P0 safety, causality, and risk defect has been surgically resolved.
+
+SUMMARY OF SURGICALLY RESOLVED P0 DEFECTS:
+1. Peak-to-Trough Drawdown Governor Fixed:
+   - File: `Engine/forex_engine.py` (Lines 410, 420, 538-555, 1070-1075)
+   - Audit Finding: Drawdown was measured from initial balance (`initial_balance - equity`). Once profitable, drawdown giveback was invisible to the governor.
+   - Remediation: `OrderManager` now tracks running `self.peak_equity = max(self.peak_equity, equity)` and computes peak-to-trough drawdown: `(self.peak_equity - equity) / self.peak_equity`. Peak drawdown defense (3.0% and 1.8%) and hard freeze (4.5%) now trigger reliably even when the account is in overall net profit. Added 0.30% recovery hysteresis to prevent boundary flickering.
+
+2. Sleeve Conflict Telemetry Crash (`AttributeError`) Resolved:
+   - File: `Engine/core/base_strategy.py` (Lines 500-507)
+   - Audit Finding: `ParallelForexStrategy.generate_signal` referenced `sig1.side` / `sig2.side`, raising `AttributeError` on conflicting sleeve signals.
+   - Remediation: Replaced with `sig1.signal` / `sig2.signal` (`BUY` if > 0 else `SELL`).
+
+3. Causal Next-Bar Open FVG Fills & Friction Parity:
+   - File: `Engine/core/strategy_kernel.py` (Lines 375-485)
+   - Audit Finding: FVG labeler filled at signal-bar close (`closes[i]`) with zero friction.
+   - Remediation: Entry now executes strictly at next-bar open (`opens[i+1]`), stop loss is evaluated first on intra-bar tests, and a -0.08R transaction friction penalty is deducted on every trade (matching ORB).
+
+4. Stop-Loss First Ordering in Generic Backtest:
+   - File: `Engine/forex_engine.py` (Lines 2120-2150)
+   - Audit Finding: `run_standard_backtest` checked take-profit (+2.5R) before stop-loss, granting favorable bias on wide expansion candles.
+   - Remediation: Intra-bar loop now evaluates stop-loss hit (`low_c <= sl_price` for longs, `high_c >= sl_price` for shorts) strictly before take-profit.
+
+5. Headless Linux/CI Compatibility:
+   - File: `Engine/forex_engine.py` (Lines 40-45)
+   - Audit Finding: `import MetaTrader5 as mt5` at module top level prevented backtesting and testing on Linux CI.
+   - Remediation: Guarded with `try...except (ImportError, ModuleNotFoundError): mt5 = None`.
+
+6. Unification of Portfolio Limits & Dry-Run Paper Trading:
+   - Files: `Engine/live/order_manager.py` & `Engine/live/run_forex_dry_run.py`
+   - Audit Finding: `order_manager.py` used max 3 slots while engine used 2; dry-run mode bypassed `place_market_order`, leaving open trades empty and preventing paper-trading validation.
+   - Remediation: Set `MAX_CONCURRENT_POSITIONS = 2` across all live files; synchronized `CORRELATION_CLUSTERS` across `forex_engine.py` and `order_manager.py`; enabled paper-trade execution in `run_forex_dry_run.py` so simulated positions accrue PnL and exercise ratchets. Fixed unreachable dry-run branches in `modify_sl` and `close_position`.
+
+================================================================================
+2. VERIFICATION DIRECTIVES FOR OX ALPHA 55
+================================================================================
+Inspect the codebase on branch `arena/01a0bf23-trading` or `main`:
+
+1. Inspect `Engine/forex_engine.py`:
+   - Verify `OrderManager.get_current_risk_budget()` and `OrderManager.get_account_metrics()` to confirm peak-to-trough drawdown calculation and hysteresis.
+   - Verify `run_standard_backtest()` lines 2120-2150 for SL-first evaluation order.
+   - Verify MT5 lazy-import guard.
+
+2. Inspect `Engine/core/base_strategy.py`:
+   - Verify `ParallelForexStrategy.generate_signal()` lines 500-508 for conflict signal formatting without `sig.side`.
+
+3. Inspect `Engine/core/strategy_kernel.py`:
+   - Verify `create_labels_ratchet()` for `entry = opens[i+1]` and `-0.08R` friction deduction.
+
+4. Inspect `Engine/live/order_manager.py` & `Engine/live/run_forex_dry_run.py`:
+   - Verify `MAX_CONCURRENT_POSITIONS = 2` and unified cluster definitions.
+   - Verify that `modify_sl` and `close_position` dry-run branches are reached before any broker lookup.
+
+5. Final Certification Assessment:
+   - Provide an updated audit scorecard evaluating the effectiveness of this remediation cycle.

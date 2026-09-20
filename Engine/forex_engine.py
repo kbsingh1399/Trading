@@ -39,7 +39,10 @@ import numpy as np
 import pandas as pd
 import polars as pl
 import xgboost as xgb
-import MetaTrader5 as mt5
+try:
+    import MetaTrader5 as mt5
+except (ImportError, ModuleNotFoundError):
+    mt5 = None
 
 from rich.console import Console, Group
 from rich.table import Table
@@ -405,6 +408,8 @@ class OrderManager:
         self.open_trades: Dict[int, Dict[str, Any]] = {}
         self.closed_trades: List[Dict[str, Any]] = []
         self.initial_balance: float = 5000.0
+        self.peak_equity: float = 5000.0
+        self.in_defense_mode: bool = False
         self.realized_pnl: float = 0.0
         self.state_file = LOG_DIR / "live_state.json"
         self.load_state()
@@ -415,6 +420,7 @@ class OrderManager:
             state_data = {
                 "realized_pnl": self.realized_pnl,
                 "initial_balance": self.initial_balance,
+                "peak_equity": self.peak_equity,
                 "open_trades": self.open_trades,
                 "timestamp": time.time()
             }
@@ -431,6 +437,7 @@ class OrderManager:
             with open(self.state_file, "r", encoding="utf-8") as f:
                 state_data = json.load(f)
             self.realized_pnl = float(state_data.get("realized_pnl", 0.0))
+            self.peak_equity = float(state_data.get("peak_equity", self.initial_balance + max(0.0, self.realized_pnl)))
             saved_trades = state_data.get("open_trades", {})
 
             raw_trades: Dict[int, Dict[str, Any]] = {}
@@ -525,32 +532,39 @@ class OrderManager:
 
     def get_current_risk_budget(self) -> Tuple[float, str]:
         """
-        Institutional 5-Regime Dynamic Risk State Machine:
+        Institutional 5-Regime Dynamic Risk State Machine (Peak-to-Trough Drawdown):
         - Milestone Pass Lock : Profit >= 500 USD AND Trades >= 15 -> 7.50 USD (0.15% micro-probing)
-        - Hard Freeze         : DD >= 4.50% (225 USD)              -> 0.00 USD (freeze)
-        - Severe DD Defense   : DD >= 3.00%                        -> 16.50 USD (0.33%)
-        - Mild DD Defense     : DD >= 1.80%                        -> 27.50 USD (0.55%)
+        - Hard Freeze         : Peak DD >= 4.50% (225 USD)         -> 0.00 USD (freeze)
+        - Severe DD Defense   : Peak DD >= 3.00%                   -> 16.50 USD (0.33%)
+        - Mild DD Defense     : Peak DD >= 1.80%                   -> 27.50 USD (0.55%)
         - House Money Accel   : Profit >= 80 USD AND DD < 1.00%    -> 65.00 USD (1.30%)
         - Normal Baseline     : Default                            -> 50.00 USD (1.00%)
         Returns: (governed_risk_usd, regime_label)
         """
         metrics = self.get_account_metrics()
         current_equity = metrics.get("equity", self.initial_balance + self.realized_pnl)
-        dd_usd = max(0.0, self.initial_balance - current_equity)
-        dd_pct = (dd_usd / self.initial_balance) * 100.0 if self.initial_balance > 0 else 0.0
+        if current_equity > self.peak_equity:
+            self.peak_equity = current_equity
+        dd_usd = max(0.0, self.peak_equity - current_equity)
+        dd_pct = (dd_usd / self.peak_equity) * 100.0 if self.peak_equity > 0 else 0.0
         n_closed = len(self.closed_trades)
 
         if dd_pct >= HARD_DD_LIMIT_PCT or dd_usd >= 225.0:
-            return 0.0, f"HARD FREEZE (DD {dd_pct:.2f}% >= {HARD_DD_LIMIT_PCT:.1f}%)"
+            self.in_defense_mode = True
+            return 0.0, f"HARD FREEZE (Peak DD {dd_pct:.2f}% >= {HARD_DD_LIMIT_PCT:.1f}%)"
         elif self.realized_pnl >= 500.0 and n_closed >= 15:
             return PASS_LOCK_RISK_USD, f"PASS LOCK (7.50 USD | Profit +{self.realized_pnl:.2f} USD | Trades {n_closed})"
         elif dd_pct >= 3.00:
-            return 16.50, f"SEVERE DEFENSE (16.50 USD | DD {dd_pct:.2f}%)"
-        elif dd_pct >= DEFENSE_DD_LIMIT_PCT:
-            return DEFENSE_RISK_USD, f"MILD DEFENSE ({DEFENSE_RISK_USD:.2f} USD | DD {dd_pct:.2f}%)"
-        elif self.realized_pnl >= HOUSE_MONEY_THRESHOLD_USD and dd_pct < HOUSE_MONEY_MAX_DD_PCT:
-            return HOUSE_MONEY_RISK_USD, f"HOUSE MONEY ({HOUSE_MONEY_RISK_USD:.2f} USD | Profit +{self.realized_pnl:.2f} USD)"
-        return BASE_RISK_USD, f"NORMAL ({BASE_RISK_USD:.2f} USD)"
+            self.in_defense_mode = True
+            return 16.50, f"SEVERE DEFENSE (16.50 USD | Peak DD {dd_pct:.2f}%)"
+        elif dd_pct >= DEFENSE_DD_LIMIT_PCT or (self.in_defense_mode and dd_pct >= 1.50):
+            self.in_defense_mode = True
+            return DEFENSE_RISK_USD, f"MILD DEFENSE ({DEFENSE_RISK_USD:.2f} USD | Peak DD {dd_pct:.2f}%)"
+        else:
+            self.in_defense_mode = False
+            if self.realized_pnl >= HOUSE_MONEY_THRESHOLD_USD and dd_pct < HOUSE_MONEY_MAX_DD_PCT:
+                return HOUSE_MONEY_RISK_USD, f"HOUSE MONEY ({HOUSE_MONEY_RISK_USD:.2f} USD | Profit +{self.realized_pnl:.2f} USD)"
+            return BASE_RISK_USD, f"NORMAL ({BASE_RISK_USD:.2f} USD)"
 
 
     def calculate_lot_size(self, symbol: str, risk_usd: float, sl_dist: float) -> float:
@@ -1055,8 +1069,10 @@ class OrderManager:
             login = acc_info.login if acc_info else 5064568
             currency = acc_info.currency if acc_info else "USD"
 
-        drawdown_usd = max(0.0, (self.initial_balance - equity))
-        drawdown_pct = (drawdown_usd / self.initial_balance) * 100.0
+        if equity > self.peak_equity:
+            self.peak_equity = equity
+        drawdown_usd = max(0.0, (self.peak_equity - equity))
+        drawdown_pct = (drawdown_usd / self.peak_equity) * 100.0 if self.peak_equity > 0 else 0.0
 
         return {
             "login": login,
@@ -2101,31 +2117,31 @@ def run_standard_backtest(
                     close_c = df_oos['close'].iloc[c_idx]
 
                     if is_long:
-                        h_r = (high_c - entry_price) / r_dist
-                        if b >= TIME_DECAY_BARS and h_r < TIME_DECAY_THRESHOLD_R:
-                            realized_r = (close_c - entry_price) / r_dist
-                            exit_idx = c_idx
-                            break
-                        if h_r >= 2.5:
-                            realized_r = 2.5
-                            exit_idx = c_idx
-                            break
                         if low_c <= sl_price:
                             realized_r = (sl_price - entry_price) / r_dist
                             exit_idx = c_idx
                             break
-                    else:
-                        h_r = (entry_price - low_c) / r_dist
-                        if b >= TIME_DECAY_BARS and h_r < TIME_DECAY_THRESHOLD_R:
-                            realized_r = (entry_price - close_c) / r_dist
-                            exit_idx = c_idx
-                            break
+                        h_r = (high_c - entry_price) / r_dist
                         if h_r >= 2.5:
                             realized_r = 2.5
                             exit_idx = c_idx
                             break
+                        if b >= TIME_DECAY_BARS and h_r < TIME_DECAY_THRESHOLD_R:
+                            realized_r = (close_c - entry_price) / r_dist
+                            exit_idx = c_idx
+                            break
+                    else:
                         if high_c >= sl_price:
                             realized_r = (entry_price - sl_price) / r_dist
+                            exit_idx = c_idx
+                            break
+                        h_r = (entry_price - low_c) / r_dist
+                        if h_r >= 2.5:
+                            realized_r = 2.5
+                            exit_idx = c_idx
+                            break
+                        if b >= TIME_DECAY_BARS and h_r < TIME_DECAY_THRESHOLD_R:
+                            realized_r = (entry_price - close_c) / r_dist
                             exit_idx = c_idx
                             break
 
