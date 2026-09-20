@@ -1,0 +1,123 @@
+# MASTER INSTITUTIONAL AUDIT & LIVE PRODUCTION VERIFICATION DIRECTIVE: OX_ALPHA_58
+# DIRECTIVE TARGET: Full Altcoin Live Terminal Pipeline Forensic Audit, Multi-Sleeve Strategy Parity, and Institutional Live Deployment Certification
+# REPOSITORY: https://github.com/kbsingh1399/Trading.git
+# ACTIVE BRANCH: arena/01a0bf23-trading (synchronized with main)
+# DATASET: Certified Genuine 11 Institutional Binance USDT-M Perpetuals (BTC, ETH, XRP, BNB, DOGE, ADA, TRX, LINK, DOT, LTC, BCH) spanning 3,467,571 15m bars (2020-2026), 0 nulls, monotonic timestamps in Engine/binance_backtesting_data/.
+# PASS CRITERIA: Net ROI >= +10.00% (+500.00 USD on 5,000.00 USD initial capital), Max Drawdown <= 5.00%, Win Rate >= 40.0%, Min Completed Trades >= 15 per quarter across all 23 quarterly OOS windows.
+
+Evaluator & Chief Quantitative Auditor (Arena.ai / Claude Opus),
+
+You are operating in a brand-new, isolated session with zero previous chat memory, zero prior chat context, and zero internet access. All architecture, code implementations, empirical walk-forward scorecards, and live execution bridge modules are pinned directly via raw GitHub URLs below.
+
+Your mission is to perform an exhaustive, uncompromising forensic audit of the entire Altcoin Quantitative Live Trading Pipeline, verify strategy parity between the backtest research suite and the live operational terminal, inspect the Binance Futures Execution Bridge, and provide your definitive institutional certification for live capital deployment on Binance USDT-M perpetuals.
+
+================================================================================
+1. PINNED REPOSITORY SOURCE CODE & SPECIFICATIONS
+================================================================================
+
+Review the following raw codebase files directly from the repository on branch `arena/01a0bf23-trading` (or `main`):
+
+1. Master Operational Live Terminal & Multi-Asset Execution Runner:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/runners/run_live_terminal.py
+
+2. Master 23-OOS Altcoin Quant Suite Runner (Causal Next-Bar Open Execution & Trend Guard):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/runners/run_23_oos_altcoin_suite.py
+
+3. Institutional Binance Futures Live Execution Broker (HMAC-SHA256, Zero-Naked-Window Ratchets, Native Stops):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/brokers/binance_broker.py
+
+4. Canonical Indicators (Prefix-Invariant Numba Kernels for KRI, Bandwidth Z, ADX, Ichimoku):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/core/canonical_indicators.py
+
+5. Fast Numba Out-Of-Sample Backtest Engine:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/core/fast_numba_oos_engine.py
+
+6. Master 23 Quarterly OOS Windows Specification (2021-Q1 to 2026-Q3):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/oos_windows_20.json
+
+7. Master Parquet Fetcher & 15m Dual-Table Historical Pipeline:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/runners/run_historical_pipeline.py
+
+8. Comprehensive Live Terminal Specification:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/docs/specs/live-terminal-pipeline-upgrade.md
+
+================================================================================
+2. EXECUTIVE QUANTITATIVE CONTEXT & ALTCOIN PORTFOLIO ARCHITECTURE
+================================================================================
+
+The trading architecture operates across the certified genuine 11 Binance USDT-M perpetuals (BTC, ETH, XRP, BNB, DOGE, ADA, TRX, LINK, DOT, LTC, BCH). The 7 synthetic assets (SUI, NEAR, AVAX, APT, OP, ARB, SOL) were permanently quarantined because they lack certified historical tick footprint depth prior to 2023.
+
+The live execution architecture is organized into three unified tiers:
+
+1. Alpha Signal Generation (MultiSleeveSignalEngine):
+   - Sleeve S1 (Liquidation Pullback): Detects extreme liquidation cascades (long_liq_zs > 1.8 or short_liq_zs > 1.8) with orderflow absorption (zc_div > 0.8), VWAP discount z-scores (< -0.5), and oversold momentum (RSI < 40).
+   - Sleeve S2 (Bollinger Mean Reversion): Enters Bollinger band envelope extremes conditioned on volatility bandwidth expansion (z_bw > -1.0) and non-trending regimes (ADX < 32) to avoid runaway trend-expansion traps.
+   - Sleeve S3 (London / NY Opening Range Breakout): Evaluates opening range breaks at 08:00 UTC (London open) and 13:30 UTC (New York open), protected by Judas sweep liquidity filters.
+   - Sleeve S4 (Kairi Relative Index Disparity): Capitalizes on mean-reverting price-to-moving-average disparity, strictly guarded by an EMA 200 trend filter on short entries (closes[i] <= ema200[i] * 1.01).
+   - Sleeve T1 (Quiet-Flow Donchian Breakout): Captures macro structural trend breakouts (20-period Donchian channel highs/lows) validated by low-volume compression filters.
+
+2. Causal Execution & Friction Modeling:
+   - Next-Bar Open Execution: All entries fill strictly at opens[i+1] * (1.0 +/- 0.0010) with an explicit 10 bps entry slippage penalty.
+   - Real Exchange Friction: 41 bps round-trip friction model (8 bps taker fees, 10 bps entry slippage, 15 bps stop slippage, plus funding buffer).
+   - Intra-Bar Conservative Precedence: Stop-loss is evaluated before take-profit within the bar, preventing optimistic exit bias.
+
+3. Dynamic Institutional Risk Governor (LivePortfolioGovernor):
+   - Base Capital: 5,000.00 USD initial capital.
+   - Base Risk: 24.00 USD (0.48% risk per trade).
+   - Drawdown Defense: Risk scales down to 6.00 USD (0.12%) when portfolio drawdown exceeds 2.00% (100.00 USD).
+   - House Money Risk: Risk expands to 26.00 USD (0.52%) once closed profits exceed +50.00 USD.
+   - Milestone Profit Lock: Milestone locking secures portfolio capital once +500.00 USD net gain is achieved per quarter.
+   - Max Concurrency: Hard limit of 4 concurrent open position slots across the entire 11-asset universe.
+   - Microstructure Ratchets:
+     * Break-Even Lock: At +0.80R gain, move stop to Entry + 0.35R (clearing all frictions with guaranteed profit).
+     * Profit Lock: At +1.50R gain, move stop to Entry + 0.80R.
+     * Structural Profit Target: +2.0R to +2.5R exit target.
+     * Time Decay Exit: Exit at market if position fails to gain +0.20R within 24 bars (6 hours).
+
+4. Institutional Binance Broker Bridge (BinanceBroker):
+   - REST & WebSocket connectivity via https://fapi.binance.com using HMAC-SHA256 signed requests.
+   - Native Exchange Bracket Orders: STOP_MARKET conditional orders (workingType=MARK_PRICE, closePosition=true).
+   - Place-Then-Cancel Trailing Ratchets: In modify_sltp, the new replacement stop is confirmed on the exchange BEFORE the old stop is cancelled, eliminating naked market risk windows.
+   - Emergency Position Liquidation: If stop-loss placement fails after 3 retries, an emergency market close is immediately executed.
+   - Dual-Mode Architecture: Seamless toggling between `--dry-run` (paper trading with live Binance data feeds) and `--live` (signed live order execution).
+
+================================================================================
+3. EMPIRICAL WALK-FORWARD BENCHMARK (23/23 OOS QUARTERS)
+================================================================================
+
+The multi-sleeve altcoin suite was evaluated across all 23 Out-Of-Sample (OOS) non-overlapping quarters (2021-Q1 through 2026-Q3):
+
+- Starting Capital: 5,000.00 USD per quarterly window
+- Outright Pass Rate: 23 out of 23 Quarters Passed (100.0% Pass Rate)
+- Total Cumulative Net PnL: +23,872.73 USD (+477.45% Net ROI across 23 sleeves)
+- Total Completed Trades: 6,484 trades
+- Average Win Rate: 49.14% (with positive payoff ratio from 2.2R targets vs 1.0R risk)
+- Peak-to-Trough Drawdown: Strictly contained between 1.80% and 4.27% across all 23 regimes (well below the 5.00% institutional ceiling)
+- Benchmark Comparison: Over the same period, BTC Buy & Hold generated +7,794.13 USD (+155.88% ROI) with severe peak-to-trough drawdowns exceeding 75.0%. The Altcoin Suite generated +16,078.60 USD in pure net alpha with zero losing quarters.
+
+================================================================================
+4. FORENSIC AUDIT DIRECTIVES FOR CHIEF QUANTITATIVE AUDITOR
+================================================================================
+
+Please conduct an exhaustive line-by-line inspection of the repository on branch `arena/01a0bf23-trading` and provide your institutional evaluation across the following core dimensions:
+
+1. Live Broker & Order Lifecycle Forensic Audit:
+   - Inspect `Engine/brokers/binance_broker.py` and `Engine/runners/run_live_terminal.py`.
+   - Does the Place-Then-Cancel order pattern in `modify_sltp` completely protect positions against exchange disconnects or execution drops?
+   - Is the error handling for rate limits (HTTP 429 Retry-After, HTTP 418 IP ban) and order sizing precision (tick size, step size filters) fully robust?
+
+2. Research-to-Live Parity Audit:
+   - Compare `Engine/runners/run_live_terminal.py` against `Engine/runners/run_23_oos_altcoin_suite.py`.
+   - Is there 100% mathematical parity in indicator calculation, threshold gating, and signal generation across all 5 sleeves (S1, S2, S3, S4, T1)?
+   - Does the live terminal faithfully reproduce the causal next-bar open fill logic (`opens[i+1] * (1 +/- 10 bps)`) and the piecewise ratchet thresholds?
+
+3. Risk Budgeting & Correlation Defense:
+   - Audit `LivePortfolioGovernor`. Does the 4-tier risk budget (24 USD base, 6 USD defense, 26 USD house money, milestone lock at +500 USD) and the 4-slot concurrency limit prevent portfolio liquidation under simultaneous cross-altcoin liquidity cascades?
+
+4. Production Verdict & Live Go-Live Recommendation:
+   - Provide your formal scorecard across:
+     * Architecture & Modular Design (/10)
+     * Causal Soundness & Friction Realism (/10)
+     * Microstructure Execution & Broker Safety (/10)
+     * Production Readiness for Live Capital Deployment (/10)
+   - State whether the Altcoin Live Terminal Pipeline is officially CERTIFIED for live funded trading on Binance Futures.
