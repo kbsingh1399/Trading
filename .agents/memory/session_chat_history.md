@@ -46837,3 +46837,10 @@ python Engine/forex_engine.py --strategy parallel --live
 
 **Antigravity:**
 Verified live pipeline continuous data updates, in-memory rolling state buffers, and production readiness in `Engine/forex_engine.py`. Demonstrated that on startup and on every newly closed 15m candle, the engine fetches closed broker bars, updates 15m/4H/D1 rolling buffers in memory, atomically syncs on-disk parquets via `robust_parquet_replace`, recomputes 13 stationary features, and runs real-time XGBoost inference. Executed live pre-flight snapshot against active MetaTrader 5 terminal (Account #5064568 on BlueberryMarketsSVG-Live, starting balance 4,855.07 USD): 6/6 system components passed green, all 18/18 canonical assets streamed live bid/ask/spread/RSI/trend/FVG/CRT data. Committed fresh parquet bar updates (commit 38666e1) and synchronized both `origin/main` and `origin/arena/01a0bf23-trading`. Confirmed full readiness for live capital deployment via `python Engine/forex_engine.py --strategy parallel --live`.
+
+**User:** <USER_REQUEST>
+also what is the longest loosing streak...also before starting engine..it delete existing ml training etc and retrain before startup...
+</USER_REQUEST>
+
+**Antigravity:**
+Quantified the empirical losing streak metrics across all 2,423 walk-forward trades across 20 Out-Of-Sample windows: the maximum streak of pure capital loss trades (realized R < 0, including stop-outs and time-decay scratches) is exactly 5 consecutive losses. Clarified that non-winning sequences (realized R <= 0) can span up to 31 events due to zero-loss breakeven ratchet stops (0.00R scratches where trades reached +0.80R and locked stop at Entry +0.15R before scratching without capital degradation). Confirmed and audited the automated startup lifecycle in `Engine/forex_engine.py`: Stage 2 explicitly purges previous models (`purge_earlier_ml_models()`) and Stage 3 dynamically retrains fresh weights (`dynamic_retrain()`) on newly appended market data unless `--skip-train` is explicitly passed.
