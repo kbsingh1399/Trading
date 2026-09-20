@@ -1,0 +1,136 @@
+# OX ALPHA 54: FORENSIC AUDIT & VERIFICATION OF MASTER FOREX & CFD PIPELINE
+# Target Repository: https://github.com/kbsingh1399/Trading.git
+# Active Working Branch: arena/01a0bf23-trading (also synchronized with main)
+# Evaluated Engine: Engine/forex_engine.py
+
+You are Claude Opus (Ox Alpha), acting as Principal Quantitative Architect and Forensic Systems Auditor.
+You operate in a brand-new evaluation session with direct repository access to branch `arena/01a0bf23-trading` on `https://github.com/kbsingh1399/Trading.git`.
+
+================================================================================
+1. EXECUTIVE MISSION CONTEXT & SYSTEM ARCHITECTURE
+================================================================================
+The user has requested an exhaustive institutional forensic review of the Master Forex & CFD Orchestration Pipeline (`Engine/forex_engine.py`).
+
+CRITICAL CLARIFICATION ON ASSET DOMAINS:
+- `Engine/forex_engine.py` is 100% dedicated to Global Forex pairs, Equity Indices, and Commodities CFDs.
+- It contains ZERO crypto assets. Crypto is strictly isolated in `Engine/runners/run_live_terminal.py` and `Engine/runners/run_23_oos_altcoin_suite.py`.
+- The Forex & CFD Universe comprises 18 institutional instruments:
+  EURHUF, GER40 (GER30), NICKEL, USDSEK, GAS, AU200, FR40, EURCNH, LEAD,
+  NZDUSD, USDHKD, US2000, AUDCHF, NZDCNH, XAUCNH, GAUCNH, EURSEK, EURUSD.
+
+SYSTEM ARCHITECTURE (PARALLEL DUAL-SLEEVE MULTI-MODEL):
+The engine orchestrates a parallel multi-strategy portfolio defined in `Engine/core/base_strategy.py` (`ParallelForexStrategy`):
+1. Sleeve 1: FVG ML Strategy (`Engine/strategy/s4_fvg_ml/s4_fvg_ml_forex_engine.py`)
+   - Fair Value Gap (FVG) detection on 15m timeframe aligned with higher-timeframe 4H EMA 200 trend.
+   - Calibrated XGBoost probabilistic classifier filtering high-conviction orderflow imbalances.
+2. Sleeve 2: ORB CRT Strategy (`Engine/strategy/orb_crt_forex_engine.py`)
+   - London & New York Opening Range Breakouts (ORB) combined with Candle Range Theory (CRT) liquidity sweeps.
+   - Identifies institutional session range expansions and liquidity absorption sweeps.
+
+HIGH-THROUGHPUT EXECUTION & PORTFOLIO INTERLEAVING:
+- Both sleeves implement `precompute_candidates(symbol, df_15m, df_4h, df_daily, model)` generating candidate signal arrays ahead of time.
+- `Engine/forex_engine.py` interleaves candidates chronologically bar-by-bar across all 18 symbols and both sleeves simultaneously.
+- This guarantees microsecond execution speed, deterministic concurrency arbitration, and zero lookahead bias.
+
+================================================================================
+2. SETTLED RISK & MICROSTRUCTURE INVARIANTS
+================================================================================
+1. Dynamic Risk Budget State Machine (5,000.00 USD Starting Capital):
+   - Milestone Pass Lock: Once Net Profit reaches +500.00 USD (+10.00% ROI) and completed trades >= 15, position risk is throttled to 7.50 USD (0.15%). This permanently locks in the passing milestone and prevents end-of-quarter drawdown giveback.
+   - Severe Drawdown Defense: Position risk cut to 16.50 USD (0.33%) when peak-to-trough drawdown exceeds 3.00% (150.00 USD).
+   - Mild Drawdown Defense: Position risk cut to 27.50 USD (0.55%) when peak-to-trough drawdown exceeds 1.80% (90.00 USD).
+   - House Money Scaling: Position risk expands to 65.00 USD (1.30%) when net profit exceeds +80.00 USD and current drawdown is below 1.00%.
+   - Base Risk: 50.00 USD (1.00% of 5,000.00 USD capital) during standard trading.
+   - Hard Drawdown Stop: 4.50% (225.00 USD) hard portfolio circuit breaker halting trading for the quarter.
+
+2. Portfolio Concurrency & Cluster Isolation:
+   - Global Concurrency Cap: Maximum 2 concurrent open positions across the entire 18-asset portfolio.
+   - Asset Lock: Maximum 1 open position per individual instrument.
+   - 4-Cluster Risk Isolation:
+     * EUR Cluster: EURUSD, EURHUF, EURCNH, EURSEK (Max 1 open position)
+     * Pacific Cluster: NZDUSD, AUDCHF, NZDCNH, USDHKD (Max 1 open position)
+     * Equity Indices: GER40, FR40, AU200, US2000 (Max 1 open position)
+     * Commodities & Metals: NICKEL, GAS, LEAD, XAUCNH, GAUCNH, USDSEK (Max 1 open position)
+
+3. Causal Microstructure Execution:
+   - Fill Price: Strictly at the open of the subsequent 15m candle (`opens[j+1]`).
+   - Frictions: Spread plus 8 bps round-trip transaction friction deducted from notional.
+   - 7-Stage Trailing Ratchet:
+     * Break-Even Lock: At +0.80R unrealized gain, stop moves to Entry + 0.15R (locking in guaranteed net profit after frictions).
+     * Profit Lock: At +1.50R unrealized gain, stop moves to Entry + 0.80R.
+     * Structural Take-Profit Target: +2.50R (purged unrealistic 5R/10R moonshots).
+     * Time Decay Exit: Exit at market if trade fails to reach +0.20R gain within 24 bars (6 hours).
+
+================================================================================
+3. EMPIRICAL SCORECARD ACROSS 20 OUT-OF-SAMPLE WINDOWS
+================================================================================
+The dual-sleeve portfolio was validated across 20 non-overlapping quarterly out-of-sample regimes (2023 to 2026, defined in `Engine/oos_windows_forex_20.json`):
+- Benchmark Criteria for Certified Pass:
+  * Net ROI >= +10.00% (+500.00 USD on 5,000.00 USD initial capital)
+  * Max Drawdown <= 5.00% (250.00 USD)
+  * Win Rate >= 40.0%
+  * Closed Trades >= 15 per window
+- Window 1 Empirical Results:
+  * Total Trades: 106
+  * Win Rate: 62.3%
+  * Profit Factor: 1.85
+  * Total R-Multiple: +45.63R
+  * Net Profit: +731.80 USD (+14.64% Net ROI)
+  * Max Drawdown: 3.47%
+  * Status: OUTRIGHT PASS (Exceeds all institutional gates)
+- Multiverse Full 20-Window Aggregate Performance (`Engine/research/perfect_20_oos_dual_sleeve_results.csv`):
+  * Regimes Tested: 20/20 Out-Of-Sample Windows
+  * Pass Rate: 100% (20 Outright Passes, 0 Regressions)
+  * Cumulative Net Profit: +16,420.50 USD (+328.41% Net ROI)
+  * Peak Portfolio Drawdown: 3.84% (strictly below 4.50% hard ceiling)
+  * Average Win Rate: 58.6% across 2,410 trades (average 120.5 trades/quarter)
+
+================================================================================
+4. MANDATORY GIT-BASED MODULE REFERENCES (BRANCH: arena/01a0bf23-trading)
+================================================================================
+Inspect these production files directly from your workspace:
+
+1. Master Orchestrator:
+   - Engine/forex_engine.py
+2. Multi-Strategy Base & Interface:
+   - Engine/core/base_strategy.py
+3. Strategy Sleeves:
+   - Engine/strategy/s4_fvg_ml/s4_fvg_ml_forex_engine.py
+   - Engine/strategy/orb_crt_forex_engine.py
+4. Invariant Contracts & Criteria:
+   - Engine/target_oos_criteria.json
+   - Engine/oos_windows_forex_20.json
+5. Empirical CSV Results & Charts:
+   - Engine/research/perfect_20_oos_dual_sleeve_results.csv
+   - Engine/artifacts/perfect_20_oos_dual_sleeve_equity_curve.png
+6. Live Dry-Run Harness:
+   - Engine/live/run_forex_dry_run.py
+   - Engine/live/order_manager.py
+   - Engine/live/mt5_connection.py
+
+================================================================================
+5. SPECIFIC FORENSIC AUDIT DIRECTIVES
+================================================================================
+Conduct a rigorous line-by-line inspection of `Engine/forex_engine.py` and its supporting modules:
+
+1. Lookahead & Information Leakage Audit:
+   - Verify that `precompute_candidates()` in both sleeves computes signals using strictly historical data up to bar j, with execution scheduled strictly for bar j+1 open.
+   - Confirm that XGBoost features in `s4_fvg_ml_forex_engine.py` and CRT levels in `orb_crt_forex_engine.py` do not leak future bar high/low/close.
+   - Verify that 4H trend joins in `multi_tf_data.py` utilize backward-looking causal shifts (no forward lookahead).
+
+2. Portfolio Interleaving & Concurrency Verification:
+   - Examine the bar-by-bar chronological loop in `Engine/forex_engine.py`.
+   - Ensure that when multiple candidates trigger on the exact same 15m timestamp across different assets or sleeves, the concurrency check (`len(open_positions) < max_concurrent`) and cluster filter (`FOREX_CLUSTER_MAP`) arbitrate deterministically without race conditions.
+   - Verify that closed trades release portfolio concurrency slots immediately at bar j+1 open or intra-bar exit.
+
+3. Dynamic Risk State Machine Rigor:
+   - Audit the milestone lock mechanism: Does it safely lock in passing windows without freezing trading entirely?
+   - Verify drawdown defense triggers and recovery hysteresis.
+
+4. Production Readiness & MT5 Compatibility:
+   - Review `Engine/live/run_forex_dry_run.py` and `Engine/live/order_manager.py`.
+   - Verify that the live execution classes faithfully reproduce the exact mathematical logic of `Engine/forex_engine.py`.
+
+5. Final Institutional Audit Verdict:
+   - Assign a rigorous rating (1 to 10) for Architecture, Causal Soundness, Microstructure Realism, and Production Readiness.
+   - Highlight any potential edge cases, slippage vulnerabilities, or recommendations for live broker deployment.
