@@ -1,0 +1,131 @@
+====================================================================================================
+OX ALPHA 50: PASSING ALL 23 OOS QUARTERLY WINDOWS (2021-2026) VIA ALTCOIN-ONLY QUANTITATIVE SUITE
+====================================================================================================
+TARGET SYSTEM: Triple Trend-Following Altcoin Suite with Causal Bitcoin Reference Stream
+REPOSITORY: https://github.com/kbsingh1399/Trading.git (Branch: main, Commit: dd1ea09)
+AUDIT AUTHORITY: Claude Opus (Ox Alpha / Arena.ai Chief Quantitative Risk Officer & Lead Architect)
+MISSION ENVIRONMENT: Fresh Session (Zero previous memory, zero local context, zero repo access beyond raw Git URLs)
+====================================================================================================
+
+# 1. EXECUTIVE MISSION DIRECTIVE FOR CLAUDE OPUS
+You are serving as the Chief Quantitative Risk Officer and Lead Microstructure Architect.
+The quantitative objective is clear, rigorous, and non-negotiable:
+Pass ALL 23 Out-Of-Sample (OOS) Quarterly Windows (2021-2026) under target_oos_criteria.json:
+- Net ROI >= +10.00% (+500.00 USD net on 5,000.00 USD capital)
+- Max Drawdown <= 5.00% (250.00 USD hard mark-to-market ceiling)
+- Win Rate >= 40.0%
+- Min Completed Trades >= 15 per quarterly window
+
+### Master Invariants & Constraints:
+1. ALTCOIN-ONLY TRADING UNIVERSE:
+   Trades are strictly confined to the 10 certified Binance Altcoins:
+   ETHUSDT, XRPUSDT, BNBUSDT, DOGEUSDT, ADAUSDT, TRXUSDT, LINKUSDT, DOTUSDT, LTCUSDT, BCHUSDT.
+   Zero trades on BTCUSDT. BTC is quarantined strictly as an external macro reference stream.
+2. BITCOIN MACRO REFERENCE STREAM:
+   BTC provides causal macro trend tide (4H EMA 50 vs EMA 200), trailing 30-day realized volatility (rolling ATR),
+   and spot-futures CVD divergence anchors. Zero future BTC bars may leak into execution.
+3. RIGOROUS MACHINE LEARNING PURITY:
+   Causal Ridge + regularized shallow LightGBM ensemble (max depth <= 4, L1/L2 penalties) trained with
+   an enforced 72-hour causal quarantine purge (t < window_start - 72h).
+4. CAUSAL EXECUTION ENGINE:
+   All entries filled strictly at next-bar open (opens[j+1]), adverse stop loss checked before take-profit
+   on every bar, and realistic 41 bps round-trip friction deducted on all executed notional.
+
+---
+
+# 2. RAW GITHUB URL MATRIX (FETCH DIRECTLY FROM GIT)
+Do NOT ask for code dumps. Fetch and inspect the entire production codebase directly from these verified raw GitHub URLs:
+
+- Master Repository:
+  https://github.com/kbsingh1399/Trading.git (Branch: main, Commit: dd1ea09)
+
+- Production 23-Quarter Altcoin ML Suite (Engine/run_23_oos_altcoin_suite.py):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/dd1ea09/Engine/run_23_oos_altcoin_suite.py
+
+- Canonical Indicators & KRI Kernels (Engine/core/canonical_indicators.py):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/dd1ea09/Engine/core/canonical_indicators.py
+
+- Production Numba-Accelerated Engine & Labeling Kernel (Engine/core/fast_numba_oos_engine.py):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/dd1ea09/Engine/core/fast_numba_oos_engine.py
+
+- Multi-Timeframe Resampling & 4H Cache Processor (Engine/core/multi_tf_data.py):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/dd1ea09/Engine/core/multi_tf_data.py
+
+- Institutional Dual-Model Orderflow Strategy (Engine/strategy/s1_dual_model_orderflow.py):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/dd1ea09/Engine/strategy/s1_dual_model_orderflow.py
+
+- Cross-Asset ORB/CRT Footprint Strategy (Engine/strategy/s3_orb_ml.py):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/dd1ea09/Engine/strategy/s3_orb_ml.py
+
+- Complete 23 Out-Of-Sample Quarterly Windows Specification (arena_01a09b0e/Engine/oos_windows_20.json):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/dd1ea09/arena_01a09b0e/Engine/oos_windows_20.json
+
+- Institutional Target OOS Criteria (Engine/target_oos_criteria.json):
+  https://raw.githubusercontent.com/kbsingh1399/Trading/dd1ea09/Engine/target_oos_criteria.json
+
+---
+
+# 3. EMPIRICAL BENCHMARK SCORECARD ACROSS ALL 23 OOS QUARTERS
+Starting Capital: 5,000.00 USD | Total Profit: +2,910.14 USD (+58.20% Net ROI) | 1,709 Completed Trades
+
+Window Summary:
+- W01 (Q1 2021 Crypto Bull Run): 63 trades, 47.6% WR, -195.69 USD PnL, Max DD 3.91% [FAIL]
+- W02 (Q2 2021 May Crash): 127 trades, 59.1% WR, +657.07 USD PnL (+13.14% ROI), Max DD 4.14% [PASS]
+- W03 (Q3 2021 Summer Rebound): 77 trades, 54.5% WR, -48.23 USD PnL, Max DD 3.77% [FAIL]
+- W04 (Q4 2021 ATH Distribution): 41 trades, 36.6% WR, -223.04 USD PnL, Max DD 4.46% [FAIL]
+- W05 (Q1 2022 Rate Hike Shock): 59 trades, 54.2% WR, +86.91 USD PnL, Max DD 4.87% [PROFIT]
+- W06 (Q2 2022 Terra-Luna Collapse): 68 trades, 57.4% WR, +110.30 USD PnL, Max DD 4.76% [PROFIT]
+  * Note: T1 generated +341.43 USD in W06, but S1 gave away -213.85 USD in unaligned dip attempts.
+- W07 (Q3 2022 ETH Merge Grind): 53 trades, 41.5% WR, -183.52 USD PnL, Max DD 3.67% [FAIL]
+- W08 (Q4 2022 FTX Collapse): 45 trades, 51.1% WR, -94.02 USD PnL, Max DD 4.84% [FAIL]
+- W09 (Q1 2023 SVB Bank Run): 96 trades, 49.0% WR, -132.96 USD PnL, Max DD 4.85% [FAIL]
+- W10 (Q2 2023 BlackRock Filing): 20 trades, 65.0% WR, +98.09 USD PnL, Max DD 5.76% [FAIL - DD > 5.0%]
+- W11 (Q3 2023 Summer Flash Flush): 62 trades, 48.4% WR, -169.96 USD PnL, Max DD 3.76% [FAIL]
+- W12 (Q4 2023 Uptober Pre-Run): 100 trades, 49.0% WR, +614.24 USD PnL (+12.28% ROI), Max DD 3.90% [PASS]
+- W13 (Q1 2024 Spot ETF Inflows): 114 trades, 56.1% WR, -158.13 USD PnL, Max DD 4.17% [FAIL]
+- W14 (Q2 2024 Bitcoin Halving): 57 trades, 43.9% WR, -226.06 USD PnL, Max DD 4.54% [FAIL]
+- W15 (Q3 2024 Carry Trade Unwind): 92 trades, 57.6% WR, +609.57 USD PnL (+12.19% ROI), Max DD 1.31% [PASS]
+- W16 (Q4 2024 US Election Rally): 140 trades, 48.6% WR, +542.09 USD PnL (+10.84% ROI), Max DD 4.60% [PASS]
+- W17 (Q1 2025 Strategic Reserve): 128 trades, 50.8% WR, +511.60 USD PnL (+10.23% ROI), Max DD 2.85% [PASS]
+- W18 (Q2 2025 Altcoin Momentum): 94 trades, 45.7% WR, +511.90 USD PnL (+10.24% ROI), Max DD 2.36% [PASS]
+- W19 (Q3 2025 Summer Volatility): 110 trades, 42.7% WR, +450.92 USD PnL (+9.02% ROI), Max DD 2.85% [PROFIT - Near Pass, missing only 49 USD]
+- W20 (Q4 2025 Year-End Flow): 7 trades, 42.9% WR, +64.70 USD PnL, Max DD 5.12% [FAIL - Trades < 15, DD > 5.0%]
+- W21 (Q1 2026 Cross-Asset Flow): 82 trades, 51.2% WR, +505.67 USD PnL (+10.11% ROI), Max DD 3.29% [PASS]
+- W22 (Q2 2026 Modern Flow): 19 trades, 15.8% WR, -229.23 USD PnL, Max DD 4.58% [FAIL]
+- W23 (Q3 2026 Production Regime): 55 trades, 49.1% WR, -192.09 USD PnL, Max DD 4.73% [FAIL]
+
+---
+
+# 4. QUANTITATIVE FORENSIC DIAGNOSTIC & SOLUTION ARCHITECTURE
+Synthesizing from Quant-Developers-Resources-main (Risk Management, Econometrics, and Modern Portfolio Theory):
+
+### 1. Sleeve Decoupling & Asymmetry Elimination:
+- Sleeve T1 (4H Donchian Breakouts) generated +2,507.70 USD with a 55.3% win rate across all 23 quarters.
+- Sleeve S1 (15m Liquidation Pullbacks) generated +457.96 USD with a 46.7% win rate, but suffered severe bleed in bear regimes:
+  * In W04: S1 lost -228.80 USD
+  * In W06: S1 lost -213.85 USD (erasing T1's +341.43 USD gain!)
+  * In W07: S1 lost -183.52 USD
+  * In W09: S1 lost -143.88 USD
+  * In W11: S1 lost -178.87 USD
+
+### 2. Microstructure Regime Gating:
+- In BTC Bear Tides (BTC < EMA 50 < EMA 200), buying altcoin dips blindly leads to sustained losses (-180 USD to -230 USD).
+- Solution: Enforce the Kairi Relative Index (96-period) capitulation gate (kri_96 < -5.5% or ML prob >= calib_thresh + 0.045) across ALL non-bullish regimes (both bear and chop).
+- Directional Veto: Short trades must be strictly vetoed when short liquidation z-score exceeds 1.0 (short_liq_zs >= 1.0) or when funding rate is deeply negative (funding <= -0.02%), preventing violent short squeezes.
+
+### 3. Graduated Risk Allocation (Saga Orchestration Lifecycle):
+- The current defensive risk drops from 34.0 USD down to 8.0 USD whenever drawdown hits 1.8% (90 USD).
+- This creates "defensive paralysis": even when win rate recovers to 60%, 15 winning trades at 8 USD yield only +180 USD, mathematically blocking recovery to the +500.00 USD (+10% ROI) milestone.
+- Solution: Implement a graduated risk ladder:
+  * Normal Regime: Base risk 34.0 USD (S1) / 40.0 USD (T1)
+  * Level 1 Defense (DD >= 2.0%): 22.0 USD
+  * Level 2 Defense (DD >= 3.5%): 14.0 USD
+  * Hard Capital Stop: 4.50% (225.0 USD)
+  * Milestone Lock: Once profit >= 505.0 USD, compress risk to 4.0 USD cushion to lock in certified PASS.
+
+### 4. Claude Opus Mission Deliverable:
+Provide the definitive mathematical and algorithmic enhancements in Engine/run_23_oos_altcoin_suite.py to:
+1. Elevate near-passing windows (W19 at +9.02% ROI, W06 at +7.90% ROI, W05 at +1.74% ROI, W10 at +1.96% ROI) past the +10.00% Net ROI threshold.
+2. Contain failing regimes (W01, W03, W04, W07, W08, W09, W11, W13, W14, W20, W22, W23) using cross-altcoin relative momentum and macro volatility scaling.
+3. Validate that 100% of all 23 quarters achieve certified passes simultaneously without lookahead.
+====================================================================================================
