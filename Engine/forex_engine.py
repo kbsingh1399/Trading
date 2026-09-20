@@ -323,11 +323,11 @@ class MT5Connection:
         df['datetime'] = pd.to_datetime(df['time'], unit='s', utc=True)
         return df
 
-    def get_4h_bars(self, symbol: str, count: int = 250) -> pd.DataFrame:
+    def get_1d_bars(self, symbol: str, count: int = 20) -> pd.DataFrame:
         if not self.connected:
             return pd.DataFrame()
         real_symbol = self.resolve_symbol(symbol)
-        rates = mt5.copy_rates_from_pos(real_symbol, mt5.TIMEFRAME_H4, 0, count)
+        rates = mt5.copy_rates_from_pos(real_symbol, mt5.TIMEFRAME_D1, 0, count)
         if rates is None or len(rates) == 0:
             return pd.DataFrame()
 
@@ -337,6 +337,7 @@ class MT5Connection:
         df['time'] = df['time'] - offset
         df['datetime'] = pd.to_datetime(df['time'], unit='s', utc=True)
         return df
+
 
 
 # -------------------------------------------------------------------------
