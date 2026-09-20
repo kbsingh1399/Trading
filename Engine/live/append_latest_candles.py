@@ -7,7 +7,10 @@ import sys
 import pandas as pd
 import numpy as np
 from datetime import datetime, timezone, timedelta
-import MetaTrader5 as mt5
+try:
+    import MetaTrader5 as mt5
+except (ImportError, ModuleNotFoundError):
+    mt5 = None
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
@@ -21,10 +24,10 @@ print(f"Target cutoff: {CUTOFF_IST.strftime('%Y-%m-%d %H:%M IST')} = {CUTOFF_UTC
 
 # Timeframe map
 TF_MAP = {
-    "15m": mt5.TIMEFRAME_M15,
-    "1h":  mt5.TIMEFRAME_H1,
-    "4h":  mt5.TIMEFRAME_H4,
-    "d1":  mt5.TIMEFRAME_D1,
+    "15m": getattr(mt5, "TIMEFRAME_M15", 15),
+    "1h":  getattr(mt5, "TIMEFRAME_H1", 60),
+    "4h":  getattr(mt5, "TIMEFRAME_H4", 240),
+    "d1":  getattr(mt5, "TIMEFRAME_D1", 1440),
 }
 
 def get_mt5_symbol(parquet_name):

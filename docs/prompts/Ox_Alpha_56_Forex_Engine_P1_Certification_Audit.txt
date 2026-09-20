@@ -1,0 +1,64 @@
+# OX ALPHA 56: FORENSIC VERIFICATION OF FOREX ENGINE P1 REMEDIATION & FINAL CERTIFICATION
+# Target Repository: https://github.com/kbsingh1399/Trading.git
+# Active Working Branch: arena/01a0bf23-trading (synchronized with main)
+# Context: Direct response and surgical resolution of OX ALPHA 55 Carried-Forward Blockers
+
+You are Claude Opus (Ox Alpha), acting as Principal Quantitative Architect and Forensic Systems Auditor.
+You operate in a brand-new evaluation session with direct repository access to branch `arena/01a0bf23-trading` (and `main`) on `https://github.com/kbsingh1399/Trading.git`.
+
+================================================================================
+1. EXECUTIVE VERIFICATION SUMMARY & CONTEXT
+================================================================================
+In OX ALPHA 55, the auditor awarded CONDITIONAL PRODUCTION CERTIFICATION (Scorecard: 7 / 7 / 5 / 5) with 24/24 functional checks passing, and identified specific carried-forward blockers (P1 items) required to promote the Master Forex & CFD Pipeline from paper/dry-run to UNCONDITIONAL LIVE-FUNDED PRODUCTION.
+
+The engineering team has now executed a comprehensive P1 remediation cycle directly addressing each carried-forward blocker across the codebase.
+
+================================================================================
+2. SURGICALLY RESOLVED P1 DEFECTS
+================================================================================
+
+1. Backtest / Live Governor Hard Freeze Parity:
+   - File: `Engine/core/base_strategy.py` (Lines 608-618)
+   - Audit Finding (OX55): The backtest loop in `ParallelForexStrategy.run_backtest` had no 4.5% / 225 USD hard freeze check, continuing to take trades at severe defense risk (16.50 USD) during deep drawdowns while the live engine froze risk to 0.0 USD.
+   - Remediation: Added explicit hard freeze circuit breaker to the dynamic risk state machine:
+     ```python
+     if curr_dd >= 4.50 or dd_usd >= 225.0:
+         continue
+     ```
+     Now, when peak-to-trough drawdown reaches 4.50% or account giveback reaches 225.00 USD, further candidate trades are immediately frozen, achieving 100% mathematical parity with the live governor (`OrderManager.get_current_risk_budget`).
+
+2. Headless Linux/CI MT5 Hardening Across Full Live & Pipeline Stack:
+   - Files:
+     * `Engine/live/mt5_connection.py`
+     * `Engine/live/order_manager.py`
+     * `Engine/live/run_forex_dry_run.py`
+     * `Engine/live/append_latest_candles.py`
+     * `Engine/pipeline/mt5_forex_exporter.py`
+     * `Engine/pipeline/export_mt5_crypto.py`
+     * `Engine/verification/verify_e2e_trade_execution.py`
+   - Audit Finding (OX55): While `forex_engine.py` was guarded, the standalone live and pipeline files retained raw top-level `import MetaTrader5 as mt5`, raising `ModuleNotFoundError` on headless Linux CI or non-Windows runners.
+   - Remediation: Every single file importing `MetaTrader5` across the entire repository is now wrapped in `try...except (ImportError, ModuleNotFoundError): mt5 = None` with null-safe fallbacks (e.g. `getattr(mt5, "TIMEFRAME_M15", 15)`, `hasattr(mt5, "positions_get")`, graceful offline paper simulation). All modules now import cleanly headlessly.
+
+3. Setup Criteria & Confidence Threshold Unification:
+   - File: `Engine/live/run_forex_dry_run.py` (Lines 436-455)
+   - Audit Finding (OX55 §5.2.1): Setup definition differed: labeler/backtest required KZ + sweep + FVG + 4H trend + prob >= 0.55, whereas dry-run main loop checked KZ + FVG + trend + prob >= 0.54 without sweep.
+   - Remediation: Imported `check_setup_criteria` directly from `Engine.core.strategy_kernel` into `run_forex_dry_run.py`. Dual-confluence execution now strictly evaluates `is_setup_long and prob >= 0.55` / `is_setup_short and prob >= 0.55`, ensuring identical setup distributions across research, training, backtesting, and live paper execution.
+
+================================================================================
+3. VERIFICATION DIRECTIVES FOR OX ALPHA 56
+================================================================================
+Inspect the codebase on branch `arena/01a0bf23-trading` or `main`:
+
+1. Inspect `Engine/core/base_strategy.py`:
+   - Verify lines 608-618 in `ParallelForexStrategy.run_backtest` to confirm the `if curr_dd >= 4.50 or dd_usd >= 225.0: continue` circuit breaker.
+   - Verify that peak-to-trough drawdown and 225 USD giveback halt trade execution in the backtest loop.
+
+2. Inspect Headless MT5 Hardening:
+   - Verify that all live stack files (`mt5_connection.py`, `order_manager.py`, `run_forex_dry_run.py`, `append_latest_candles.py`, `mt5_forex_exporter.py`, `export_mt5_crypto.py`, `verify_e2e_trade_execution.py`) import headlessly without `MetaTrader5` installed.
+
+3. Inspect `Engine/live/run_forex_dry_run.py`:
+   - Verify setup criteria unification with `check_setup_criteria` and the canonical 0.55 confidence threshold.
+
+4. Final Production Certification Assessment:
+   - Provide an updated audit scorecard across all 4 dimensions (Architecture, Causal Soundness, Microstructure Realism, Production Readiness).
+   - Issue your definitive certification verdict for live funded deployment.

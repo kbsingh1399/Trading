@@ -21,7 +21,10 @@ from datetime import datetime, timezone, timedelta
 import pandas as pd
 import numpy as np
 import xgboost as xgb
-import MetaTrader5 as mt5
+try:
+    import MetaTrader5 as mt5
+except (ImportError, ModuleNotFoundError):
+    mt5 = None
 
 from rich.console import Console
 from rich.table import Table
@@ -37,7 +40,7 @@ if PROJECT_ROOT not in sys.path:
 from Engine.live.mt5_connection import MT5Connection
 from Engine.live.inference_engine import StatefulInferenceEngine
 from Engine.live.order_manager import OrderManager, MAX_CONCURRENT_POSITIONS
-from Engine.core.strategy_kernel import CANONICAL_FEATURES, CANONICAL_18_ASSETS
+from Engine.core.strategy_kernel import CANONICAL_FEATURES, CANONICAL_18_ASSETS, check_setup_criteria
 from Engine.forex_engine import (
     calculate_adaptive_sl_tp,
     BASE_RISK_USD,
@@ -145,7 +148,7 @@ def pre_flight_data_sync(mt5_conn: MT5Connection, single_asset=None):
             fetch_from_broker = fetch_from + timedelta(seconds=broker_offset)
             cutoff_broker = now_utc + timedelta(seconds=broker_offset)
 
-            rates = mt5.copy_rates_range(real_symbol, mt5.TIMEFRAME_M15, fetch_from_broker, cutoff_broker)
+            rates = mt5.copy_rates_range(real_symbol, getattr(mt5, "TIMEFRAME_M15", 15), fetch_from_broker, cutoff_broker) if (hasattr(mt5, "copy_rates_range") and mt5 is not None) else None
 
             if rates is not None and len(rates) > 0:
                 df_new = pd.DataFrame(rates)
@@ -285,13 +288,13 @@ def main():
 
             # Reconnection logic & dynamic account updates
 
-            acc = mt5.account_info()
-            if acc is None:
+            acc = mt5.account_info() if (hasattr(mt5, "account_info") and mt5 is not None) else None
+            if acc is None and mt5 is not None:
                 logging.warning("MT5 connection lost in telemetry loop. Attempting to reconnect...")
                 if not mt5_conn.connect():
                     time.sleep(5)
                     continue
-                acc = mt5.account_info()
+                acc = mt5.account_info() if hasattr(mt5, "account_info") else None
             
             acc_dict = acc._asdict() if acc is not None else {"login": "UNKNOWN", "server": "UNKNOWN", "balance": 0.0, "equity": 0.0}
 
@@ -433,18 +436,20 @@ def main():
                 is_short_sig = False
                 strat_tag = "DUAL"
 
+                is_setup_long, is_setup_short = check_setup_criteria(features.to_dict())
+
                 if strat_mode == "fvg":
                     strat_tag = "FVG"
-                    is_long_sig = (trend_val > 0 and bull_fvg > 0)
-                    is_short_sig = (trend_val < 0 and bear_fvg > 0)
+                    is_long_sig = is_setup_long
+                    is_short_sig = is_setup_short
                 elif strat_mode == "ml":
                     strat_tag = "ML"
-                    is_long_sig = (trend_val > 0 and prob >= 0.54)
-                    is_short_sig = (trend_val < 0 and prob >= 0.54)
-                else:  # combined (dual confluence)
+                    is_long_sig = (trend_val > 0 and prob >= 0.55)
+                    is_short_sig = (trend_val < 0 and prob >= 0.55)
+                else:  # combined (dual confluence: setup criteria + ML probability)
                     strat_tag = "DUAL"
-                    is_long_sig = (trend_val > 0 and bull_fvg > 0 and prob >= 0.54)
-                    is_short_sig = (trend_val < 0 and bear_fvg > 0 and prob >= 0.54)
+                    is_long_sig = (is_setup_long and prob >= 0.55)
+                    is_short_sig = (is_setup_short and prob >= 0.55)
 
                 atr = float(features.get('atr_14', 0.0))
                 current_utc_hour = datetime.now(timezone.utc).hour
@@ -591,8 +596,8 @@ def main():
                 for asset in ASSETS:
                     if asset.upper() == sym_clean and asset in eval_data:
                         direction = "BUY" if trade_info["type"] == 0 else "SELL"
-                        pos_mt5 = mt5.positions_get(ticket=ticket)
-                        profit_usd = pos_mt5[0].profit if (pos_mt5 and len(pos_mt5) > 0) else 0.0
+                        pos_mt5 = mt5.positions_get(ticket=ticket) if (hasattr(mt5, "positions_get") and not is_dry_run) else None
+                        profit_usd = trade_info.get("unrealized_pnl", 0.0) if is_dry_run else (pos_mt5[0].profit if (pos_mt5 and len(pos_mt5) > 0) else 0.0)
                         pnl_sign = "+" if profit_usd >= 0 else ""
                         eval_data[asset]['decision_cell'] = f"[bold white on blue] ACTIVE TRADE: {direction} {trade_info['volume']}L ({pnl_sign}{profit_usd:.2f} USD) [/bold white on blue]"
 

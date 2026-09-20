@@ -1,4 +1,8 @@
-import MetaTrader5 as mt5
+try:
+    import MetaTrader5 as mt5
+except (ImportError, ModuleNotFoundError):
+    mt5 = None
+
 import pandas as pd
 import logging
 from typing import Optional
@@ -13,6 +17,9 @@ class MT5Connection:
         self.connected = False
         
     def connect(self):
+        if mt5 is None:
+            logging.error("MetaTrader5 python module is not available on this platform/environment.")
+            return False
         if not mt5.initialize():
             logging.error(f"initialize() failed, error code = {mt5.last_error()}")
             return False
@@ -31,7 +38,8 @@ class MT5Connection:
         
     def disconnect(self):
         if self.connected:
-            mt5.shutdown()
+            if mt5 is not None:
+                mt5.shutdown()
             self.connected = False
             logging.info("Disconnected from MT5")
             
@@ -42,6 +50,9 @@ class MT5Connection:
         1. Suffix resolution (.pi for forex, .p for CFDs)
         2. Renamed/transitioned instruments (GER30 -> GER40.p)
         """
+        if mt5 is None:
+            return symbol
+
         # Alias map for sunsetted/renamed instruments
         ALIASES = {
             "GER30": "GER40.p",

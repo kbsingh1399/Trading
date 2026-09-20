@@ -1,4 +1,8 @@
-import MetaTrader5 as mt5
+try:
+    import MetaTrader5 as mt5
+except (ImportError, ModuleNotFoundError):
+    mt5 = None
+
 import logging
 import os
 import json
@@ -188,7 +192,7 @@ class OrderManager:
                     "real_symbol": tr.get("real_symbol", tr.get("symbol", "")),
                     "ticket": int(tkt),
                     "type": int(tr.get("type", 0)),
-                    "action": tr.get("action", "BUY" if tr.get("type", 0) in (0, mt5.ORDER_TYPE_BUY) else "SELL"),
+                    "action": tr.get("action", "BUY" if tr.get("type", 0) in (0, getattr(mt5, "ORDER_TYPE_BUY", 0)) else "SELL"),
                     "volume": float(tr.get("volume", 0.01)),
                     "entry": entry,
                     "entry_price": entry,

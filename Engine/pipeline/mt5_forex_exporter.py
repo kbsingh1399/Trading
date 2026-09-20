@@ -26,7 +26,10 @@ import os
 import time
 import json
 from datetime import datetime, timezone
-import MetaTrader5 as mt5
+try:
+    import MetaTrader5 as mt5
+except (ImportError, ModuleNotFoundError):
+    mt5 = None
 import polars as pl
 
 # Earliest date to pull history from (MT5 server typically has data from ~2015)
@@ -34,10 +37,10 @@ HISTORY_START = datetime(2010, 1, 1, tzinfo=timezone.utc)
 
 # Timeframes to export: (label, MT5 constant, file suffix)
 TIMEFRAMES = [
-    ("15m", mt5.TIMEFRAME_M15, "15m"),
-    ("1h",  mt5.TIMEFRAME_H1,  "1h"),
-    ("4h",  mt5.TIMEFRAME_H4,  "4h"),
-    ("D1",  mt5.TIMEFRAME_D1,  "d1"),
+    ("15m", getattr(mt5, "TIMEFRAME_M15", 15), "15m"),
+    ("1h",  getattr(mt5, "TIMEFRAME_H1", 60),  "1h"),
+    ("4h",  getattr(mt5, "TIMEFRAME_H4", 240), "4h"),
+    ("D1",  getattr(mt5, "TIMEFRAME_D1", 1440), "d1"),
 ]
 
 # ICT Session boundaries in UTC hour (inclusive start, exclusive end)

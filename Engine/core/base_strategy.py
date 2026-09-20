@@ -604,11 +604,15 @@ class ParallelForexStrategy(BaseForexStrategy):
                 continue
 
             curr_dd = (w_peak - w_eq) / w_peak * 100.0 if w_peak > 0 else 0.0
+            dd_usd = max(0.0, w_peak - w_eq)
             current_pnl = w_eq - initial_capital
             n_done = len(executed)
 
-            # Institutional Dynamic Risk State Machine
-            if current_pnl >= 500.0 and n_done >= 15:
+            # Institutional Dynamic Risk State Machine (100% Parity with Live Governor)
+            if curr_dd >= 4.50 or dd_usd >= 225.0:
+                # Hard Freeze: Portfolio hit 4.5% / $225 limit - freeze further execution
+                continue
+            elif current_pnl >= 500.0 and n_done >= 15:
                 risk = base_risk * pass_lock_mult
             elif curr_dd >= 3.0:
                 risk = base_risk * dd_mult * 0.60

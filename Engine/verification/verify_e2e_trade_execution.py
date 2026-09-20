@@ -19,7 +19,10 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import MetaTrader5 as mt5
+try:
+    import MetaTrader5 as mt5
+except (ImportError, ModuleNotFoundError):
+    mt5 = None
 
 ENGINE_DIR = Path(__file__).resolve().parents[1]
 PROJECT_ROOT = ENGINE_DIR.parent
