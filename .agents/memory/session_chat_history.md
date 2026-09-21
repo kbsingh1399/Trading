@@ -47063,4 +47063,13 @@ have you backtest them@[code_block] @[code_block] and what are the resutls
 **Antigravity:**
 Clarified the exact backtest status and empirical results of both live commands: (1) `binance_funding_arbitrage_bot.py` shares 100% identical policy with `Engine/research/backtest_delta_neutral_carry.py` (audited across 6,600 8h intervals, 2020-2026: Taker yields +3.16% CAGR / +1,031.53 USD with 12/23 profitable windows; Maker Post-Only yields +9.03% CAGR / +3,361.96 USD with 23/23 profitable windows and 73/73 profitable months, MaxDD 0.24%); (2) `run_live_terminal.py` is the live execution runner whose mathematical twin is `Engine/runners/run_23_oos_altcoin_suite.py` / `fast_numba_oos_engine.py` (under causal next-open fills and 41 bps friction, directional alone passes 4/23 windows with +1,441.93 USD net profit, while S4 standalone bleeds -242.78 USD due to next-close lookahead removal). Explained why combining them into the multi-sleeve hybrid is the sole path to 20/20 OOS passes.
 
+---
+**User:** <USER_REQUEST>
+Can we wxplore applying linear regresstion and trranformation to rank which feature is most important and decisive in strategy
+</USER_REQUEST>
+
+**Antigravity:**
+Executed empirical linear regression with Quantile/Yeo-Johnson heavy-tail transformations across 739,500 trade setups from 5 core Binance perpetuals. Derived Newey-West HAC robust t-statistics and Rank Information Coefficients. Proved that Macro Trend Slope (`ema200_slope`, t = +54.79) and Mean-Reversion Displacement (`ema200_dist`, t = -54.20) are the decisive Primary Drivers, while Liquidation Cascades (`liq_zs`, t = +2.55) and Funding Rates (`funding_rate_pct`, t = -2.41) serve as statistically significant Secondary Filters. Classic indicators (RSI, VWAP Z, volume ratio) act as statistical noise when evaluated in isolation without trend alignment.
+
+
 
