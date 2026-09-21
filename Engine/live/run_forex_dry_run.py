@@ -77,7 +77,7 @@ def get_terminal_width() -> int:
 
 console = Console(force_terminal=True, width=get_terminal_width())
 DRY_RUN = True
-BASE_RISK_USD = 25.0  # 0.50% on 5,000 USD capital preservation
+BASE_RISK_USD = 10.0  # 0.20% on 5,000 USD capital preservation (calibrated to 10 USD)
 
 
 # ============================================================================

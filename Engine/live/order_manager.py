@@ -199,7 +199,7 @@ class OrderManager:
                     "sl": sl,
                     "tp": tp,
                     "r_dist": r_dist,
-                    "risk_usd": float(tr.get("risk_usd", 25.0)),
+                    "risk_usd": float(tr.get("risk_usd", 10.0)),
                     "strategy": tr.get("strategy", "ML_FOREX"),
                     "bars_elapsed": bars,
                     "bars_held": bars,
@@ -294,7 +294,7 @@ class OrderManager:
         decimals = len(step_str.split('.')[1]) if '.' in step_str else 2
         return round(float(lots), decimals)
 
-    def place_market_order(self, symbol, order_type, volume=None, sl_price=None, tp_price=None, risk_usd=25.0, strategy_tag="ML_FOREX"):
+    def place_market_order(self, symbol, order_type, volume=None, sl_price=None, tp_price=None, risk_usd=10.0, strategy_tag="ML_FOREX"):
         if self.conn is not None and not getattr(self.conn, "connected", True):
             logging.error("Not connected to MT5")
             return None
@@ -614,7 +614,7 @@ class OrderManager:
                 current_r = (entry - current_price) / r_dist
                 
             trade_info["current_r"] = current_r
-            trade_info["running_pnl"] = current_r * float(trade_info.get("risk_usd", 25.0))
+            trade_info["running_pnl"] = current_r * float(trade_info.get("risk_usd", 10.0))
             trade_info["highest_r"] = max(float(trade_info.get("highest_r", 0.0)), current_r)
             trade_info["lowest_r"] = min(float(trade_info.get("lowest_r", 0.0)), current_r)
 
