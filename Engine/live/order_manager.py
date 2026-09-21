@@ -31,7 +31,10 @@ from Engine.forex_engine import (
     is_broker_rollover_window,
     is_friday_weekend_lockout,
     is_friday_closeout_window,
-    RECONCILE_HEARTBEAT_INTERVAL_SEC
+    RECONCILE_HEARTBEAT_INTERVAL_SEC,
+    UX_TP1_R,
+    UX_TP1_FRAC,
+    UX_TP1_LOCK_R
 )
 
 class OrderManager:
@@ -209,7 +212,9 @@ class OrderManager:
                     "running_pnl": float(tr.get("running_pnl", 0.0)),
                     "ratchet_phase": int(tr.get("ratchet_phase", 0)),
                     "ratchet_desc": str(tr.get("ratchet_desc", "Base SL (-1.00R)")),
-                    "last_bar_time": tr.get("last_bar_time", None)
+                    "last_bar_time": tr.get("last_bar_time", None),
+                    "tp1_scaled": bool(tr.get("tp1_scaled", False)),
+                    "partial_pnl": float(tr.get("partial_pnl", 0.0))
                 }
             logging.info(f"Loaded state: {len(self.open_trades)} active positions restored from {target_file.name}")
         except Exception as e:
@@ -392,7 +397,9 @@ class OrderManager:
                 "running_pnl": 0.0,
                 "ratchet_phase": 0,
                 "ratchet_desc": "Base SL (-1.00R)",
-                "last_bar_time": None
+                "last_bar_time": None,
+                "tp1_scaled": False,
+                "partial_pnl": 0.0
             }
             self.save_state()
             return mock_ticket
@@ -435,7 +442,9 @@ class OrderManager:
             "running_pnl": 0.0,
             "ratchet_phase": 0,
             "ratchet_desc": "Base SL (-1.00R)",
-            "last_bar_time": None
+            "last_bar_time": None,
+            "tp1_scaled": False,
+            "partial_pnl": 0.0
         }
         self.save_state()
         
@@ -489,6 +498,73 @@ class OrderManager:
         if ticket in self.open_trades:
             del self.open_trades[ticket]
             self.save_state()
+        return True
+
+    def close_partial(self, ticket, exit_price, frac=0.50, reason="TP1 PARTIAL"):
+        """OX63 2-stage scaling: closes fraction `frac` at `exit_price`, books the partial
+        PnL into the trade's partial_pnl accumulator, and scales volume + risk_usd in place.
+        The position stays in open_trades under the same ticket. Returns False if refused."""
+        trade_info = self.open_trades.get(ticket)
+        if trade_info is None:
+            return False
+        if not (0.0 < frac < 1.0):
+            logging.warning(f"[PARTIAL REFUSED] #{ticket}: frac {frac} outside (0, 1).")
+            return False
+        entry = float(trade_info.get("entry_price") or trade_info.get("entry") or 0.0)
+        r_dist = float(trade_info.get("r_dist") or 0.0001)
+        if r_dist <= 0:
+            r_dist = 0.0001
+        pos_type = int(trade_info.get("type", 0))
+        is_long = pos_type in (0, getattr(mt5, "POSITION_TYPE_BUY", 0))
+        leg_r = (exit_price - entry) / r_dist if is_long else (entry - exit_price) / r_dist
+        risk_usd = float(trade_info.get("risk_usd", 10.0))
+        partial_pnl = leg_r * risk_usd * frac
+        trade_info["partial_pnl"] = float(trade_info.get("partial_pnl", 0.0)) + partial_pnl
+
+        if not getattr(self, "dry_run", False):
+            if self.conn is not None and not getattr(self.conn, "connected", True):
+                trade_info["partial_pnl"] -= partial_pnl
+                return False
+            position = mt5.positions_get(ticket=ticket) if hasattr(mt5, "positions_get") else None
+            if position is None or len(position) == 0:
+                logging.error(f"Position {ticket} not found for partial close")
+                trade_info["partial_pnl"] -= partial_pnl
+                return False
+            pos = position[0]
+            info = mt5.symbol_info(pos.symbol) if hasattr(mt5, "symbol_info") else None
+            step = getattr(info, "volume_step", 0.01) or 0.01
+            vmin = getattr(info, "volume_min", 0.01) or 0.01
+            close_vol = max(vmin, math.floor(pos.volume * frac / step + 1e-9) * step)
+            close_type = getattr(mt5, "ORDER_TYPE_SELL", 1) if pos.type == getattr(mt5, "POSITION_TYPE_BUY", 0) else getattr(mt5, "ORDER_TYPE_BUY", 0)
+            tick = self.conn.get_last_tick(pos.symbol) if self.conn and hasattr(self.conn, "get_last_tick") else None
+            price = exit_price
+            if tick is not None:
+                price = tick.bid if close_type == getattr(mt5, "ORDER_TYPE_SELL", 1) else tick.ask
+            request = {
+                "action": getattr(mt5, "TRADE_ACTION_DEAL", 1),
+                "symbol": pos.symbol,
+                "volume": close_vol,
+                "type": close_type,
+                "position": ticket,
+                "price": price,
+                "deviation": 20,
+                "magic": 123456,
+                "comment": "Partial TP1",
+                "type_time": getattr(mt5, "ORDER_TIME_GTC", 0),
+                "type_filling": getattr(mt5, "ORDER_FILLING_IOC", 1),
+            }
+            result = mt5.order_send(request)
+            if result is None or getattr(result, "retcode", None) != getattr(mt5, "TRADE_RETCODE_DONE", 10009):
+                retcode = getattr(result, "retcode", None)
+                logging.error(f"Partial close failed for {ticket}, retcode={retcode}")
+                trade_info["partial_pnl"] -= partial_pnl
+                return False
+            logging.info(f"Position {ticket} partial-closed {close_vol} lots ({reason})")
+
+        trade_info["volume"] = float(trade_info.get("volume", 0.01)) * (1.0 - frac)
+        trade_info["risk_usd"] = risk_usd * (1.0 - frac)
+        self.save_state()
+        logging.info(f"[TRADE PARTIAL] #{ticket} {trade_info.get('symbol')} | Reason: {reason} | Leg: {leg_r:+.2f}R x{frac:.0%} = {leg_r * frac:+.2f}R | Partial PnL: {partial_pnl:+.2f} USD")
         return True
         
     def modify_sl(self, ticket, new_sl):
@@ -618,6 +694,32 @@ class OrderManager:
             trade_info["highest_r"] = max(float(trade_info.get("highest_r", 0.0)), current_r)
             trade_info["lowest_r"] = min(float(trade_info.get("lowest_r", 0.0)), current_r)
 
+            # OX63 2-stage scaling: TP1 partial BEFORE the TP2 full-close check so a gap
+            # over both levels still banks TP1 first (research-sim bar-order parity:
+            # SL > TP1 > TP2). SL keeps priority via sl_hit_now. Fires in both modes.
+            is_long = pos_type in (0, getattr(mt5, "POSITION_TYPE_BUY", 0))
+            tp_val = float(trade_info.get("tp", 0.0))
+            sl_hit_now = (pos_sl > 0) and ((current_price <= pos_sl) if is_long else (current_price >= pos_sl))
+            if (not trade_info.get("tp1_scaled", False) and tp_val > 0
+                    and current_r >= UX_TP1_R and not sl_hit_now):
+                if in_rollover:
+                    logging.info(f"[ROLLOVER LOCKOUT] Suppressing TP1 partial for #{ticket} during 21:55-22:15 UTC bank settlement.")
+                else:
+                    tp1_price = entry + (UX_TP1_R * r_dist) if is_long else entry - (UX_TP1_R * r_dist)
+                    if self.close_partial(ticket, exit_price=tp1_price, frac=UX_TP1_FRAC,
+                                          reason=f"TP1 PARTIAL (+{UX_TP1_R:.2f}R)"):
+                        lock1 = entry + (UX_TP1_LOCK_R * r_dist) if is_long else entry - (UX_TP1_LOCK_R * r_dist)
+                        if is_long:
+                            if lock1 > pos_sl:
+                                self.modify_sl(ticket, lock1)
+                        else:
+                            if lock1 < pos_sl or pos_sl == 0:
+                                self.modify_sl(ticket, lock1)
+                        trade_info["tp1_scaled"] = True
+                        trade_info["ratchet_phase"] = max(int(trade_info.get("ratchet_phase", 0)), 1)
+                        trade_info["ratchet_desc"] = f"TP1 Scaled (Lock +{UX_TP1_LOCK_R:.2f}R)"
+                        trade_info["running_pnl"] = current_r * float(trade_info.get("risk_usd", 10.0))
+
             # In dry run mode, check simulated SL and TP hits
             if getattr(self, "dry_run", False):
                 if pos_type in (0, getattr(mt5, "POSITION_TYPE_BUY", 0)):
@@ -672,7 +774,7 @@ class OrderManager:
                 new_sl_r = 0.80
                 trade_info["ratchet_phase"] = 2
                 trade_info["ratchet_desc"] = "Lock +0.80R"
-            elif highest_r >= 0.8:
+            elif highest_r >= 0.8 and not trade_info.get("tp1_scaled", False):
                 new_sl_r = 0.15
                 trade_info["ratchet_phase"] = 1
                 trade_info["ratchet_desc"] = "BE Lock (+0.15R)"

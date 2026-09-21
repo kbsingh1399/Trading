@@ -114,3 +114,7 @@ docs/ox61_verification/__pycache__/
 # OX62 regenerable build artifacts (rebuilt by run_ox62_primary/cv.py; scorecards stay tracked)
 docs/ox62_research/*.parquet
 docs/ox62_research/__pycache__/
+
+# OX63 regenerable build artifacts (rebuilt by run_ox63.py; scorecards + manifest stay tracked)
+docs/ox63_research/*.parquet
+docs/ox63_research/__pycache__/

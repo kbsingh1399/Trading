@@ -1,0 +1,153 @@
+{
+ "program": "OX63 single-shot",
+ "protocol": "docs/ox63_research/PROTOCOL.md",
+ "evidence_grade": "EXPLORATORY-CONFIRMATORY HYBRID (protocol \u00a71)",
+ "economics": {
+  "research_risk_usd": 50.0,
+  "production_risk_usd": 10.0,
+  "initial_capital_usd": 5000.0
+ },
+ "w01_start": "2023-09-15",
+ "params": {
+  "TP1_R": 1.1,
+  "TP1_FRAC": 0.5,
+  "TP1_LOCK_R": 0.15,
+  "veto_R_eff": 1.2,
+  "cap_R_eff": 3.5,
+  "fallback_R": 2.5,
+  "friction_R": 0.08
+ },
+ "pool_scaled": {
+  "n": 2254,
+  "avgR": -0.1159,
+  "WR": 55.7,
+  "netR": -261.32,
+  "scaled_rate": 0.3846
+ },
+ "pool_mono": {
+  "n": 890,
+  "avgR": -0.0546,
+  "WR": 55.1,
+  "netR": -48.59
+ },
+ "portfolio_50": {
+  "economics": "research-$50",
+  "trades": 576,
+  "sharpe": -3.039,
+  "profit_factor": 0.712,
+  "max_dd_pct": 51.8,
+  "annual": {
+   "2023": -421.38,
+   "2024": -1100.54,
+   "2025": -854.05,
+   "2026": -173.52
+  },
+  "net_pnl": -2549.48,
+  "net_r": -92.2
+ },
+ "portfolio_10": {
+  "economics": "production-$10",
+  "trades": 1624,
+  "sharpe": -3.132,
+  "profit_factor": 0.739,
+  "max_dd_pct": 33.13,
+  "annual": {
+   "2023": -220.79,
+   "2024": -616.2,
+   "2025": -649.05,
+   "2026": -72.03
+  },
+  "net_pnl": -1558.07,
+  "net_r": -193.46
+ },
+ "portfolio_mono50": {
+  "economics": "counterfactual-mono-$50",
+  "trades": 513,
+  "sharpe": 0.437,
+  "profit_factor": 1.049,
+  "max_dd_pct": 15.45,
+  "annual": {
+   "2023": 375.11,
+   "2024": 281.81,
+   "2025": -200.5,
+   "2026": -85.06
+  },
+  "net_pnl": 371.35,
+  "net_r": 3.0
+ },
+ "verdict_50": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": false,
+  "y2024_pos": false,
+  "y2025_pos": false
+ },
+ "verdict_10": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": false,
+  "y2024_pos": false,
+  "y2025_pos": false
+ },
+ "conjunction": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": false,
+  "y2024_pos": false,
+  "y2025_pos": false
+ },
+ "all_pass_conjunction": false,
+ "logical_hashes": {
+  "cand": {
+   "rows": 2254,
+   "hash": "dac6399b552e35dfb1bd807d3fe73acf9035e162056a786b885c316d9aa8338e"
+  },
+  "mono": {
+   "rows": 890,
+   "hash": "30df90a69a38bad297da72d8c9b2f7c552b02ab01b0c17bd09f101b232a4443e"
+  },
+  "sc50": {
+   "rows": 20,
+   "hash": "cdefc0e8f1b9e049dbf672bcd8ff17cc1af893060b4bc31ef8182a40d74197ad"
+  },
+  "sc10": {
+   "rows": 20,
+   "hash": "70991125c06b7fd82f81e02d26875507d4579279468c828892892e7ab8f8a50e"
+  },
+  "scm50": {
+   "rows": 20,
+   "hash": "3d85aaecd89f254da6905693c06725e86a67225d5079899cea0f5b561a48d4ec"
+  },
+  "ex50": {
+   "rows": 576,
+   "hash": "e115276ae5710d899631c9406c0a632291212ea581858f099698c66ca7b0767d"
+  },
+  "ex10": {
+   "rows": 1624,
+   "hash": "6a623223b125750f41f31bc2be7fa612cffc804fa99fb562c1fffd6986b44753"
+  },
+  "exm50": {
+   "rows": 513,
+   "hash": "3c52016ad4614bcc1f41b11bd00feed4a529733cf967b639db6900c093301fcd"
+  }
+ },
+ "artifact_sha256": {
+  "cand_ox63_F6R.parquet": "1505ddc94e641e20ba4dc765d42c02a54a3da58174345932af26ba097926c65c",
+  "cand_ox63_F6R_mono.parquet": "59ffef3dad61de03ab2d895df68f576a83f67cb136b8686c20a87aa2760fc0a1",
+  "scorecard_ox63_50.csv": "39ff0032f9b8c90212a8616ee2489cc2a13f0919ef5bd8f3dc2face14068b475",
+  "scorecard_ox63_10.csv": "0d68959d9e1ef2d84da68b2f5422576681aeedbe9199c7b8f5c34124034ed50c",
+  "scorecard_ox63_mono50.csv": "2765cb42ec6970197ecf231b76f38dc74401632501909aa555e7dbd1de6923b7",
+  "exec_ox63_50.parquet": "b4a4e21431a0f0f6b8c61e759a54a888674f57264c266e53fd62886b8745f817",
+  "exec_ox63_10.parquet": "840e7c90b955be615fe30b3aa3c6ee69a5d3441c41057776228f156787b5a3c3",
+  "exec_ox63_mono50.parquet": "698f248cfaf6ba11252438136a728a34e46f3e9d2767f9f2eb34890d3639eb77"
+ },
+ "code_hashes": {
+  "ox63_lib.py": "a3db82593b269d2b60bd2a7276e9bd1c8d1d92f6721451633f3386e1f55e9642",
+  "run_ox63.py": "b1e90e8a8ff963584b21b46398f4a726a2cf42d71d2adb2d55c399101f098c6c",
+  "test_ox63_scaled.py": "12c84460b4091d5df3fba3cabea6cef9e538f031e9200aed912bdd96e2183d69",
+  "test_ox63_manager.py": "2eb9980e2754f6eefff34aecaedd42752da33b7e537bdf90859e89c6584e241f",
+  "test_ox63_mirror.py": "b86b960caae9eddc88b249e8bfccc4e7d296ffb51f50948424bb108f6557b926",
+  "test_ox63_msb.py": "7d92a7d06926645043ef0c5ab5e67618349e66344ddd276cf3f0e827958a43e1",
+  "PROTOCOL.md": "dfb3497d33de01b3ef8085540aff4f363b98b483d67ea9e87c87a01c9f3cfba7"
+ }
+}

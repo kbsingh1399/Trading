@@ -79,6 +79,9 @@ from Engine.core.strategy_kernel import (
     CANONICAL_18_ASSETS,
     engineer_features_polars,
     create_labels_ratchet,
+    UX_TP1_R,
+    UX_TP1_FRAC,
+    UX_TP1_LOCK_R,
 )
 
 # Explicitly import FVG_ML strategy to register it into StrategyRegistry
@@ -151,7 +154,7 @@ MAX_SPREAD_ATR_RATIO_ENTER = 0.12 # Enter quarantine threshold
 MAX_SPREAD_ATR_RATIO_EXIT = 0.08  # Exit quarantine hysteresis threshold
 MIN_SPREAD_MULTIPLIER = 3.5       # Stop distance must be >= 3.5x current broker spread
 MIN_ATR_MULTIPLIER = 1.5          # Stop distance must be >= 1.5x 15m ATR
-MIN_STRUCTURAL_R_EFF = 2.50       # Minimum effective R for structural targets (strict parity with target_oos_criteria.json min_r_multiple = 2.5)
+MIN_STRUCTURAL_R_EFF = 1.20       # OX63: relaxed 2.50 -> 1.20 for 2-stage scaling (TP1 banks 50% at +1.10R; aligns with calculate_adaptive_sl_tp docstring range 1.20-3.50)
 MAX_STRUCTURAL_R_EFF = 3.50       # Cap effective R to avoid tail liquidity moonshots
 MAX_MARGIN_UTILIZATION_PCT = 0.30 # Portfolio margin utilization ceiling (30%)
 MIN_MARGIN_LEVEL_PCT = 200.0      # Minimum margin level before hard freeze (200%)
@@ -521,7 +524,8 @@ class OrderManager:
                     "ratchet_phase": int(tr.get("ratchet_phase", 0)),
                     "ratchet_desc": str(tr.get("ratchet_desc", "Base SL (-1.00R)")),
                     "last_evaluated_bar": tr.get("last_evaluated_bar", None),
-                    "last_bar_time": tr.get("last_bar_time", None)
+                    "last_bar_time": tr.get("last_bar_time", None),
+                    "tp1_scaled": bool(tr.get("tp1_scaled", False))
                 }
                 self.open_trades[int(tkt)] = norm_trade
 
@@ -757,7 +761,8 @@ class OrderManager:
                 "current_r": 0.0,
                 "running_pnl": 0.0,
                 "ratchet_phase": 0,
-                "ratchet_desc": "Base SL (-1.00R)"
+                "ratchet_desc": "Base SL (-1.00R)",
+                "tp1_scaled": False
             }
             logging.info(f"[PAPER ORDER] {action_name} {volume:.2f}L {symbol} @ {fill_price:.5f} | SL={sl_price:.5f} | TP={tp_price:.5f} | #{fake_ticket}")
             self.save_state()
@@ -815,7 +820,8 @@ class OrderManager:
             "current_r": 0.0,
             "running_pnl": 0.0,
             "ratchet_phase": 0,
-            "ratchet_desc": "Base SL (-1.00R)"
+            "ratchet_desc": "Base SL (-1.00R)",
+            "tp1_scaled": False
         }
         logging.info(f"[LIVE ORDER FILLED] {action_name} {volume:.2f}L {symbol} @ {fill_price:.5f} | Ticket: {live_ticket}")
         self.save_state()
@@ -942,6 +948,93 @@ class OrderManager:
         self.save_state()
         logging.info(f"[TRADE CLOSED] #{ticket} {t.get('symbol')} | Reason: {reason} | Exit: {actual_exit:.5f} | Realized PnL: {realized_pnl:+.2f} USD ({actual_r:+.2f}R)")
 
+    def close_partial(
+        self,
+        ticket: int,
+        exit_price: float,
+        frac: float = 0.50,
+        reason: str = "TP1 PARTIAL"
+    ) -> bool:
+        """OX63 2-stage scaling: closes fraction `frac` of an open position at `exit_price`,
+        books the partial PnL, and scales the runner remainder (volume + risk_usd) in place.
+        The position stays in open_trades under the same ticket. Returns False if refused."""
+        t = self.open_trades.get(ticket)
+        if t is None:
+            return False
+        if not (0.0 < frac < 1.0):
+            logging.warning(f"[PARTIAL REFUSED] #{ticket}: frac {frac} outside (0, 1).")
+            return False
+        entry = float(t.get("entry") or t.get("entry_price") or 0.0)
+        r_dist = float(t.get("r_dist", 0.0))
+        if r_dist <= 0:
+            r_dist = 0.0001
+        is_long = (t.get("type", 0) in (0, mt5.ORDER_TYPE_BUY))
+        leg_r = (exit_price - entry) / r_dist if is_long else (entry - exit_price) / r_dist
+        risk_usd = float(t.get("risk_usd", BASE_RISK_USD))
+        partial_pnl = leg_r * risk_usd * frac
+        self.realized_pnl += partial_pnl
+
+        # Live MT5 broker partial closure (fraction of broker-side volume, floored to step)
+        if not self.dry_run and self.conn.connected:
+            pos = mt5.positions_get(ticket=ticket)
+            if pos and len(pos) > 0:
+                p = pos[0]
+                close_type = mt5.ORDER_TYPE_SELL if p.type == mt5.ORDER_TYPE_BUY else mt5.ORDER_TYPE_BUY
+                sym = t.get("symbol", "")
+                real_sym = t.get("real_symbol") or sym
+                info = mt5.symbol_info(real_sym)
+                step = float(info.volume_step) if info is not None else 0.01
+                vmin = float(info.volume_min) if info is not None else 0.01
+                close_vol = max(vmin, float(np.floor(p.volume * frac / step) * step))
+                tick = self.conn.get_last_tick(sym)
+                price = tick.bid if close_type == mt5.ORDER_TYPE_SELL else (tick.ask if tick else exit_price)
+                close_request = {
+                    "action": mt5.TRADE_ACTION_DEAL,
+                    "position": ticket,
+                    "symbol": real_sym,
+                    "volume": close_vol,
+                    "type": close_type,
+                    "price": price,
+                    "deviation": 10,
+                    "magic": 10101,
+                    "comment": f"Partial-{reason[:10]}",
+                    "type_time": mt5.ORDER_TIME_GTC,
+                    "type_filling": mt5.ORDER_FILLING_IOC,
+                }
+                res = mt5.order_send(close_request)
+                if res and res.retcode == mt5.TRADE_RETCODE_DONE:
+                    logging.info(f"[LIVE MT5 PARTIAL CLOSED] #{ticket} {sym} {close_vol:.2f}L @ {price:.5f}")
+                else:
+                    err_comment = res.comment if res else "No response"
+                    err_code = res.retcode if res else -1
+                    logging.warning(f"[LIVE MT5 PARTIAL FAILED] #{ticket}: {err_comment} ({err_code})")
+                    self.realized_pnl -= partial_pnl
+                    return False
+
+        t["volume"] = float(t.get("volume", 0.01)) * (1.0 - frac)
+        t["risk_usd"] = risk_usd * (1.0 - frac)
+        self.closed_trades.append({
+            "ticket": ticket,
+            "symbol": t.get("symbol", ""),
+            "strategy": t.get("strategy", "PARALLEL"),
+            "action": t.get("action", "BUY" if is_long else "SELL"),
+            "volume": float(t.get("volume", 0.01)) * frac / max(1.0 - frac, 1e-9),
+            "entry": entry,
+            "exit": exit_price,
+            "sl": float(t.get("sl", 0.0)),
+            "tp": float(t.get("tp", 0.0)),
+            "realized_r": leg_r * frac,
+            "realized_pnl": partial_pnl,
+            "entry_time": t.get("entry_time", datetime.now(timezone.utc)),
+            "exit_time": datetime.now(timezone.utc),
+            "bars_held": int(t.get("bars_held", t.get("bars_elapsed", 0))),
+            "reason": reason,
+            "partial_frac": frac
+        })
+        self.save_state()
+        logging.info(f"[TRADE PARTIAL] #{ticket} {t.get('symbol')} | Reason: {reason} | Leg: {leg_r:+.2f}R x{frac:.0%} = {leg_r * frac:+.2f}R | Partial PnL: {partial_pnl:+.2f} USD")
+        return True
+
     def manage_open_trades(self, current_bar_time: datetime) -> None:
         """Applies 7-stage microstructure ratchets, running PnL calculations, and time-decay exits."""
         # Operational Safeguard 2b: Friday Weekend Gap Defense - Liquidate open positions at 20:30 UTC Friday
@@ -1004,6 +1097,30 @@ class OrderManager:
                 reason_label = "BE RATCHET" if realized_r > 0 else "STOP LOSS"
                 self.close_trade(ticket, exit_price=exit_price, realized_r=realized_r, reason=f"{reason_label} ({realized_r:+.2f}R)")
                 continue
+
+            # OX63 2-stage scaling: TP1 partial at +1.10R banks half the position and locks
+            # the runner SL to +0.15R. Requires a defined TP2 (tp > 0). Falls through to the
+            # TP2/decay/ratchet checks below so the remainder is managed on the same tick
+            # (research-sim bar-order parity: TP1 is evaluated before TP2).
+            if not trade.get("tp1_scaled", False) and tp_price > 0 and gain_r >= UX_TP1_R:
+                if in_rollover:
+                    logging.info(f"[ROLLOVER LOCKOUT] Suppressing TP1 partial for {sym} during 21:55-22:15 UTC settlement (will retry).")
+                else:
+                    tp1_price = entry + (UX_TP1_R * r_dist) if is_long else entry - (UX_TP1_R * r_dist)
+                    if self.close_partial(ticket, exit_price=tp1_price, frac=UX_TP1_FRAC,
+                                          reason=f"TP1 PARTIAL (+{UX_TP1_R:.2f}R)"):
+                        lock1 = entry + (UX_TP1_LOCK_R * r_dist) if is_long else entry - (UX_TP1_LOCK_R * r_dist)
+                        if is_long:
+                            if lock1 > trade.get("sl", 0.0):
+                                self.modify_sl(ticket, lock1)
+                        else:
+                            curr_sl = trade.get("sl", 0.0)
+                            if lock1 < curr_sl or curr_sl == 0.0:
+                                self.modify_sl(ticket, lock1)
+                        trade["tp1_scaled"] = True
+                        trade["ratchet_phase"] = max(int(trade.get("ratchet_phase", 0)), 1)
+                        trade["ratchet_desc"] = f"TP1 Scaled (Lock +{UX_TP1_LOCK_R:.2f}R)"
+                        trade["running_pnl"] = gain_r * float(trade.get("risk_usd", BASE_RISK_USD))
 
             if hit_tp:
                 actual_tp_r = (tp_price - entry) / r_dist if is_long else (entry - tp_price) / r_dist

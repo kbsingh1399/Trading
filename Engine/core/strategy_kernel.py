@@ -84,8 +84,10 @@ def engineer_features_polars(symbol: str, data_dir: str) -> pd.DataFrame:
     ]).with_columns([
         # Shift 1 bar so that 15m bars during 08:00-12:00 join the 04:00-08:00 closed bar
         pl.col("htf_4h_trend_raw").shift(1).alias("htf_4h_trend"),
-        pl.col("ema_200_4h").shift(1).alias("ema_200_4h")
-    ]).select(["datetime", "ema_200_4h", "htf_4h_trend"]).drop_nulls()
+        pl.col("ema_200_4h").shift(1).alias("ema_200_4h"),
+        # OX63 additive: as-of 4H close for MSB (same shift(1)+asof causal pattern)
+        pl.col("close").shift(1).alias("close_4h_asof")
+    ]).select(["datetime", "ema_200_4h", "htf_4h_trend", "close_4h_asof"]).drop_nulls()
 
     # 3. 15M Data: Base calculations (Rolling Unmitigated FVGs)
     m15_df = pl.read_parquet(m15_file).sort("datetime")
@@ -510,6 +512,12 @@ UX_FRIDAY = 3
 UX_RATCHET = ((0.8, 0.15), (1.5, 0.80), (2.0, 1.80), (2.5, 2.30), (3.0, 2.80), (3.5, 3.30))
 UX_MAX_R_EFF = 3.5
 
+# OX63 2-stage scaling (protocol P1/P4-P8; monolithic path above untouched)
+UX_TP1_R = 1.10
+UX_TP1_FRAC = 0.50
+UX_TP1_LOCK_R = 0.15
+UX_MIN_R_EFF_SCALED = 1.20
+
 
 def _ux_exit_long(opens, highs, lows, closes, dows, hrs, mns, n, e, entry, sl0, tp, r):
     """Live-spec LONG exit. Returns (r_pre_friction, exit_j, reason) or None at data-end."""
@@ -580,6 +588,116 @@ def _ux_exit_short(opens, highs, lows, closes, dows, hrs, mns, n, e, entry, sl0,
                 break
         if upgraded and c > sl:
             return (entry - sl) / r, j, UX_SL
+    return None
+
+
+def _ux_exit_scaled_long(opens, highs, lows, closes, dows, hrs, mns, n, e, entry, sl0, tp2, r):
+    """OX63 2-stage LONG exit (protocol P5-P8). TP1 banks half at +1.10R and locks +0.15R;
+    runner continues to TP2 under the ratchet + decay + Friday rules.
+    Returns (r_pre_friction, exit_j, reason, scaled) or None at data-end."""
+    sl = sl0
+    phase = 0
+    highest = -1e9
+    scaled = False
+    banked = 0.0
+    tp1 = entry + UX_TP1_R * r
+    lock1 = entry + UX_TP1_LOCK_R * r
+    run_frac = 1.0 - UX_TP1_FRAC
+    for j in range(e, n):
+        o = opens[j]
+        h = highs[j]
+        low = lows[j]
+        c = closes[j]
+        if o <= sl:
+            rr = (o - entry) / r
+            return (banked + run_frac * rr if scaled else rr, j, UX_SL, scaled)
+        if low <= sl:
+            rr = (sl - entry) / r
+            return (banked + run_frac * rr if scaled else rr, j, UX_SL, scaled)
+        if not scaled and h >= tp1:
+            scaled = True
+            banked = UX_TP1_FRAC * UX_TP1_R
+            sl = lock1
+            phase = 1
+            if low <= sl:
+                return (banked + run_frac * UX_TP1_LOCK_R, j, UX_SL, scaled)
+        if h >= tp2:
+            rr = (tp2 - entry) / r
+            return (banked + run_frac * rr if scaled else rr, j, UX_TP, scaled)
+        if dows[j] == 4 and (hrs[j] > 20 or (hrs[j] == 20 and mns[j] >= 30)):
+            rr = (c - entry) / r
+            return (banked + run_frac * rr if scaled else rr, j, UX_FRIDAY, scaled)
+        hr_now = (h - entry) / r
+        if hr_now > highest:
+            highest = hr_now
+        if (j - e) >= TIME_DECAY_BARS and highest < TIME_DECAY_THRESHOLD_R:
+            rr = (c - entry) / r
+            return (banked + run_frac * rr if scaled else rr, j, UX_DECAY, scaled)
+        upgraded = False
+        for stage in range(6, 0, -1):
+            trig, lock = UX_RATCHET[stage - 1]
+            if hr_now >= trig and phase < stage:
+                sl = entry + lock * r
+                phase = stage
+                upgraded = True
+                break
+        if upgraded and c < sl:
+            rr = (sl - entry) / r
+            return (banked + run_frac * rr if scaled else rr, j, UX_SL, scaled)
+    return None
+
+
+def _ux_exit_scaled_short(opens, highs, lows, closes, dows, hrs, mns, n, e, entry, sl0, tp2, r):
+    """OX63 2-stage SHORT exit (mirror of long)."""
+    sl = sl0
+    phase = 0
+    highest = -1e9
+    scaled = False
+    banked = 0.0
+    tp1 = entry - UX_TP1_R * r
+    lock1 = entry - UX_TP1_LOCK_R * r
+    run_frac = 1.0 - UX_TP1_FRAC
+    for j in range(e, n):
+        o = opens[j]
+        h = highs[j]
+        low = lows[j]
+        c = closes[j]
+        if o >= sl:
+            rr = (entry - o) / r
+            return (banked + run_frac * rr if scaled else rr, j, UX_SL, scaled)
+        if h >= sl:
+            rr = (entry - sl) / r
+            return (banked + run_frac * rr if scaled else rr, j, UX_SL, scaled)
+        if not scaled and low <= tp1:
+            scaled = True
+            banked = UX_TP1_FRAC * UX_TP1_R
+            sl = lock1
+            phase = 1
+            if h >= sl:
+                return (banked + run_frac * UX_TP1_LOCK_R, j, UX_SL, scaled)
+        if low <= tp2:
+            rr = (entry - tp2) / r
+            return (banked + run_frac * rr if scaled else rr, j, UX_TP, scaled)
+        if dows[j] == 4 and (hrs[j] > 20 or (hrs[j] == 20 and mns[j] >= 30)):
+            rr = (entry - c) / r
+            return (banked + run_frac * rr if scaled else rr, j, UX_FRIDAY, scaled)
+        hr_now = (entry - low) / r
+        if hr_now > highest:
+            highest = hr_now
+        if (j - e) >= TIME_DECAY_BARS and highest < TIME_DECAY_THRESHOLD_R:
+            rr = (entry - c) / r
+            return (banked + run_frac * rr if scaled else rr, j, UX_DECAY, scaled)
+        upgraded = False
+        for stage in range(6, 0, -1):
+            trig, lock = UX_RATCHET[stage - 1]
+            if hr_now >= trig and phase < stage:
+                sl = entry - lock * r
+                phase = stage
+                upgraded = True
+                break
+        if upgraded and c > sl:
+            rr = (entry - sl) / r
+            return (banked + run_frac * rr if scaled else rr, j, UX_SL, scaled)
     return None
 
 
