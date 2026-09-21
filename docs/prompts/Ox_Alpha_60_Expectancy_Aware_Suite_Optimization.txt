@@ -1,0 +1,134 @@
+# MASTER QUANTITATIVE ARCHITECT & EXECUTION DIRECTIVE: OX_ALPHA_60
+# TARGET: Institutional Multi-Sleeve Suite Expectancy-Aware Optimization & 20-OOS Target Certification
+# REPOSITORY: https://github.com/kbsingh1399/Trading.git
+# ACTIVE BRANCH: arena/01a0bf23-trading (monotonic parity with origin/main @ 76abc43)
+# DATASETS:
+#   1. Genuine 11 Binance USDT-M Perpetuals: BTC, ETH, XRP, BNB, DOGE, ADA, TRX, LINK, DOT, LTC, BCH (3,467,571 15m bars, 2020-2026)
+#   2. Canonical Forex & CFD 18-Asset Basket: EURUSD, GER40, NICKEL, USDSEK, GAS, AU200, FR40, EURCNH, LEAD, NZDUSD, USDHKD, US2000, AUDCHF, NZDCNH, XAUCNH, GAUCNH, EURSEK, EURHUF (15m, 4H, D1 true UTC)
+# OOS WINDOWS SPECIFICATION: Engine/oos_windows_20.json (20 Non-Overlapping Quarterly Macro Windows, 2021 to 2026)
+# INSTITUTIONAL PASS CRITERIA (Engine/target_oos_criteria.json):
+#   - Net ROI >= +10.00% (+500.00 USD on 5,000.00 USD initial capital)
+#   - Max Peak-to-Trough Drawdown <= 5.00% (250.00 USD maximum giveback)
+#   - Win Rate >= 40.0%
+#   - Minimum Completed Trades >= 15 per regime window
+#   - Dynamic Risk Budget: Base 36.00 to 45.00 USD | DD Defense: 18.00 to 20.00 USD | Milestone Cushion Lock at +500.00 USD | Hard DD Stop: 4.85% (242.50 USD)
+
+Evaluator & Chief Quantitative Architect (Arena.ai / Claude Opus),
+
+You are operating in a brand new, isolated session with zero prior chat memory, zero local state, and zero external web access. All source modules, strategy kernels, risk governors, and execution bridges are pinned via raw GitHub URLs from branch arena/01a0bf23-trading below.
+
+Your mission is to perform an institutional expectancy-aware overhaul of the multi-sleeve suite across our primary runner (Engine/runners/run_23_oos_altcoin_suite.py), Numba ratchet kernel (Engine/core/fast_numba_oos_engine.py), and live execution terminal (Engine/runners/run_live_terminal.py), directly resolving the label poisoning and tail-starvation mechanisms identified in your OX59 engineering audit, so that all 20 canonical OOS regime windows in Engine/oos_windows_20.json strictly achieve institutional certification (Net ROI >= +10.00%, Max Drawdown <= 5.00%, WR >= 40.0%, Trades >= 15).
+
+================================================================================
+1. PINNED REPOSITORY SOURCE CODE & AUDIT REFERENCES
+================================================================================
+
+Review the following raw codebase files directly from the repository on branch `arena/01a0bf23-trading` (commit `76abc43`):
+
+1. Master 20/23 OOS Multi-Sleeve Suite Runner:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/runners/run_23_oos_altcoin_suite.py
+
+2. Master Operational Live Terminal & Multi-Asset Execution Runner:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/runners/run_live_terminal.py
+
+3. Fast Numba OOS Engine & Ratchet Labeler:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/core/fast_numba_oos_engine.py
+
+4. S1 Dual Model Orderflow Strategy Kernel:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/strategy/s1_liquidation_orderflow/s1_dual_model_orderflow.py
+
+5. Fast S3 ORB/CRT Multi-Asset Engine:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/strategy/s3_orb_crt/s3_orb_ml.py
+
+6. Master 20 OOS Multiverse Reference (18/20 Pass Empirical Baseline):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/runners/run_20_oos_multiverse.py
+
+7. Institutional Binance Futures Live Execution Broker:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/brokers/binance_broker.py
+
+8. Canonical Indicators:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/core/canonical_indicators.py
+
+9. Master 20 OOS Windows Specification:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/oos_windows_20.json
+
+10. Target Institutional OOS Criteria Contract:
+    https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/target_oos_criteria.json
+
+11. OX ALPHA 59 Engineering Report & Forensic Decomposition:
+    https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/docs/OX_ALPHA_59_ENGINEERING_REPORT.md
+
+================================================================================
+2. EMPIRICAL FINDINGS & ROOT-CAUSE DIAGNOSIS FROM OX ALPHA 59
+================================================================================
+
+In your OX59 engineering audit (docs/OX_ALPHA_59_ENGINEERING_REPORT.md), you proved why the tight-ratchet and heavy-contraction theory failed (0/20 passes, -3,152.14 USD):
+
+1. Dust-Win Label Contamination (The Core Poisoning Mechanism):
+   - By dropping the S1 BE ratchet trigger to +0.80R with lock at +0.20R, 23.1% of trades exited with tiny +0.02R net gains.
+   - The binary classifier (label_y = 1 if net_r > 0) treated these +0.02R dust wins identically to +2.5R runners.
+   - Consequently, the ML selector learned to predict dust probability instead of trade expectancy. Selection lift collapsed from +0.121R down to +0.027R, and trade count exploded 3.5x (from 983 to 3,414 trades), clogging the concurrency slots and incurring massive cumulative friction.
+
+2. Symmetrical Tail Amputation:
+   - Aggressive early ratchets cut positive right-tail payoffs symmetrically with left-tail risk (big wins >= 1.0R dropped from 18.5% down to 12.5%), destroying the payoff geometry needed for positive net ROI.
+
+3. Sizing Downward Spiral:
+   - Halving S1 in chop, applying x0.5 contraction at 1.80% DD, and capping risk shrank trade sizes to 3.60 to 7.20 USD.
+   - While this successfully protected against 5.0% DD violations (zero 5%+ breaches in OX59), it made +500.00 USD net profit mathematically impossible (-0.14R * 15.00 USD * 170 trades ~= -360.00 USD per window).
+
+4. ORB ML Anti-Selection:
+   - In crypto altcoins, the ORB ML filter anti-selected out-of-sample (pool expectancy -0.05R worsened to -0.29R executed), generating drag rather than alpha.
+
+================================================================================
+3. CORE ARCHITECTURAL REQUIREMENTS FOR OX ALPHA 60
+================================================================================
+
+Implement the precise remediation path outlined in §7 of your OX59 report:
+
+1. Expectancy-Conditioned / R-Aware ML Selection:
+   - In Engine/core/fast_numba_oos_engine.py and the ML modeling pipelines:
+     * ELIMINATE dust-win labeling. Set the binary classification target to meaningful right-tail expansion:
+       label_y = 1 if realized_r >= 0.75 else 0 (or real_r >= 0.80)
+       Alternatively, train a direct regressor on realized_r (predicting E[R]) and filter candidates with predicted_E[R] >= +0.25R.
+     * This ensures the ML selector only admits setups with true convexity and substantial right-tail payoff.
+
+2. Restore Convex Microstructure Ratchet Geometry:
+   - Give altcoin trades sufficient breathing room to absorb 15m microstructure noise:
+     * Breakeven Trigger: +1.40R to +1.60R gain -> Lock stop at Entry + 0.35R (clearing all 41 bps friction with guaranteed positive edge).
+     * Profit Lock Trigger: +2.00R to +2.20R gain -> Lock stop at Entry + 1.20R to +1.40R.
+     * Target Profit Exit: +2.50R to +3.00R.
+     * Time-Decay Exit: At bar 24 (6 hours), exit at market only if position is stagnant (gain < +0.10R).
+
+3. Mathematically Reachable Risk Budgeting & Milestone Preservation:
+   - Base Risk: 38.00 to 45.00 USD (0.76% to 0.90%).
+   - Dynamic Drawdown Defense: 18.00 to 20.00 USD armed when intra-window drawdown reaches 2.00% (100.00 USD).
+   - House Money Expansion: 60.00 to 75.00 USD unlocked once net profit exceeds +80.00 USD.
+   - Milestone Lock Protocol: Once net profit reaches +500.00 USD (+10.00% ROI) with at least 15 completed trades:
+     * Immediately set a hard equity floor at max(5500.00 USD, peak_equity - 120.00 USD).
+     * Scale subsequent trade risk to min(10.00 USD, cushion * 0.20), preventing any giveback and locking the PASS.
+   - Eliminate blanket 50% risk cuts on S1 in chop; instead, use higher probability thresholds (prob >= 0.50) and orderflow divergence gates (zc_div > 0.6) to filter out low-expectancy trades.
+
+4. Sleeve Rebalancing & ORB Quarantine:
+   - Prioritize T1 Donchian Breakouts (which generated +1,099.00 USD in baseline with positive pool expectancy) alongside high-conviction S1 Liquidity Pullbacks.
+   - Quarantine or heavily demote the anti-selecting crypto ORB ML model (e.g. restrict ORB to minimal risk 10.00 USD or allow only when confirmed by session high/low breakouts).
+
+5. Production Parity with Live Terminal:
+   - Ensure all updated ratchet thresholds, risk tiers, and feature transforms are faithfully mirrored in Engine/runners/run_live_terminal.py.
+
+6. Verification & 20-Regime Scorecard:
+   - Run the complete walk-forward simulation across all 20 canonical OOS windows in Engine/oos_windows_20.json.
+   - Output the full empirical scorecard table (Window, Regime, Trades, Win Rate %, Net PnL USD, Net ROI %, Max Drawdown %, Status).
+   - Verify that the target criteria (ROI >= +10.00%, Max DD <= 5.00%, WR >= 40.0%, Trades >= 15) are satisfied.
+
+================================================================================
+4. DELIVERABLES REQUIRED
+================================================================================
+
+1. Full, unabridged source code for all updated modules:
+   - Engine/runners/run_23_oos_altcoin_suite.py
+   - Engine/core/fast_numba_oos_engine.py
+   - Engine/runners/run_live_terminal.py
+   - Any auxiliary strategy kernels updated.
+2. Complete 20-regime walk-forward scorecard and performance attribution table.
+3. Unit test suite verifying ratchet triggers, label purity, and governor state transitions.
+4. Definitive Institutional Certification Verdict for live funded deployment.
