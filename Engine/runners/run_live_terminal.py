@@ -195,8 +195,8 @@ class InstitutionalRiskGovernor:
         self.is_locked: bool = False
         self.circuit_breaker_tripped: bool = False
 
-        # Concurrency caps
-        self.max_concurrent: int = 4
+        # Concurrency caps (OX59: max 3 portfolio-wide)
+        self.max_concurrent: int = 3
         self.max_s1_concurrent: int = 2
         self.max_t1_concurrent: int = 2
         self.max_orb_concurrent: int = 2
@@ -220,10 +220,15 @@ class InstitutionalRiskGovernor:
             self.win_count += 1
         self.update_equity(0.0)
 
-    def get_risk_budget(self, base_r: float = 36.0) -> Tuple[float, str]:
-        """Calculates dynamic risk budget and active tier."""
+    def get_risk_budget(self, base_r: float = 36.0, sleeve_id: int = 0,
+                        regime: str = "SIDEWAYS_CHOP") -> Tuple[float, str]:
+        """Calculates dynamic risk budget and active tier (OX59: regime sizing + DD contraction)."""
         cur_dd = ((self.peak_equity - self.equity) / self.peak_equity) * 100.0 if self.peak_equity > 0 else 0.0
         cur_profit = self.equity - self.initial_capital
+
+        # OX59 regime sizing: halve S1 pullback risk in chop
+        if regime == "SIDEWAYS_CHOP" and sleeve_id == 1:
+            base_r = base_r * 0.5
 
         if (self.peak_equity - self.initial_capital) >= 500.0 and self.trade_count >= 15:
             floor_stop = max(self.initial_capital + 500.0, self.peak_equity - 120.0)
@@ -238,14 +243,21 @@ class InstitutionalRiskGovernor:
             return trade_risk, "MILESTONE_LOCK"
 
         if cur_dd >= 2.0 or cur_profit < -50.0:
-            return min(base_r * 0.40, 14.0), "DD_DEFENSE"
+            trade_risk, tier = min(base_r * 0.40, 14.0), "DD_DEFENSE"
+        elif cur_profit >= 120.0:
+            trade_risk, tier = min(base_r * 1.35, 48.0), "HOUSE_MONEY"
+        else:
+            trade_risk, tier = min(base_r, 36.0), "BASE_RISK"
 
-        if cur_profit >= 120.0:
-            return min(base_r * 1.35, 48.0), "HOUSE_MONEY"
+        # OX59 DD contraction: halve non-milestone risk once running DD >= 1.80%
+        if self.max_dd_pct >= 1.80:
+            trade_risk = trade_risk * 0.5
+            tier = tier + "_X05"
+        return trade_risk, tier
 
-        return min(base_r, 36.0), "BASE_RISK"
-
-    def can_open_position(self, sleeve_id: int, active_positions: List[Dict[str, Any]]) -> bool:
+    def can_open_position(self, sleeve_id: int, active_positions: List[Dict[str, Any]],
+                        symbol: Optional[str] = None, direction: int = 0,
+                        btc_breakdown: bool = False) -> bool:
         if self.is_locked or self.circuit_breaker_tripped:
             return False
         if len(active_positions) >= self.max_concurrent:
@@ -261,6 +273,17 @@ class InstitutionalRiskGovernor:
             return False
         if sleeve_id == 3 and orb_count >= self.max_orb_concurrent:
             return False
+
+        # OX59 cluster: max 1 position per asset
+        if symbol is not None and any(p["symbol"] == symbol for p in active_positions):
+            return False
+
+        # OX59 cluster: max 1 high-beta alt long in BTC breakdown
+        if btc_breakdown and direction == 1 and symbol is not None and symbol != "BTCUSDT":
+            hb_longs = sum(1 for p in active_positions
+                           if p["direction"] == 1 and p["symbol"] != "BTCUSDT")
+            if hb_longs >= 1:
+                return False
 
         return True
 
@@ -350,17 +373,18 @@ class LivePositionTracker:
             if r_gain > pos["peak_r"]:
                 pos["peak_r"] = r_gain
 
-            # Microstructure Ratchet (Settled Invariants)
-            # Stage 1: +0.8R gain -> Ratchet stop to Entry + 0.15R (BE Lock)
+            # Microstructure Ratchet (OX59 universal: 0.80->+0.20 / 1.50->+0.80 / 2.00->+1.50)
+            # Stage 1: +0.8R gain -> Ratchet stop to Entry + 0.20R (BE Lock)
             if pos["peak_r"] >= 0.80 and pos["ratchet_stage"] < 1:
                 if direction == 1:
-                    pos["stop_price"] = pos["entry_price"] + 0.15 * r_dist
+                    pos["stop_price"] = pos["entry_price"] + 0.20 * r_dist
                 else:
-                    pos["stop_price"] = pos["entry_price"] - 0.15 * r_dist
+                    pos["stop_price"] = pos["entry_price"] - 0.20 * r_dist
                 pos["ratchet_stage"] = 1
-                RICH_CONSOLE.print(f"[bold green]⚡ RATCHET LOCK (+0.15R BE)[/bold green] {sym} ({pos['sleeve_name']}) at +{pos['peak_r']:.2f}R")
+                RICH_CONSOLE.print(f"[bold green]⚡ RATCHET LOCK (+0.20R BE)[/bold green] {sym} ({pos['sleeve_name']}) at +{pos['peak_r']:.2f}R")
                 if self.broker:
-                    self.broker.modify_sltp(binance_symbol=sym, position_ticket=pos.get("ticket", 0), sl=pos["stop_price"])
+                    if not self.broker.modify_sltp(binance_symbol=sym, position_ticket=pos.get("ticket", 0), sl=pos["stop_price"]):
+                        RICH_CONSOLE.print(f"[bold yellow]⚠️ BE ratchet modify failed on exchange for {sym} (local stop kept)[/bold yellow]")
 
             # Stage 2: +1.5R gain -> Ratchet stop to Entry + 0.80R (Profit Lock)
             if pos["peak_r"] >= 1.50 and pos["ratchet_stage"] < 2:
@@ -371,7 +395,20 @@ class LivePositionTracker:
                 pos["ratchet_stage"] = 2
                 RICH_CONSOLE.print(f"[bold cyan]🎯 PROFIT LOCK (+0.80R)[/bold cyan] {sym} ({pos['sleeve_name']}) at +{pos['peak_r']:.2f}R")
                 if self.broker:
-                    self.broker.modify_sltp(binance_symbol=sym, position_ticket=pos.get("ticket", 0), sl=pos["stop_price"])
+                    if not self.broker.modify_sltp(binance_symbol=sym, position_ticket=pos.get("ticket", 0), sl=pos["stop_price"]):
+                        RICH_CONSOLE.print(f"[bold yellow]⚠️ Profit-lock modify failed on exchange for {sym} (local stop kept)[/bold yellow]")
+
+            # Stage 3 (OX59): +2.0R gain -> Ratchet stop to Entry + 1.50R (Trailing Lock)
+            if pos["peak_r"] >= 2.00 and pos["ratchet_stage"] < 3:
+                if direction == 1:
+                    pos["stop_price"] = pos["entry_price"] + 1.50 * r_dist
+                else:
+                    pos["stop_price"] = pos["entry_price"] - 1.50 * r_dist
+                pos["ratchet_stage"] = 3
+                RICH_CONSOLE.print(f"[bold magenta]🔒 TRAIL LOCK (+1.50R)[/bold magenta] {sym} ({pos['sleeve_name']}) at +{pos['peak_r']:.2f}R")
+                if self.broker:
+                    if not self.broker.modify_sltp(binance_symbol=sym, position_ticket=pos.get("ticket", 0), sl=pos["stop_price"]):
+                        RICH_CONSOLE.print(f"[bold yellow]⚠️ Trail-lock modify failed on exchange for {sym} (local stop kept)[/bold yellow]")
 
             # Check Exit Conditions
             exit_reason = None
@@ -398,7 +435,8 @@ class LivePositionTracker:
                 # F2 Fix: Dispatch live position closure directly to Binance exchange
                 if self.broker:
                     try:
-                        self.broker.close_position(binance_symbol=sym, ticket=pos.get("ticket", 0))
+                        if not self.broker.close_position(symbol=sym, reason=exit_reason):
+                            RICH_CONSOLE.print(f"[bold red]❌ Exchange close returned False for {sym} [{exit_reason}][/bold red]")
                     except Exception as e:
                         RICH_CONSOLE.print(f"[bold red]❌ Failed to close {sym} on exchange: {e}[/bold red]")
             else:
@@ -408,9 +446,11 @@ class LivePositionTracker:
         return closed_positions, total_upnl
 
     def reconcile_with_exchange(self):
-        """F4 Fix: Reconcile internal tracker state with true exchange positions."""
+        """F4 Fix: Reconcile internal tracker state with true exchange positions.
+        OX59: returns exchange-closed positions so the governor books their PnL."""
         if not self.broker or self.broker.dry_run:
-            return
+            return []
+        reconciled_closed = []
         try:
             exchange_positions = self.broker.get_all_positions()
             open_symbols = {p["symbol"] for p in exchange_positions if float(p.get("positionAmt", 0)) != 0}
@@ -421,12 +461,14 @@ class LivePositionTracker:
                     pos["exit_reason"] = "EXCHANGE_STOP_HIT"
                     closed_pnl, _ = self.broker.get_position_history_profit(pos.get("ticket", 0))
                     pos["realized_pnl"] = closed_pnl if closed_pnl != 0.0 else pos["unrealized_pnl"]
+                    reconciled_closed.append(pos)
                     RICH_CONSOLE.print(f"[bold yellow]🔄 RECONCILED CLOSE[/bold yellow] {sym} closed on Binance (PnL: {pos['realized_pnl']:+,.2f} USD)")
                 else:
                     reconciled.append(pos)
             self.positions = reconciled
         except Exception as e:
             RICH_CONSOLE.print(f"[bold red]⚠️ Position reconciliation error: {e}[/bold red]")
+        return reconciled_closed
 
 
 # ================================================================================
@@ -458,7 +500,7 @@ class MultiSleeveAlphaEngine:
             # Read last row group or slice
             table = pf.read(columns=[
                 "open_time_ms", "open", "high", "low", "close",
-                "volume", "rsi_14", "atr_14", "ema_200", "vwap_zscore", "zc_div"
+                "volume", "rsi_14", "atr_14", "ema_200", "vwap_zscore", "zc_div", "volume_base"
             ])
             df = table.to_pandas().iloc[skip:].dropna().reset_index(drop=True)
             return df
@@ -472,7 +514,7 @@ class MultiSleeveAlphaEngine:
         """
         btc_p = self.data_dir / "BTCUSDT_15m_master_2020_2026.parquet"
         if not btc_p.exists():
-            return {"regime": "SIDEWAYS_CHOP", "ath_dd": -15.0, "btc_30d_ret": 2.5, "trailing_vol": 1.75, "btc_price": 65000.0}
+            return {"regime": "SIDEWAYS_CHOP", "ath_dd": -15.0, "btc_30d_ret": 2.5, "trailing_vol": 1.75, "btc_price": 65000.0, "btc_breakdown": False}
 
         try:
             pf = pq.ParquetFile(btc_p)
@@ -498,6 +540,15 @@ class MultiSleeveAlphaEngine:
                 except Exception:
                     pass
 
+            # OX59: BTC 4H macro breakdown (close < 200 EMA on last closed 4H bar)
+            btc_breakdown = False
+            if get_or_compute_4h_dataframe is not None:
+                try:
+                    df_b4 = get_or_compute_4h_dataframe("BTCUSDT")
+                    btc_breakdown = bool(float(df_b4['close'].iloc[-1]) < float(df_b4['ema_200'].iloc[-1]))
+                except Exception:
+                    pass
+
             is_bear_contagion = (ath_dd <= -35.0) and (btc_30d_ret <= -10.0)
             is_bull_expansion = (btc_30d_ret >= 15.0) and (cur_close >= df_btc["close"].rolling(800).mean().iloc[-1] if len(df_btc) > 800 else True)
 
@@ -514,9 +565,10 @@ class MultiSleeveAlphaEngine:
                 "btc_30d_ret": btc_30d_ret,
                 "trailing_vol": trailing_vol,
                 "btc_price": cur_close,
+                "btc_breakdown": btc_breakdown,
             }
         except Exception as e:
-            return {"regime": "SIDEWAYS_CHOP", "ath_dd": -15.0, "btc_30d_ret": 0.0, "trailing_vol": 1.75, "btc_price": 65000.0}
+            return {"regime": "SIDEWAYS_CHOP", "ath_dd": -15.0, "btc_30d_ret": 0.0, "trailing_vol": 1.75, "btc_price": 65000.0, "btc_breakdown": False}
 
     def scan_asset_signals(self, symbol: str, macro: Dict[str, Any]) -> Tuple[Dict[str, Any], List[Dict[str, Any]]]:
         """
@@ -534,7 +586,10 @@ class MultiSleeveAlphaEngine:
         atrs = df["atr_14"].to_numpy(float)
         ema200 = df["ema_200"].to_numpy(float) if "ema_200" in df.columns else pd.Series(closes).ewm(span=200).mean().to_numpy(float)
         vwap_z = df["vwap_zscore"].to_numpy(float) if "vwap_zscore" in df.columns else np.zeros(len(df))
-        zc_div = df["zc_div"].to_numpy(float) if "zc_div" in df.columns else np.zeros(len(df))
+        _volb = df["volume_base"].to_numpy(float) if "volume_base" in df.columns else np.ones(len(df))
+        _volb = np.where(_volb == 0, 1.0, _volb)
+        # OX59: normalized zc (research semantics) instead of raw CVD dollars
+        zc_div = np.clip(df["zc_div"].to_numpy(float) / _volb, -3.0, 3.0) if "zc_div" in df.columns else np.zeros(len(df))
 
         # Compute Canonical Indicators
         upper, lower, bw, zbw = compute_bollinger_bandwidth_zscore(closes, period=96, std_mult=2.0, z_window=96)
@@ -582,11 +637,11 @@ class MultiSleeveAlphaEngine:
                         "target_price": cur_px - 2.2 * cur_atr, "r_dist": cur_atr, "prob": 0.62, "base_risk": 32.0
                     })
             else:
-                if cur_vwap_z < -0.5 and cur_rsi < 40.0 and cur_zc_div > 0.8:
+                if cur_vwap_z < -0.5 and cur_rsi < 40.0 and cur_zc_div > 0.0:
                     signals.append({
                         "symbol": symbol, "sleeve_name": "S1_PULLBACK", "sleeve_id": 1, "direction": 1,
                         "entry_price": cur_px, "stop_price": cur_px - 1.0 * cur_atr,
-                        "target_price": cur_px + 2.2 * cur_atr, "r_dist": cur_atr, "prob": 0.59, "base_risk": 36.0
+                        "target_price": cur_px + 2.2 * cur_atr, "r_dist": cur_atr, "prob": 0.59, "base_risk": 42.0
                     })
 
         # -------------------------------------------------------------------------
@@ -607,7 +662,7 @@ class MultiSleeveAlphaEngine:
         if len(df) >= 32 and cur_atr > 0:
             session_high = np.max(highs[-16:-1])
             session_low = np.min(lows[-16:-1])
-            if cur_px > session_high and cur_rsi > 52.0:
+            if cur_px > session_high and cur_rsi > 52.0 and (regime != "BEAR_CONTAGION" or cur_zc_div > 1.2):
                 signals.append({
                     "symbol": symbol, "sleeve_name": "S3_ORB_LONG", "sleeve_id": 3, "direction": 1,
                     "entry_price": cur_px, "stop_price": cur_px - 1.0 * cur_atr,
@@ -731,7 +786,7 @@ def render_live_dashboard(
     RICH_CONSOLE.print(t_matrix)
 
     # 4. Open Positions & Microstructure Ratchet Status
-    t_pos = Table(title="🎯 Active Open Positions & Microstructure Ratchet (Max: 4 Concurrent)", box=box.SIMPLE_HEAVY, border_style="magenta", expand=True)
+    t_pos = Table(title="🎯 Active Open Positions & Microstructure Ratchet (Max: 3 Concurrent)", box=box.SIMPLE_HEAVY, border_style="magenta", expand=True)
     t_pos.add_column("Asset", style="bold white", justify="left")
     t_pos.add_column("Sleeve", justify="center")
     t_pos.add_column("Side", justify="center")
@@ -750,7 +805,8 @@ def render_live_dashboard(
         for p in tracker.positions:
             pnl_col = "green" if p["unrealized_pnl"] >= 0 else "red"
             side_str = "[green]LONG[/green]" if p["direction"] == 1 else "[red]SHORT[/red]"
-            stage_str = "Initial" if p["ratchet_stage"] == 0 else ("BE (+0.15R)" if p["ratchet_stage"] == 1 else "Profit Lock (+0.80R)")
+            _st = p["ratchet_stage"]
+            stage_str = ("Initial" if _st == 0 else ("BE (+0.20R)" if _st == 1 else ("Profit Lock (+0.80R)" if _st == 2 else "Trail Lock (+1.50R)")))
             t_pos.add_row(
                 p["symbol"],
                 p["sleeve_name"],
@@ -836,7 +892,8 @@ def run_live_pipeline(
 
             # Reconcile open positions with true exchange state periodically
             if cycle % 2 == 0:
-                tracker.reconcile_with_exchange()
+                for rc in tracker.reconcile_with_exchange():
+                    risk_gov.record_closed_trade(rc.get("realized_pnl", 0.0))
 
             # 4. Update Existing Positions & Microstructure Ratchet
             closed, total_upnl = tracker.update_positions(latest_prices)
@@ -847,13 +904,16 @@ def run_live_pipeline(
             # 5. Dispatch New Positions If Capacity Permits
             for sig in all_detected_signals:
                 slv_id = sig["sleeve_id"]
-                if risk_gov.can_open_position(slv_id, tracker.positions):
+                if risk_gov.can_open_position(slv_id, tracker.positions, symbol=sig["symbol"],
+                                              direction=sig["direction"],
+                                              btc_breakdown=macro.get("btc_breakdown", False)):
                     # Check if already open for this symbol
                     if any(p["symbol"] == sig["symbol"] for p in tracker.positions):
                         continue
 
-                    # Dynamic Risk Sizing
-                    risk_usd, _ = risk_gov.get_risk_budget(base_r=sig.get("base_risk", 24.0))
+                    # Dynamic Risk Sizing (OX59 regime-aware)
+                    risk_usd, _ = risk_gov.get_risk_budget(base_r=sig.get("base_risk", 24.0),
+                                                          sleeve_id=slv_id, regime=macro["regime"])
                     if risk_usd <= 0:
                         continue
 

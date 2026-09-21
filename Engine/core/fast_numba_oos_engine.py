@@ -95,11 +95,14 @@ def label_triple_barriers_numba(
     be_lock_r: float = 0.45,
     profit_trigger_r: float = 1.40,
     profit_lock_r: float = 0.80,
-    friction_r: float = 0.25
+    friction_r: float = 0.25,
+    trail_trigger_r: float = 2.00,  # OX59 Phase 2: trailing lock trigger
+    trail_lock_r: float = 1.50,     # OX59 Phase 2: trailing lock level
 ):
-    """Lightning-fast Numba two-stage microstructure ratchet labeler.
+    """Lightning-fast Numba three-stage microstructure ratchet labeler.
     Causal bar j+1 ratchet arming prevents intra-bar lookahead.
     Tracks exact bars_held to accurately simulate position release.
+    OX59: BE 0.80->+0.20 / Profit 1.50->+0.80 / Trail 2.00->+1.50 + 24-bar decay exit (<+0.20R).
     """
     n = len(c)
     is_candidate = np.zeros(n, dtype=np.bool_)
@@ -151,13 +154,25 @@ def label_triple_barriers_numba(
                 hold_count = j - i
                 break
 
-            # 3. Arm ratchet for bar j+1
-            if favorable_r >= profit_trigger_r:
+            # 3. Arm ratchet for bar j+1 (OX59 three-stage)
+            if favorable_r >= trail_trigger_r:
+                if trail_lock_r > cur_stop_r:
+                    cur_stop_r = trail_lock_r
+            elif favorable_r >= profit_trigger_r:
                 if profit_lock_r > cur_stop_r:
                     cur_stop_r = profit_lock_r
             elif favorable_r >= be_trigger_r:
                 if be_lock_r > cur_stop_r:
                     cur_stop_r = be_lock_r
+
+            # 4. OX59 time-decay: at bar 24, exit at market if R < +0.20
+            if (j - i) == 24:
+                cur_r = (c[j] - entry_p) / dist if s == 1 else (entry_p - c[j]) / dist
+                if cur_r < 0.20:
+                    exit_r = cur_r
+                    hit = True
+                    hold_count = 24
+                    break
 
         if not hit:
             exit_p = c[i + horizon_bars]
@@ -340,9 +355,15 @@ def compile_dataset_with_numba(friction_r: float = 0.18):
         tide_align = np.where(long_cond, tide, np.where(short_cond, -tide, 0.0))
 
         # Execute JIT Ratchet Labeler with Convex Asymmetric Payoff Geometry
+        # OX59: universal ratchet BE 0.80->+0.20 / Profit 1.50->+0.80 / Trail 2.00->+1.50
+        # (horizon 32 / target 3.0 / stop 1.2 / friction preserved from research).
         t_numba_0 = time.perf_counter()
         is_cand, side, label_y, real_r, b_held = label_triple_barriers_numba(
-            c, h, lo, atr, long_cond, short_cond, 32, 3.0, 1.2, 1.6, 0.35, 2.2, 1.4, friction_r
+            c, h, lo, atr, long_cond, short_cond, 32, 3.0, 1.2,
+            be_trigger_r=0.80, be_lock_r=0.20,
+            profit_trigger_r=1.50, profit_lock_r=0.80,
+            friction_r=friction_r,
+            trail_trigger_r=2.00, trail_lock_r=1.50,
         )
         t_numba_ms = (time.perf_counter() - t_numba_0) * 1000
 

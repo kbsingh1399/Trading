@@ -260,10 +260,12 @@ class InstitutionalDualModelEngine:
                                 r_gain = 2.20
                                 bars_held = j
                                 break
-                            elif max_fav >= 1.40:
-                                stop_px = max(stop_px, fill_px + 0.85 * r_dist)
-                            elif max_fav >= 0.75:
-                                stop_px = max(stop_px, fill_px + 0.35 * r_dist)
+                            elif max_fav >= 2.00:
+                                stop_px = max(stop_px, fill_px + 1.50 * r_dist)
+                            elif max_fav >= 1.50:
+                                stop_px = max(stop_px, fill_px + 0.80 * r_dist)
+                            elif max_fav >= 0.80:
+                                stop_px = max(stop_px, fill_px + 0.20 * r_dist)
                         else:
                             if hi_j >= stop_px:
                                 t_exit = int(ts_ms.iloc[idx])
@@ -278,10 +280,12 @@ class InstitutionalDualModelEngine:
                                 r_gain = 2.20
                                 bars_held = j
                                 break
-                            elif max_fav >= 1.40:
-                                stop_px = min(stop_px, fill_px - 0.85 * r_dist)
-                            elif max_fav >= 0.75:
-                                stop_px = min(stop_px, fill_px - 0.35 * r_dist)
+                            elif max_fav >= 2.00:
+                                stop_px = min(stop_px, fill_px - 1.50 * r_dist)
+                            elif max_fav >= 1.50:
+                                stop_px = min(stop_px, fill_px - 0.80 * r_dist)
+                            elif max_fav >= 0.80:
+                                stop_px = min(stop_px, fill_px - 0.20 * r_dist)
 
                     if t_exit == -1:
                         idx = min(i + 16, n - 1)
@@ -300,11 +304,12 @@ class InstitutionalDualModelEngine:
                         "hold_bars": bars_held * 16,
                         "symbol": sym,
                         "prob": 0.52,
-                        "strategy": "T1"
+                        "strategy": "T1",
+                        "side": side,  # OX59: required for cluster filter
                     })
 
         if not all_t1_trades:
-            return pd.DataFrame(columns=["time", "t_exit", "r_gain", "hold_bars", "symbol", "prob", "strategy"])
+            return pd.DataFrame(columns=["time", "t_exit", "r_gain", "hold_bars", "symbol", "prob", "strategy", "side"])
         df_t1 = pd.DataFrame(all_t1_trades).sort_values("time").reset_index(drop=True)
         return df_t1
 

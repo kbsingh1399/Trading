@@ -223,6 +223,7 @@ def simulate_orb_trades(
                             exit_taken = False
                             phase_0_locked = False
                             phase_1_locked = False
+                            phase_2_locked = False
                             trail_active = False
 
                             for k in range(entry_bar + 1, trade_end):
@@ -249,12 +250,15 @@ def simulate_orb_trades(
                                 # Ratchet: check on bar close (causal, bar k not k+1)
                                 current_gain = (closes[k] - entry) / (r_val + 1e-9)
                                 if not phase_0_locked and current_gain >= phase0_trigger:
-                                    current_sl = entry + 0.35 * r_val  # BE lock covers 41 bps
+                                    current_sl = entry + 0.20 * r_val  # OX59 BE lock
                                     phase_0_locked = True
                                 if phase_0_locked and not phase_1_locked and current_gain >= 1.5:
                                     current_sl = entry + 0.80 * r_val  # profit lock
                                     phase_1_locked = True
                                     trail_active = True  # unlock ATR trailing after Phase 1
+                                if phase_1_locked and not phase_2_locked and current_gain >= 2.0:
+                                    current_sl = max(current_sl, entry + 1.50 * r_val)  # OX59 trail lock
+                                    phase_2_locked = True
 
                                 # ATR trailing stop (activates after Phase 1)
                                 # Computed on close of bar k → tested on bar k+1 (causal)
@@ -355,6 +359,7 @@ def simulate_orb_trades(
                             exit_taken = False
                             phase_0_locked = False
                             phase_1_locked = False
+                            phase_2_locked = False
                             trail_active = False
 
                             for k in range(entry_bar + 1, trade_end):
@@ -381,12 +386,15 @@ def simulate_orb_trades(
                                 # Ratchet: check on bar close (causal)
                                 current_gain = (entry - closes[k]) / (r_val + 1e-9)
                                 if not phase_0_locked and current_gain >= phase0_trigger:
-                                    current_sl = entry - 0.35 * r_val  # BE lock covers 41 bps
+                                    current_sl = entry - 0.20 * r_val  # OX59 BE lock
                                     phase_0_locked = True
                                 if phase_0_locked and not phase_1_locked and current_gain >= 1.5:
                                     current_sl = entry - 0.80 * r_val  # profit lock
                                     phase_1_locked = True
                                     trail_active = True  # unlock ATR trailing after Phase 1
+                                if phase_1_locked and not phase_2_locked and current_gain >= 2.0:
+                                    current_sl = min(current_sl, entry - 1.50 * r_val)  # OX59 trail lock
+                                    phase_2_locked = True
 
                                 # ATR trailing stop (activates after Phase 1)
                                 # Computed on close of bar k → tested on bar k+1 (causal)

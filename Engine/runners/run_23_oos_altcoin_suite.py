@@ -1,13 +1,10 @@
 """Elite Quant 23 OOS Regime-Routed Suite.
-Combining:
-1. S2 Bollinger Bands Mean Reversion with authentic RSI 32/68 filter (retains W09 and W21 passes).
-2. Dynamic Risk Scaling:
-   - Base risk: 24 USD (0.48%)
-   - DD Defense: when DD >= 1.5% or equity < 5000, scale risk to 14 USD (prevents W02, W03, W11, W15, W22 drawdown kills).
-   - House Money: when profit >= 150 USD, scale risk to 32 USD.
-   - Milestone Lock: when profit >= 500 USD with >= 15 trades, lock in pass floor stop.
-3. Concurrency: max_concurrent = 4, max_s1 = 2, max_t1 = 1, max_s2 = 2, max_orb = 2.
-4. Bar-level causal trend gating on T1 breakouts.
+Combining: S1 Liquidity Pullbacks + T1 Donchian Breakout + S3 Crypto ORB/CRT.
+Dynamic Risk Scaling: base 36 / DD-defense min(base*0.40, 14) / house min(base*1.35, 48) /
+milestone cushion*0.20 / 4.85% DD stop.
+OX59: universal 3-stage ratchets (0.80->+0.20 / 1.50->+0.80 / 2.00->+1.50) + 24-bar decay;
+regime sizing (S1 halved in chop); DD contraction x0.5 at 1.80%; max 3 concurrent;
+1 position/asset; max 1 HB-alt long in BTC 4H breakdown; bear ORB-long zc>1.2 gate.
 """
 import json
 from pathlib import Path
@@ -46,8 +43,13 @@ def simulate_elite_portfolio(
     event_risks: np.ndarray,
     event_hold_ms: np.ndarray,
     event_sleeve_ids: np.ndarray,  # 1=S1, 2=T1, 3=ORB
+    event_syms: np.ndarray,      # OX59: factorized symbol id (0=BTCUSDT)
+    event_sides: np.ndarray,     # OX59: +1 long / -1 short
+    event_hb: np.ndarray,        # OX59: 1 if high-beta-alt long (non-BTC, side=+1)
+    event_btcbd: np.ndarray,     # OX59: 1 if BTC in 4H breakdown at event time
+    regime_id: int = 0,          # OX59: 0=SIDEWAYS_CHOP, 1=BULL_EXPANSION, 2=BEAR_CONTAGION
     capital: float = 5000.0,
-    max_concurrent: int = 4,
+    max_concurrent: int = 3,
     max_s1_concurrent: int = 2,
     max_t1_concurrent: int = 2,
     max_orb_concurrent: int = 2,
@@ -62,10 +64,13 @@ def simulate_elite_portfolio(
     pos_end_times = np.zeros(max_concurrent, dtype=np.int64)
     pos_sleeves = np.zeros(max_concurrent, dtype=np.int8)
     pos_active = np.zeros(max_concurrent, dtype=np.bool_)
+    pos_syms = np.zeros(max_concurrent, dtype=np.int64)   # OX59: 1 position/asset
+    pos_hb = np.zeros(max_concurrent, dtype=np.int8)      # OX59: hb-alt-long flag
     
     trade_pnls = np.zeros(n, dtype=np.float64)
     trade_times = np.zeros(n, dtype=np.int64)
     trade_sleeves = np.zeros(n, dtype=np.int8)
+    trade_evidx = np.zeros(n, dtype=np.int64)  # OX59 tracing (no economic effect)
     
     tr_count = 0
     win_count = 0
@@ -80,6 +85,9 @@ def simulate_elite_portfolio(
         base_r = event_risks[i]
         hold = event_hold_ms[i]
         slv = event_sleeve_ids[i]
+        sym = event_syms[i]
+        hb = event_hb[i]
+        btcbd = event_btcbd[i]
 
         # Release closed positions
         for p in range(max_concurrent):
@@ -93,8 +101,10 @@ def simulate_elite_portfolio(
         s1_active = 0
         t1_active = 0
         orb_active = 0
+        hb_active = 0
         active_count = 0
         slot = -1
+        sym_already = False
 
         for p in range(max_concurrent):
             if pos_active[p]:
@@ -102,6 +112,8 @@ def simulate_elite_portfolio(
                 if pos_sleeves[p] == 1: s1_active += 1
                 elif pos_sleeves[p] == 2: t1_active += 1
                 elif pos_sleeves[p] == 3: orb_active += 1
+                if pos_hb[p] == 1: hb_active += 1
+                if pos_syms[p] == sym: sym_already = True
             elif slot == -1:
                 slot = p
 
@@ -113,6 +125,11 @@ def simulate_elite_portfolio(
         if slv == 2 and t1_active >= max_t1_concurrent: continue
         if slv == 3 and orb_active >= max_orb_concurrent: continue
 
+        # OX59 cluster filter: max 1 position per asset
+        if sym_already: continue
+        # OX59 cluster filter: max 1 high-beta alt long in BTC breakdown
+        if hb == 1 and btcbd == 1 and hb_active >= 1: continue
+
         # Milestone lock
         if (peak_equity - capital) >= milestone_pnl and tr_count >= 15:
             floor_stop = max(capital + milestone_pnl, peak_equity - 120.0)
@@ -123,8 +140,13 @@ def simulate_elite_portfolio(
         # Dynamic Institutional Risk Budgeting (Quant-Developers-Resources / Risk Management)
         cur_dd = ((peak_equity - equity) / peak_equity) * 100.0 if peak_equity > 0 else 0.0
         cur_profit = equity - capital
-        
-        if (peak_equity - capital) >= milestone_pnl:
+
+        # OX59 regime sizing: halve S1 pullback risk in SIDEWAYS_CHOP (prioritizes ORB/T1 relatively)
+        if regime_id == 0 and slv == 1:
+            base_r = base_r * 0.5
+
+        is_milestone = (peak_equity - capital) >= milestone_pnl
+        if is_milestone:
             cushion = max(0.0, equity - (capital + milestone_pnl))
             trade_risk = min(10.0, cushion * 0.20)
             if trade_risk <= 0.0:
@@ -137,10 +159,16 @@ def simulate_elite_portfolio(
         else:
             trade_risk = min(base_r, 36.0)
 
+        # OX59 DD contraction: halve non-milestone risk once intra-window DD >= 1.80%
+        if (not is_milestone) and max_dd_pct >= 1.80:
+            trade_risk = trade_risk * 0.5
+
         # Open position
         pos_active[slot] = True
         pos_end_times[slot] = t + hold
         pos_sleeves[slot] = slv
+        pos_syms[slot] = sym
+        pos_hb[slot] = hb
 
         pnl = r * trade_risk
         equity += pnl
@@ -153,6 +181,7 @@ def simulate_elite_portfolio(
         trade_pnls[tr_count] = pnl
         trade_times[tr_count] = t
         trade_sleeves[tr_count] = slv
+        trade_evidx[tr_count] = i
 
         tr_count += 1
         if r > 0: win_count += 1
@@ -160,7 +189,7 @@ def simulate_elite_portfolio(
         elif slv == 2: t1_tr += 1
         elif slv == 3: orb_tr += 1
 
-    return equity - capital, max_dd_pct, tr_count, win_count, s1_tr, t1_tr, orb_tr, trade_pnls[:tr_count], trade_times[:tr_count], trade_sleeves[:tr_count]
+    return equity - capital, max_dd_pct, tr_count, win_count, s1_tr, t1_tr, orb_tr, trade_pnls[:tr_count], trade_times[:tr_count], trade_sleeves[:tr_count], trade_evidx[:tr_count]
 
 def run_elite_suite():
     t_start = time.perf_counter()
@@ -197,6 +226,29 @@ def run_elite_suite():
 
     df_t1_pure = engine.load_t1_breakout_trades()
     orb_pool = load_cross_asset_orb_crt_pool(crypto_only=True)
+
+    # ---- OX59 precomputes: symbol ids, BTC 4H breakdown state, per-symbol zc_norm ----
+    SYM_ID = {"BTCUSDT": 0}
+    for _k, _s in enumerate(sorted(CORE_SYMBOLS), start=1):
+        if _s != "BTCUSDT":
+            SYM_ID[_s] = _k
+    BTC4H_MS = df_btc_4h['time'].astype('int64').to_numpy() // 1_000_000
+    BTC4H_BD = (df_btc_4h['close'].to_numpy(float) < df_btc_4h['ema_200'].to_numpy(float))
+    ZC_DB = {}
+    for _s in CORE_SYMBOLS:
+        _p = DATA_DIR / f"{_s}_15m_master_2020_2026.parquet"
+        if _p.exists():
+            _z = pd.read_parquet(_p, columns=["open_time_ms", "zc_div", "volume_base"])
+            _vb = _z["volume_base"].replace(0, 1.0).to_numpy(float)
+            _zn = np.clip(_z["zc_div"].to_numpy(float) / _vb, -3.0, 3.0)
+            ZC_DB[_s] = (_z["open_time_ms"].to_numpy(np.int64), np.nan_to_num(_zn, nan=0.0))
+
+    def _zc_at(_sym, _t_ms):
+        _db = ZC_DB.get(_sym)
+        if _db is None:
+            return 0.0
+        _i = int(np.searchsorted(_db[0], _t_ms, side="right")) - 1
+        return float(_db[1][_i]) if _i >= 0 else 0.0
 
     print("\n" + "-" * 140)
     print(f"{'W#':<3} | {'Window Name':<38} | {'Regime':<18} | {'Trades':<6} | {'Sleeves':<14} | {'Win Rate':<8} | {'Net PnL':<12} | {'Net ROI':<9} | {'Max DD':<7} | {'Status':<6}")
@@ -242,6 +294,7 @@ def run_elite_suite():
         if is_bear_contagion: regime_label = "BEAR_CONTAGION"
         elif is_bull_expansion: regime_label = "BULL_EXPANSION"
         else: regime_label = "SIDEWAYS_CHOP"
+        regime_id = 2 if is_bear_contagion else (1 if is_bull_expansion else 0)
 
         # 1. S1 Model
         ridge, clf, mu, sd, calib_thresh = engine.train_models(train_set)
@@ -265,7 +318,8 @@ def run_elite_suite():
                     s1_events.append({
                         "time": int(selected["open_time_ms"].iloc[idx]), "r_gain": float(selected["realized_r"].iloc[idx]),
                         "hold_ms": int(selected["bars_held"].iloc[idx]) * 15 * 60 * 1000, "symbol": str(selected["symbol"].iloc[idx]),
-                        "strategy": "S1_SHORT", "prob": prob, "sleeve_id": 1, "risk": 32.0
+                        "strategy": "S1_SHORT", "prob": prob, "sleeve_id": 1, "risk": 32.0,
+                        "side": side
                     })
             else:
                 if side == -1 and tide > 0.0: continue
@@ -274,7 +328,8 @@ def run_elite_suite():
                     s1_events.append({
                         "time": int(selected["open_time_ms"].iloc[idx]), "r_gain": float(selected["realized_r"].iloc[idx]),
                         "hold_ms": int(selected["bars_held"].iloc[idx]) * 15 * 60 * 1000, "symbol": str(selected["symbol"].iloc[idx]),
-                        "strategy": "S1", "prob": prob, "sleeve_id": 1, "risk": 30.0 if prob < 0.48 else 42.0
+                        "strategy": "S1", "prob": prob, "sleeve_id": 1, "risk": 30.0 if prob < 0.48 else 42.0,
+                        "side": side
                     })
 
         # 2. T1 Breakout Events
@@ -285,7 +340,8 @@ def run_elite_suite():
                 t1_events.append({
                     "time": int(cur_t1["time"].iloc[idx]), "r_gain": float(cur_t1["r_gain"].iloc[idx]),
                     "hold_ms": 16 * 4 * 3600 * 1000, "symbol": str(cur_t1["symbol"].iloc[idx]),
-                    "strategy": "T1", "prob": float(cur_t1["prob"].iloc[idx]), "sleeve_id": 2, "risk": 36.0
+                    "strategy": "T1", "prob": float(cur_t1["prob"].iloc[idx]), "sleeve_id": 2, "risk": 36.0,
+                    "side": int(cur_t1["side"].iloc[idx]) if "side" in cur_t1.columns else 1
                 })
 
         # 3. S3 ORB/CRT
@@ -310,10 +366,19 @@ def run_elite_suite():
             orb_passed = orb_cand[orb_cand['prob'] >= max(0.55, thresh)].copy()
 
             for idx in range(len(orb_passed)):
+                o_side = 1 if float(orb_passed['direction_enum'].iloc[idx]) > 0 else -1
+                o_sym = str(orb_passed['symbol'].iloc[idx])
+                o_time = int(orb_passed['time'].iloc[idx])
+                if is_bear_contagion and o_side == 1:
+                    # OX59 BEAR: suppress non-trend longs unless extreme spot CVD divergence
+                    # (causal: zc of the completed breakout bar, 15 min before entry).
+                    if _zc_at(o_sym, o_time - 900_000) <= 1.2:
+                        continue
                 orb_events.append({
-                    "time": int(orb_passed['time'].iloc[idx]), "r_gain": float(orb_passed['outcome'].iloc[idx]),
-                    "hold_ms": 24 * 15 * 60 * 1000, "symbol": str(orb_passed['symbol'].iloc[idx]),
-                    "strategy": "ORB", "prob": float(orb_passed['prob'].iloc[idx]), "sleeve_id": 3, "risk": 24.0
+                    "time": o_time, "r_gain": float(orb_passed['outcome'].iloc[idx]),
+                    "hold_ms": 24 * 15 * 60 * 1000, "symbol": o_sym,
+                    "strategy": "ORB", "prob": float(orb_passed['prob'].iloc[idx]), "sleeve_id": 3, "risk": 24.0,
+                    "side": o_side
                 })
 
         combined = s1_events + t1_events + orb_events
@@ -326,10 +391,16 @@ def run_elite_suite():
         ev_risks = np.array([x["risk"] for x in combined], dtype=np.float64)
         ev_holds = np.array([x["hold_ms"] for x in combined], dtype=np.int64)
         ev_sleeves = np.array([x["sleeve_id"] for x in combined], dtype=np.int8)
+        ev_syms = np.array([SYM_ID[x["symbol"]] for x in combined], dtype=np.int64)
+        ev_sides = np.array([x["side"] for x in combined], dtype=np.int8)
+        ev_hb = ((ev_sides == 1) & (ev_syms != 0)).astype(np.int8)
+        btc_idx = np.searchsorted(BTC4H_MS, ev_times, side="right") - 1
+        ev_btcbd = np.where(btc_idx >= 0, BTC4H_BD[np.maximum(btc_idx, 0)], False).astype(np.int8)
 
-        net_pnl, max_dd, tr_count, win_count, s1_tr, t1_tr, orb_tr, tr_pnls, tr_times, tr_sleeves = simulate_elite_portfolio(
+        net_pnl, max_dd, tr_count, win_count, s1_tr, t1_tr, orb_tr, tr_pnls, tr_times, tr_sleeves, tr_evidx = simulate_elite_portfolio(
             ev_times, ev_rgains, ev_risks, ev_holds, ev_sleeves,
-            capital=CAPITAL, max_concurrent=4, max_s1_concurrent=2, max_t1_concurrent=2,
+            ev_syms, ev_sides, ev_hb, ev_btcbd, regime_id,
+            capital=CAPITAL, max_concurrent=3, max_s1_concurrent=2, max_t1_concurrent=2,
             max_orb_concurrent=2, milestone_pnl=500.0, dd_stop_pct=4.85
         )
 
@@ -344,9 +415,12 @@ def run_elite_suite():
 
         eq_curve = (CAPITAL + np.cumsum(np.insert(tr_pnls, 0, 0.0))).tolist()
 
-        for tp, tt, ts in zip(tr_pnls, tr_times, tr_sleeves):
+        for tp, tt, ts, te in zip(tr_pnls, tr_times, tr_sleeves, tr_evidx):
+            _ev = combined[int(te)]
             all_executed_trades.append({
-                "window_id": w_id, "time": int(tt), "pnl": float(tp), "sleeve": int(ts)
+                "window_id": w_id, "time": int(tt), "pnl": float(tp), "sleeve": int(ts),
+                "symbol": str(_ev["symbol"]), "strategy": str(_ev["strategy"]),
+                "r_gain": float(_ev["r_gain"]), "risk": float(_ev["risk"]), "prob": float(_ev["prob"])
             })
 
         sleeve_summary = f"S1:{s1_tr} T1:{t1_tr} ORB:{orb_tr}"
