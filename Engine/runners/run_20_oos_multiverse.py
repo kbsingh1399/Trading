@@ -161,7 +161,7 @@ def main():
     df_btc['trailing_30d_atr_pct'] = df_btc['atr_pct'].rolling(180).mean()
 
     df_t1_pure = engine.load_t1_breakout_trades()
-    orb_pool = load_cross_asset_orb_crt_pool()
+    orb_pool = load_cross_asset_orb_crt_pool(crypto_only=False)
 
     passed_count = 0
     total_trades = 0

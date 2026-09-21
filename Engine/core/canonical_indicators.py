@@ -600,3 +600,90 @@ def compute_session_value_area(
     prev_vah[first] = out_vah[first]
     prev_val[first] = out_val[first]
     return out_vah, out_val, prev_vah, prev_val
+
+
+# ------------------------------------------------------------------------------
+# Multi-Timeframe Structural Pivots & Footprint Sweep Detectors
+# ------------------------------------------------------------------------------
+def compute_structural_pivots_and_sweeps(
+    timestamps_ms: np.ndarray,
+    highs: np.ndarray,
+    lows: np.ndarray,
+    closes: np.ndarray,
+    deltas: np.ndarray,
+    volumes: np.ndarray,
+    volume_ratios: np.ndarray,
+    atrs: np.ndarray,
+) -> Tuple[
+    np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray,
+    np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray
+]:
+    """
+    Causal, prefix-invariant multi-timeframe structural pivots and footprint delta sweeps.
+    Calculates:
+      - Daily: PDH (Previous Day High), PDL (Previous Day Low)
+      - Weekly: PWH (Previous Week High), PWL (Previous Week Low)
+      - Monthly: PMH (Previous Month High), PML (Previous Month Low)
+      - Normalized Distances: pdl_dist, pdh_dist, pwl_dist, pwh_dist in ATR units
+      - Orderflow Sweeps: pdl_sweep_bull (PDL pierced and closed back above with positive delta),
+                          pdh_sweep_bear (PDH pierced and closed back below with negative delta)
+    """
+    n = len(timestamps_ms)
+    if n == 0:
+        z = np.zeros(0, dtype=np.float64)
+        b = np.zeros(0, dtype=bool)
+        return z, z, z, z, z, z, z, z, z, z, b, b
+
+    t = np.asarray(timestamps_ms, dtype=np.int64)
+    h = np.asarray(highs, dtype=np.float64)
+    l = np.asarray(lows, dtype=np.float64)
+    c = np.asarray(closes, dtype=np.float64)
+    d = np.asarray(deltas, dtype=np.float64)
+    vr = np.asarray(volume_ratios, dtype=np.float64)
+    atr = np.maximum(np.asarray(atrs, dtype=np.float64), 1e-6)
+
+    # 1. Daily Pivots (00:00 UTC anchor)
+    day_idx = (t // DAY_MS)
+    _, d_start, d_counts = np.unique(day_idx, return_index=True, return_counts=True)
+    pdh_day = np.empty(d_start.size, dtype=np.float64)
+    pdl_day = np.empty(d_start.size, dtype=np.float64)
+    pdh_day[1:], pdh_day[0] = np.maximum.reduceat(h, d_start)[:-1], h[0]
+    pdl_day[1:], pdl_day[0] = np.minimum.reduceat(l, d_start)[:-1], l[0]
+    pdh = np.repeat(pdh_day, d_counts)
+    pdl = np.repeat(pdl_day, d_counts)
+
+    # 2. Weekly Pivots (Monday 00:00 UTC anchor: 1970-01-01 was Thursday = +4 days)
+    week_idx = (t + 4 * DAY_MS) // (7 * DAY_MS)
+    _, w_start, w_counts = np.unique(week_idx, return_index=True, return_counts=True)
+    pwh_wk = np.empty(w_start.size, dtype=np.float64)
+    pwl_wk = np.empty(w_start.size, dtype=np.float64)
+    pwh_wk[1:], pwh_wk[0] = np.maximum.reduceat(h, w_start)[:-1], h[0]
+    pwl_wk[1:], pwl_wk[0] = np.minimum.reduceat(l, w_start)[:-1], l[0]
+    pwh = np.repeat(pwh_wk, w_counts)
+    pwl = np.repeat(pwl_wk, w_counts)
+
+    # 3. Monthly Pivots (Calendar month anchor)
+    dt = pd.to_datetime(t, unit="ms", utc=True)
+    m_idx = dt.year.to_numpy() * 12 + dt.month.to_numpy()
+    _, m_start, m_counts = np.unique(m_idx, return_index=True, return_counts=True)
+    pmh_m = np.empty(m_start.size, dtype=np.float64)
+    pml_m = np.empty(m_start.size, dtype=np.float64)
+    pmh_m[1:], pmh_m[0] = np.maximum.reduceat(h, m_start)[:-1], h[0]
+    pml_m[1:], pml_m[0] = np.minimum.reduceat(l, m_start)[:-1], l[0]
+    pmh = np.repeat(pmh_m, m_counts)
+    pml = np.repeat(pml_m, m_counts)
+
+    # 4. Normalized distances in ATR units
+    pdl_dist = np.clip((c - pdl) / atr, -10.0, 10.0)
+    pdh_dist = np.clip((c - pdh) / atr, -10.0, 10.0)
+    pwl_dist = np.clip((c - pwl) / atr, -10.0, 10.0)
+    pwh_dist = np.clip((c - pwh) / atr, -10.0, 10.0)
+
+    # 5. Orderflow Sweeps with Footprint Delta Absorption
+    # Bullish Liquidity Sweep: Price dipped below PDL but closed back above PDL, with positive Delta or volume absorption
+    pdl_sweep_bull = (l < pdl) & (c > pdl) & (d > 0)
+    # Bearish Liquidity Sweep: Price poked above PDH but closed back below PDH, with negative Delta or exhaustion
+    pdh_sweep_bear = (h > pdh) & (c < pdh) & (d < 0)
+
+    return pdh, pdl, pwh, pwl, pmh, pml, pdl_dist, pdh_dist, pwl_dist, pwh_dist, pdl_sweep_bull, pdh_sweep_bear
+

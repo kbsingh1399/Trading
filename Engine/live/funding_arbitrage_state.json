@@ -1,0 +1,43 @@
+{
+  "initial_capital_usd": 5000.0,
+  "current_equity_usd": 5000.0,
+  "cumulative_yield_usd": 0.0,
+  "settlements_collected": 0,
+  "active_positions": {
+    "BNBUSDT": {
+      "allocated_usd": 1666.6666666666667,
+      "spot_qty": 1.0591270932857213,
+      "perp_short_qty": 1.0591270932857213,
+      "entry_price": 786.81145881,
+      "mark_price": 786.81145881,
+      "rate_8h_pct": 0.010588,
+      "annual_apr_pct": 11.59386,
+      "next_time_ms": 1790006400000,
+      "last_updated_utc": "2026-09-21 11:12:17"
+    },
+    "XRPUSDT": {
+      "allocated_usd": 1666.6666666666667,
+      "spot_qty": 558.2350839585567,
+      "perp_short_qty": 558.2350839585567,
+      "entry_price": 1.4928,
+      "mark_price": 1.4928,
+      "rate_8h_pct": 0.01,
+      "annual_apr_pct": 10.95,
+      "next_time_ms": 1790006400000,
+      "last_updated_utc": "2026-09-21 11:12:17"
+    },
+    "LINKUSDT": {
+      "allocated_usd": 1666.6666666666667,
+      "spot_qty": 63.886333435551464,
+      "perp_short_qty": 63.886333435551464,
+      "entry_price": 13.044,
+      "mark_price": 13.044,
+      "rate_8h_pct": 0.01,
+      "annual_apr_pct": 10.95,
+      "next_time_ms": 1790006400000,
+      "last_updated_utc": "2026-09-21 11:12:17"
+    }
+  },
+  "history": [],
+  "start_time_utc": "2026-09-21 11:06:04"
+}

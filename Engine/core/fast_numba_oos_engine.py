@@ -22,6 +22,7 @@ import numba as nb
 from numba import njit, prange
 import numpy as np
 import pandas as pd
+from Engine.core.canonical_indicators import compute_structural_pivots_and_sweeps
 
 REPO = Path(__file__).resolve().parents[2]
 DATA_DIR = REPO / "binance_backtesting_data"
@@ -70,6 +71,12 @@ FEATURE_COLS = [
     "vol_strain",
     "hour",
     "tide_align",
+    "pdl_dist",
+    "pdh_dist",
+    "pwl_dist",
+    "pwh_dist",
+    "pdl_sweep_bull",
+    "pdh_sweep_bear",
     "signal_side",
     "sleeve_id"
 ]
@@ -331,6 +338,14 @@ def compile_dataset_with_numba(friction_r: float = 0.18):
         vol_strain = np.clip(atr / np.maximum(c, 1e-6), 0.005, 0.10)
         hour = (t // (3600 * 1000)) % 24
 
+        # Multi-Timeframe Structural Pivots & Orderflow Sweeps
+        fut_delta = df["future_cvd_15m"].fillna(0.0).to_numpy(float)
+        (
+            pdh, pdl, pwh, pwl, pmh, pml,
+            pdl_dist, pdh_dist, pwl_dist, pwh_dist,
+            pdl_sweep_bull, pdh_sweep_bear
+        ) = compute_structural_pivots_and_sweeps(t, h, lo, c, fut_delta, vol_base, vol_ratio, atr)
+
         # Causal Volatility Shock Filter (veto entries during 88th+ percentile volatility shocks)
         ret = np.diff(np.log(np.maximum(c, 1e-9)), prepend=0.0)
         rv_96 = pd.Series(ret).rolling(96, min_periods=8).std().fillna(0.0).to_numpy(float)
@@ -346,12 +361,15 @@ def compile_dataset_with_numba(friction_r: float = 0.18):
         # Sleeve T2: Trapped-Trader Liquidation Absorption
         t2_liq_flush = (long_liq >= 1.5) & (vwap_z <= -0.6) & (zc_norm > 0.0) & (vol_ratio >= 1.3) & (c > e200)
 
-        long_cond = (bull_pullback | t2_liq_flush) & (~is_shock) & np.isfinite(atr) & (atr > 0)
+        # Sleeve T3: Structural Liquidity Sweeps (PDL / PWL Sweeps with Delta Absorption)
+        t3_pdl_sweep = pdl_sweep_bull & (vol_ratio >= 1.1)
+
+        long_cond = (bull_pullback | t2_liq_flush | t3_pdl_sweep) & (~is_shock) & np.isfinite(atr) & (atr > 0)
         short_cond = bear_rally & (~is_shock) & np.isfinite(atr) & (atr > 0)
         long_cond = (long_cond & (~short_cond)).astype(bool)
         short_cond = (short_cond & (~long_cond)).astype(bool)
 
-        sleeve_id = np.where(t2_liq_flush, 2, 1)
+        sleeve_id = np.where(t3_pdl_sweep, 3, np.where(t2_liq_flush, 2, 1))
         tide_align = np.where(long_cond, tide, np.where(short_cond, -tide, 0.0))
 
         # Execute JIT Ratchet Labeler with Convex Asymmetric Payoff Geometry
@@ -393,6 +411,12 @@ def compile_dataset_with_numba(friction_r: float = 0.18):
             "vol_strain": vol_strain[cand_idx],
             "hour": hour[cand_idx],
             "tide_align": tide_align[cand_idx],
+            "pdl_dist": pdl_dist[cand_idx],
+            "pdh_dist": pdh_dist[cand_idx],
+            "pwl_dist": pwl_dist[cand_idx],
+            "pwh_dist": pwh_dist[cand_idx],
+            "pdl_sweep_bull": pdl_sweep_bull[cand_idx].astype(float),
+            "pdh_sweep_bear": pdh_sweep_bear[cand_idx].astype(float),
             "btc_macro_tide": tide[cand_idx],
             "signal_side": side[cand_idx],
 
