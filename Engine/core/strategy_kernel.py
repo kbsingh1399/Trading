@@ -497,6 +497,191 @@ def create_labels_ratchet(df: pd.DataFrame, min_r: float = MIN_R_MULTIPLE, look_
 
 
 # -------------------------------------------------------------------------
+# UNIFIED LIVE-SPEC LABELING (OX61: single-shot principle-driven MANDATE 3 test)
+# -------------------------------------------------------------------------
+# Exit reason codes (shared convention with the ORB sleeve)
+UX_SL = 0
+UX_TP = 1
+UX_DECAY = 2
+UX_FRIDAY = 3
+
+# Live 7-stage ratchet schedule: (gain trigger R, locked SL R) — mirrors
+# OrderManager.manage_open_trades exactly (elif cascade takes highest stage).
+UX_RATCHET = ((0.8, 0.15), (1.5, 0.80), (2.0, 1.80), (2.5, 2.30), (3.0, 2.80), (3.5, 3.30))
+UX_MAX_R_EFF = 3.5
+
+
+def _ux_exit_long(opens, highs, lows, closes, dows, hrs, mns, n, e, entry, sl0, tp, r):
+    """Live-spec LONG exit. Returns (r_pre_friction, exit_j, reason) or None at data-end."""
+    sl = sl0
+    phase = 0
+    highest = -1e9
+    for j in range(e, n):
+        o = opens[j]
+        h = highs[j]
+        low = lows[j]
+        c = closes[j]
+        if o <= sl:
+            return (o - entry) / r, j, UX_SL
+        if low <= sl:
+            return (sl - entry) / r, j, UX_SL
+        if h >= tp:
+            return (tp - entry) / r, j, UX_TP
+        if dows[j] == 4 and (hrs[j] > 20 or (hrs[j] == 20 and mns[j] >= 30)):
+            return (c - entry) / r, j, UX_FRIDAY
+        hr_now = (h - entry) / r
+        if hr_now > highest:
+            highest = hr_now
+        if (j - e) >= TIME_DECAY_BARS and highest < TIME_DECAY_THRESHOLD_R:
+            return (c - entry) / r, j, UX_DECAY
+        upgraded = False
+        for stage in range(6, 0, -1):
+            trig, lock = UX_RATCHET[stage - 1]
+            if hr_now >= trig and phase < stage:
+                sl = entry + lock * r
+                phase = stage
+                upgraded = True
+                break
+        if upgraded and c < sl:
+            return (sl - entry) / r, j, UX_SL
+    return None
+
+
+def _ux_exit_short(opens, highs, lows, closes, dows, hrs, mns, n, e, entry, sl0, tp, r):
+    """Live-spec SHORT exit (mirror of long)."""
+    sl = sl0
+    phase = 0
+    highest = -1e9
+    for j in range(e, n):
+        o = opens[j]
+        h = highs[j]
+        low = lows[j]
+        c = closes[j]
+        if o >= sl:
+            return (entry - o) / r, j, UX_SL
+        if h >= sl:
+            return (entry - sl) / r, j, UX_SL
+        if low <= tp:
+            return (entry - tp) / r, j, UX_TP
+        if dows[j] == 4 and (hrs[j] > 20 or (hrs[j] == 20 and mns[j] >= 30)):
+            return (entry - c) / r, j, UX_FRIDAY
+        hr_now = (entry - low) / r
+        if hr_now > highest:
+            highest = hr_now
+        if (j - e) >= TIME_DECAY_BARS and highest < TIME_DECAY_THRESHOLD_R:
+            return (entry - c) / r, j, UX_DECAY
+        upgraded = False
+        for stage in range(6, 0, -1):
+            trig, lock = UX_RATCHET[stage - 1]
+            if hr_now >= trig and phase < stage:
+                sl = entry - lock * r
+                phase = stage
+                upgraded = True
+                break
+        if upgraded and c > sl:
+            return (entry - sl) / r, j, UX_SL
+    return None
+
+
+def create_labels_unified(df: pd.DataFrame) -> pd.DataFrame:
+    """Labels setups with live-spec exits (FVG swing stops are compatible).
+
+    Entry predicate pre-committed and untouched. Exits mirror live exactly:
+    swing-extreme SL with 1.5xATR floor (spread term provably dominated under
+    the 12% live quarantine), structural TP with R_eff in [2.5, 3.5] + viability
+    veto below 2.5, 6-lock ratchet on extremes, highest-R decay at 24 bars,
+    Friday 20:30 closeout + Friday 18:00 entry veto, gap-aware unclamped stops,
+    no bar-cap (data-end truncation yields NO label: boundary discipline).
+    Emits target / r_realized / hold_bars / exit_reason (-1 = unlabeled).
+    """
+    n = len(df)
+    targets = np.full(n, np.nan)
+    r_reals = np.zeros(n)
+    holds = np.zeros(n, dtype=np.int64)
+    reasons = np.full(n, -1, dtype=np.int64)
+
+    opens = df['open'].values
+    highs = df['high'].values
+    lows = df['low'].values
+    closes = df['close'].values
+    sweep_pdl = df['sweep_pdl'].values
+    sweep_pdh = df['sweep_pdh'].values
+    bullish_fvg = df['bullish_fvg'].values
+    bearish_fvg = df['bearish_fvg'].values
+    htf_4h = df['htf_4h_trend'].values
+    local_low = df['local_low_20'].values
+    local_high = df['local_high_20'].values
+    atr14 = df['atr_14'].values
+    is_kz = df['is_kill_zone'].values if 'is_kill_zone' in df.columns else np.ones(n, dtype=bool)
+    dts = pd.to_datetime(df['datetime'])
+    dows = dts.dt.weekday.values
+    hrs = dts.dt.hour.values
+    mns = dts.dt.minute.values
+
+    for i in range(n):
+        is_long = is_kz[i] and sweep_pdl[i] == 1 and bullish_fvg[i] > 0 and htf_4h[i] > 0
+        is_short = is_kz[i] and sweep_pdh[i] == 1 and bearish_fvg[i] > 0 and htf_4h[i] < 0
+        if not (is_long or is_short):
+            continue
+        e = i + 1
+        if e >= n:
+            continue
+        if dows[e] == 4 and hrs[e] >= 18:
+            continue  # Friday 18:00 UTC entry cutoff (live truth)
+        entry = opens[e]
+        if is_long:
+            sl0 = local_low[i]
+            r = entry - sl0
+            floor = 1.5 * atr14[i]
+            if r < floor:
+                r = floor  # SL0 already structural; floor widens directly
+                sl0 = entry - r
+            if r <= 0 or (r / entry) > MAX_STOP_PCT:
+                continue
+            tp_struct = local_high[i]
+            if tp_struct > entry:
+                r_eff = (tp_struct - entry) / r
+                if r_eff < MIN_R_MULTIPLE:
+                    continue  # live viability veto
+                tp = entry + min(r_eff, UX_MAX_R_EFF) * r
+            else:
+                tp = entry + MIN_R_MULTIPLE * r
+            res = _ux_exit_long(opens, highs, lows, closes, dows, hrs, mns, n, e, entry, sl0, tp, r)
+        else:
+            sl0 = local_high[i]
+            r = sl0 - entry
+            floor = 1.5 * atr14[i]
+            if r < floor:
+                r = floor
+                sl0 = entry + r
+            if r <= 0 or (r / entry) > MAX_STOP_PCT:
+                continue
+            tp_struct = local_low[i]
+            if tp_struct < entry:
+                r_eff = (entry - tp_struct) / r
+                if r_eff < MIN_R_MULTIPLE:
+                    continue  # live viability veto
+                tp = entry - min(r_eff, UX_MAX_R_EFF) * r
+            else:
+                tp = entry - MIN_R_MULTIPLE * r
+            res = _ux_exit_short(opens, highs, lows, closes, dows, hrs, mns, n, e, entry, sl0, tp, r)
+        if res is None:
+            continue  # data-end truncation: NO label (boundary discipline)
+        r_pre, exit_j, reason = res
+        r_real = round(r_pre - 0.08, 4)
+        targets[i] = 1 if r_real > 0 else 0
+        r_reals[i] = r_real
+        holds[i] = exit_j - e
+        reasons[i] = reason
+
+    df['target'] = targets
+    df['r_realized'] = r_reals
+    df['hold_bars'] = holds
+    df['exit_reason'] = reasons
+    return df
+
+
+# -------------------------------------------------------------------------
 # PURGE & EMBARGO BOUNDARY HELPER (PREVENTS LOOKAHEAD INTO TEST WINDOWS)
 # -------------------------------------------------------------------------
 def get_causal_train_test_split(

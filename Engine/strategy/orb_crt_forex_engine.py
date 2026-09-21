@@ -72,6 +72,15 @@ ARTIFACT_DIR = ENGINE_DIR / "artifacts"
 # -------------------------------------------------------------------------
 # NUMBA VECTORIZED SIMULATOR KERNEL
 # -------------------------------------------------------------------------
+# Exit reason codes (OX61: true hold bars + exit attribution for concurrency truth)
+EXIT_SL = 0          # stopped out (gap-aware: open beyond SL fills at open, unclamped)
+EXIT_TP = 1          # fixed 2.5R take-profit
+EXIT_DECAY = 2       # time decay (unreachable under the 24-bar session cap; kept for parity)
+EXIT_FRIDAY = 3      # Friday 20:30 UTC weekend closeout (live truth: never hold weekends)
+EXIT_DATA_END = 4    # (reserved)
+EXIT_TRUNC = 5       # 24-bar session time-stop: MTM exit at last session bar close
+
+
 @njit
 def simulate_session_orb(
     opens: np.ndarray,
@@ -88,10 +97,17 @@ def simulate_session_orb(
     start_minute: int,
     range_duration_bars: int = 2,
     trade_duration_bars: int = 30
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Simulates Opening Range Breakouts (ORB) with Candle Range Theory (CRT)
     microstructure filters and piecewise ratchets with zero lookahead.
+
+    OX61 correctness fixes (entry/exit economics pre-committed and untouched):
+    exited-flag (no -1.0 sentinel collision), gap-aware unclamped SL fills,
+    Friday 20:30 UTC closeout + Friday 18:00 entry cutoff (live truth), true
+    hold bars + exit reason codes. An experimental full live-spec unification
+    (structural TP, 1.5xATR floors, R_eff veto, extreme-locks, no truncation)
+    was built, measured at 0/20, and reverted: see OX61 report (F0).
     """
     n = len(highs)
     max_trades = (n // 10) + 100
@@ -101,6 +117,8 @@ def simulate_session_orb(
     trade_entry_prices = np.zeros(max_trades, dtype=np.float64)  # Entry Price
     trade_sl_prices = np.zeros(max_trades, dtype=np.float64)     # Stop Loss Price
     trade_timestamps = np.zeros(max_trades, dtype=np.int64)      # Entry bar timestamp
+    trade_hold_bars = np.zeros(max_trades, dtype=np.int64)       # TRUE bars held (exit - entry)
+    trade_reasons = np.zeros(max_trades, dtype=np.int64)         # Exit reason code
 
     emas_50 = np.zeros(n)
     emas_50[0] = closes[0]
@@ -184,6 +202,9 @@ def simulate_session_orb(
                             entry_bar = j + 1
                             if entry_bar >= trade_end or entry_bar >= n:
                                 continue
+                            # Friday 18:00 UTC entry cutoff (live truth: no weekend-gap entries)
+                            if day_of_weeks[entry_bar] == 4 and hours[entry_bar] >= 18:
+                                continue
 
                             entry = opens[entry_bar] # Strictly causal next-bar open fill
                             sl = or_low
@@ -195,6 +216,9 @@ def simulate_session_orb(
                             tp = entry + 2.5 * r_val
                             current_sl = sl
                             outcome_r = -1.0
+                            exited = False  # OX61: explicit flag (kills -1.0 sentinel collision)
+                            exit_k = trade_end - 1
+                            reason = 5  # EXIT_TRUNC default (24-bar session time-stop)
                             phase_0_locked = False
                             phase_1_locked = False
 
@@ -204,13 +228,36 @@ def simulate_session_orb(
                                     current_r = (closes[k] - entry) / r_val
                                     if current_r < 0.2:
                                         outcome_r = current_r
+                                        exited = True
+                                        exit_k = k
+                                        reason = 2  # EXIT_DECAY
                                         break
 
+                                # Gap-through-stop: bar opens beyond SL -> live fills at open
+                                if opens[k] <= current_sl:
+                                    outcome_r = (opens[k] - entry) / r_val
+                                    exited = True
+                                    exit_k = k
+                                    reason = 0  # EXIT_SL
+                                    break
                                 if lows[k] <= current_sl:
                                     outcome_r = (current_sl - entry) / r_val
+                                    exited = True
+                                    exit_k = k
+                                    reason = 0  # EXIT_SL
                                     break
                                 if highs[k] >= tp:
                                     outcome_r = 2.5
+                                    exited = True
+                                    exit_k = k
+                                    reason = 1  # EXIT_TP
+                                    break
+                                # Friday 20:30 UTC weekend closeout (live truth)
+                                if day_of_weeks[k] == 4 and (hours[k] > 20 or (hours[k] == 20 and minutes[k] >= 30)):
+                                    outcome_r = (closes[k] - entry) / r_val
+                                    exited = True
+                                    exit_k = k
+                                    reason = 3  # EXIT_FRIDAY
                                     break
 
                                 # Trailing ratchets on bar close
@@ -222,17 +269,19 @@ def simulate_session_orb(
                                     current_sl = entry + 0.80 * r_val
                                     phase_1_locked = True
 
-                            if outcome_r == -1.0:
+                            if not exited:
                                 outcome_r = (closes[trade_end-1] - entry) / r_val
 
-                            # Friction deduction (8 bps)
+                            # Friction deduction (8 bps on risk == 0.08R, pre-committed)
                             outcome_r -= 0.08
 
                             trade_signals[trade_idx] = 1.0
-                            trade_outcomes[trade_idx] = max(-1.15, min(2.5, outcome_r))
+                            trade_outcomes[trade_idx] = outcome_r  # OX61: unclamped (live has no clamp)
                             trade_entry_prices[trade_idx] = entry
                             trade_sl_prices[trade_idx] = sl
                             trade_timestamps[trade_idx] = timestamps[entry_bar]
+                            trade_hold_bars[trade_idx] = exit_k - entry_bar
+                            trade_reasons[trade_idx] = reason
                             trade_idx += 1
                             i = trade_end
                             break
@@ -248,6 +297,9 @@ def simulate_session_orb(
                             entry_bar = j + 1
                             if entry_bar >= trade_end or entry_bar >= n:
                                 continue
+                            # Friday 18:00 UTC entry cutoff (live truth: no weekend-gap entries)
+                            if day_of_weeks[entry_bar] == 4 and hours[entry_bar] >= 18:
+                                continue
 
                             entry = opens[entry_bar] # Strictly causal next-bar open fill
                             sl = or_high
@@ -259,6 +311,9 @@ def simulate_session_orb(
                             tp = entry - 2.5 * r_val
                             current_sl = sl
                             outcome_r = -1.0
+                            exited = False  # OX61: explicit flag (kills -1.0 sentinel collision)
+                            exit_k = trade_end - 1
+                            reason = 5  # EXIT_TRUNC default (24-bar session time-stop)
                             phase_0_locked = False
                             phase_1_locked = False
 
@@ -267,13 +322,36 @@ def simulate_session_orb(
                                     current_r = (entry - closes[k]) / r_val
                                     if current_r < 0.2:
                                         outcome_r = current_r
+                                        exited = True
+                                        exit_k = k
+                                        reason = 2  # EXIT_DECAY
                                         break
 
+                                # Gap-through-stop: bar opens beyond SL -> live fills at open
+                                if opens[k] >= current_sl:
+                                    outcome_r = (entry - opens[k]) / r_val
+                                    exited = True
+                                    exit_k = k
+                                    reason = 0  # EXIT_SL
+                                    break
                                 if highs[k] >= current_sl:
                                     outcome_r = (entry - current_sl) / r_val
+                                    exited = True
+                                    exit_k = k
+                                    reason = 0  # EXIT_SL
                                     break
                                 if lows[k] <= tp:
                                     outcome_r = 2.5
+                                    exited = True
+                                    exit_k = k
+                                    reason = 1  # EXIT_TP
+                                    break
+                                # Friday 20:30 UTC weekend closeout (live truth)
+                                if day_of_weeks[k] == 4 and (hours[k] > 20 or (hours[k] == 20 and minutes[k] >= 30)):
+                                    outcome_r = (entry - closes[k]) / r_val
+                                    exited = True
+                                    exit_k = k
+                                    reason = 3  # EXIT_FRIDAY
                                     break
 
                                 current_gain = (entry - closes[k]) / r_val
@@ -284,16 +362,18 @@ def simulate_session_orb(
                                     current_sl = entry - 0.80 * r_val
                                     phase_1_locked = True
 
-                            if outcome_r == -1.0:
+                            if not exited:
                                 outcome_r = (entry - closes[trade_end-1]) / r_val
 
                             outcome_r -= 0.08
 
                             trade_signals[trade_idx] = -1.0
-                            trade_outcomes[trade_idx] = max(-1.15, min(2.5, outcome_r))
+                            trade_outcomes[trade_idx] = outcome_r  # OX61: unclamped (live has no clamp)
                             trade_entry_prices[trade_idx] = entry
                             trade_sl_prices[trade_idx] = sl
                             trade_timestamps[trade_idx] = timestamps[entry_bar]
+                            trade_hold_bars[trade_idx] = exit_k - entry_bar
+                            trade_reasons[trade_idx] = reason
                             trade_idx += 1
                             i = trade_end
                             break
@@ -305,7 +385,9 @@ def simulate_session_orb(
         trade_outcomes[:trade_idx],
         trade_entry_prices[:trade_idx],
         trade_sl_prices[:trade_idx],
-        trade_timestamps[:trade_idx]
+        trade_timestamps[:trade_idx],
+        trade_hold_bars[:trade_idx],
+        trade_reasons[:trade_idx]
     )
 
 
@@ -487,13 +569,13 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
                 day_of_weeks = df_sub['datetime'].dt.dayofweek.values.astype(np.int64)
 
                 # 1. London Session ORB (07:00 UTC)
-                lon_sig, lon_r, lon_entry, lon_sl, lon_ts = simulate_session_orb(
+                lon_sig, lon_r, lon_entry, lon_sl, lon_ts, lon_hold, lon_reason = simulate_session_orb(
                     opens, highs, lows, closes, volumes, timestamps, dates, hours, minutes, day_of_weeks,
                     start_hour=7, start_minute=0, range_duration_bars=2, trade_duration_bars=24
                 )
 
                 # 2. NY Session ORB (13:30 UTC)
-                ny_sig, ny_r, ny_entry, ny_sl, ny_ts = simulate_session_orb(
+                ny_sig, ny_r, ny_entry, ny_sl, ny_ts, ny_hold, ny_reason = simulate_session_orb(
                     opens, highs, lows, closes, volumes, timestamps, dates, hours, minutes, day_of_weeks,
                     start_hour=13, start_minute=30, range_duration_bars=2, trade_duration_bars=24
                 )
@@ -504,6 +586,8 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
                 combined_ts = np.concatenate([lon_ts, ny_ts])
                 combined_entry = np.concatenate([lon_entry, ny_entry])
                 combined_sl = np.concatenate([lon_sl, ny_sl])
+                combined_hold = np.concatenate([lon_hold, ny_hold])
+                combined_reason = np.concatenate([lon_reason, ny_reason])
 
                 if len(combined_r) > 0:
                     order = np.argsort(combined_ts)
@@ -512,6 +596,8 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
                     s_ts = pd.to_datetime(combined_ts[order])
                     s_entry = combined_entry[order]
                     s_sl = combined_sl[order]
+                    s_hold = combined_hold[order]
+                    s_reason = combined_reason[order]
 
                     asset_df = pd.DataFrame({
                         'datetime': s_ts,
@@ -520,6 +606,8 @@ class ORBCRTForexCFDStrategy(BaseForexStrategy):
                         'entry': s_entry,
                         'sl': s_sl,
                         'r_realized': s_r,
+                        'hold_bars': s_hold,
+                        'exit_reason': s_reason,
                         'pnl': s_r * base_risk
                     })
                     all_trades_list.append(asset_df)

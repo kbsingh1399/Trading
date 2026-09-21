@@ -1,0 +1,21 @@
+window_id,name,trades,win_rate,profit_factor,net_r,pnl_usd,roi_pct,max_dd_pct,passed,failures
+1,Late 2023 Fed Higher-for-Longer Pause,106,62.26,1.83,45.15,720.37,14.41,3.47,True,
+2,Q4 2023 Year-End Soft Landing Rally,107,58.88,1.162,15.12,223.43,4.47,4.7,False,ROI (+4.47%) < Target (+10.00%)
+3,Q1 2024 Global Disinflation Surge,103,63.11,2.528,43.04,797.67,15.95,2.29,True,
+4,Early 2024 Tech & Index Expansion,113,56.64,1.462,35.99,643.33,12.87,4.07,True,
+5,Spring 2024 Geopolitical Energy Spike,105,68.57,4.473,68.36,1149.95,23.0,1.32,True,
+6,ECB Rate Cut Pivot & Dollar Strength,119,63.87,2.418,46.92,774.56,15.49,3.53,True,
+7,Mid-2024 High-Beta Equity Distribution,112,61.61,2.327,38.37,774.29,15.49,2.68,True,
+8,August 2024 Global Carry Trade Flash Unwind,113,57.52,1.718,30.55,672.6,13.45,3.72,True,
+9,Fed 50bps Jumbo Rate Cut Ignition,124,53.23,1.055,13.73,87.04,1.74,5.18,False,ROI (+1.74%) < Target (+10.00%);Max DD (5.18%) > Limit (5.00%)
+10,US Presidential Election Mega Breakout,120,55.0,1.098,11.12,160.79,3.22,5.28,False,ROI (+3.22%) < Target (+10.00%);Max DD (5.28%) > Limit (5.00%)
+11,Year-End Cross-Currency Flow Rebalancing,123,56.91,1.647,21.19,580.62,11.61,4.17,True,
+12,Post-Inauguration Trade Policy Realignment,117,61.54,2.827,38.6,917.21,18.34,1.46,True,
+13,Spring 2025 Precious Metals All-Time High,121,49.59,1.621,12.58,583.22,11.66,6.36,False,Max DD (6.36%) > Limit (5.00%)
+14,Late-Cycle Yield Curve Steepening,120,60.0,2.023,45.55,803.29,16.07,4.71,True,
+15,European Macro Slowdown & CNH Divergence,126,57.14,2.011,32.15,768.65,15.37,3.32,True,
+16,Late-Summer Commodity Volatility Expansion,121,54.55,1.922,29.37,697.82,13.96,3.06,True,
+17,Autumn 2025 Global Liquidity Injection,122,63.93,2.79,46.14,836.06,16.72,1.71,True,
+18,Q4 2025 Industrial Metals & Indices Momentum,159,62.26,3.145,59.25,966.7,19.33,1.37,True,
+19,Q1 2026 New Year Cross-Asset Range Shift,120,55.0,2.24,18.5,644.33,12.89,2.28,True,
+20,March 2026 Modern Microstructure Shock,116,67.24,2.86,60.97,937.11,18.74,2.62,True,

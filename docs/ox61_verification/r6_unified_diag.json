@@ -1,0 +1,142 @@
+[
+ {
+  "window": 1,
+  "n_train": 10,
+  "pos_rate": 0.6,
+  "fit_auc": 1.0,
+  "n_sig": 9
+ },
+ {
+  "window": 2,
+  "n_train": 34,
+  "pos_rate": 0.4412,
+  "fit_auc": 1.0,
+  "n_sig": 10
+ },
+ {
+  "window": 3,
+  "n_train": 69,
+  "pos_rate": 0.4493,
+  "fit_auc": 1.0,
+  "n_sig": 10
+ },
+ {
+  "window": 4,
+  "n_train": 114,
+  "pos_rate": 0.4035,
+  "fit_auc": 1.0,
+  "n_sig": 13
+ },
+ {
+  "window": 5,
+  "n_train": 126,
+  "pos_rate": 0.4206,
+  "fit_auc": 1.0,
+  "n_sig": 7
+ },
+ {
+  "window": 6,
+  "n_train": 151,
+  "pos_rate": 0.4305,
+  "fit_auc": 1.0,
+  "n_sig": 16
+ },
+ {
+  "window": 7,
+  "n_train": 188,
+  "pos_rate": 0.4468,
+  "fit_auc": 1.0,
+  "n_sig": 11
+ },
+ {
+  "window": 8,
+  "n_train": 215,
+  "pos_rate": 0.4791,
+  "fit_auc": 1.0,
+  "n_sig": 19
+ },
+ {
+  "window": 9,
+  "n_train": 244,
+  "pos_rate": 0.4795,
+  "fit_auc": 0.9993,
+  "n_sig": 11
+ },
+ {
+  "window": 10,
+  "n_train": 274,
+  "pos_rate": 0.4708,
+  "fit_auc": 0.9967,
+  "n_sig": 25
+ },
+ {
+  "window": 11,
+  "n_train": 334,
+  "pos_rate": 0.482,
+  "fit_auc": 0.9996,
+  "n_sig": 18
+ },
+ {
+  "window": 12,
+  "n_train": 401,
+  "pos_rate": 0.5062,
+  "fit_auc": 0.9955,
+  "n_sig": 19
+ },
+ {
+  "window": 13,
+  "n_train": 448,
+  "pos_rate": 0.5134,
+  "fit_auc": 0.9947,
+  "n_sig": 19
+ },
+ {
+  "window": 14,
+  "n_train": 497,
+  "pos_rate": 0.507,
+  "fit_auc": 0.989,
+  "n_sig": 15
+ },
+ {
+  "window": 15,
+  "n_train": 560,
+  "pos_rate": 0.5125,
+  "fit_auc": 0.9868,
+  "n_sig": 19
+ },
+ {
+  "window": 16,
+  "n_train": 622,
+  "pos_rate": 0.5161,
+  "fit_auc": 0.986,
+  "n_sig": 14
+ },
+ {
+  "window": 17,
+  "n_train": 674,
+  "pos_rate": 0.5178,
+  "fit_auc": 0.9731,
+  "n_sig": 12
+ },
+ {
+  "window": 18,
+  "n_train": 700,
+  "pos_rate": 0.5186,
+  "fit_auc": 0.9713,
+  "n_sig": 22
+ },
+ {
+  "window": 19,
+  "n_train": 764,
+  "pos_rate": 0.5236,
+  "fit_auc": 0.9744,
+  "n_sig": 19
+ },
+ {
+  "window": 20,
+  "n_train": 817,
+  "pos_rate": 0.5226,
+  "fit_auc": 0.9753,
+  "n_sig": 7
+ }
+]

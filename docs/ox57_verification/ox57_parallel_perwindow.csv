@@ -1,0 +1,21 @@
+window_id,name,trades,win_rate,profit_factor,net_r,pnl_usd,roi_pct,max_dd_pct,passed,failures
+1,Late 2023 Fed Higher-for-Longer Pause,106,62.26,1.908,45.15,752.88,15.06,3.04,True,
+2,Q4 2023 Year-End Soft Landing Rally,35,45.71,0.764,-2.55,-116.04,-2.32,4.7,False,ROI (-2.32%) < Target (+10.00%);Net R (-2.55R) < Target (+4.00R)
+3,Q1 2024 Global Disinflation Surge,103,63.11,2.528,43.04,797.67,15.95,2.29,True,
+4,Early 2024 Tech & Index Expansion,113,56.64,1.585,35.99,702.68,14.05,4.01,True,
+5,Spring 2024 Geopolitical Energy Spike,105,68.57,4.473,68.36,1149.95,23.0,1.32,True,
+6,ECB Rate Cut Pivot & Dollar Strength,119,63.87,2.418,46.92,774.56,15.49,3.53,True,
+7,Mid-2024 High-Beta Equity Distribution,112,61.61,2.497,38.37,835.01,16.7,2.22,True,
+8,August 2024 Global Carry Trade Flash Unwind,113,57.52,1.737,30.55,672.43,13.45,3.96,True,
+9,Fed 50bps Jumbo Rate Cut Ignition,22,45.45,0.683,-4.63,-109.4,-2.19,4.5,False,ROI (-2.19%) < Target (+10.00%);Net R (-4.63R) < Target (+4.00R)
+10,US Presidential Election Mega Breakout,96,55.21,1.168,12.15,242.51,4.85,4.33,False,ROI (+4.85%) < Target (+10.00%)
+11,Year-End Cross-Currency Flow Rebalancing,123,56.91,1.646,21.19,590.72,11.81,4.16,True,
+12,Post-Inauguration Trade Policy Realignment,117,61.54,2.827,38.6,917.21,18.34,1.46,True,
+13,Spring 2025 Precious Metals All-Time High,21,47.62,0.404,-6.06,-189.7,-3.79,4.48,False,ROI (-3.79%) < Target (+10.00%);Net R (-6.06R) < Target (+4.00R)
+14,Late-Cycle Yield Curve Steepening,19,36.84,0.568,-6.63,-179.14,-3.58,4.71,False,ROI (-3.58%) < Target (+10.00%);Win Rate (36.8%) < Target (40.0%);Net R (-6.63R) < Target (+4.00R)
+15,European Macro Slowdown & CNH Divergence,126,57.14,1.793,32.15,747.93,14.96,3.67,True,
+16,Late-Summer Commodity Volatility Expansion,121,54.55,1.922,29.37,697.82,13.96,3.06,True,
+17,Autumn 2025 Global Liquidity Injection,122,63.93,2.79,46.14,836.06,16.72,1.71,True,
+18,Q4 2025 Industrial Metals & Indices Momentum,159,62.26,3.145,59.25,966.7,19.33,1.37,True,
+19,Q1 2026 New Year Cross-Asset Range Shift,120,55.0,2.111,18.5,577.26,11.55,2.28,True,
+20,March 2026 Modern Microstructure Shock,116,67.24,2.86,60.97,937.11,18.74,2.62,True,

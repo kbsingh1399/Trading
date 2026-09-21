@@ -1019,6 +1019,7 @@ class OrderManager:
             # 7-Stage Ratchet Logic
             new_sl_r = None
             ratchet_phase = int(trade.get("ratchet_phase", 0))
+            prev_desc = trade.get("ratchet_desc", "Base SL (-1.00R)")
             if gain_r >= 3.5 and ratchet_phase < 6:
                 new_sl_r = 3.3
                 trade["ratchet_phase"] = 6
@@ -1046,17 +1047,28 @@ class OrderManager:
 
             if new_sl_r is not None:
                 if in_rollover:
-                    logging.info(f"[ROLLOVER LOCKOUT] Suppressing SL ratchet modification for {sym} during 21:55-22:15 UTC settlement.")
+                    # OX61 FIX (ratchet rollover-drop): the cascade above pre-advanced
+                    # ratchet_phase; roll it back so the lock is retried after rollover
+                    # instead of being silently dropped forever by the phase gate.
+                    trade["ratchet_phase"] = ratchet_phase
+                    trade["ratchet_desc"] = prev_desc
+                    logging.info(f"[ROLLOVER LOCKOUT] Suppressing SL ratchet modification for {sym} during 21:55-22:15 UTC settlement (phase held at {ratchet_phase}, will retry).")
                 else:
+                    applied = True  # no-op when broker SL already reflects the lock
                     if is_long:
                         candidate_sl = entry + (new_sl_r * r_dist)
                         if candidate_sl > trade.get("sl", 0.0):
-                            self.modify_sl(ticket, candidate_sl)
+                            applied = self.modify_sl(ticket, candidate_sl)
                     else:
                         candidate_sl = entry - (new_sl_r * r_dist)
                         curr_sl = trade.get("sl", 0.0)
                         if candidate_sl < curr_sl or curr_sl == 0.0:
-                            self.modify_sl(ticket, candidate_sl)
+                            applied = self.modify_sl(ticket, candidate_sl)
+                    if not applied:
+                        # OX61 FIX: a failed modification must not consume the phase
+                        # gate either — roll back so the lock is retried next tick.
+                        trade["ratchet_phase"] = ratchet_phase
+                        trade["ratchet_desc"] = prev_desc
 
 
     def get_account_metrics(self) -> Dict[str, Any]:

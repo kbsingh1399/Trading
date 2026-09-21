@@ -60,6 +60,7 @@ from Engine.core.strategy_kernel import (
     CANONICAL_18_ASSETS,
     engineer_features_polars,
     create_labels_ratchet,
+    check_setup_criteria,
 )
 
 DATA_DIR = PROJECT_ROOT / "Forex_Backtesting_Data"
@@ -154,9 +155,12 @@ class FVGMLForexCFDStrategy(BaseForexStrategy):
 
         base_risk = self.config.criteria.base_risk_usd
 
-        # Setup Conditions
-        is_long = is_kz and (trend_val > 0) and (bull_fvg > 0) and (prob >= self.prob_threshold)
-        is_short = is_kz and (trend_val < 0) and (bear_fvg > 0) and (prob >= self.prob_threshold)
+        # Setup Conditions (OX61 FIX: S4 sweep — delegate the rule predicate to the
+        # canonical kernel so streaming matches the labeler, the backtest, and live
+        # dry-run dual mode: Kill Zone + Liquidity Sweep + FVG + 4H Trend.)
+        is_setup_long, is_setup_short = check_setup_criteria(last_row.to_dict())
+        is_long = is_setup_long and (prob >= self.prob_threshold)
+        is_short = is_setup_short and (prob >= self.prob_threshold)
 
         if not is_kz:
             return StrategySignal(symbol=symbol, signal=0, prob=prob, reason="HOLD (Off-Hours)")
@@ -212,8 +216,12 @@ class FVGMLForexCFDStrategy(BaseForexStrategy):
             )
 
         # Informative hold reasons
+        sweep_pdl = int(last_row.get("sweep_pdl", 0))
+        sweep_pdh = int(last_row.get("sweep_pdh", 0))
         if bull_fvg == 0 and bear_fvg == 0:
             hold_reason = "HOLD (No FVG)"
+        elif sweep_pdl == 0 and sweep_pdh == 0:
+            hold_reason = "HOLD (No Sweep)"
         elif (trend_val > 0 and bear_fvg > 0) or (trend_val < 0 and bull_fvg > 0):
             hold_reason = "HOLD (Trend Opposed)"
         elif prob < self.prob_threshold:

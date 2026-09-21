@@ -1,0 +1,44 @@
+{
+ "generator": "docs/ox61_verification/run_ox61_r4.py",
+ "command": "/home/user/ox61venv/bin/python docs/ox61_verification/run_ox61_r4.py",
+ "commit": "ed547bbc9ee8439bfc4b4c416f6e65e2447da96a",
+ "primary": "dual-R6-unified @ gate 0.55 (live-spec exits, walk-forward XGB, bar-purged)",
+ "sibling": "dual-R6-precommitted @ gate 0.55 (filed-spec exits, walk-forward XGB, bar-purged)",
+ "gates": [
+  0.53,
+  0.55,
+  0.57
+ ],
+ "seeds": {
+  "xgb_seed": 42,
+  "num_boost_round": 120,
+  "max_depth": 4,
+  "lr": 0.05
+ },
+ "purge_bars": {
+  "precommitted": 96,
+  "unified": 480
+ },
+ "friction_r": 0.08,
+ "versions": {
+  "xgboost": "3.2.0",
+  "sklearn": "1.9.1",
+  "pandas": "3.0.6",
+  "python": "3.11.2"
+ },
+ "config_hashes": {
+  "target_oos_criteria.json": "17488f77c1fdc2a39918b431a19b9ce27b620a54cea72778c9b296547c80b267",
+  "oos_windows_forex_20.json": "732af7741e60621563529ae787298122a1f957ade83a2bc93c21de2339768d46"
+ },
+ "artifacts": {
+  "scorecard_r4_pinned.csv": "20f5a87c004ebee135d705ffe66069fbf0cb6963853514f84e073d05fa05c1df",
+  "scorecard_r4_precommitted.csv": "fc26c2b418bb6dfeea4fc4c32e55f4413b49c837054175182a763403dc3203a4",
+  "scorecard_r4_bands.csv": "09b06fdf6085234384ac082eacd40c45c8096dbded37ff7979cefdce586e6f59",
+  "s4_r6_unified.parquet": "542d5368c0ca39eac59a1a2f2131347faf8229a6a3fbe4be73ecd6ed213c77d7",
+  "s4_r6_precommitted.parquet": "92f8fa6d217ac1e32a02f361dfe44ce5b5b1a810507e8394049a7f39314adc0f",
+  "candidates_dual_r6_unified.parquet": "bf500fc10f372bf7dede00b7249d1e08df4b9427bbba811c63945ee3f232dc99",
+  "candidates_dual_r6_precommitted.parquet": "0c1d73eab858fcf2815d32abd04e2fbd2aaff2f12bfe41b0d03df53e3d8f5406",
+  "scorecard_dual_r6_unified_g053.csv": "6f74e964ccfe1bdbe8b400c8db50b44a6467f46676928f0532d9a359c18aab0e",
+  "scorecard_dual_r6_unified_g057.csv": "38d15e5afadfd85ef46ef58bd5057bed08d4ebca9e8b66cca44e5b586e6eb5fb"
+ }
+}

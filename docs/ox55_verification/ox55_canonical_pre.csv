@@ -1,0 +1,21 @@
+window_id,name,trades,win_rate,profit_factor,net_r,pnl_usd,roi_pct,max_dd_pct,passed
+1,Late 2023 Fed Higher-for-Longer Pause,106,56.6,1.637,34.98,723.64,14.47,3.99,True
+2,Q4 2023 Year-End Soft Landing Rally,107,57.94,1.129,12.44,174.03,3.48,5.44,False
+3,Q1 2024 Global Disinflation Surge,104,64.42,3.147,41.42,878.28,17.57,1.44,True
+4,Early 2024 Tech & Index Expansion,113,57.52,1.664,38.22,685.47,13.71,4.39,True
+5,Spring 2024 Geopolitical Energy Spike,106,68.87,3.388,61.78,950.46,19.01,1.69,True
+6,ECB Rate Cut Pivot & Dollar Strength,125,59.2,3.09,45.48,968.87,19.38,2.29,True
+7,Mid-2024 High-Beta Equity Distribution,112,62.5,2.088,30.95,705.36,14.11,2.65,True
+8,August 2024 Global Carry Trade Flash Unwind,115,63.48,2.071,49.04,781.36,15.63,2.11,True
+9,Fed 50bps Jumbo Rate Cut Ignition,125,57.6,1.828,25.75,715.23,14.3,4.89,True
+10,US Presidential Election Mega Breakout,122,56.56,1.848,17.26,679.49,13.59,2.89,True
+11,Year-End Cross-Currency Flow Rebalancing,123,60.16,1.97,31.04,662.13,13.24,2.56,True
+12,Post-Inauguration Trade Policy Realignment,117,63.25,2.708,27.41,685.52,13.71,2.08,True
+13,Spring 2025 Precious Metals All-Time High,120,51.67,1.484,6.67,499.35,9.99,4.8,False
+14,Late-Cycle Yield Curve Steepening,120,60.0,2.154,52.78,884.57,17.69,4.24,True
+15,European Macro Slowdown & CNH Divergence,127,55.91,1.691,35.38,726.05,14.52,5.29,False
+16,Late-Summer Commodity Volatility Expansion,121,56.2,1.94,38.53,768.55,15.37,3.28,True
+17,Autumn 2025 Global Liquidity Injection,123,60.16,2.327,39.28,784.6,15.69,1.46,True
+18,Q4 2025 Industrial Metals & Indices Momentum,161,68.94,4.906,62.9,1344.93,26.9,0.99,True
+19,Q1 2026 New Year Cross-Asset Range Shift,121,53.72,1.827,17.54,592.65,11.85,2.86,True
+20,March 2026 Modern Microstructure Shock,116,61.21,2.145,49.93,884.74,17.69,3.4,True

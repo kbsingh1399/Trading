@@ -103,3 +103,10 @@ live_state.json
 Engine/research/forward_state.json
 Engine/live/live_state.json
 tmp_state_*.json
+
+# OX61 regenerable build artifacts (rebuilt by docs/ox61_verification/run_ox61_r4.py;
+# pinned scorecards + manifest stay tracked)
+docs/ox61_verification/*.parquet
+docs/ox61_verification/labels_precommitted/
+docs/ox61_verification/labels_unified/
+docs/ox61_verification/__pycache__/

@@ -1,0 +1,21 @@
+window_id,name,trades,win_rate,profit_factor,net_r,pnl_usd,roi_pct,max_dd_pct,passed,failures
+1,Late 2023 Fed Higher-for-Longer Pause,36,72.22,3.388,16.68,834.2,16.68,-1.85,True,
+2,Q4 2023 Year-End Soft Landing Rally,59,69.49,1.245,4.41,220.37,4.41,-8.56,False,ROI (+4.41%) < Target (+10.00%);Max DD (8.56%) > Limit (5.00%)
+3,Q1 2024 Global Disinflation Surge,47,55.32,0.703,-5.38,-269.09,-5.38,-10.61,False,ROI (-5.38%) < Target (+10.00%);Max DD (10.61%) > Limit (5.00%);Net R (-5.38R) < Target (+4.00R)
+4,Early 2024 Tech & Index Expansion,86,55.81,0.966,-1.33,-66.69,-1.33,-27.54,False,ROI (-1.33%) < Target (+10.00%);Max DD (27.54%) > Limit (5.00%);Net R (-1.33R) < Target (+4.00R)
+5,Spring 2024 Geopolitical Energy Spike,57,78.95,1.457,5.92,296.13,5.92,-3.24,False,ROI (+5.92%) < Target (+10.00%)
+6,ECB Rate Cut Pivot & Dollar Strength,64,71.88,2.188,21.81,1090.44,21.81,-7.27,False,Max DD (7.27%) > Limit (5.00%)
+7,Mid-2024 High-Beta Equity Distribution,52,88.46,5.308,27.91,1395.71,27.91,-2.49,True,
+8,August 2024 Global Carry Trade Flash Unwind,45,73.33,1.859,8.83,441.57,8.83,-2.11,False,ROI (+8.83%) < Target (+10.00%)
+9,Fed 50bps Jumbo Rate Cut Ignition,75,69.33,1.204,4.47,223.51,4.47,-5.35,False,ROI (+4.47%) < Target (+10.00%);Max DD (5.35%) > Limit (5.00%)
+10,US Presidential Election Mega Breakout,144,72.92,2.016,33.76,1688.24,33.76,-4.39,True,
+11,Year-End Cross-Currency Flow Rebalancing,165,81.82,4.29,91.36,4568.04,91.36,-4.43,True,
+12,Post-Inauguration Trade Policy Realignment,92,86.96,6.7,53.46,2673.12,53.46,-2.79,True,
+13,Spring 2025 Precious Metals All-Time High,70,80.0,3.386,31.13,1556.25,31.13,-3.9,True,
+14,Late-Cycle Yield Curve Steepening,162,83.95,6.387,110.06,5503.16,110.06,-3.35,True,
+15,European Macro Slowdown & CNH Divergence,149,75.17,3.034,64.87,3243.65,64.87,-4.38,True,
+16,Late-Summer Commodity Volatility Expansion,105,77.14,2.599,32.65,1632.56,32.65,-4.62,True,
+17,Autumn 2025 Global Liquidity Injection,208,85.58,6.778,92.3,4615.15,92.3,-1.52,True,
+18,Q4 2025 Industrial Metals & Indices Momentum,216,81.02,3.634,90.68,4533.77,90.68,-4.11,True,
+19,Q1 2026 New Year Cross-Asset Range Shift,147,68.71,1.503,19.41,970.44,19.41,-13.21,False,Max DD (13.21%) > Limit (5.00%)
+20,March 2026 Modern Microstructure Shock,72,81.94,2.942,23.44,1172.12,23.44,-4.76,True,

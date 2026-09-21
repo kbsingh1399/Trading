@@ -1,0 +1,142 @@
+[
+ {
+  "window": 1,
+  "n_train": 118,
+  "pos_rate": 0.2966,
+  "fit_auc": 1.0,
+  "n_sig": 35
+ },
+ {
+  "window": 2,
+  "n_train": 298,
+  "pos_rate": 0.3658,
+  "fit_auc": 0.9984,
+  "n_sig": 72
+ },
+ {
+  "window": 3,
+  "n_train": 518,
+  "pos_rate": 0.3707,
+  "fit_auc": 0.9943,
+  "n_sig": 42
+ },
+ {
+  "window": 4,
+  "n_train": 678,
+  "pos_rate": 0.3599,
+  "fit_auc": 0.9918,
+  "n_sig": 47
+ },
+ {
+  "window": 5,
+  "n_train": 858,
+  "pos_rate": 0.3706,
+  "fit_auc": 0.9866,
+  "n_sig": 25
+ },
+ {
+  "window": 6,
+  "n_train": 1035,
+  "pos_rate": 0.3923,
+  "fit_auc": 0.9707,
+  "n_sig": 41
+ },
+ {
+  "window": 7,
+  "n_train": 1253,
+  "pos_rate": 0.4086,
+  "fit_auc": 0.951,
+  "n_sig": 17
+ },
+ {
+  "window": 8,
+  "n_train": 1457,
+  "pos_rate": 0.431,
+  "fit_auc": 0.9428,
+  "n_sig": 28
+ },
+ {
+  "window": 9,
+  "n_train": 1635,
+  "pos_rate": 0.4404,
+  "fit_auc": 0.9444,
+  "n_sig": 43
+ },
+ {
+  "window": 10,
+  "n_train": 1828,
+  "pos_rate": 0.4502,
+  "fit_auc": 0.9177,
+  "n_sig": 106
+ },
+ {
+  "window": 11,
+  "n_train": 2154,
+  "pos_rate": 0.4591,
+  "fit_auc": 0.8905,
+  "n_sig": 84
+ },
+ {
+  "window": 12,
+  "n_train": 2568,
+  "pos_rate": 0.477,
+  "fit_auc": 0.8687,
+  "n_sig": 67
+ },
+ {
+  "window": 13,
+  "n_train": 2873,
+  "pos_rate": 0.4817,
+  "fit_auc": 0.8763,
+  "n_sig": 58
+ },
+ {
+  "window": 14,
+  "n_train": 3147,
+  "pos_rate": 0.4824,
+  "fit_auc": 0.8578,
+  "n_sig": 98
+ },
+ {
+  "window": 15,
+  "n_train": 3508,
+  "pos_rate": 0.4897,
+  "fit_auc": 0.8565,
+  "n_sig": 140
+ },
+ {
+  "window": 16,
+  "n_train": 3929,
+  "pos_rate": 0.4902,
+  "fit_auc": 0.848,
+  "n_sig": 74
+ },
+ {
+  "window": 17,
+  "n_train": 4217,
+  "pos_rate": 0.4932,
+  "fit_auc": 0.8422,
+  "n_sig": 103
+ },
+ {
+  "window": 18,
+  "n_train": 4619,
+  "pos_rate": 0.5066,
+  "fit_auc": 0.8336,
+  "n_sig": 139
+ },
+ {
+  "window": 19,
+  "n_train": 5098,
+  "pos_rate": 0.5169,
+  "fit_auc": 0.8236,
+  "n_sig": 143
+ },
+ {
+  "window": 20,
+  "n_train": 5470,
+  "pos_rate": 0.5143,
+  "fit_auc": 0.8006,
+  "n_sig": 64
+ }
+]

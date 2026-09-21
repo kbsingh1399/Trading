@@ -1,0 +1,21 @@
+window_id,name,trades,win_rate,profit_factor,net_r,pnl_usd,roi_pct,max_dd_pct,passed,failures
+1,Late 2023 Fed Higher-for-Longer Pause,106,62.26,1.852,45.63,731.8,14.64,3.47,True,
+2,Q4 2023 Year-End Soft Landing Rally,107,58.88,1.151,15.52,210.34,4.21,4.68,False,ROI (+4.21%) < Target (+10.00%)
+3,Q1 2024 Global Disinflation Surge,103,63.11,2.534,43.36,800.07,16.0,2.29,True,
+4,Early 2024 Tech & Index Expansion,113,56.64,1.558,36.71,665.56,13.31,4.1,True,
+5,Spring 2024 Geopolitical Energy Spike,105,68.57,4.193,67.27,1051.5,21.03,1.56,True,
+6,ECB Rate Cut Pivot & Dollar Strength,119,63.87,2.478,46.23,798.89,15.98,3.43,True,
+7,Mid-2024 High-Beta Equity Distribution,112,61.61,2.333,38.77,777.29,15.55,2.68,True,
+8,August 2024 Global Carry Trade Flash Unwind,113,57.52,1.703,30.79,666.69,13.33,3.85,True,
+9,Fed 50bps Jumbo Rate Cut Ignition,124,54.03,1.082,14.37,134.86,2.7,5.08,False,ROI (+2.70%) < Target (+10.00%);Max DD (5.08%) > Limit (5.00%)
+10,US Presidential Election Mega Breakout,120,55.83,1.111,13.78,196.66,3.93,5.14,False,ROI (+3.93%) < Target (+10.00%);Max DD (5.14%) > Limit (5.00%)
+11,Year-End Cross-Currency Flow Rebalancing,123,56.91,1.687,22.23,661.86,13.24,4.33,True,
+12,Post-Inauguration Trade Policy Realignment,117,61.54,2.855,39.24,930.01,18.6,1.45,True,
+13,Spring 2025 Precious Metals All-Time High,121,50.41,1.619,13.31,585.0,11.7,6.36,False,Max DD (6.36%) > Limit (5.00%)
+14,Late-Cycle Yield Curve Steepening,120,60.0,1.963,47.67,796.86,15.94,4.71,True,
+15,European Macro Slowdown & CNH Divergence,126,57.14,1.965,33.11,731.36,14.63,3.32,True,
+16,Late-Summer Commodity Volatility Expansion,121,54.55,1.942,30.25,712.42,14.25,3.06,True,
+17,Autumn 2025 Global Liquidity Injection,122,63.93,2.827,47.35,849.76,17.0,1.71,True,
+18,Q4 2025 Industrial Metals & Indices Momentum,159,62.89,3.178,60.05,977.32,19.55,1.37,True,
+19,Q1 2026 New Year Cross-Asset Range Shift,120,55.0,2.296,19.59,670.89,13.42,2.27,True,
+20,March 2026 Modern Microstructure Shock,116,67.24,2.871,60.64,942.64,18.85,2.62,True,
