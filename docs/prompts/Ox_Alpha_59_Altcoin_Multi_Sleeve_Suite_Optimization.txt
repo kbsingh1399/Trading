@@ -1,0 +1,109 @@
+# MASTER QUANTITATIVE ARCHITECT & EXECUTION DIRECTIVE: OX_ALPHA_59
+# TARGET: Institutional Multi-Sleeve Suite Optimization & Production Parity on 20 OOS Regimes
+# REPOSITORY: https://github.com/kbsingh1399/Trading.git
+# ACTIVE BRANCH: arena/01a0bf23-trading (monotonic parity with origin/main @ dce465e)
+# DATASETS:
+#   1. Genuine 11 Binance USDT-M Perpetuals: BTC, ETH, XRP, BNB, DOGE, ADA, TRX, LINK, DOT, LTC, BCH (3,467,571 15m bars, 2020-2026)
+#   2. Canonical Forex & CFD 18-Asset Basket: EURUSD, GER40, NICKEL, USDSEK, GAS, AU200, FR40, EURCNH, LEAD, NZDUSD, USDHKD, US2000, AUDCHF, NZDCNH, XAUCNH, GAUCNH, EURSEK, EURHUF (15m, 4H, D1 true UTC)
+# OOS WINDOWS SPECIFICATION: Engine/oos_windows_20.json (20 Non-Overlapping Quarterly Macro Windows, 2021 to 2026)
+# INSTITUTIONAL PASS CRITERIA (Engine/target_oos_criteria.json):
+#   - Net ROI >= +10.00% (+500.00 USD on 5,000.00 USD initial capital)
+#   - Max Peak-to-Trough Drawdown <= 5.00% (250.00 USD maximum giveback)
+#   - Win Rate >= 40.0%
+#   - Minimum Completed Trades >= 15 per regime window
+#   - Base Risk: 50.00 USD (1.00%) | Dynamic Drawdown Defense: 27.50 USD / 16.50 USD | Hard DD Stop: 4.50% / 225.00 USD
+
+Evaluator & Chief Quantitative Architect (Arena.ai / Claude Opus),
+
+You are operating in a fresh, isolated session with zero prior chat memory, zero local state, and zero external web access. All source modules, strategy kernels, risk governors, and execution bridges are pinned via raw GitHub URLs from branch arena/01a0bf23-trading below.
+
+Your mission is to perform an end-to-end quantitative engineering upgrade on the multi-sleeve suite across our primary runner (Engine/runners/run_23_oos_altcoin_suite.py) and operational execution bridge (Engine/runners/run_live_terminal.py and Engine/brokers/binance_broker.py), ensuring that all 20 canonical OOS regime windows in Engine/oos_windows_20.json strictly pass the institutional performance criteria (Net ROI >= +10.00%, Max Drawdown <= 5.00%, WR >= 40.0%, Trades >= 15).
+
+================================================================================
+1. PINNED REPOSITORY SOURCE CODE & SPECIFICATIONS
+================================================================================
+
+Review the following raw codebase files directly from the repository on branch `arena/01a0bf23-trading` (commit `dce465e`):
+
+1. Master 20/23 OOS Multi-Sleeve Suite Runner:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/runners/run_23_oos_altcoin_suite.py
+
+2. Master Operational Live Terminal & Multi-Asset Execution Runner:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/runners/run_live_terminal.py
+
+3. Institutional Binance Futures Live Execution Broker (HMAC-SHA256, Place-Then-Cancel Ratchets):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/brokers/binance_broker.py
+
+4. Fast S3 ORB/CRT Multi-Asset Engine & Microstructure Kernel:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/strategy/s3_orb_crt/s3_orb_ml.py
+
+5. Unified Forex & CFD Master Orchestration Engine:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/forex_engine.py
+
+6. Canonical Indicators (Prefix-Invariant Numba Kernels for KRI, Bandwidth Z, ADX, Ichimoku):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/core/canonical_indicators.py
+
+7. Master 20 OOS Windows Specification:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/oos_windows_20.json
+
+8. Target Institutional OOS Criteria Contract:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/target_oos_criteria.json
+
+================================================================================
+2. EMPIRICAL DIAGNOSIS & RECENT BENCHMARK AUDIT
+================================================================================
+
+In our latest full backtest of Engine/runners/run_23_oos_altcoin_suite.py across the 20 quarterly regimes (2021-Q1 to 2025-Q4):
+- Strong Pass Regimes (W02 May 2021 Crash +11.96% ROI, W12 Uptober ETF +10.06% ROI, W16 US Election +10.00% ROI, W17 Strategic Reserve +10.00% ROI).
+- Drawdown Violations in Choppy Consolidation Regimes:
+  * W01 (Q1 2021 Bull Run): 34 trades, 35.3% WR, Max DD 4.87%, ROI -4.87% (S1 caught in premature pullback dip buys before consolidation completion).
+  * W03 (Q3 2021 Summer Chop): 128 trades, 46.9% WR, Max DD 5.15%, ROI -5.15% (Chop churn with excessive small losses breaching the 5.0% DD ceiling).
+  * W05 (Q1 2022 Macro Tightening Shock): 90 trades, 52.2% WR, Max DD 5.04%, ROI +0.78% (Drawdown pierced 5.0% ceiling by 0.04% before recovery).
+  * W06 (Q2 2022 Terra-Luna / 3AC Contagion): 41 trades, 46.3% WR, Max DD 5.03%, ROI -5.03% (Long liquidations cascaded through base stops).
+  * W07 (Q3 2022 ETH Merge Chop): 32 trades, 31.3% WR, Max DD 5.17%, ROI -5.17% (Low volatility bleed).
+  * W08 (Q4 2022 FTX Collapse): 32 trades, 46.9% WR, Max DD 5.08%, ROI -2.53% (Contagion flash flush).
+
+The root cause is clear:
+1. Sleeve Concurrency Imbalance: S1 (Pullback) accounts for over 70% of candidate trade volume during prolonged rangebound regimes, firing repeated counter-trend attempts before liquidity bottoms.
+2. Incomplete Ratchet Coverage in Choppy Regimes: When trades achieve +0.80R to +1.20R, lack of rapid Breakeven (+0.15R) lock allows trades to reverse back into -1.0R full stop-outs.
+3. Lack of Macro Regime Conditioned Risk Sizing: In high-volatility sideways regimes, the base risk of 36.00 USD exhausts the 5.0% (250.00 USD) loss budget in just 5-6 consecutive losses before the defense governor can catch the curve.
+
+================================================================================
+3. CORE ARCHITECTURAL REQUIREMENTS FOR ARENA.AI / OPUS
+================================================================================
+
+You are tasked with engineering the necessary upgrades in Engine/runners/run_23_oos_altcoin_suite.py, Engine/runners/run_live_terminal.py, and Engine/brokers/binance_broker.py:
+
+1. Dynamic Regime Sizing & Volatility Governor:
+   - Condition sleeve risk allocation on the prevailing Macro Regime:
+     * BULL_EXPANSION: Full sizing on T1_BREAKOUT and S1_PULLBACK.
+     * SIDEWAYS_CHOP: Halve S1 pullback risk, prioritize S3_ORB and S2 Bollinger mean reversion.
+     * BEAR_CONTAGION: Suppress all non-trend long pullbacks unless spot CVD divergence is extreme (zc_div > 1.2).
+   - Enforce immediate risk contraction from 36.00 USD down to 18.00 USD (0.36%) whenever intra-window peak drawdown exceeds 1.80% (90.00 USD).
+
+2. Universal 7-Stage Microstructure Ratchets across all Sleeves:
+   - Phase 0 (BE Lock): At +0.80R gain, move stop to Entry + 0.20R (clearing all 41 bps friction).
+   - Phase 1 (Profit Lock): At +1.50R gain, move stop to Entry + 0.80R.
+   - Phase 2 (Trailing Lock): At +2.00R gain, move stop to Entry + 1.50R.
+   - Time Decay Exit: Exit at market if position fails to achieve +0.20R within 24 bars (6 hours).
+
+3. Portfolio Concurrency & Correlation Filter:
+   - Max 3 concurrent positions across the entire 11-asset universe.
+   - Strict cluster restriction: Max 1 position per asset, and max 1 high-beta altcoin long if BTC is in active macro breakdown (BTC below 200 EMA on 4H).
+
+4. Production Verification & Scorecard Reproduction:
+   - Execute the updated suite against all 20 canonical OOS windows in Engine/oos_windows_20.json.
+   - Provide a complete markdown table showing Window ID, Regime, Trades, Win Rate %, Net PnL (USD), Net ROI %, and Max Drawdown %.
+   - Confirm that all 20 windows satisfy Net ROI >= +10.00% and Max Drawdown <= 5.00%.
+
+================================================================================
+4. DELIVERABLES REQUIRED
+================================================================================
+
+1. Full, unabridged Python source code for the modified sections in:
+   - `Engine/runners/run_23_oos_altcoin_suite.py`
+   - `Engine/runners/run_live_terminal.py`
+   - `Engine/brokers/binance_broker.py`
+2. Complete 20-regime walk-forward empirical scorecard demonstrating 20/20 outright passes.
+3. Proof of strategy parity between backtest simulation and the live execution terminal.
+4. Definitive Institutional Certification Verdict for live funded deployment.
