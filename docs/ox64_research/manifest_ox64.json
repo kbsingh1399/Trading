@@ -1,0 +1,369 @@
+{
+ "program": "OX64 single-shot",
+ "protocol": "docs/ox64_research/PROTOCOL.md",
+ "evidence_grade": "EXPLORATORY-CONFIRMATORY HYBRID, program-selection outcome-informed (\u00a71)",
+ "economics": {
+  "research_risk_usd": 50.0,
+  "production_risk_usd": 10.0
+ },
+ "w01_start": "2023-09-15",
+ "params": {
+  "Q0_trading_day_min_bars": 10,
+  "Q1_A_zero_flat": true,
+  "Q2_B_threshold_sigma_mult": 0.5,
+  "Q3_C_mult_cap": [
+   0.5,
+   2.0
+  ],
+  "Q4_R_ATR_mult": 1.5,
+  "Q5_horizon_reason": 4,
+  "friction_R": 0.08,
+  "A_formation_trading_days": 252,
+  "B_hold_trading_days": 1,
+  "C_veto": 2.5,
+  "C_fallback": 2.5,
+  "C_cap": 3.5
+ },
+ "pool_A": {
+  "n": 318,
+  "avgR": -0.0311,
+  "WR": 51.9,
+  "netR": -9.9
+ },
+ "portfolio_A_50": {
+  "economics": "A-research-$50",
+  "trades": 50,
+  "sharpe": 0.998,
+  "profit_factor": 1.109,
+  "max_dd_pct": 8.98,
+  "annual": {
+   "2023": 143.7,
+   "2024": 201.13,
+   "2025": 10.35,
+   "2026": -161.26
+  },
+  "net_pnl": 193.91,
+  "net_r": -1.29
+ },
+ "portfolio_A_10": {
+  "economics": "A-production-$10",
+  "trades": 54,
+  "sharpe": -0.115,
+  "profit_factor": 0.979,
+  "max_dd_pct": 2.22,
+  "annual": {
+   "2023": 28.74,
+   "2024": 37.97,
+   "2025": -25.22,
+   "2026": -50.4
+  },
+  "net_pnl": -8.92,
+  "net_r": -0.85
+ },
+ "verdict_A_50": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": true,
+  "y2024_pos": true,
+  "y2025_pos": true
+ },
+ "verdict_A_10": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": true,
+  "y2024_pos": true,
+  "y2025_pos": false
+ },
+ "conjunction_A": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": true,
+  "y2024_pos": true,
+  "y2025_pos": false
+ },
+ "all_pass_A": false,
+ "pool_B": {
+  "n": 6051,
+  "avgR": -0.0811,
+  "WR": 40.3,
+  "netR": -490.76
+ },
+ "portfolio_B_50": {
+  "economics": "B-research-$50",
+  "trades": 1197,
+  "sharpe": -3.527,
+  "profit_factor": 0.603,
+  "max_dd_pct": 58.21,
+  "annual": {
+   "2023": -540.55,
+   "2024": -998.45,
+   "2025": -1089.18,
+   "2026": -279.94
+  },
+  "net_pnl": -2908.12,
+  "net_r": -98.65
+ },
+ "portfolio_B_10": {
+  "economics": "B-production-$10",
+  "trades": 1304,
+  "sharpe": -4.125,
+  "profit_factor": 0.599,
+  "max_dd_pct": 20.68,
+  "annual": {
+   "2023": -206.08,
+   "2024": -316.88,
+   "2025": -446.38,
+   "2026": -60.38
+  },
+  "net_pnl": -1029.71,
+  "net_r": -102.92
+ },
+ "verdict_B_50": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": false,
+  "y2024_pos": false,
+  "y2025_pos": false
+ },
+ "verdict_B_10": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": false,
+  "y2024_pos": false,
+  "y2025_pos": false
+ },
+ "conjunction_B": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": false,
+  "y2024_pos": false,
+  "y2025_pos": false
+ },
+ "all_pass_B": false,
+ "pool_C": {
+  "n": 890,
+  "avgR": -0.0337,
+  "WR": 53.8,
+  "netR": -30.03
+ },
+ "portfolio_C_50": {
+  "economics": "C-research-$50",
+  "trades": 521,
+  "sharpe": 0.548,
+  "profit_factor": 1.066,
+  "max_dd_pct": 16.01,
+  "annual": {
+   "2023": 429.82,
+   "2024": 0.17,
+   "2025": 93.92,
+   "2026": -5.06
+  },
+  "net_pnl": 518.85,
+  "net_r": 9.37
+ },
+ "portfolio_C_10": {
+  "economics": "C-production-$10",
+  "trades": 711,
+  "sharpe": -0.084,
+  "profit_factor": 0.986,
+  "max_dd_pct": 7.48,
+  "annual": {
+   "2023": 101.51,
+   "2024": 46.24,
+   "2025": -162.25,
+   "2026": -32.01
+  },
+  "net_pnl": -46.52,
+  "net_r": -3.25
+ },
+ "verdict_C_50": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": false,
+  "y2024_pos": true,
+  "y2025_pos": true
+ },
+ "verdict_C_10": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": true,
+  "y2024_pos": true,
+  "y2025_pos": false
+ },
+ "conjunction_C": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": false,
+  "y2024_pos": true,
+  "y2025_pos": false
+ },
+ "all_pass_C": false,
+ "pool_Cs": {
+  "n": 2254,
+  "avgR": -0.108,
+  "WR": 54.5,
+  "netR": -243.52
+ },
+ "portfolio_Cs_50": {
+  "economics": "Cs-research-$50",
+  "trades": 577,
+  "sharpe": -2.08,
+  "profit_factor": 0.784,
+  "max_dd_pct": 43.38,
+  "annual": {
+   "2023": -349.81,
+   "2024": -890.36,
+   "2025": -695.1,
+   "2026": 16.63
+  },
+  "net_pnl": -1918.64,
+  "net_r": -70.82
+ },
+ "portfolio_Cs_10": {
+  "economics": "Cs-production-$10",
+  "trades": 1624,
+  "sharpe": -2.64,
+  "profit_factor": 0.766,
+  "max_dd_pct": 30.99,
+  "annual": {
+   "2023": -214.44,
+   "2024": -615.51,
+   "2025": -556.48,
+   "2026": -53.04
+  },
+  "net_pnl": -1439.47,
+  "net_r": -183.08
+ },
+ "verdict_Cs_50": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": false,
+  "y2024_pos": false,
+  "y2025_pos": false
+ },
+ "verdict_Cs_10": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": false,
+  "y2024_pos": false,
+  "y2025_pos": false
+ },
+ "conjunction_Cs": {
+  "sharpe_ge_1.50": false,
+  "pf_ge_1.35": false,
+  "dd_le_10": false,
+  "y2024_pos": false,
+  "y2025_pos": false
+ },
+ "all_pass_Cs": false,
+ "logical_hashes": {
+  "candA": {
+   "rows": 318,
+   "hash": "e5cc807e7da03857c9690969a421d75f8314721b41660a1bb5b60abbb93941bf"
+  },
+  "scA50": {
+   "rows": 20,
+   "hash": "70840f5ee4763c87b635e6f77f59756e374258dce7268cfbc6bc99bcaaf9fb1c"
+  },
+  "scA10": {
+   "rows": 20,
+   "hash": "793d91305e5e1be2314fefddfb2a7605bcddad3c0054e41d23bd6c75a0e70b78"
+  },
+  "exA50": {
+   "rows": 50,
+   "hash": "03a6b7e6d7aeb47358541ac0e1eb38a5c97b79869f19e6c8204e54bf0022b2fa"
+  },
+  "exA10": {
+   "rows": 54,
+   "hash": "c15ecd54a5d69def8ba780b29f291cca186754b1f8310067ba1145d4f43550e8"
+  },
+  "candB": {
+   "rows": 6051,
+   "hash": "0266bc0a63690571b354497f1fccb21c872af5035d7567fd8e64138ab835eeb1"
+  },
+  "scB50": {
+   "rows": 20,
+   "hash": "637b6c2cbd5a14ebba18fbad116bca539deab091c56dd3180a906d2f3ef5a540"
+  },
+  "scB10": {
+   "rows": 20,
+   "hash": "5218ed3b81176960cc8ff1ddbf240baebe01ff8c4a33712c84ceef378d013ea4"
+  },
+  "exB50": {
+   "rows": 1197,
+   "hash": "de8c1b6a52733676745a0986ccfd9f3aa84ba570eaf180fd0407d43d6ecb8ee4"
+  },
+  "exB10": {
+   "rows": 1304,
+   "hash": "3f8558386defedc3e8bfab4d56e313b5a0aa6ca36a311948ca7e23cc9ec7a5dd"
+  },
+  "candC": {
+   "rows": 890,
+   "hash": "3bb92aeaa7deddc17d52f5162ba7e7a121cba40890da819dade8a6f209b6e5d8"
+  },
+  "scC50": {
+   "rows": 20,
+   "hash": "5e8b2a10b03a5b33e78f3b83faf5b3da9a4b0b23f4ad59ccceb6fe8cf13e8bff"
+  },
+  "scC10": {
+   "rows": 20,
+   "hash": "9177197428b5328e614d552d60321316ba81c103c84f52ada9c5bc2d11a96a04"
+  },
+  "exC50": {
+   "rows": 521,
+   "hash": "185fa9478e53509908cb6fc391ffbbdd85f6e83aca5b0b46e4a93f4303f33708"
+  },
+  "exC10": {
+   "rows": 711,
+   "hash": "24937893fd0e98018a825ab59b581896e31df5cff7e9fc22b39172c41b3215c2"
+  },
+  "candCs": {
+   "rows": 2254,
+   "hash": "997fa70d0a52a8cf5f5f63b1fcc5b49cc60a992fb2109c615e15dab6ca29d5be"
+  },
+  "scCs50": {
+   "rows": 20,
+   "hash": "7a9cc77514992cd7d82dc7dbc4b63cd592d984abb25f1c74b4d0a32a078d5416"
+  },
+  "scCs10": {
+   "rows": 20,
+   "hash": "340c2a208d1c4a6c080b65b570ac2cde805864cfd2f3f8b5fdef67be316f1896"
+  },
+  "exCs50": {
+   "rows": 577,
+   "hash": "8082be83b7c48a08824cd4aab5f4659798f9da63f3bfa46e3c48d3b8669649b2"
+  },
+  "exCs10": {
+   "rows": 1624,
+   "hash": "eea637b7acb612bcb7cba5b5e4bdf136bf8d206d5b2d4356c3f43536b6a5ed1a"
+  }
+ },
+ "artifact_sha256": {
+  "cand_ox64_A.parquet": "4889160d91aa59e6f24cad87f155deb2bf44e1b1c0c2b9ba7fe5957e8e9ce5ca",
+  "cand_ox64_B.parquet": "701d763b661b9aa0449765d1788c96578bf6e63b6f69f639727f3149e917541b",
+  "cand_ox64_C.parquet": "abf31b2670d11c49e760cd4cc80d0718d28bdbb4748d5061d3952f5b73d14d8c",
+  "cand_ox64_Cs.parquet": "e3f48ea773762f027689a25ad24d507a56fd6ab9557b48cae6227279b60e5d72",
+  "scorecard_ox64_A_50.csv": "7a61d1cd439a8c82136bf7cea59c81929ab4874306b1169ec5ba547f9820d614",
+  "scorecard_ox64_A_10.csv": "2bf3ab94fc85952c26181f266cc28e89b594a731140a16f648e3b568196b7b2f",
+  "scorecard_ox64_B_50.csv": "0cf0ca858c7f5c83febda0632ee1a39ded00ab355a05b86203886a13658e1ad3",
+  "scorecard_ox64_B_10.csv": "0c29b38c2b531d0060914b56e6cb76dd897d6ab3e82bc810f7dd6d5ddc509a81",
+  "scorecard_ox64_C_50.csv": "27747b1e3c39cb9d8c36d22ae7e72da2719715d62b4c4cb08d5b007847e2077b",
+  "scorecard_ox64_C_10.csv": "743b3036511ebc0f4d039ee9ab4472e440c2875cda71cfdc40e22720748ee00f",
+  "scorecard_ox64_Cs_50.csv": "bcdcdeef0649b658c5e6adabc7cd71a00160204935582dab7cb12e17b78a8827",
+  "scorecard_ox64_Cs_10.csv": "e4b11d28589785e736a6db16818c9385726ac25639c6644e3fb49f231ea4dac3",
+  "exec_ox64_A_50.parquet": "5599f3f9d47c21a831ce24b010b8b1dbaa5ec947d30560cec80c9c5a77cc9a6c",
+  "exec_ox64_A_10.parquet": "e30a652ec72f2cfef2ebed98c804187736a1f0bfee1efbf3c828837721487a92",
+  "exec_ox64_B_50.parquet": "6aa95755f6792fcad10c39405fb68ed1281dd3a5ed42e8e73b59c7687b96d64a",
+  "exec_ox64_B_10.parquet": "559489160828f3a6096b86c3dd11b84ece72051588f76952238f91935d3cdfc6",
+  "exec_ox64_C_50.parquet": "c230ce01826d4d919796773a7d04b7659dd9137f9cf9b057f4c87f9a48b50551",
+  "exec_ox64_C_10.parquet": "c5975e0b3fed87cefe856918737edb58749027da24ad86df665d41f9aeef94b9",
+  "exec_ox64_Cs_50.parquet": "d99cf638418b207e13d0e8ac8c05cceae0ff091998dfbe65d43226b344621f7b",
+  "exec_ox64_Cs_10.parquet": "8d1a7d5972c22d9063490d0e9c3f5efe7faea8c22b7412eda22264178180fa66"
+ },
+ "code_hashes": {
+  "ox64_lib.py": "b6ec9ee913ce51096137e6abda3b28989706e1bd137d77cd4115356b81cd4fc6",
+  "run_ox64.py": "4847a5ba5ceb112f2b917b9e564f07013b47be4d9f5a817c1a1c2de4f0a985c7",
+  "test_ox64_signals.py": "17c22828537e979ded2c380e8c3d840e44177b32ec131cd2cb921a85df8aace2",
+  "PROTOCOL.md": "ca164eed6ffe182d84fbe2626669aa2aa33db58e20a03e6fabcdd44aeb6420c9"
+ }
+}
