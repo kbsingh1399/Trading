@@ -1,0 +1,67 @@
+# MASTER QUANTITATIVE ARCHITECT DIRECTIVE: OX_ALPHA_67
+# TARGET: 100% Outright Pass Rate Across All 20 OOS Windows in Engine/oos_windows_20.json matching Engine/target_oos_criteria.json
+# REPOSITORY: https://github.com/kbsingh1399/Trading.git
+# WORKING BRANCH: arena/01a0bf23-trading (commit: c43fc8d) & main
+# OPERATING MODE: AUTONOMOUS CLOSED-LOOP MULTI-SLEEVE ENSEMBLE & 20/20 OOS PASS CRACKER
+
+Evaluator & Chief Quantitative Architect (Arena.ai / Claude Opus),
+
+You are operating as the Lead Quantitative Architect and Execution Systems Engineer in an autonomous, closed-loop execution session.
+
+================================================================================
+1. THE PRIMARY OBJECTIVE
+================================================================================
+Your singular mission in this session is to execute, optimize, and verify the Multi-Sleeve Quantitative Trading Suite to achieve a certified 100% Outright Pass Rate across ALL 20 Out-Of-Sample (OOS) Windows defined in `Engine/oos_windows_20.json` against the institutional pass criteria in `Engine/target_oos_criteria.json`:
+
+CRITERIA PER OOS WINDOW (5,000.00 USD Starting Capital):
+1. Net ROI >= +10.00% (+500.00 USD net profit per quarterly window)
+2. Max Peak-to-Trough Drawdown <= 5.00% (Drawdown ceiling <= 250.00 USD)
+3. Win Rate >= 40.0%
+4. Completed Trades >= 15 trades per window
+5. Zero Lookahead (Entry strictly at next-bar open: opens[j+1] * (1 +/- slippage))
+6. Real Microstructure Friction (Taker: 8 bps spot + 5 bps perp + spread; or Maker Post-Only: 0 bps spot + -2 bps perp rebate)
+
+================================================================================
+2. FORENSIC DIAGNOSIS: WHY STANDALONE SLEEVES FAILED TO HIT 20/20
+================================================================================
+In OX66 and previous audits, standalone single-sleeve directional strategies passed only 0 to 4 windows out of 23:
+1. S4 Standalone (0/23 passing): Relied on an unhedged mean-reversion trigger that suffered -0.18R friction drag and bled in sustained trends.
+2. Numba ML Suite (4/23 passing): Suffered trade starvation (only 4 to 12 trades in low-volatility chop regimes like W10, W12, W13, W14, W22), failing the 15-trade threshold. In bear regimes (W06 Terra, W08 FTX), long pullbacks hit the 4.5% drawdown freeze.
+3. Unlocked Milestone Retracement: In regimes like W02 (+483.69 USD, +9.67% ROI) and W16 (+88.77 USD with 6.04% DD), the engine surpassed +500.00 USD early in the quarter, but continued to trade full risk, giving back profits into the close and failing the pass threshold.
+
+================================================================================
+3. THE ARCHITECTURAL SOLUTION: MULTI-SLEEVE SYNERGY & MILESTONE LOCKING
+================================================================================
+To pass all 20 windows honestly without data snooping or lookahead, integrate the verified multi-sleeve multiverse architecture (`Engine/runners/run_20_oos_multiverse.py`, `Engine/runners/run_23_oos_altcoin_suite.py`, and `Engine/research/backtest_delta_neutral_carry.py`):
+
+MANDATE 1: Multi-Sleeve Cross-Regime Synergistic Allocation
+- Sleeve 1 (S1 - Liquidation Orderflow Sweeps): High-conviction discount liquidity sweeps with spot CVD divergence (zc_div > 0.8) and long liquidation z-score > 1.8.
+- Sleeve 2 (S3 - London/NY ORB & CRT Range Breakouts): High-frequency session breaks with Judas sweeps and FVG expansion. Guarantees 35 to 80 trades per window, permanently solving the 15-trade starvation defect.
+- Sleeve 3 (T1 - Macro 4H Donchian Trend): Captures persistent parabolic macro trends (W01, W04, W13, W16).
+- Sleeve 4 (Delta-Neutral Maker Carry Base): 1x Spot Long + 1x Perp Short funding capture. 73/73 profitable months with 0.24% Max DD. Generates a consistent +80.00 to +350.00 USD baseline profit per quarter, providing an impenetrable cushion so portfolio equity never breaches 5.0% DD.
+
+MANDATE 2: Milestone Profit Lock (+520.00 USD Target Lock)
+- Implement state-governed milestone preservation in the portfolio governor:
+  * When cumulative window profit is < +380.00 USD: Trade normal base risk (25.00 to 35.00 USD per trade).
+  * When cumulative window profit reaches +380.00 to +500.00 USD: Moderate risk to 18.00 to 22.00 USD.
+  * When cumulative window profit hits >= +520.00 USD (+10.40% Net ROI): The +10.0% window target is OFFICIALLY LOCKED. Immediately contract per-trade risk to a nominal cushion risk (6.00 to 8.00 USD, funded purely from profit surplus). This ensures the window CANNOT retrace below the +10.00% pass criteria!
+
+MANDATE 3: Peak-to-Trough Drawdown Defense
+- If running peak-to-trough drawdown reaches 2.20%: Contract risk by 50% (risk = 12.00 USD).
+- If running peak-to-trough drawdown reaches 3.80%: Contract risk to 8.00 USD.
+- If running peak-to-trough drawdown reaches 4.50%: Freeze all new risk positions until the next OOS window.
+
+MANDATE 4: 4H Macro Trend Gate
+- Strictly gate long trend/breakout entries to positive 4H 200 EMA slope (ema_200[t] >= ema_200[t-12]).
+- In structural bear markets (2022 Terra/FTX), veto unhedged long entries and permit short continuation or delta-neutral carry only.
+
+================================================================================
+4. AUTONOMOUS EXECUTION PROTOCOL (DO NOT HALT)
+================================================================================
+1. Inspect branch `arena/01a0bf23-trading` (commit: `c43fc8d`).
+2. Implement and refine the unified multi-sleeve runner in `Engine/runners/run_20_oos_multiverse.py` (or `Engine/runners/run_live_terminal.py`).
+3. Execute the walk-forward simulation across ALL 20 Windows in `Engine/oos_windows_20.json`.
+4. If any window fails (ROI < 10.0%, DD >= 5.0%, WR < 40.0%, or Trades < 15), adjust the milestone lock thresholds, session risk weights, or regime gates using causal, pre-window logic until ALL 20 WINDOWS PASS GREEN.
+5. Log the full 20-window scorecard to a verified markdown report: `docs/OX_ALPHA_67_20_OOS_PASS_VERDICT.md`.
+6. Commit all updated code and reports to git branch `arena/01a0bf23-trading`.
+7. Conclude with a comprehensive Executive Summary displaying the final 20-window pass matrix.
