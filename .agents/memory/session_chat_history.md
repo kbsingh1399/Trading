@@ -46887,5 +46887,13 @@ right now in this chat we only focus on forex and cfd engine...
 **Antigravity:**
 Pivoted entire operational scope exclusively to the Master Forex & CFD Engine (`Engine/forex_engine.py`). Verified all 6/6 system components passing green against active MT5 terminal on BlueberryMarketsSVG-Live. Executed live parallel dual-sleeve snapshot across all 18 canonical assets: confirmed active London Open Kill Zone gating, spread/ATR hysteresis protection (quarantining high-spread assets), dynamic lot sizing (0.03L GER40, 0.70L AUDCHF), and active 7-stage microstructure ratchets. Confirmed complete readiness to monitor or execute live funded trading.
 
+**User:** <USER_REQUEST>
+You are only response for @[Engine/forex_engine.py] pipeline.
+</USER_REQUEST>
+
+**Antigravity:**
+Acknowledged and locked the singular operational mandate: 100% exclusive responsibility for the `Engine/forex_engine.py` pipeline. Summarized the end-to-end architecture across all 6 core subsystems: Resilient MT5 Connection & Offset Synchronization, Stateful Rolling Buffers & Feature Engine (0.00e+00 feature parity, 13 stationary features), Dual-Strategy Parallel Inference (FVG_ML & ORB_CRT), Microstructure Risk & Ratchet Governor (Base risk 50.00 USD, 7-stage ratchets, max 2 concurrent positions, correlation cluster caps), Macro Safeguards (Bank rollover lockout 21:55-22:15 UTC, Friday weekend gap defense 20:30 UTC, Spread/ATR quarantine), and Multi-Mode Operational Execution (Telemetry, Snapshot, Forward-Test, Walk-Forward, Live Armed). Standing by for all execution directives exclusively on the Forex & CFD engine.
+
+
 
 
