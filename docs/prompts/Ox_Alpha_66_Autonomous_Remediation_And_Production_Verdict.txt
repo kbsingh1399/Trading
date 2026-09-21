@@ -1,0 +1,100 @@
+# MASTER QUANTITATIVE ARCHITECT DIRECTIVE: OX_ALPHA_66
+# TARGET: Autonomous Resolution of Forensic Audit Findings, Delta-Neutral Cost Engine & Parity-Hardened Live Execution Stack
+# REPOSITORY: https://github.com/kbsingh1399/Trading.git
+# WORKING BRANCH: arena/01a0bf23-trading (commit: 00ed676) & main
+# OPERATING MODE: AUTONOMOUS CLOSED-LOOP REMEDIATION & FINAL PRODUCTION CERTIFICATION
+
+Evaluator & Chief Quantitative Architect (Arena.ai / Claude Opus),
+
+You are operating as the Lead Quantitative Architect and Systems Engineer in an autonomous, self-directed execution loop. 
+Your forensic review (OX_ALPHA_65_FORENSIC_REVIEW.md, commit 00ed676) provided a decisive, high-caliber institutional audit that uncovered the exact points of friction, parity mismatches, and execution gaps across the stack.
+
+We endorse your diagnosis 100%. We do NOT dispute the findings. Instead, your objective in this session is to AUTONOMOUSLY RESOLVE EVERY GATING DEFECT, implement the institutional corrections in code, run the empirical verifications, and drive the system to its verifiable goal.
+
+================================================================================
+1. EXECUTIVE DIRECTIVE & MANDATE (AUTONOMOUS RESOLUTION)
+================================================================================
+
+Do not halt for clarifications or intermediate confirmation. Execute the complete remediation plan in-place, commit all changes to git branch `arena/01a0bf23-trading`, run the tests and verification scripts, and publish the final certification report.
+
+Your remediation must resolve the five core gating pillars identified in OX65 and OX51:
+
+--------------------------------------------------------------------------------
+MANDATE 1: Cost-Aware, Hysteresis-Gated Delta-Neutral Cash-and-Carry Backtest
+--------------------------------------------------------------------------------
+1. Problem: 
+   The initial paper monitor rotated the top-3 pairs in 82% of 8-hour intervals, converting an 88.7% funding persistence into an ~190%/year churn cost that dwarfed the ~10.4%/year gross yield by 18x. Furthermore, no backtest was tracked in the repo.
+2. Implementation Requirements:
+   - Build a reproducible, cost-aware backtest module (`Engine/research/backtest_delta_neutral_carry.py`):
+     * Data Source: Tracked 18/11 perpetual master parquets in `binance_backtesting_data/` (`funding_rate_pct`, `basis_index_bps`, `open_time_ms`).
+     * Rebalancing Hysteresis: Maintain existing holdings unless an incoming candidate's funding rate exceeds the current holding's rate by at least a hurdle delta (e.g. `rate_diff >= 0.005%` per 8h) AND has persisted for at least N intervals (minimum hold cooldown of 24-72 hours).
+     * Rotation Cost Hurdle: Rebalancing only permitted if expected net carry accrual over the minimum hold period strictly exceeds the 2x round-trip transaction costs (taker fees 8 bps spot + 5 bps perp + bid-ask spread + adverse basis).
+     * Single-Leg Swap Architecture: When rebalancing, swap ONLY the departing asset. Never liquidate and rebuild the entire portfolio book.
+     * Realistic Leverage & Margin: Isolated margin accounting, 1x Spot Long + 1x Perp Short, margin buffer reserve (20% cash buffer), and true exchange settlement timing (00:00, 08:00, 16:00 UTC).
+   - Generate and publish the audited scorecard across all 23 quarterly regimes with full metric attribution (gross yield, fee drag, basis drag, net yield, max drawdown, Sharpe).
+
+--------------------------------------------------------------------------------
+MANDATE 2: Real Binance Execution Bridge & Gateway Integration
+--------------------------------------------------------------------------------
+1. Problem:
+   `binance_funding_arbitrage_bot.py` was a telemetry monitor with zero execution code (`--live` was a vanity flag). Meanwhile, the repository contains a production-grade REST/WS broker in `Engine/brokers/binance_broker.py` (1,110 lines, HMAC signing, testnet/mainnet, order placement, retries) that was disconnected from the live bots.
+2. Implementation Requirements:
+   - Wire `Engine/brokers/binance_broker.py` directly into `Engine/live/binance_funding_arbitrage_bot.py`:
+     * Dual-leg order execution: When entering a carry trade, place spot buy (`api.binance.com/api/v3/order`) and perp short (`fapi.binance.com/fapi/v1/order`) with precise lot-size / tick-size precision rounding and `newClientOrderId` idempotency tags.
+     * Leg-Failure Rollback: If the second leg fails to fill within timeout, immediately unwind the first leg with a market order to prevent unhedged directional exposure.
+     * Real Spot Price Ingestion: Fetch real spot orderbook bids/asks via REST/WebSocket rather than deriving spot notional from perpetual mark price.
+     * Atomic State Management: Use tempfile write + atomic filesystem rename (`os.replace`) for `funding_arbitrage_state.json` to prevent corruption on sudden process termination.
+     * Guardrails: Rate limit token-bucket enforcement, clock skew correction (`recvWindow=5000`), connection watchdog, and dead-man's emergency kill switch.
+
+--------------------------------------------------------------------------------
+MANDATE 3: Directional Terminal Parity & Geometry Realignment
+--------------------------------------------------------------------------------
+1. Problem:
+   The directional terminal (`Engine/runners/run_live_terminal.py`) had research vs live parity drift:
+   - 1.2% ATR floor in research vs raw ATR in live (a 10x geometry divergence on high-priced assets).
+   - Sleeve taxonomy drift (terminal runs S1, T1, S3 while S2/S4 were uncoupled).
+   - Lookahead in standalone S4 research script (entry at next-bar close instead of next-bar open).
+2. Implementation Requirements:
+   - Unify ATR floor and position sizing geometry: enforce identical ATR definition and floor (`max(atr, 0.012 * close)`) in both live and backtest engines.
+   - Reconcile the 5-sleeve taxonomy across `run_live_terminal.py`, `s4_pivot_footprint_exhaustion.py`, and `fast_numba_oos_engine.py`:
+     * Sleeve 1 (S1): Dual-Model Liquidation Pullback.
+     * Sleeve 2 (S2): Bollinger Volatility Expansion (Mean Reversion).
+     * Sleeve 3 (S3): London/NY ORB & CRT Range Breakout.
+     * Sleeve 4 (S4): Structural Multi-Timeframe Pivot Sweeps (PDL/PDH) with Footprint Exhaustion.
+     * Sleeve 5 (T1): Macro Donchian Trend Breakout.
+   - Eliminate all next-close fill artifacts: strictly enforce execution at `opens[j+1] * (1 +/- friction_slippage)`.
+   - Add live deduplication and cooldown to prevent rapid re-entry churn on identical signals.
+
+--------------------------------------------------------------------------------
+MANDATE 4: Empirical Cross-Validation & End-to-End Test Suite
+--------------------------------------------------------------------------------
+1. Requirements:
+   - Build a comprehensive verification test suite (`Engine/tests/test_funding_arbitrage_execution.py` and `Engine/tests/test_live_terminal_parity.py`):
+     * Test mathematical delta cancellation (spot + perp = 0 market delta).
+     * Test hysteresis switching logic: verify that a 0.001% higher rate does NOT trigger an expensive rebalance.
+     * Test atomic state write and recovery from corrupted state files.
+     * Test next-bar open fill causality across all directional sleeves.
+     * Test order manager lot-size rounding and margin buffer calculations.
+   - Run all pre-flight verification scripts and ensure 100% test assertions pass.
+
+--------------------------------------------------------------------------------
+MANDATE 5: Final Production Report & Institutional Certification
+--------------------------------------------------------------------------------
+1. Requirements:
+   - Author `docs/OX_ALPHA_66_FINAL_PRODUCTION_VERDICT.md` containing:
+     * Full comparative table: Pre-remediation (OX65) vs Post-remediation (OX66).
+     * Backtest performance metrics for the Hysteresis-Gated Delta-Neutral Arbitrage strategy across all 23 quarterly regimes (annualized return, max DD, Sharpe, turnover rate, net fee impact).
+     * Directional suite parity audit results (MTM drawdown, win rate, expectancy under true next-open execution).
+     * Live deployment runbooks with exact configuration parameters for both paper dry-run and live mainnet execution.
+     * Final verdict and grading across the 4 core dimensions (Architecture, Causal Soundness, Microstructure Realism, Production Readiness).
+
+================================================================================
+2. AUTONOMOUS EXECUTION PROTOCOL (DO NOT HALT)
+================================================================================
+
+1. Check out branch `arena/01a0bf23-trading`.
+2. Implement all Mandates 1 through 5 sequentially.
+3. Run the test suite and verify all checks pass cleanly without mock shortcuts or synthetic bypasses.
+4. Commit all source code, tests, and documentation to git with descriptive institutional commit messages.
+5. Push all commits to `origin arena/01a0bf23-trading` and merge/push to `origin main`.
+6. Conclude with a clear, definitive Executive Production Summary.
