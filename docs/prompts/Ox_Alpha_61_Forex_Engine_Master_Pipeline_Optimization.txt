@@ -1,0 +1,117 @@
+# MASTER QUANTITATIVE ARCHITECT & EXECUTION DIRECTIVE: OX_ALPHA_61
+# TARGET: Institutional Forex & CFD Master Pipeline Optimization & 20 OOS Window Certification
+# REPOSITORY: https://github.com/kbsingh1399/Trading.git
+# ACTIVE BRANCH: arena/01a0bf23-trading (monotonic parity with origin/main @ ee2f6f1)
+# DATASET: Canonical Forex & CFD 18-Asset Basket in Forex_Backtesting_Data/
+#   Assets: EURUSD, GER40, NICKEL, USDSEK, GAS, AU200, FR40, EURCNH, LEAD, NZDUSD, USDHKD, US2000, AUDCHF, NZDCNH, XAUCNH, GAUCNH, EURSEK, EURHUF (15m, 4H, D1 true UTC)
+# OOS WINDOWS SPECIFICATION:
+#   1. Primary: Engine/oos_windows_forex_20.json (20 Non-Overlapping 1-Month Microstructure Regimes, 2023 to 2026)
+#   2. Macro: Engine/oos_windows_20.json (20 Non-Overlapping Quarterly Macro Windows, 2021 to 2026)
+# INSTITUTIONAL PASS CRITERIA (Engine/target_oos_criteria.json):
+#   - Net ROI >= +10.00% (+500.00 USD on 5,000.00 USD initial capital)
+#   - Max Peak-to-Trough Drawdown <= 5.00% (250.00 USD maximum giveback)
+#   - Win Rate >= 40.0%
+#   - Minimum Completed Trades >= 15 per regime window
+#   - Minimum Target R-Multiple: 2.50R
+#   - Base Risk: 50.00 USD (1.00%) | Dynamic DD Defense: 27.50 USD / 16.50 USD | Hard DD Stop: 4.50% / 225.00 USD
+
+Evaluator & Chief Quantitative Architect (Arena.ai / Claude Opus),
+
+You are operating in a fresh, isolated session with zero prior chat memory, zero local state, and zero external web access. All source modules, strategy kernels, risk governors, and execution bridges are pinned via raw GitHub URLs from branch arena/01a0bf23-trading below.
+
+Your mission is to perform an end-to-end quantitative review, optimization, and certification of the Master Forex & CFD pipeline (Engine/forex_engine.py, Engine/core/base_strategy.py, Engine/strategy/s4_fvg_ml/s4_fvg_ml_forex_engine.py, Engine/strategy/orb_crt_forex_engine.py, and Engine/core/strategy_kernel.py). You must ensure that the parallel dual-sleeve portfolio (FVG_ML + ORB_CRT) strictly passes the institutional criteria across all 20 out-of-sample regimes without lookahead bias, iterating autonomously until verified, and pushing all modifications to GitHub.
+
+================================================================================
+1. PINNED REPOSITORY SOURCE CODE & SPECIFICATIONS
+================================================================================
+
+Review the following raw codebase files directly from the repository on branch `arena/01a0bf23-trading` (commit `ee2f6f1`):
+
+1. Master Forex & CFD Orchestration Engine:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/forex_engine.py
+
+2. Strategy Core Interface, Registry & Walk-Forward Harness:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/core/base_strategy.py
+
+3. Strategy Kernel (Vectorized Feature Engineering & 7-Stage Ratchet Labeler):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/core/strategy_kernel.py
+
+4. Modular ICT FVG + XGBoost Strategy Module:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/strategy/s4_fvg_ml/s4_fvg_ml_forex_engine.py
+
+5. Opening Range Breakout (ORB) + Candle Range Theory (CRT) Strategy Module:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/strategy/orb_crt_forex_engine.py
+
+6. 20 OOS Walk-Forward Benchmark Runner:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/runners/run_forex_20_oos_benchmark.py
+
+7. Institutional Target Criteria Contract:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/target_oos_criteria.json
+
+8. 20 Forex OOS Windows Specification:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/oos_windows_forex_20.json
+
+9. 20 Quarterly Macro OOS Windows Specification:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/oos_windows_20.json
+
+================================================================================
+2. RECENT EMPIRICAL FINDINGS & ARCHITECTURAL AUDIT
+================================================================================
+
+1. Baseline Performance:
+   - In our latest run across Engine/oos_windows_forex_20.json, the parallel suite achieved 16/20 outright passes, +11,848.07 USD net profit (+236.96% ROI), 57.9% Win Rate, and maximum drawdown strictly contained at 4.66% (under the 5.00% ceiling).
+   - In 4 choppy consolidation windows (e.g. W02 Q4 2023 soft landing rally), the engine activated Drawdown Defense and preserved capital (+174.03 USD net PnL, Max DD 5.44%), but fell short of the +10.00% (+500.00 USD) pass threshold.
+
+2. Structural R:R Geometry Alignment:
+   - We recently updated MIN_STRUCTURAL_R_EFF from 1.20 to 2.50 in forex_engine.py to eliminate tight 1:1.36 scalps and ensure strict parity with target_oos_criteria.json (min_r_multiple = 2.5).
+   - In live dry run, the order manager successfully placed orders with asymmetric geometry (e.g. GER40 1:3.16 R:R, AUDCHF 1:2.92 R:R).
+
+3. Machine Learning Signal Arbiter:
+   - XGBoost model (Engine/models/xgboost_forex.json) is trained on 13 stationary features (RSI 14, VWAP 20 typical price proxy, EMA 50/200, 4H EMA 200 slope, unmitigated FVGs, daily high/low sweeps) conditioned on the 7-stage ratchet labels.
+   - Signal confidence gate is enforced at P* >= 0.540.
+
+================================================================================
+3. EXECUTION MANDATES & AUTONOMOUS REFINEMENT LOOP
+================================================================================
+
+You are authorized and required to review, mutate, execute, and certify the pipeline. Follow this strict execution protocol:
+
+MANDATE 1: Forensic Causal Soundness (Zero Lookahead)
+- Verify that every trade entry price is booked strictly at opens[j+1] (the opening price of the subsequent 15m candle).
+- Verify that 4H higher-timeframe trend features (htf_4h_trend) and daily swing levels (prev_day_high, prev_day_low) are shifted by 1 full bar (shift(1)) and joined backward via join_asof.
+- Verify that zero static result caches (e.g. winning_configuration.json, s1_status.json) or hardcoded lookup tables are used.
+
+MANDATE 2: Target Criteria Parity Across All 20 Windows
+- Target: 20 / 20 Certified Outright Passes.
+  * Window Net ROI >= +10.00% (+500.00 USD net on 5,000.00 USD capital)
+  * Window Max Peak-to-Trough Drawdown <= 5.00% (250.00 USD maximum giveback)
+  * Window Win Rate >= 40.0%
+  * Window Completed Trades >= 15
+- In choppy regimes where profit stalls below +500.00 USD, refine the candidate selection or ML confidence threshold so the engine captures sufficient high-conviction continuation expansions without increasing churn.
+- Maintain the 4-tier risk budget: Base risk 50.00 USD (1.00%), DD Defense 27.50 USD / 16.50 USD arming at 1.8% DD, House Money 65.00 USD unlocking at +80.00 USD profit with DD < 1.0%, and Milestone Pass-Lock (7.50 USD) preserving +500.00 USD passes.
+
+MANDATE 3: 7-Stage Microstructure Ratchet Calibration
+- Verify and tune the dynamic ratchet progression:
+  * Stage 1 (BE Lock): At +0.80R gain -> Move SL to Entry + 0.15R (locks friction clearance).
+  * Stage 2 (Profit Lock): At +1.50R gain -> Move SL to Entry + 0.80R.
+  * Stage 3 (Profit Lock): At +2.00R gain -> Move SL to Entry + 1.80R.
+  * Stage 4 (Profit Lock): At +2.50R gain -> Move SL to Entry + 2.30R.
+  * Stage 5 (Profit Lock): At +3.00R gain -> Move SL to Entry + 2.80R.
+  * Stage 6 (Profit Lock): At +3.50R gain -> Move SL to Entry + 3.30R.
+  * Time Decay: Exit at market if highest R < +0.20R after 24 bars (6 hours).
+- Ensure ratchet execution in base_strategy.py, strategy_kernel.py, and order_manager.py are 100% byte-for-byte consistent.
+
+MANDATE 4: Autonomous Iteration & Execution Loop
+- Execute walk-forward validation:
+  `python Engine/forex_engine.py --mode walkforward --strategy parallel`
+  (or via `Engine/runners/run_forex_20_oos_benchmark.py`).
+- Do not stop at the first failure. If any window fails the criteria, inspect the trade log for that specific window, isolate the failure mode (e.g. premature entry, stop cluster, or chop churn), refine the code, and re-run.
+- Continue iterating until all 20 windows pass the institutional criteria.
+
+MANDATE 5: Final Git Commit & Push
+- Once the pipeline achieves full certification:
+  1. Commit all modified files with a descriptive institutional commit message:
+     `git commit -m "feat(forex): optimize dual-sleeve pipeline and certify 20/20 OOS passes matching target criteria"`
+  2. Push the branch to remote:
+     `git push origin arena/01a0bf23-trading` and `git push origin HEAD:main`
+- Output the full 20-window scorecard table (Window ID, Regime Name, Trades, Win Rate, Profit Factor, Net R, Net PnL USD, Net ROI %, Max DD %, and Pass/Fail Status) and the summary metrics.
