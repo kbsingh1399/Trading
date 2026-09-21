@@ -57,3 +57,8 @@ trigger: always_on
   * Council: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/verification/verify_parquet_integrity.py
 - **Zero Chat Dump**: Never dump lengthy prompt text in chat responses; provide filename, summary, and direct file link.
 - **Zero Dollar Signs**: Strict prohibition on dollar symbols; always write USD.
+
+## 5. Quantitative Knowledge Grounding & Minimal Token Reference Mandate
+- **Always Reference Quant-Developers-Resources**: For all quantitative modeling, risk management, econometrics, and execution math, actively ground solutions in the canonical libraries inside `Quant-Developers-Resources-main/` (Risk Management, Econometrics, Financial Theory, Technical Indicators, Microstructure, and C++).
+- **Minimal Token Querying via Graphify**: NEVER dump entire files into context. Always query specific subgraphs via `python -m graphify query "<concept>" --budget 300` or `graphify explain "<concept>"` to retrieve scoped AST nodes, classes, and call-flows with minimal token footprint.
+

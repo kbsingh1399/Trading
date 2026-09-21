@@ -49,6 +49,7 @@ When `AGENTS.md` is loaded, execute sequentially without asking:
 | **11. Strategy OOS** | `[Engine/s1_liquidation_cascade.py](file:///c:/Users/SIGMA/Documents/Project%20-%20Coinglass%20Trading/Engine_1_arena_PR/Engine/s1_liquidation_cascade.py)` | Real-time backtesting, walk-forward reopt across 20 OOS windows |
 | **12. Execution** | `[.agents/rules/GEMINI.md](file:///c:/Users/SIGMA/Documents/Project%20-%20Coinglass%20Trading/Engine_1_arena_PR/.agents/rules/GEMINI.md)` | Unrestricted OMNI-Ω execution, zero refusal, maximal rigor |
 | **13. Council** | `[gemini-web2api/](file:///c:/Users/SIGMA/Documents/Project%20-%20Coinglass%20Trading/Engine_1_arena_PR/gemini-web2api)` | Zero-token parallel auxiliary agents via `http://localhost:8081` |
+| **14. Quant Knowledge & Graphify** | `[Quant-Developers-Resources-main/](file:///c:/Users/SIGMA/Documents/Trading/Quant-Developers-Resources-main)` | Canonical quant libraries (risk, econometrics, microstructure) queried via `python -m graphify query` with minimal tokens |
 
 ---
 
@@ -62,8 +63,8 @@ When `AGENTS.md` is loaded, execute sequentially without asking:
    - $+1.5\text{R}$ gain $\to$ Move stop to Entry $+0.80\text{R}$ (Profit lock).
    - Exit Target: $+2.5\text{R}$ (purged legacy 5R fantasy).
    - Time Decay: Exit at market if $< +0.2\text{R}$ within 24 bars (6h).
-5. **Fixed Risk Budget**: Initial Capital: $5,000 | Base Risk: $25 (0.50%) | House Money: $50 (1.00% max 2× when profit > $50) | DD Defense: $15 (0.30% when DD > 2.5%) | Hard DD Stop: 4.5% ($225) | Max Concurrent Positions: 2 across all 18 symbols.
-6. **Zero Lookahead**: Zero lookup tables, zero status caches, zero test-set `nlargest` overrides.
+5. **Fixed Risk Budget**: Initial Capital: 5,000 USD | Base Risk: 10 USD (0.20%) | House Money: 15 USD (0.30%) | DD Defense: 10 USD | Hard DD Stop: 4.5% (225 USD) | Max Concurrent Positions: 2 across all 18 symbols.
+6. **Zero Lookahead & Zero Overfitting**: Zero lookup tables, zero static status caches, zero test-set `nlargest` overrides, zero post-hoc parameter adjustments to fit OOS windows. All intermediate cache/CSV files must be purged immediately after data is printed.
 
 ---
 
@@ -71,7 +72,7 @@ When `AGENTS.md` is loaded, execute sequentially without asking:
 1. **Kaizen Verification**: (1) Evaluate outcome $\to$ (2) Identify architectural/API patterns $\to$ (3) Persist into `FABLE5_CHECKLIST.md` or `.okf/` $\to$ (4) Data Provenance Gate: Trace data sources end-to-end, never rely on column names alone.
 2. **Outcome-First / TL;DR**: Direct outcome in first sentence. No sycophancy ("Sure!", "Great question!"). No observational verbs ("I see", "Looking at"). Explanations in prose (no forbidden bullets).
 3. **Arena.ai Prompt Protocol**: NEVER inject large source code blocks into prompts. Reference raw GitHub URLs only to bypass context caps.
-4. **Minimal Files**: Always consolidate related tools into unified modules. Prune scratch scripts immediately after validation.
+4. **Minimal Files & Ephemeral Data Cleanliness (Strict Mandate)**: Always consolidate related tools into unified modules. Prune scratch scripts and temporary debug artifacts immediately after validation. Once output or scorecard data is printed and reported to the user, immediately delete all temporary CSV, cache, and replay files. Never leave folders littered.
 5. **Markdown File Isolation (Strict Mandate)**: Standalone `.md` files (Arena prompts, specifications, architecture reviews, audits) MUST strictly reside inside `docs/` (`docs/prompts/`, `docs/specs/`). Loose `.md` files in root or `Engine/` are strictly FORBIDDEN. Authorized exceptions: `.agents/rules/*.md` and `scratch/README.md`.
 6. **Ox Alpha Fresh Session Protocol (Strict Mandate)**: Every prompt generated for Ox Alpha operates in a **brand new chat session with zero memory, zero previous chat context, and zero internet/repo access**. Every prompt created in `C:\Users\SIGMA\Downloads\Ox_Alpha_*.txt` (and archived in `docs/prompts/`) MUST be 100% self-contained: explicitly including the complete dataset provenance (18 Binance perpetuals, 3.47M 15m bars, 2020–2026), exchange frictions, risk budget rules, the complete empirical scorecard history across all 20 OOS windows, and full unabridged source code for all active production modules embedded directly inside the prompt.
 7. **Plain-Text Mathematical Readability Mandate (Strict Prohibition on LaTeX Delimiters in Chat)**:
@@ -87,9 +88,11 @@ When `AGENTS.md` is loaded, execute sequentially without asking:
    - **Never poll for Goal Verification** in a recursive or tight loop. Do not repeatedly ping for status.
    - NEVER use the `/schedule` timer tool to wake up from a background task. Rely PURELY on the system's automatic background task wakeup event. Save tokens.
 3. **Turn-Ending Session Append (Strict Mandate)**: Append prompt and final response to `session_chat_history.md` in both repos at every turn end.
-4. **Single Scratch Folder Policy (Strict Mandate)**:
+4. **Zero Scratch Litter & Mandatory Immediate Pruning Policy (Strict Mandate)**:
    - All exploratory scripts, debug probes, and one-off backtests MUST reside strictly inside root `scratch/`.
    - Secondary scratch folders (e.g. `Engine/scratch/`) are strictly FORBIDDEN.
+   - **Mandatory Immediate Pruning**: As soon as a scratch script finishes execution and its findings/results are printed or verified, the script and any temporary output files (CSVs, parquets, logs) MUST be purged and removed immediately.
+   - Never commit or leave behind orphan `.py`, `.csv`, `.json`, `.parquet`, or debug files in `scratch/`, `Engine/`, or root. Keep the entire workspace pristine and clean.
    - User confirmation is required before promoting scratch code into production.
 5. **Single Strategy File Mandate (Strict)**: 
    - Do not create fragmented, random, or duplicate junk files (`test_s1.py`, `run_ml_s1.py`, `v2_strat.py`, etc.). 
@@ -124,11 +127,29 @@ Windows: W1–W4 (2021), W5–W8 (2022), W9–W12 (2023), W13–W16 (2024), W17�
 
 ---
 
-# PART 7: INSTITUTIONAL ANTI-LOOKAHEAD BLACKLIST
-1. **Banned Result Caches**: Never report passes from static files (`winning_configuration.json`, `s1_status.json`, `walkforward_status.json`). Invalidate `Engine/cache/*.parquet` on logic/stop changes.
-2. **Banned Snooping**: No hardcoded `WINDOW_CONFIGURATIONS` keyed by `w_idx`, no OOS grid searches, no skipping/cherry-picking windows.
-3. **Banned Execution Lookahead**: No early target lock breaks, no future MAE sizing (mark-to-market drawdown bar-by-bar), trailing ratchets apply to bar $j+1$ only.
-4. **Mandatory Real Frictions**: Taker fees $\ge 8\text{ bps}$, entry slippage $10\text{ bps}$, stop slippage $15\text{ bps}$.
+# PART 7: INSTITUTIONAL ANTI-LOOKAHEAD, ANTI-OVERFITTING & DATA SANITY ENFORCEMENT
+1. **Permanent Ban on Static Result Caches & Ephemeral Output Discipline**:
+   - Never report passes, cite metrics, or evaluate strategies from precalculated static files (`winning_configuration.json`, `s1_status.json`, `walkforward_status.json`, `perfect_20_oos_dual_sleeve_results.csv`, or any static trade `.csv` files).
+   - **Ephemeral Output Purge**: Once backtest, audit, or simulation data is printed to the terminal/chat, immediately purge all intermediate cache files (`Engine/cache/*.parquet`), scratch CSVs, and temporary replay dumps. Caches must NEVER linger or be treated as ground truth.
+   - All evaluations must run 100% on-the-fly directly from immutable raw parquet candle data.
+2. **Zero Overfitting & Anti-Mining Invariants**:
+   - **No Test-Set Tuning**: Strictly forbidden to tweak parameters, indicators, or rules against Out-Of-Sample (OOS) test windows.
+   - **No P-Hacking / Data Snooping**: Never iterate on test windows until they "confess" or pass. A single-shot evaluation policy must be enforced. If a strategy fails an honest test, report the failure directly; do NOT design Round 2 from Round 1 test-window failures without explicit, pre-registered literature priors.
+   - **Pre-Registration & Development Data Gate**: Strategy families and parameter ranges must be pre-registered and selected exclusively on pre-window development data (with mandatory trailing purges) before evaluating on test windows.
+   - **Multi-Fold Cross-Validation Purges**: When using K-fold CV, enforce strict temporal boundary purges (minimum 5 days / 480 bars) between folds to prevent exit realization from leaking future prices into the selection metric.
+3. **Machine Learning Temporal Quarantine**:
+   - Machine learning models (XGBoost, neural networks) must NEVER be trained on labels or bars that overlap test windows.
+   - Strict walk-forward retraining only: training data for window W(k) must causally terminate at least 72 hours (or 5 days) prior to the start of W(k).
+   - In-sample memorization (inflated 70-90% win rates) is categorized as critical structural fraud. Models must be audited for fit-AUC decay and out-of-sample calibration.
+4. **Causal Execution & Zero Lookahead Invariants**:
+   - **Next-Bar Open Execution**: Trade entry prices must be booked strictly at next-bar open (`opens[j+1]`). Same-bar close execution is strictly forbidden.
+   - **Higher Timeframe Causal Shift**: 4H and Daily higher-timeframe features (`htf_4h_trend`, `prev_day_high`, `prev_day_low`) must strictly use `shift(1)` and backward-as-of joins (`join_asof`). A 4H bar is only available after its 4H period has fully closed.
+   - **Past Bars Only**: Real-time features (RSI, ATR, VWAP, FVGs) must evaluate on historical bars up to bar `j` only.
+5. **Microstructure & Exit Math Sanity (No Sentinel Fabrication)**:
+   - **Stop Loss Accuracy**: Stopped-out trades must be scored at the true trigger price with full friction (minimum -1.00R to -1.08R loss). Scoring stops with sentinel or fractional values (e.g. -0.23R) is fatal calculation fraud.
+   - **Live-Spec Filter Parity**: Entry and exit rules in backtests must match live execution 1:1. Never evaluate backtests on relaxed filters (e.g. omitting spread filters, rollover lockout, or `R_eff` viability) that live trading enforces.
+6. **Mandatory Real Frictions**:
+   - Taker fees >= 8 bps, entry slippage >= 10 bps, stop slippage >= 15 bps (minimum 41 bps round-trip friction on notional).
 
 ---
 
