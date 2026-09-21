@@ -173,13 +173,13 @@ def preflight_sync_missing_data(target_dir: Path = DEFAULT_DATA_DIR, max_workers
 class InstitutionalRiskGovernor:
     """
     Enforces the certified 23-OOS Institutional Risk Management protocol:
-    1. Base Risk: 24.0 USD (0.48% on 5,000 USD initial capital).
-    2. DD Defense Mode: Scales risk down to min(base_r * 0.35, 6.0 USD) if DD >= 1.0% or equity < capital.
-    3. House Money Mode: Scales risk up to min(base_r * 1.25, 26.0 USD) if cumulative profit >= 150.0 USD.
+    1. Base Risk: 36.0 USD (0.72% on 5,000 USD initial capital).
+    2. DD Defense Mode: Scales risk down to min(base_r * 0.40, 14.0 USD) if DD >= 2.0% or profit < -50.0 USD.
+    3. House Money Mode: Scales risk up to min(base_r * 1.35, 48.0 USD) if cumulative profit >= 120.0 USD.
     4. Milestone Pass Lock: Once peak profit >= 500.0 USD and trades >= 15, locks in pass floor stop
-       and restricts risk to min(10.0 USD, cushion * 0.15).
+       and restricts risk to min(10.0 USD, cushion * 0.20).
     5. Circuit Breaker: 4.85% maximum drawdown ceiling.
-    6. Concurrency Limits: Max 4 concurrent positions (max 2 S1, max 1 T1, max 2 S2/S4, max 2 ORB).
+    6. Concurrency Limits: Max 4 concurrent positions (max 2 S1, max 2 T1, max 2 ORB).
     """
 
     def __init__(self, initial_capital: float = 5000.0):
@@ -198,8 +198,7 @@ class InstitutionalRiskGovernor:
         # Concurrency caps
         self.max_concurrent: int = 4
         self.max_s1_concurrent: int = 2
-        self.max_t1_concurrent: int = 1
-        self.max_s2_s4_concurrent: int = 2
+        self.max_t1_concurrent: int = 2
         self.max_orb_concurrent: int = 2
 
     def update_equity(self, unrealized_pnl: float):
@@ -221,9 +220,10 @@ class InstitutionalRiskGovernor:
             self.win_count += 1
         self.update_equity(0.0)
 
-    def get_risk_budget(self, base_r: float = 24.0) -> Tuple[float, str]:
+    def get_risk_budget(self, base_r: float = 36.0) -> Tuple[float, str]:
         """Calculates dynamic risk budget and active tier."""
         cur_dd = ((self.peak_equity - self.equity) / self.peak_equity) * 100.0 if self.peak_equity > 0 else 0.0
+        cur_profit = self.equity - self.initial_capital
 
         if (self.peak_equity - self.initial_capital) >= 500.0 and self.trade_count >= 15:
             floor_stop = max(self.initial_capital + 500.0, self.peak_equity - 120.0)
@@ -231,19 +231,19 @@ class InstitutionalRiskGovernor:
                 self.is_locked = True
                 return 0.0, "PASS_LOCKED"
             cushion = max(0.0, self.equity - (self.initial_capital + 500.0))
-            trade_risk = min(10.0, cushion * 0.15)
+            trade_risk = min(10.0, cushion * 0.20)
             if trade_risk <= 0.0:
                 self.is_locked = True
                 return 0.0, "PASS_LOCKED"
             return trade_risk, "MILESTONE_LOCK"
 
-        if cur_dd >= 1.0 or self.equity < self.initial_capital:
-            return min(base_r * 0.35, 6.0), "DD_DEFENSE"
+        if cur_dd >= 2.0 or cur_profit < -50.0:
+            return min(base_r * 0.40, 14.0), "DD_DEFENSE"
 
-        if (self.equity - self.initial_capital) >= 150.0:
-            return min(base_r * 1.25, 26.0), "HOUSE_MONEY"
+        if cur_profit >= 120.0:
+            return min(base_r * 1.35, 48.0), "HOUSE_MONEY"
 
-        return min(base_r, 24.0), "BASE_RISK"
+        return min(base_r, 36.0), "BASE_RISK"
 
     def can_open_position(self, sleeve_id: int, active_positions: List[Dict[str, Any]]) -> bool:
         if self.is_locked or self.circuit_breaker_tripped:
@@ -254,15 +254,12 @@ class InstitutionalRiskGovernor:
         s1_count = sum(1 for p in active_positions if p["sleeve_id"] == 1)
         t1_count = sum(1 for p in active_positions if p["sleeve_id"] == 2)
         orb_count = sum(1 for p in active_positions if p["sleeve_id"] == 3)
-        s2_s4_count = sum(1 for p in active_positions if p["sleeve_id"] in (4, 5))
 
         if sleeve_id == 1 and s1_count >= self.max_s1_concurrent:
             return False
         if sleeve_id == 2 and t1_count >= self.max_t1_concurrent:
             return False
         if sleeve_id == 3 and orb_count >= self.max_orb_concurrent:
-            return False
-        if sleeve_id in (4, 5) and s2_s4_count >= self.max_s2_s4_concurrent:
             return False
 
         return True
@@ -294,8 +291,10 @@ class LivePositionTracker:
         r_dist: float,
         risk_usd: float,
         units: float,
+        ticket: int = 0,
     ):
         pos = {
+            "ticket": ticket,
             "symbol": symbol,
             "sleeve_name": sleeve_name,
             "sleeve_id": sleeve_id,
@@ -318,7 +317,8 @@ class LivePositionTracker:
 
     def update_positions(self, latest_prices: Dict[str, float]) -> Tuple[List[Dict[str, Any]], float]:
         """
-        Updates current prices, ratchets stops, evaluates targets/stops, and returns closed positions.
+        Updates current prices, ratchets stops on exchange, evaluates targets/stops,
+        and triggers live broker closures.
         """
         closed_positions = []
         total_upnl = 0.0
@@ -328,7 +328,11 @@ class LivePositionTracker:
             sym = pos["symbol"]
             cur_px = latest_prices.get(sym, pos["current_price"])
             pos["current_price"] = cur_px
-            pos["bars_held"] += 1
+            
+            # F3 Fix: Calculate true 15m bars held from wall-clock elapsed time (900s per bar)
+            elapsed_sec = time.time() - pos["open_time"]
+            pos["bars_held"] = int(elapsed_sec / 900)
+            
             direction = pos["direction"]
             r_dist = pos["r_dist"]
 
@@ -355,6 +359,8 @@ class LivePositionTracker:
                     pos["stop_price"] = pos["entry_price"] - 0.15 * r_dist
                 pos["ratchet_stage"] = 1
                 RICH_CONSOLE.print(f"[bold green]⚡ RATCHET LOCK (+0.15R BE)[/bold green] {sym} ({pos['sleeve_name']}) at +{pos['peak_r']:.2f}R")
+                if self.broker:
+                    self.broker.modify_sltp(binance_symbol=sym, position_ticket=pos.get("ticket", 0), sl=pos["stop_price"])
 
             # Stage 2: +1.5R gain -> Ratchet stop to Entry + 0.80R (Profit Lock)
             if pos["peak_r"] >= 1.50 and pos["ratchet_stage"] < 2:
@@ -364,6 +370,8 @@ class LivePositionTracker:
                     pos["stop_price"] = pos["entry_price"] - 0.80 * r_dist
                 pos["ratchet_stage"] = 2
                 RICH_CONSOLE.print(f"[bold cyan]🎯 PROFIT LOCK (+0.80R)[/bold cyan] {sym} ({pos['sleeve_name']}) at +{pos['peak_r']:.2f}R")
+                if self.broker:
+                    self.broker.modify_sltp(binance_symbol=sym, position_ticket=pos.get("ticket", 0), sl=pos["stop_price"])
 
             # Check Exit Conditions
             exit_reason = None
@@ -387,11 +395,38 @@ class LivePositionTracker:
                 pos["realized_pnl"] = upnl
                 closed_positions.append(pos)
                 RICH_CONSOLE.print(f"[bold magenta]🔔 POSITION CLOSED [{exit_reason}][/bold magenta] {sym} | PnL: {upnl:+,.2f} USD ({r_gain:+.2f}R)")
+                # F2 Fix: Dispatch live position closure directly to Binance exchange
+                if self.broker:
+                    try:
+                        self.broker.close_position(binance_symbol=sym, ticket=pos.get("ticket", 0))
+                    except Exception as e:
+                        RICH_CONSOLE.print(f"[bold red]❌ Failed to close {sym} on exchange: {e}[/bold red]")
             else:
                 remaining_positions.append(pos)
 
         self.positions = remaining_positions
         return closed_positions, total_upnl
+
+    def reconcile_with_exchange(self):
+        """F4 Fix: Reconcile internal tracker state with true exchange positions."""
+        if not self.broker or self.broker.dry_run:
+            return
+        try:
+            exchange_positions = self.broker.get_all_positions()
+            open_symbols = {p["symbol"] for p in exchange_positions if float(p.get("positionAmt", 0)) != 0}
+            reconciled = []
+            for pos in self.positions:
+                sym = pos["symbol"]
+                if sym not in open_symbols:
+                    pos["exit_reason"] = "EXCHANGE_STOP_HIT"
+                    closed_pnl, _ = self.broker.get_position_history_profit(pos.get("ticket", 0))
+                    pos["realized_pnl"] = closed_pnl if closed_pnl != 0.0 else pos["unrealized_pnl"]
+                    RICH_CONSOLE.print(f"[bold yellow]🔄 RECONCILED CLOSE[/bold yellow] {sym} closed on Binance (PnL: {pos['realized_pnl']:+,.2f} USD)")
+                else:
+                    reconciled.append(pos)
+            self.positions = reconciled
+        except Exception as e:
+            RICH_CONSOLE.print(f"[bold red]⚠️ Position reconciliation error: {e}[/bold red]")
 
 
 # ================================================================================
@@ -536,41 +571,7 @@ class MultiSleeveAlphaEngine:
         regime = macro["regime"]
 
         # -------------------------------------------------------------------------
-        # 1. S2: Bollinger Mean Reversion (Z_BW <= 1.85 and ADX <= 32.0)
-        # -------------------------------------------------------------------------
-        if cur_zbw <= 1.85 and cur_adx <= 32.0 and cur_atr > 0:
-            if cur_px < lower[idx] and cur_rsi < 32.0:
-                signals.append({
-                    "symbol": symbol, "sleeve_name": "S2_BB", "sleeve_id": 4, "direction": 1,
-                    "entry_price": cur_px, "stop_price": cur_px - 1.0 * cur_atr,
-                    "target_price": cur_px + 2.2 * cur_atr, "r_dist": cur_atr, "prob": 0.58, "base_risk": 22.0
-                })
-            elif cur_px > upper[idx] and cur_rsi > 68.0 and cur_px <= ema200[idx] * 1.01:
-                signals.append({
-                    "symbol": symbol, "sleeve_name": "S2_BB", "sleeve_id": 4, "direction": -1,
-                    "entry_price": cur_px, "stop_price": cur_px + 1.0 * cur_atr,
-                    "target_price": cur_px - 2.2 * cur_atr, "r_dist": cur_atr, "prob": 0.58, "base_risk": 22.0
-                })
-
-        # -------------------------------------------------------------------------
-        # 2. S4: Kairi Relative Index Disparity Mean Reversion
-        # -------------------------------------------------------------------------
-        if cur_atr > 0:
-            if cur_zkri < -1.75 and cur_rsi < 32.0 and cur_px >= lower[idx]:
-                signals.append({
-                    "symbol": symbol, "sleeve_name": "S4_KRI", "sleeve_id": 5, "direction": 1,
-                    "entry_price": cur_px, "stop_price": cur_px - 1.0 * cur_atr,
-                    "target_price": cur_px + 2.0 * cur_atr, "r_dist": cur_atr, "prob": 0.57, "base_risk": 20.0
-                })
-            elif cur_zkri > 1.75 and cur_rsi > 68.0 and cur_px <= upper[idx] and cur_px <= ema200[idx] * 1.01:
-                signals.append({
-                    "symbol": symbol, "sleeve_name": "S4_KRI", "sleeve_id": 5, "direction": -1,
-                    "entry_price": cur_px, "stop_price": cur_px + 1.0 * cur_atr,
-                    "target_price": cur_px - 2.0 * cur_atr, "r_dist": cur_atr, "prob": 0.57, "base_risk": 20.0
-                })
-
-        # -------------------------------------------------------------------------
-        # 3. S1: Institutional Liquidity Pullbacks (Dual-Model Orderflow)
+        # 1. S1: Institutional Liquidity Pullbacks (Dual-Model Orderflow)
         # -------------------------------------------------------------------------
         if cur_atr > 0:
             if regime == "BEAR_CONTAGION":
@@ -578,26 +579,45 @@ class MultiSleeveAlphaEngine:
                     signals.append({
                         "symbol": symbol, "sleeve_name": "S1_SHORT", "sleeve_id": 1, "direction": -1,
                         "entry_price": cur_px, "stop_price": cur_px + 1.0 * cur_atr,
-                        "target_price": cur_px - 2.2 * cur_atr, "r_dist": cur_atr, "prob": 0.62, "base_risk": 24.0
+                        "target_price": cur_px - 2.2 * cur_atr, "r_dist": cur_atr, "prob": 0.62, "base_risk": 32.0
                     })
             else:
                 if cur_vwap_z < -0.5 and cur_rsi < 40.0 and cur_zc_div > 0.8:
                     signals.append({
                         "symbol": symbol, "sleeve_name": "S1_PULLBACK", "sleeve_id": 1, "direction": 1,
                         "entry_price": cur_px, "stop_price": cur_px - 1.0 * cur_atr,
-                        "target_price": cur_px + 2.2 * cur_atr, "r_dist": cur_atr, "prob": 0.59, "base_risk": 24.0
+                        "target_price": cur_px + 2.2 * cur_atr, "r_dist": cur_atr, "prob": 0.59, "base_risk": 36.0
                     })
 
         # -------------------------------------------------------------------------
-        # 4. T1: Quiet-Flow Donchian Trend Breakout
+        # 2. T1: Quiet-Flow Donchian Trend Breakout
         # -------------------------------------------------------------------------
-        if regime == "BULL_EXPANSION" and macro["trailing_vol"] >= 1.60 and len(highs) >= 96:
+        if regime != "BEAR_CONTAGION" and len(highs) >= 96 and cur_atr > 0:
             highest_96 = np.max(highs[-96:-1])
             if cur_px >= highest_96:
                 signals.append({
                     "symbol": symbol, "sleeve_name": "T1_BREAKOUT", "sleeve_id": 2, "direction": 1,
                     "entry_price": cur_px, "stop_price": cur_px - 1.2 * cur_atr,
-                    "target_price": cur_px + 2.5 * cur_atr, "r_dist": 1.2 * cur_atr, "prob": 0.53, "base_risk": 15.0
+                    "target_price": cur_px + 2.5 * cur_atr, "r_dist": 1.2 * cur_atr, "prob": 0.54, "base_risk": 36.0
+                })
+
+        # -------------------------------------------------------------------------
+        # 3. S3: Crypto Opening Range Breakout (ORB / CRT)
+        # -------------------------------------------------------------------------
+        if len(df) >= 32 and cur_atr > 0:
+            session_high = np.max(highs[-16:-1])
+            session_low = np.min(lows[-16:-1])
+            if cur_px > session_high and cur_rsi > 52.0:
+                signals.append({
+                    "symbol": symbol, "sleeve_name": "S3_ORB_LONG", "sleeve_id": 3, "direction": 1,
+                    "entry_price": cur_px, "stop_price": cur_px - 1.0 * cur_atr,
+                    "target_price": cur_px + 2.4 * cur_atr, "r_dist": cur_atr, "prob": 0.56, "base_risk": 24.0
+                })
+            elif cur_px < session_low and cur_rsi < 48.0 and regime == "BEAR_CONTAGION":
+                signals.append({
+                    "symbol": symbol, "sleeve_name": "S3_ORB_SHORT", "sleeve_id": 3, "direction": -1,
+                    "entry_price": cur_px, "stop_price": cur_px + 1.0 * cur_atr,
+                    "target_price": cur_px - 2.4 * cur_atr, "r_dist": cur_atr, "prob": 0.56, "base_risk": 24.0
                 })
 
         return metrics, signals
@@ -725,7 +745,7 @@ def render_live_dashboard(
     t_pos.add_column("Bars Held", justify="center")
 
     if not tracker.positions:
-        t_pos.add_row("[dim]NO ACTIVE POSITIONS[/dim]", "-", "-", "-", "-", "-", "-", "-", "-", "$0.00", "-")
+        t_pos.add_row("[dim]NO ACTIVE POSITIONS[/dim]", "-", "-", "-", "-", "-", "-", "-", "-", "0.00 USD", "-")
     else:
         for p in tracker.positions:
             pnl_col = "green" if p["unrealized_pnl"] >= 0 else "red"
@@ -774,6 +794,12 @@ def run_live_pipeline(
     alpha_engine = MultiSleeveAlphaEngine(data_dir=target_dir)
 
     # Fetch initial macro regime and BTC benchmark price
+    if not broker.connect():
+        RICH_CONSOLE.print("[bold red]⚠️ Binance Broker connect returned False (running in fallback mode)[/bold red]")
+        if not dry_run:
+            RICH_CONSOLE.print("[bold red]❌ Cannot proceed in LIVE mode without active broker connection. Exiting.[/bold red]")
+            return
+
     macro = alpha_engine.evaluate_macro_regime()
     initial_btc_price = macro["btc_price"]
 
@@ -783,28 +809,42 @@ def run_live_pipeline(
             cycle += 1
             loop_start = time.time()
 
-            # 1. Update Macro Regime
+            # 1. Real-time Ticker Price Fetching via Broker REST API (F4 Fix)
+            live_prices_map = broker.get_ticker_prices()
+            latest_prices = {}
+            if live_prices_map:
+                for sym in symbols:
+                    if sym in live_prices_map:
+                        latest_prices[sym] = live_prices_map[sym]
+
+            # 2. Update Macro Regime
             macro = alpha_engine.evaluate_macro_regime()
 
-            # 2. Multi-Asset Scanning & Feature Extraction
+            # 3. Multi-Asset Scanning & Feature Extraction
             metrics_list = []
             all_detected_signals = []
-            latest_prices = {}
 
             for sym in symbols:
                 m, sigs = alpha_engine.scan_asset_signals(sym, macro)
-                metrics_list.append(m)
-                if "price" in m:
+                # Override static parquet price with live ticker price if available
+                if sym in latest_prices:
+                    m["price"] = latest_prices[sym]
+                elif "price" in m:
                     latest_prices[sym] = m["price"]
+                metrics_list.append(m)
                 all_detected_signals.extend(sigs)
 
-            # 3. Update Existing Positions & Microstructure Ratchet
+            # Reconcile open positions with true exchange state periodically
+            if cycle % 2 == 0:
+                tracker.reconcile_with_exchange()
+
+            # 4. Update Existing Positions & Microstructure Ratchet
             closed, total_upnl = tracker.update_positions(latest_prices)
             for c in closed:
                 risk_gov.record_closed_trade(c.get("realized_pnl", 0.0))
             risk_gov.update_equity(total_upnl)
 
-            # 4. Dispatch New Positions If Capacity Permits
+            # 5. Dispatch New Positions If Capacity Permits
             for sig in all_detected_signals:
                 slv_id = sig["sleeve_id"]
                 if risk_gov.can_open_position(slv_id, tracker.positions):
@@ -836,6 +876,7 @@ def run_live_pipeline(
                     )
 
                     if order_res:
+                        ticket = int(order_res.get("ticket", order_res.get("orderId", 0)))
                         tracker.add_position(
                             symbol=sig["symbol"],
                             sleeve_name=sig["sleeve_name"],
@@ -846,11 +887,12 @@ def run_live_pipeline(
                             target_price=sig["target_price"],
                             r_dist=sig["r_dist"],
                             risk_usd=risk_usd,
-                            units=units
+                            units=units,
+                            ticket=ticket
                         )
                         RICH_CONSOLE.print(f"[bold green]🚀 ORDER EXECUTED[/bold green] {sig['symbol']} {sig['sleeve_name']} | Sized: {units:.4f} units ({risk_usd:.2f} USD risk)")
 
-            # 5. Render Dashboard
+            # 6. Render Dashboard
             RICH_CONSOLE.clear()
             render_live_dashboard(
                 macro=macro,
@@ -881,7 +923,7 @@ def run_live_pipeline(
 def main():
     parser = argparse.ArgumentParser(description="Engine 2 Live Terminal: 23-OOS Elite Multi-Sleeve Suite")
     parser.add_argument("--sync", action="store_true", help="Perform pre-flight historical Parquet re-sync")
-    parser.add_argument("--skip-sync", action="store_true", default=True, help="Skip pre-flight Parquet check")
+    parser.add_argument("--skip-sync", action="store_true", default=False, help="Skip pre-flight Parquet check")
     parser.add_argument("--dry-run", action="store_true", default=True, help="Run in simulation / paper trading mode")
     parser.add_argument("--live", action="store_true", help="Run with real live order execution on Binance")
     parser.add_argument("--symbol", "-s", type=str, default=None, help="Specific symbol(s) to monitor (e.g. BTCUSDT or BTC,ETH,SOL)")
@@ -892,7 +934,7 @@ def main():
 
     target_path = Path(args.target_dir)
 
-    if args.sync and not args.skip_sync:
+    if args.sync:
         preflight_sync_missing_data(target_dir=target_path)
 
     is_dry_run = not args.live

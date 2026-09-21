@@ -343,6 +343,17 @@ class BinanceBroker:
                     active_positions.append(pos)
         return active_positions
 
+    def get_ticker_prices(self) -> Dict[str, float]:
+        """Fetch real-time market prices for all Binance futures symbols via public REST endpoint."""
+        try:
+            res = self._request("GET", "/fapi/v1/ticker/price", signed=False)
+            if isinstance(res, list):
+                return {item["symbol"]: float(item["price"]) for item in res if "symbol" in item and "price" in item}
+            return {}
+        except Exception as e:
+            log.warning(f"[Binance] Failed to fetch live ticker prices: {e}")
+            return {}
+
     def get_account_details(self) -> Dict[str, float]:
         """Fetch USDT-specific balance, equity, and unrealized PnL."""
         if self.dry_run:
@@ -955,7 +966,7 @@ class BinanceBroker:
             if has_stop:
                 log.info(f"[Binance] SL heartbeat for {binance_symbol}: existing exchange stop active (protected no-op).")
                 return True
-        elif ("algoId" in new_sl_res or "clientAlgoId" in new_sl_res or "orderId" in new_sl_res) and new_sl_res.get("algoId") != 0:
+        elif new_sl_res and ("algoId" in new_sl_res or "clientAlgoId" in new_sl_res or "orderId" in new_sl_res) and new_sl_res.get("algoId") != 0:
             sl_placed = True
         elif new_sl_res and new_sl_res.get("status") == "MANAGED_BY_ENGINE":
             log.info(f"[Binance] SL modify collision. Keeping existing SL active.")

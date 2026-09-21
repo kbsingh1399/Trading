@@ -33,8 +33,16 @@ FEATURES = [
     'body_ratio', 'close_outside', 'fvg_expansion', 'judas_sweep'
 ]
 
-def load_cross_asset_orb_crt_pool():
-    print("Pre-compiling Cross-Asset (Crypto + Forex) ORB + CRT candidates...")
+def load_cross_asset_orb_crt_pool(crypto_only: bool = True):
+    cache_file = REPO_ROOT / "Engine" / "cache" / "crypto_only_orb_pool.parquet"
+    if crypto_only and cache_file.exists():
+        print(f"Loading cached pure CRYPTO ORB+CRT pool from {cache_file}...")
+        master = pd.read_parquet(cache_file)
+        if "asset_class" not in master.columns:
+            master["asset_class"] = "CRYPTO"
+        return master
+
+    print(f"Pre-compiling {'Pure Crypto' if crypto_only else 'Cross-Asset (Crypto + Forex)'} ORB + CRT candidates...")
     t0 = time.perf_counter()
     all_trades = []
 
@@ -66,38 +74,39 @@ def load_cross_asset_orb_crt_pool():
             tdf['asset_class'] = 'CRYPTO'
             all_trades.append(tdf)
 
-    for a in FOREX_ASSETS:
-        p = FOREX_DIR / f"{a}_15m_real.parquet"
-        if not p.exists(): continue
-        df = pd.read_parquet(p).dropna().reset_index(drop=True)
-        df['datetime'] = pd.to_datetime(df['datetime'], utc=True)
-        opens = df['open'].values.astype(np.float64)
-        highs = df['high'].values.astype(np.float64)
-        lows = df['low'].values.astype(np.float64)
-        closes = df['close'].values.astype(np.float64)
-        volumes = df['volume'].values.astype(np.float64) if 'volume' in df.columns else (df['tick_volume'].values.astype(np.float64) if 'tick_volume' in df.columns else np.ones(len(df)))
-        timestamps = df['datetime'].dt.tz_localize(None).astype('datetime64[s]').astype(np.int64).values
-        df['date_int'] = df['datetime'].dt.strftime('%Y%m%d').astype(np.int64)
-        dates = df['date_int'].values
-        hours = df['datetime'].dt.hour.values.astype(np.int32)
-        minutes = df['datetime'].dt.minute.values.astype(np.int32)
-        day_of_weeks = df['datetime'].dt.dayofweek.values.astype(np.int32)
+    if not crypto_only:
+        for a in FOREX_ASSETS:
+            p = FOREX_DIR / f"{a}_15m_real.parquet"
+            if not p.exists(): continue
+            df = pd.read_parquet(p).dropna().reset_index(drop=True)
+            df['datetime'] = pd.to_datetime(df['datetime'], utc=True)
+            opens = df['open'].values.astype(np.float64)
+            highs = df['high'].values.astype(np.float64)
+            lows = df['low'].values.astype(np.float64)
+            closes = df['close'].values.astype(np.float64)
+            volumes = df['volume'].values.astype(np.float64) if 'volume' in df.columns else (df['tick_volume'].values.astype(np.float64) if 'tick_volume' in df.columns else np.ones(len(df)))
+            timestamps = df['datetime'].dt.tz_localize(None).astype('datetime64[s]').astype(np.int64).values
+            df['date_int'] = df['datetime'].dt.strftime('%Y%m%d').astype(np.int64)
+            dates = df['date_int'].values
+            hours = df['datetime'].dt.hour.values.astype(np.int32)
+            minutes = df['datetime'].dt.minute.values.astype(np.int32)
+            day_of_weeks = df['datetime'].dt.dayofweek.values.astype(np.int32)
 
-        for sh, sm in [(7, 0), (13, 30)]:
-            feat, out, t_out = simulate_orb_trades(opens, highs, lows, closes, volumes, timestamps, dates, hours, minutes, day_of_weeks, sh, sm)
-            if len(out) == 0: continue
-            tdf = pd.DataFrame(feat, columns=FEATURES)
-            tdf['outcome'] = out
-            tdf['time'] = t_out * 1000
-            tdf['symbol'] = a
-            tdf['hold_bars'] = 24
-            tdf['asset_class'] = 'FOREX'
-            all_trades.append(tdf)
+            for sh, sm in [(7, 0), (13, 30)]:
+                feat, out, t_out = simulate_orb_trades(opens, highs, lows, closes, volumes, timestamps, dates, hours, minutes, day_of_weeks, sh, sm)
+                if len(out) == 0: continue
+                tdf = pd.DataFrame(feat, columns=FEATURES)
+                tdf['outcome'] = out
+                tdf['time'] = t_out * 1000
+                tdf['symbol'] = a
+                tdf['hold_bars'] = 24
+                tdf['asset_class'] = 'FOREX'
+                all_trades.append(tdf)
 
     master = pd.concat(all_trades, ignore_index=True)
     master.sort_values('time', inplace=True)
     master.reset_index(drop=True, inplace=True)
-    print(f"Generated {len(master):,d} Cross-Asset ORB+CRT candidates in {time.perf_counter() - t0:.2f}s.")
+    print(f"Generated {len(master):,d} {'Pure Crypto' if crypto_only else 'Cross-Asset'} ORB+CRT candidates in {time.perf_counter() - t0:.2f}s.")
     return master
 
 def main():

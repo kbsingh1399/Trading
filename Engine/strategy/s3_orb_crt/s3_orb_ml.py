@@ -220,7 +220,7 @@ def simulate_orb_trades(
                             phase0_trigger = 0.8
 
                             outcome_r = -1.0  # default: expired at market
-                            exit_is_stop = False
+                            exit_taken = False
                             phase_0_locked = False
                             phase_1_locked = False
                             trail_active = False
@@ -231,17 +231,19 @@ def simulate_orb_trades(
                                     current_r = (closes[k] - entry) / (r_val + 1e-9)
                                     if current_r < 0.2:
                                         outcome_r = current_r
+                                        exit_taken = True
                                         break
 
                                 # Stop hit
                                 if lows[k] <= current_sl:
                                     outcome_r = (current_sl - entry) / (r_val + 1e-9)
-                                    exit_is_stop = True
+                                    exit_taken = True
                                     break
 
                                 # TP hit — 1:3 RR target
                                 if highs[k] >= tp:
                                     outcome_r = 3.0
+                                    exit_taken = True
                                     break
 
                                 # Ratchet: check on bar close (causal, bar k not k+1)
@@ -262,7 +264,7 @@ def simulate_orb_trades(
                                     if trail_sl > current_sl:
                                         current_sl = trail_sl
 
-                            if outcome_r == -1.0:
+                            if not exit_taken:
                                 outcome_r = (closes[trade_end-1] - entry) / (r_val + 1e-9)
 
                             # Calibrated flat friction: 0.08R per trade
@@ -350,7 +352,7 @@ def simulate_orb_trades(
                             phase0_trigger = 0.8
 
                             outcome_r = -1.0
-                            exit_is_stop = False
+                            exit_taken = False
                             phase_0_locked = False
                             phase_1_locked = False
                             trail_active = False
@@ -361,17 +363,19 @@ def simulate_orb_trades(
                                     current_r = (entry - closes[k]) / (r_val + 1e-9)
                                     if current_r < 0.2:
                                         outcome_r = current_r
+                                        exit_taken = True
                                         break
 
                                 # Stop hit
                                 if highs[k] >= current_sl:
                                     outcome_r = (entry - current_sl) / (r_val + 1e-9)
-                                    exit_is_stop = True
+                                    exit_taken = True
                                     break
 
                                 # TP hit — 1:3 RR target
                                 if lows[k] <= tp:
                                     outcome_r = 3.0
+                                    exit_taken = True
                                     break
 
                                 # Ratchet: check on bar close (causal)
@@ -392,7 +396,7 @@ def simulate_orb_trades(
                                     if trail_sl < current_sl:
                                         current_sl = trail_sl
 
-                            if outcome_r == -1.0:
+                            if not exit_taken:
                                 outcome_r = (entry - closes[trade_end-1]) / (r_val + 1e-9)
 
                             # Calibrated flat friction: 0.08R per trade

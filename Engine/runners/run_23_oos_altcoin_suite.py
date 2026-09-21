@@ -45,12 +45,11 @@ def simulate_elite_portfolio(
     event_r_gains: np.ndarray,
     event_risks: np.ndarray,
     event_hold_ms: np.ndarray,
-    event_sleeve_ids: np.ndarray,  # 1=S1, 2=T1, 3=ORB, 4=S2_BB
+    event_sleeve_ids: np.ndarray,  # 1=S1, 2=T1, 3=ORB
     capital: float = 5000.0,
     max_concurrent: int = 4,
     max_s1_concurrent: int = 2,
-    max_t1_concurrent: int = 1,
-    max_s2_concurrent: int = 2,
+    max_t1_concurrent: int = 2,
     max_orb_concurrent: int = 2,
     milestone_pnl: float = 500.0,
     dd_stop_pct: float = 4.85
@@ -73,7 +72,6 @@ def simulate_elite_portfolio(
     s1_tr = 0
     t1_tr = 0
     orb_tr = 0
-    s2_tr = 0
     locked = False
 
     for i in range(n):
@@ -94,7 +92,6 @@ def simulate_elite_portfolio(
         # Count active positions per sleeve
         s1_active = 0
         t1_active = 0
-        s2_active = 0
         orb_active = 0
         active_count = 0
         slot = -1
@@ -105,7 +102,6 @@ def simulate_elite_portfolio(
                 if pos_sleeves[p] == 1: s1_active += 1
                 elif pos_sleeves[p] == 2: t1_active += 1
                 elif pos_sleeves[p] == 3: orb_active += 1
-                elif pos_sleeves[p] == 4: s2_active += 1
             elif slot == -1:
                 slot = p
 
@@ -116,7 +112,6 @@ def simulate_elite_portfolio(
         if slv == 1 and s1_active >= max_s1_concurrent: continue
         if slv == 2 and t1_active >= max_t1_concurrent: continue
         if slv == 3 and orb_active >= max_orb_concurrent: continue
-        if slv == 4 and s2_active >= max_s2_concurrent: continue
 
         # Milestone lock
         if (peak_equity - capital) >= milestone_pnl and tr_count >= 15:
@@ -127,21 +122,20 @@ def simulate_elite_portfolio(
 
         # Dynamic Institutional Risk Budgeting (Quant-Developers-Resources / Risk Management)
         cur_dd = ((peak_equity - equity) / peak_equity) * 100.0 if peak_equity > 0 else 0.0
+        cur_profit = equity - capital
         
         if (peak_equity - capital) >= milestone_pnl:
             cushion = max(0.0, equity - (capital + milestone_pnl))
-            trade_risk = min(10.0, cushion * 0.15)
+            trade_risk = min(10.0, cushion * 0.20)
             if trade_risk <= 0.0:
                 locked = True
                 continue
-        elif cur_dd >= 1.0 or equity < capital:
-            # DD Defense mode: scale risk down to 6.0 USD to prevent circuit-breaker trips
-            trade_risk = min(base_r * 0.35, 6.0)
-        elif (equity - capital) >= 150.0:
-            # House money mode: scale risk up slightly
-            trade_risk = min(base_r * 1.25, 26.0)
+        elif cur_dd >= 2.0 or cur_profit < -50.0:
+            trade_risk = min(base_r * 0.40, 14.0)
+        elif cur_profit >= 120.0:
+            trade_risk = min(base_r * 1.35, 48.0)
         else:
-            trade_risk = min(base_r, 18.0)
+            trade_risk = min(base_r, 36.0)
 
         # Open position
         pos_active[slot] = True
@@ -165,15 +159,14 @@ def simulate_elite_portfolio(
         if slv == 1: s1_tr += 1
         elif slv == 2: t1_tr += 1
         elif slv == 3: orb_tr += 1
-        elif slv == 4: s2_tr += 1
 
-    return equity - capital, max_dd_pct, tr_count, win_count, s1_tr, t1_tr, orb_tr, s2_tr, trade_pnls[:tr_count], trade_times[:tr_count], trade_sleeves[:tr_count]
+    return equity - capital, max_dd_pct, tr_count, win_count, s1_tr, t1_tr, orb_tr, trade_pnls[:tr_count], trade_times[:tr_count], trade_sleeves[:tr_count]
 
 def run_elite_suite():
     t_start = time.perf_counter()
     print("=" * 140)
     print("ELITE QUANT 23 OOS REGIME-ROUTED STRATEGY SUITE (QUANT-DEVELOPERS-RESOURCES + SSRN-4647103)")
-    print("Multi-Sleeve Confluence: S1 Liquidity Pullbacks + S2 BB Mean Reversion (32/68) + T1 Trend Breakout + Cross-Asset ORB")
+    print("Multi-Sleeve Confluence: S1 Liquidity Pullbacks + T1 Donchian Breakout + S3 Crypto ORB/CRT")
     print("=" * 140)
 
     all_data = compile_dataset_with_numba()
@@ -184,10 +177,10 @@ def run_elite_suite():
     PURGE_MS = 72 * 3600 * 1000
 
     engine = InstitutionalDualModelEngine(
-        capital=CAPITAL, base_risk=24.0, house_risk_max=35.0, defense_risk=14.0,
-        milestone_risk=10.0, trans_risk=20.0, trans_thresh=380.0, t1_base_risk=15.0,
-        t1_trans_risk=10.0, cushion_multiplier=0.20, milestone_profit_usd=500.0,
-        max_concurrent=4, max_s1_concurrent=2, max_t1_concurrent=1, cooldown_bars=4,
+        capital=CAPITAL, base_risk=36.0, house_risk_max=50.0, defense_risk=14.0,
+        milestone_risk=10.0, trans_risk=25.0, trans_thresh=380.0, t1_base_risk=36.0,
+        t1_trans_risk=20.0, cushion_multiplier=0.20, milestone_profit_usd=500.0,
+        max_concurrent=4, max_s1_concurrent=2, max_t1_concurrent=2, cooldown_bars=4,
         win_r_reset_thresh=0.90, conf_prob_thresh=0.46, conf_mult=1.35, max_dd_limit=4.85,
         random_state=42
     )
@@ -203,107 +196,7 @@ def run_elite_suite():
     btc_df.reset_index(drop=True, inplace=True)
 
     df_t1_pure = engine.load_t1_breakout_trades()
-    orb_pool = load_cross_asset_orb_crt_pool()
-
-    # Pre-compile S2 (Enhanced BB with Bandwidth Z & ADX) and S4 (KRI Disparity) across all 11 symbols
-    print("Generating S2 (Enhanced BB with Bandwidth Z & ADX) and S4 (KRI Disparity) candidates...")
-    s2_trades = []
-    s4_trades = []
-    for sym in CORE_SYMBOLS:
-        p = DATA_DIR / f"{sym}_15m_master_2020_2026.parquet"
-        if not p.exists(): continue
-        df = pd.read_parquet(p, columns=["open_time_ms", "open", "high", "low", "close", "rsi_14", "atr_14", "ema_200"]).dropna().reset_index(drop=True)
-        closes = df["close"].to_numpy(float)
-        opens = df["open"].to_numpy(float)
-        highs = df["high"].to_numpy(float)
-        lows = df["low"].to_numpy(float)
-        rsis = df["rsi_14"].to_numpy(float)
-        atrs = df["atr_14"].to_numpy(float)
-        times = df["open_time_ms"].to_numpy(np.int64)
-        ema200 = df["ema_200"].to_numpy(float) if "ema_200" in df.columns else pd.Series(closes).ewm(span=200).mean().to_numpy(float)
-
-        # Canonical indicators
-        upper, lower, bw, zbw = compute_bollinger_bandwidth_zscore(closes, period=96, std_mult=2.0, z_window=96)
-        _, _, adx = compute_adx_series(highs, lows, closes, 14)
-        zkri_20 = compute_kairi_zscore(closes, atrs, period=20, z_window=96)
-
-        n_bars = len(df)
-        for i in range(200, n_bars - 25):
-            dist = atrs[i]
-            if dist <= 0: continue
-
-            # Regime filter: avoid runaway volatility expansion or ultra-strong trend
-            if zbw[i] > 1.85 or adx[i] > 32.0:
-                continue
-
-            # 1. S2 Bollinger Mean Reversion (Next-Bar Open Execution + 10 bps slippage)
-            if closes[i] < lower[i] and rsis[i] < 32.0:
-                entry_p = opens[i + 1] * (1.0 + 0.0010)
-                target_p = entry_p + 2.2 * dist
-                stop_p = entry_p - 1.0 * dist
-                r_gain = -1.0
-                for j in range(i + 1, i + 25):
-                    if lows[j] <= stop_p: r_gain = -1.0; break
-                    if highs[j] >= target_p: r_gain = 2.2; break
-                if r_gain == -1.0 and highs[min(i+24, n_bars-1)] > stop_p:
-                    r_gain = (closes[min(i+24, n_bars-1)] - entry_p) / dist
-                s2_trades.append({
-                    "time": int(times[i + 1]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
-                    "symbol": sym, "strategy": "S2_BB", "prob": 0.58, "sleeve_id": 4, "risk": 22.0
-                })
-            elif closes[i] > upper[i] and rsis[i] > 68.0:
-                if closes[i] > ema200[i] * 1.01:
-                    continue  # Guard: do not short in strong uptrend
-                entry_p = opens[i + 1] * (1.0 - 0.0010)
-                target_p = entry_p - 2.2 * dist
-                stop_p = entry_p + 1.0 * dist
-                r_gain = -1.0
-                for j in range(i + 1, i + 25):
-                    if highs[j] >= stop_p: r_gain = -1.0; break
-                    if lows[j] <= target_p: r_gain = 2.2; break
-                if r_gain == -1.0 and lows[min(i+24, n_bars-1)] < stop_p:
-                    r_gain = (entry_p - closes[min(i+24, n_bars-1)]) / dist
-                s2_trades.append({
-                    "time": int(times[i + 1]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
-                    "symbol": sym, "strategy": "S2_BB", "prob": 0.58, "sleeve_id": 4, "risk": 22.0
-                })
-
-            # 2. S4 Kairi Relative Index Disparity (Next-Bar Open Execution + 10 bps slippage)
-            if zkri_20[i] < -1.75 and rsis[i] < 32.0 and closes[i] >= lower[i]:
-                entry_p = opens[i + 1] * (1.0 + 0.0010)
-                target_p = entry_p + 2.0 * dist
-                stop_p = entry_p - 1.0 * dist
-                r_gain = -1.0
-                for j in range(i + 1, i + 25):
-                    if lows[j] <= stop_p: r_gain = -1.0; break
-                    if highs[j] >= target_p: r_gain = 2.0; break
-                if r_gain == -1.0 and highs[min(i+24, n_bars-1)] > stop_p:
-                    r_gain = (closes[min(i+24, n_bars-1)] - entry_p) / dist
-                s4_trades.append({
-                    "time": int(times[i + 1]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
-                    "symbol": sym, "strategy": "S4_KRI", "prob": 0.57, "sleeve_id": 4, "risk": 20.0
-                })
-            elif zkri_20[i] > 1.75 and rsis[i] > 68.0 and closes[i] <= upper[i]:
-                if closes[i] > ema200[i] * 1.01:
-                    continue  # Guard: do not short in strong uptrend
-                entry_p = opens[i + 1] * (1.0 - 0.0010)
-                target_p = entry_p - 2.0 * dist
-                stop_p = entry_p + 1.0 * dist
-                r_gain = -1.0
-                for j in range(i + 1, i + 25):
-                    if highs[j] >= stop_p: r_gain = -1.0; break
-                    if lows[j] <= target_p: r_gain = 2.0; break
-                if r_gain == -1.0 and lows[min(i+24, n_bars-1)] < stop_p:
-                    r_gain = (entry_p - closes[min(i+24, n_bars-1)]) / dist
-                s4_trades.append({
-                    "time": int(times[i + 1]), "r_gain": float(r_gain - 0.25), "hold_ms": 24 * 15 * 60 * 1000,
-                    "symbol": sym, "strategy": "S4_KRI", "prob": 0.57, "sleeve_id": 4, "risk": 20.0
-                })
-
-    df_s2 = pd.DataFrame(s2_trades)
-    df_s4 = pd.DataFrame(s4_trades)
-    print(f"Pre-compiled {len(df_s2):,d} S2 BB trades (filtered by Z_BW <= 1.85 & ADX <= 32).")
-    print(f"Pre-compiled {len(df_s4):,d} S4 KRI Disparity trades.")
+    orb_pool = load_cross_asset_orb_crt_pool(crypto_only=True)
 
     print("\n" + "-" * 140)
     print(f"{'W#':<3} | {'Window Name':<38} | {'Regime':<18} | {'Trades':<6} | {'Sleeves':<14} | {'Win Rate':<8} | {'Net PnL':<12} | {'Net ROI':<9} | {'Max DD':<7} | {'Status':<6}")
@@ -372,7 +265,7 @@ def run_elite_suite():
                     s1_events.append({
                         "time": int(selected["open_time_ms"].iloc[idx]), "r_gain": float(selected["realized_r"].iloc[idx]),
                         "hold_ms": int(selected["bars_held"].iloc[idx]) * 15 * 60 * 1000, "symbol": str(selected["symbol"].iloc[idx]),
-                        "strategy": "S1_SHORT", "prob": prob, "sleeve_id": 1, "risk": 24.0
+                        "strategy": "S1_SHORT", "prob": prob, "sleeve_id": 1, "risk": 32.0
                     })
             else:
                 if side == -1 and tide > 0.0: continue
@@ -381,40 +274,21 @@ def run_elite_suite():
                     s1_events.append({
                         "time": int(selected["open_time_ms"].iloc[idx]), "r_gain": float(selected["realized_r"].iloc[idx]),
                         "hold_ms": int(selected["bars_held"].iloc[idx]) * 15 * 60 * 1000, "symbol": str(selected["symbol"].iloc[idx]),
-                        "strategy": "S1", "prob": prob, "sleeve_id": 1, "risk": 24.0 if prob < 0.48 else 30.0
+                        "strategy": "S1", "prob": prob, "sleeve_id": 1, "risk": 30.0 if prob < 0.48 else 42.0
                     })
 
-        # 2. T1 Breakout Events (Require both macro bull AND causal positive tide!)
+        # 2. T1 Breakout Events
         t1_events = []
         cur_t1 = df_t1_pure[(df_t1_pure['time'] >= start_ms) & (df_t1_pure['time'] <= end_ms)].copy()
-        if is_bull_expansion and trailing_vol >= 1.60:
+        if not is_bear_contagion:
             for idx in range(len(cur_t1)):
                 t1_events.append({
                     "time": int(cur_t1["time"].iloc[idx]), "r_gain": float(cur_t1["r_gain"].iloc[idx]),
-                    "hold_ms": 24 * 15 * 60 * 1000, "symbol": str(cur_t1["symbol"].iloc[idx]),
-                    "strategy": "T1", "prob": 0.52, "sleeve_id": 2, "risk": 15.0
+                    "hold_ms": 16 * 4 * 3600 * 1000, "symbol": str(cur_t1["symbol"].iloc[idx]),
+                    "strategy": "T1", "prob": float(cur_t1["prob"].iloc[idx]), "sleeve_id": 2, "risk": 36.0
                 })
 
-        # 3. S2 Mean Reversion + S4 KRI Disparity Mean Reversion
-        s2_events = []
-        cur_s2 = df_s2[(df_s2["time"] >= start_ms) & (df_s2["time"] <= end_ms)]
-        cur_s4 = df_s4[(df_s4["time"] >= start_ms) & (df_s4["time"] <= end_ms)]
-        for idx in range(len(cur_s2)):
-            s2_events.append({
-                "time": int(cur_s2["time"].iloc[idx]), "r_gain": float(cur_s2["r_gain"].iloc[idx]),
-                "hold_ms": int(cur_s2["hold_ms"].iloc[idx]), "symbol": str(cur_s2["symbol"].iloc[idx]),
-                "strategy": "S2_BB", "prob": float(cur_s2["prob"].iloc[idx]), "sleeve_id": 4,
-                "risk": 22.0
-            })
-        for idx in range(len(cur_s4)):
-            s2_events.append({
-                "time": int(cur_s4["time"].iloc[idx]), "r_gain": float(cur_s4["r_gain"].iloc[idx]),
-                "hold_ms": int(cur_s4["hold_ms"].iloc[idx]), "symbol": str(cur_s4["symbol"].iloc[idx]),
-                "strategy": "S4_KRI", "prob": float(cur_s4["prob"].iloc[idx]), "sleeve_id": 4,
-                "risk": 20.0
-            })
-
-        # 4. S3 ORB/CRT
+        # 3. S3 ORB/CRT
         orb_events = []
         orb_tr_mask = orb_pool['time'] < purge_ms
         orb_te_mask = (orb_pool['time'] >= start_ms) & (orb_pool['time'] <= end_ms)
@@ -439,10 +313,10 @@ def run_elite_suite():
                 orb_events.append({
                     "time": int(orb_passed['time'].iloc[idx]), "r_gain": float(orb_passed['outcome'].iloc[idx]),
                     "hold_ms": 24 * 15 * 60 * 1000, "symbol": str(orb_passed['symbol'].iloc[idx]),
-                    "strategy": "ORB", "prob": float(orb_passed['prob'].iloc[idx]), "sleeve_id": 3, "risk": 15.0
+                    "strategy": "ORB", "prob": float(orb_passed['prob'].iloc[idx]), "sleeve_id": 3, "risk": 24.0
                 })
 
-        combined = s1_events + t1_events + s2_events + orb_events
+        combined = s1_events + t1_events + orb_events
         combined.sort(key=lambda x: (x["time"], -x["prob"]))
 
         if len(combined) == 0: continue
@@ -453,10 +327,10 @@ def run_elite_suite():
         ev_holds = np.array([x["hold_ms"] for x in combined], dtype=np.int64)
         ev_sleeves = np.array([x["sleeve_id"] for x in combined], dtype=np.int8)
 
-        net_pnl, max_dd, tr_count, win_count, s1_tr, t1_tr, orb_tr, s2_tr, tr_pnls, tr_times, tr_sleeves = simulate_elite_portfolio(
+        net_pnl, max_dd, tr_count, win_count, s1_tr, t1_tr, orb_tr, tr_pnls, tr_times, tr_sleeves = simulate_elite_portfolio(
             ev_times, ev_rgains, ev_risks, ev_holds, ev_sleeves,
-            capital=CAPITAL, max_concurrent=4, max_s1_concurrent=2, max_t1_concurrent=1,
-            max_s2_concurrent=2, max_orb_concurrent=2, milestone_pnl=500.0, dd_stop_pct=4.85
+            capital=CAPITAL, max_concurrent=4, max_s1_concurrent=2, max_t1_concurrent=2,
+            max_orb_concurrent=2, milestone_pnl=500.0, dd_stop_pct=4.85
         )
 
         wr = (win_count / tr_count * 100.0) if tr_count > 0 else 0.0
@@ -475,12 +349,12 @@ def run_elite_suite():
                 "window_id": w_id, "time": int(tt), "pnl": float(tp), "sleeve": int(ts)
             })
 
-        sleeve_summary = f"S:{s1_tr} T:{t1_tr} B:{s2_tr} O:{orb_tr}"
+        sleeve_summary = f"S1:{s1_tr} T1:{t1_tr} ORB:{orb_tr}"
         print(f"W{w_id:02d} | {w_name[:38]:<38} | {regime_label:<18} | {tr_count:<6d} | {sleeve_summary:<14} | {wr:>5.1f}%  | {net_pnl:>+10.2f} USD | {net_roi:>+7.2f}% | {max_dd:>5.2f}% | {status:<6}")
 
         scorecard_rows.append({
             "window_id": w_id, "name": w_name, "regime": regime_label, "trades": tr_count,
-            "s1_trades": s1_tr, "t1_trades": t1_tr, "s2_trades": s2_tr, "orb_trades": orb_tr,
+            "s1_trades": s1_tr, "t1_trades": t1_tr, "orb_trades": orb_tr,
             "win_rate_pct": wr, "net_pnl_usd": net_pnl, "net_roi_pct": net_roi, "max_dd_pct": max_dd,
             "status": status, "equity_curve": eq_curve
         })
@@ -548,7 +422,7 @@ def plot_elite_performance(scorecard_rows, windows, btc_df):
 
     fig = plt.figure(figsize=(20, 14), facecolor="#0d1117")
     fig.suptitle(
-        "ELITE QUANT 23-QUARTER OOS MULTI-SLEEVE SUITE VS BTC BUY & HOLD\nS1 Pullback + S2 BB (Bandwidth Z & ADX) + S4 KRI Disparity + T1 Donchian + S3 ORB/CRT",
+        "ELITE QUANT 23-QUARTER OOS MULTI-SLEEVE SUITE VS BTC BUY & HOLD\nS1 Liquidity Pullback + T1 Donchian Breakout + S3 Crypto ORB/CRT",
         fontsize=16, color="white", fontweight="bold", y=0.98
     )
 
