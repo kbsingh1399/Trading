@@ -1,0 +1,144 @@
+{
+ "program": "OX62 PRIMARY single-shot",
+ "protocol": "docs/ox62_research/PROTOCOL.md",
+ "economics": {
+  "base_risk_usd": 50.0,
+  "tip_base_risk_usd": 50.0
+ },
+ "w01_start": "2023-09-15",
+ "results": [
+  {
+   "family": "F1",
+   "name": "Donchian",
+   "params": {
+    "N": 20
+   },
+   "pass": 0,
+   "pnl": -2478.57,
+   "maxDD": 4.82,
+   "pool": {
+    "n": 3274,
+    "avgR": -0.1309,
+    "WR": 48.8,
+    "netR": -428.52
+   }
+  },
+  {
+   "family": "F2",
+   "name": "TSMOM",
+   "params": {
+    "K": 60
+   },
+   "pass": 0,
+   "pnl": -1659.57,
+   "maxDD": 4.79,
+   "pool": {
+    "n": 27096,
+    "avgR": -0.0045,
+    "WR": 55.8,
+    "netR": -122.42
+   }
+  },
+  {
+   "family": "F3",
+   "name": "RSI-MR",
+   "params": {
+    "X": 30
+   },
+   "pass": 0,
+   "pnl": -724.3,
+   "maxDD": 4.82,
+   "pool": {
+    "n": 57952,
+    "avgR": 0.0016,
+    "WR": 56.6,
+    "netR": 90.96
+   }
+  },
+  {
+   "family": "F4",
+   "name": "MA-cross",
+   "params": {
+    "f": 12,
+    "s": 48
+   },
+   "pass": 0,
+   "pnl": -44.05,
+   "maxDD": 4.58,
+   "pool": {
+    "n": 283,
+    "avgR": 0.0132,
+    "WR": 55.5,
+    "netR": 3.73
+   }
+  },
+  {
+   "family": "F5",
+   "name": "Keltner-cross",
+   "params": {
+    "k": 2.0
+   },
+   "pass": 0,
+   "pnl": -2049.77,
+   "maxDD": 4.76,
+   "pool": {
+    "n": 1396,
+    "avgR": -0.1116,
+    "WR": 49.6,
+    "netR": -155.83
+   }
+  },
+  {
+   "family": "F6",
+   "name": "Sweep-reclaim",
+   "params": {
+    "d": 1.0
+   },
+   "pass": 1,
+   "pnl": 198.47,
+   "maxDD": 4.66,
+   "pool": {
+    "n": 887,
+    "avgR": -0.0593,
+    "WR": 54.9,
+    "netR": -52.6
+   }
+  },
+  {
+   "family": "F7",
+   "name": "KZ-drift",
+   "params": {
+    "t": 0.5
+   },
+   "pass": 0,
+   "pnl": -633.57,
+   "maxDD": 3.79,
+   "pool": {
+    "n": 137,
+    "avgR": -0.1617,
+    "WR": 49.6,
+    "netR": -22.15
+   }
+  },
+  {
+   "family": "F8",
+   "name": "Rule-FVG",
+   "params": {},
+   "pass": 0,
+   "pnl": -2171.83,
+   "maxDD": 4.73,
+   "pool": {
+    "n": 826,
+    "avgR": -0.1749,
+    "WR": 52.7,
+    "netR": -144.51
+   }
+  }
+ ],
+ "code_hashes": {
+  "ox62_lib.py": "16eb7a2b14f3bfea91ed89d7ca674890328838cea228ebfcbabb157a552adad7",
+  "ox62_families.py": "2b7914e94ce0a4a0c40e8964d415aa0c96043549701520f72316318e19e34897",
+  "run_ox62_primary.py": "338846a4fead38ac36df541114a79233a46fc629d91e5f17f93741d4d867a1f5",
+  "PROTOCOL.md": "32733a64fe496c6633b5b25ee255fb8860896ec71e727f64f87597529ac2a644"
+ }
+}

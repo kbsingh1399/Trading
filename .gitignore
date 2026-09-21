@@ -110,3 +110,7 @@ docs/ox61_verification/*.parquet
 docs/ox61_verification/labels_precommitted/
 docs/ox61_verification/labels_unified/
 docs/ox61_verification/__pycache__/
+
+# OX62 regenerable build artifacts (rebuilt by run_ox62_primary/cv.py; scorecards stay tracked)
+docs/ox62_research/*.parquet
+docs/ox62_research/__pycache__/

@@ -1,0 +1,237 @@
+{
+ "program": "OX62 SECONDARY bidirectional 2-fold CV",
+ "t_mid": "2024-12-16",
+ "purge_days": 5,
+ "folds": [
+  {
+   "family": "F1",
+   "name": "Donchian",
+   "selA": {
+    "combo": 1,
+    "params": {
+     "N": 55
+    },
+    "netR": -64.37,
+    "n": 522
+   },
+   "selB": {
+    "combo": 1,
+    "params": {
+     "N": 55
+    },
+    "netR": -141.57,
+    "n": 988
+   },
+   "scoreA": {
+    "pass": "0/10",
+    "pnl": -1602.46
+   },
+   "scoreB": {
+    "pass": "0/10",
+    "pnl": -1190.71
+   },
+   "total": "0/20"
+  },
+  {
+   "family": "F2",
+   "name": "TSMOM",
+   "selA": {
+    "combo": 0,
+    "params": {
+     "K": 20
+    },
+    "netR": 477.29,
+    "n": 3507
+   },
+   "selB": {
+    "combo": 0,
+    "params": {
+     "K": 20
+    },
+    "netR": -360.21,
+    "n": 4447
+   },
+   "scoreA": {
+    "pass": "0/10",
+    "pnl": -441.54
+   },
+   "scoreB": {
+    "pass": "1/10",
+    "pnl": -491.42
+   },
+   "total": "1/20"
+  },
+  {
+   "family": "F3",
+   "name": "RSI-MR",
+   "selA": {
+    "combo": 1,
+    "params": {
+     "X": 30
+    },
+    "netR": 363.5,
+    "n": 21881
+   },
+   "selB": {
+    "combo": 0,
+    "params": {
+     "X": 25
+    },
+    "netR": 44.86,
+    "n": 22269
+   },
+   "scoreA": {
+    "pass": "0/10",
+    "pnl": -1250.66
+   },
+   "scoreB": {
+    "pass": "0/10",
+    "pnl": 425.26
+   },
+   "total": "0/20"
+  },
+  {
+   "family": "F4",
+   "name": "MA-cross",
+   "selA": {
+    "combo": 0,
+    "params": {
+     "f": 12,
+     "s": 48
+    },
+    "netR": 19.42,
+    "n": 112
+   },
+   "selB": {
+    "combo": 1,
+    "params": {
+     "f": 24,
+     "s": 96
+    },
+    "netR": 1.07,
+    "n": 76
+   },
+   "scoreA": {
+    "pass": "0/10",
+    "pnl": -589.91
+   },
+   "scoreB": {
+    "pass": "0/10",
+    "pnl": -782.0
+   },
+   "total": "0/20"
+  },
+  {
+   "family": "F5",
+   "name": "Keltner-cross",
+   "selA": {
+    "combo": 1,
+    "params": {
+     "k": 2.5
+    },
+    "netR": -29.49,
+    "n": 367
+   },
+   "selB": {
+    "combo": 1,
+    "params": {
+     "k": 2.5
+    },
+    "netR": -113.18,
+    "n": 578
+   },
+   "scoreA": {
+    "pass": "0/10",
+    "pnl": -1677.51
+   },
+   "scoreB": {
+    "pass": "0/10",
+    "pnl": -725.56
+   },
+   "total": "0/20"
+  },
+  {
+   "family": "F6",
+   "name": "Sweep-reclaim",
+   "selA": {
+    "combo": 0,
+    "params": {
+     "d": 1.0
+    },
+    "netR": 6.84,
+    "n": 344
+   },
+   "selB": {
+    "combo": 1,
+    "params": {
+     "d": 1.5
+    },
+    "netR": -20.64,
+    "n": 220
+   },
+   "scoreA": {
+    "pass": "0/10",
+    "pnl": -497.47
+   },
+   "scoreB": {
+    "pass": "0/10",
+    "pnl": 43.71
+   },
+   "total": "0/20"
+  },
+  {
+   "family": "F7",
+   "name": "KZ-drift",
+   "selA": {
+    "combo": 1,
+    "params": {
+     "t": 0.5
+    },
+    "netR": 2.59,
+    "n": 65
+   },
+   "selB": {
+    "combo": 0,
+    "params": {
+     "t": 0.25
+    },
+    "netR": -17.89,
+    "n": 82
+   },
+   "scoreA": {
+    "pass": "0/10",
+    "pnl": -855.42
+   },
+   "scoreB": {
+    "pass": "0/10",
+    "pnl": 28.83
+   },
+   "total": "0/20"
+  },
+  {
+   "family": "F8",
+   "name": "Rule-FVG",
+   "selA": {
+    "combo": 0,
+    "params": {},
+    "netR": -71.67,
+    "n": 329
+   },
+   "selB": {
+    "combo": 0,
+    "params": {},
+    "netR": -72.98,
+    "n": 495
+   },
+   "scoreA": {
+    "pass": "0/10",
+    "pnl": -1304.57
+   },
+   "scoreB": {
+    "pass": "0/10",
+    "pnl": -867.26
+   },
+   "total": "0/20"
+  }
+ ]
+}
