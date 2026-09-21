@@ -151,7 +151,7 @@ MAX_SPREAD_ATR_RATIO_ENTER = 0.12 # Enter quarantine threshold
 MAX_SPREAD_ATR_RATIO_EXIT = 0.08  # Exit quarantine hysteresis threshold
 MIN_SPREAD_MULTIPLIER = 3.5       # Stop distance must be >= 3.5x current broker spread
 MIN_ATR_MULTIPLIER = 1.5          # Stop distance must be >= 1.5x 15m ATR
-MIN_STRUCTURAL_R_EFF = 1.20       # Minimum effective R for structural targets
+MIN_STRUCTURAL_R_EFF = 2.50       # Minimum effective R for structural targets (strict parity with target_oos_criteria.json min_r_multiple = 2.5)
 MAX_STRUCTURAL_R_EFF = 3.50       # Cap effective R to avoid tail liquidity moonshots
 MAX_MARGIN_UTILIZATION_PCT = 0.30 # Portfolio margin utilization ceiling (30%)
 MIN_MARGIN_LEVEL_PCT = 200.0      # Minimum margin level before hard freeze (200%)
