@@ -1,0 +1,130 @@
+# MASTER QUANTITATIVE ARCHITECT DIRECTIVE: OX_ALPHA_63
+# TARGET: Institutional Microstructure Architecture, Partial Scaling Engine & Sweep-Reclaim Refinement
+# REPOSITORY: https://github.com/kbsingh1399/Trading.git
+# ACTIVE BRANCH: arena/01a0bf23-trading (commit: 61d4936)
+# DATASET: Canonical 18 Forex & CFD Basket in Forex_Backtesting_Data/
+#   Assets: EURUSD, GER40, NICKEL, USDSEK, GAS, AU200, FR40, EURCNH, LEAD, NZDUSD, USDHKD, US2000, AUDCHF, NZDCNH, XAUCNH, GAUCNH, EURSEK, EURHUF (15m, 4H, D1 true UTC)
+# EVALUATION SPAN: 20 Non-Overlapping 1-Month Microstructure Regimes (Engine/oos_windows_forex_20.json, 2023 to 2026)
+
+Evaluator & Chief Quantitative Architect (Arena.ai / Claude Opus),
+
+You are operating in a fresh, isolated session with zero prior chat memory, zero local state, and zero external web access. All source modules, strategy kernels, risk governors, and execution bridges are pinned via raw GitHub URLs from branch arena/01a0bf23-trading below.
+
+================================================================================
+1. EXECUTIVE ACKNOWLEDGMENT OF OX61 & OX62 AUDIT FINDINGS
+================================================================================
+
+We fully accept and endorse your forensic findings documented in `docs/OX_ALPHA_61_FOREX_HONEST_CERTIFICATION.md` and `docs/OX_ALPHA_62_FAMILY_DISCOVERY_REPORT.md`:
+1. Legacy 20/20 Claims Are Void: The historical +13,000 USD / 20-of-20 results were mathematically artifactual due to:
+   - The ORB sentinel exit calculation bug (+7,529.7R artificial lift from scoring stops at -0.2308R instead of -1.08R).
+   - XGBoost in-sample contamination (training set overlapping ~98% of the test windows, inflating WR to 70-90% via memorization).
+   - Live-spec exit filter disconnect (live R_eff >= 2.50 viability veto discarding ~88% of setups, while survivors suffered a 97% stop-out rate aiming for moonshot targets).
+2. Data Mining Halt Upheld: The pre-registered stopping policy was correct. We will NOT ask you to mine or test-tune against those 20 historical windows to manufacture an artificial 20/20. Doing so produces curve-fitted noise, not real alpha.
+3. Code Mechanics Certified: The core live execution architecture (broker bridge, order manager, margin guards, and rollover lockouts) and live fixes (ratchet rollover rollback, S4 sweep unification) are verified 35/35 green.
+
+================================================================================
+2. PINNED REPOSITORY SOURCE CODE & SPECIFICATIONS
+================================================================================
+
+Inspect the codebase directly on branch `arena/01a0bf23-trading` at commit `61d4936`:
+
+1. Master Forex & CFD Orchestration Engine:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/forex_engine.py
+
+2. Strategy Core Interface & Walk-Forward Harness:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/core/base_strategy.py
+
+3. Strategy Kernel (Vectorized Feature Engineering & 7-Stage Ratchet):
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/core/strategy_kernel.py
+
+4. Live Order Manager:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/live/order_manager.py
+
+5. OX61 Certification Report & Harness:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/docs/OX_ALPHA_61_FOREX_HONEST_CERTIFICATION.md
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/docs/ox61_verification/run_ox61_r4.py
+
+6. OX62 Family Discovery Report & Protocol:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/docs/OX_ALPHA_62_FAMILY_DISCOVERY_REPORT.md
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/docs/ox62_research/PROTOCOL.md
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/docs/ox62_research/ox62_families.py
+
+7. 20 Forex OOS Windows Specification:
+   https://raw.githubusercontent.com/kbsingh1399/Trading/arena/01a0bf23-trading/Engine/oos_windows_forex_20.json
+
+================================================================================
+3. MISSION DIRECTIVES: OX_ALPHA_63
+================================================================================
+
+Your mission is to re-architect the strategy execution stack to resolve the fundamental structural bottleneck identified in OX61/OX62, moving from an artificial 20/20 target to an institutional portfolio standard.
+
+--------------------------------------------------------------------------------
+MANDATE 1: Institutional Target Function Calibration
+--------------------------------------------------------------------------------
+The previous requirement in `target_oos_criteria.json` (demanding >= +10% ROI every single quarter with <= 5% DD across 5 years) was calibrated against an artifactual backtest. Requiring positive returns in 20/20 non-overlapping monthly windows is an extreme bar that penalizes legitimate strategies for experiencing natural market regimes.
+
+Adopt Institutional Macro Portfolio Standards across the 2023-2026 span:
+- Annualized Portfolio Sharpe Ratio >= 1.50
+- Profit Factor >= 1.35
+- Max Portfolio Peak-to-Trough Drawdown <= 10.00%
+- Positive Net Annual PnL across every completed calendar year (2024, 2025, 2026)
+- Regime Survivability: Drawdown defense activates smoothly during adverse regimes without triggering permanent hard freezes.
+
+--------------------------------------------------------------------------------
+MANDATE 2: Implement 2-Stage Partial Profit Scaling (Fixing the 88% Veto & Stop Trap)
+--------------------------------------------------------------------------------
+The single most critical structural discovery in OX61 was that the live-spec exit stack destroyed viable trade pools:
+- The `MIN_STRUCTURAL_R_EFF = 2.50` entry veto rejected ~88% of generated setups because real market liquidity sweeps typically offer 1.0R to 1.8R of immediate structural headroom.
+- The remaining ~12% of trades were forced to target distant 2.5R to 3.5R levels, resulting in a 97% stop-out rate as price reversed before reaching extreme targets.
+
+You are mandated to design and implement a 2-Stage Scaling Microstructure Engine in `Engine/core/strategy_kernel.py` and `Engine/forex_engine.py`:
+1. Take-Profit 1 (TP1) — Liquidity Scale-Out:
+   - At +1.00R to +1.20R gain, execute a partial close of 50% of the position volume.
+   - Immediately advance the stop loss to Entry + 0.15R (locking in transaction frictions and guaranteeing net-positive outcome on the trade).
+2. Take-Profit 2 (TP2) — Structural Runner:
+   - The remaining 50% volume runs toward the structural target (PDH/PDL or swing extreme) or is managed by the active trailing ratchet (+1.5R, +2.0R, +2.5R) and 24-bar time decay.
+3. Entry Viability Filter Relaxation:
+   - Relax `MIN_STRUCTURAL_R_EFF` from 2.50 to 1.20. This allows the strategy to capture high-probability liquidity sweeps that offer clean 1.0R-1.5R moves without prematurely discarding them.
+
+--------------------------------------------------------------------------------
+MANDATE 3: Refine Strategy Family 6 (Liquidity Sweep-Reclaim) with 4H Structural Anchors
+--------------------------------------------------------------------------------
+In your pre-registered discovery program (OX62), Family 6 (Sweep-Reclaim) was the ONLY family among the 8 tested that demonstrated genuine window alpha (Window 09: +20.8R net gain, 72.7% win rate).
+
+Refine Family 6 (`ox62_families.py` and `Engine/strategy/`) by coupling the 15m sweep-reclaim with 4H higher-timeframe market structure:
+1. 4H Trend Alignment:
+   - LONG setups require 4H EMA 200 slope > 0 or 4H market structure break (MSB) bullish.
+   - SHORT setups require 4H EMA 200 slope < 0 or 4H MSB bearish.
+2. 15m Sweep & Reclaim Trigger:
+   - Previous Day High (PDH) sweep followed by a close back inside the daily range for SHORTS.
+   - Previous Day Low (PDL) sweep followed by a close back inside the daily range for LONGS.
+   - Minimum reclaim bar range >= 1.0 * ATR14 (confirming institutional absorption, not low-volume drift).
+3. Session Killzone Filter:
+   - Restrict entries to London Open (07:00-10:00 UTC) and New York Open (12:00-15:00 UTC).
+   - Friday weekend gap cutoff (>= 18:00 UTC) strictly enforced.
+
+--------------------------------------------------------------------------------
+MANDATE 4: Dual-Economics Replay & Causal Verification
+--------------------------------------------------------------------------------
+1. Replay Economics:
+   - Evaluate the reformed strategy under both:
+     (a) Baseline Research Economics: Base risk 50.00 USD (1.00% on 5,000.00 USD capital) with 4-tier DD defense.
+     (b) Active Production Economics: Base risk 10.00 USD (0.20% on 5,000.00 USD capital) matching the current live OrderManager configuration.
+2. Causal Soundness:
+   - Ensure all entries execute strictly at `opens[j+1]`.
+   - Ensure all 4H and D1 features are backward-shifted by 1 full bar (shift(1) + join_asof).
+   - Maintain the byte-reproducible R4 framework (`run_ox63.py` + manifest).
+3. Test Suite:
+   - Add unit tests for the 2-stage partial scaling engine and 4H sweep-reclaim signal logic.
+   - Ensure all existing test suites remain 100% green.
+
+================================================================================
+4. DELIVERABLE & COMMIT PROTOCOL
+================================================================================
+
+1. Commit all modified code, new modules, and tests to branch `arena/01a0bf23-trading`.
+2. Generate `docs/OX_ALPHA_63_MICROSTRUCTURE_REPORT.md` presenting:
+   - Full performance scorecard across all 20 windows under the 2-stage scaling engine.
+   - Comparison of pool metrics (trade count, win rate, average R, net PnL) between monolithic 2.5R target vs 2-stage partial scale.
+   - Verification test tallies.
+3. Push cleanly to GitHub (`origin arena/01a0bf23-trading`).
