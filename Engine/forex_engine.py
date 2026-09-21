@@ -133,10 +133,10 @@ console = Console(force_terminal=True, width=get_terminal_width())
 # -------------------------------------------------------------------------
 # CANONICAL STRATEGY CONSTANTS & OPTION C GOVERNANCE
 # -------------------------------------------------------------------------
-BASE_RISK_USD = 50.0              # 1.00% of 5,000 USD capital (matching target_oos_criteria.json)
-DEFENSE_RISK_USD = 27.50          # 0.55% — arms when DD >= 1.8% (90 USD), scales to 16.50 USD (0.33%) at DD >= 3.0%
-HOUSE_MONEY_RISK_USD = 65.00      # 1.30% — unlocks when profit >= 80 USD AND DD < 1.0%
-PASS_LOCK_RISK_USD = 7.50         # 0.15% — micro-probing lock on profit >= 500 USD and trades >= 15
+BASE_RISK_USD = 10.0              # Calibrated per-trade risk budget (10.00 USD)
+DEFENSE_RISK_USD = 10.00          # Scaled defense risk floor (10.00 USD)
+HOUSE_MONEY_RISK_USD = 15.00      # Scaled house money cap (15.00 USD)
+PASS_LOCK_RISK_USD = 5.00         # Micro-probing lock on profit >= 500 USD and trades >= 15
 HARD_DD_LIMIT_PCT = 4.50          # 4.5% Hard DD Stop (225.00 USD) — total freeze
 DEFENSE_DD_LIMIT_PCT = 1.80       # 1.8% DD Defense threshold
 HOUSE_MONEY_THRESHOLD_USD = 80.0  # Profit threshold for house money
@@ -574,10 +574,10 @@ class OrderManager:
             self.in_defense_mode = True
             return 0.0, f"HARD FREEZE (Peak DD {dd_pct:.2f}% >= {HARD_DD_LIMIT_PCT:.1f}%)"
         elif self.realized_pnl >= 500.0 and n_closed >= 15:
-            return PASS_LOCK_RISK_USD, f"PASS LOCK (7.50 USD | Profit +{self.realized_pnl:.2f} USD | Trades {n_closed})"
+            return PASS_LOCK_RISK_USD, f"PASS LOCK ({PASS_LOCK_RISK_USD:.2f} USD | Profit +{self.realized_pnl:.2f} USD | Trades {n_closed})"
         elif dd_pct >= 3.00:
             self.in_defense_mode = True
-            return 16.50, f"SEVERE DEFENSE (16.50 USD | Peak DD {dd_pct:.2f}%)"
+            return 10.00, f"SEVERE DEFENSE (10.00 USD | Peak DD {dd_pct:.2f}%)"
         elif dd_pct >= DEFENSE_DD_LIMIT_PCT or (self.in_defense_mode and dd_pct >= 1.50):
             self.in_defense_mode = True
             return DEFENSE_RISK_USD, f"MILD DEFENSE ({DEFENSE_RISK_USD:.2f} USD | Peak DD {dd_pct:.2f}%)"
