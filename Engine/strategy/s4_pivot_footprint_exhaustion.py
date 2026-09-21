@@ -28,16 +28,17 @@ from numba import njit
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 
-from Engine.core.canonical_indicators import compute_structural_pivots_and_sweeps
+from Engine.core.canonical_indicators import (
+    compute_structural_pivots_and_sweeps, apply_atr_floor)
 
 DATA_DIR = REPO_ROOT / "binance_backtesting_data"
 WINDOWS_PATH = REPO_ROOT / "Engine" / "oos_windows_20.json"
 CRITERIA_PATH = REPO_ROOT / "Engine" / "target_oos_criteria.json"
-ARTIFACT_DIR = Path(r"C:\Users\SIGMA\.gemini\antigravity\brain\ffa08070-c9a9-49d2-a394-b72ce2e0971d")
+ARTIFACT_DIR = REPO_ROOT / "reports" / "s4_exhaustion"  # OX66: repo-relative (was a Windows user path)
 
 CAPITAL = 5000.0
-BASE_RISK_USD = 38.0
-MAX_CONCURRENT = 2
+BASE_RISK_USD = 36.0  # OX66: terminal parity (was 38.0)
+MAX_CONCURRENT = 3  # OX66: terminal parity (was 2)
 DD_STOP_PCT = 4.85
 FRICTION_R = 0.18
 
@@ -58,6 +59,7 @@ def label_exhaustion_trades_numba(
     c: np.ndarray,
     h: np.ndarray,
     lo: np.ndarray,
+    o: np.ndarray,
     atr: np.ndarray,
     long_cond: np.ndarray,
     short_cond: np.ndarray,
@@ -90,7 +92,7 @@ def label_exhaustion_trades_numba(
 
         is_cand[i] = True
         side[i] = s
-        entry_p = c[i + 1]  # Next bar open execution (approximated by open_time_ms[i+1])
+        entry_p = o[i + 1]  # OX66 FIX (was c[i+1] = next-CLOSE lookahead): next-bar OPEN
         dist = atr[i]
         if dist <= 0:
             continue
@@ -229,16 +231,18 @@ def simulate_portfolio_numba(
 
         if is_milestone:
             cushion = max(0.0, equity - (capital + milestone_pnl))
-            trade_risk = min(12.0, cushion * 0.20)
+            trade_risk = min(10.0, cushion * 0.20)  # OX66: terminal parity
             if trade_risk <= 0.0:
                 locked = True
                 continue
         elif cur_dd >= 2.0 or cur_profit < -50.0:
-            trade_risk = min(base_r * 0.50, 16.0)
-        elif cur_profit >= 150.0:
-            trade_risk = min(base_r * 1.30, 48.0)
+            trade_risk = min(base_r * 0.40, 14.0)  # OX66: terminal parity
+        elif cur_profit >= 120.0:
+            trade_risk = min(base_r * 1.35, 48.0)  # OX66: terminal parity
         else:
-            trade_risk = min(base_r, 38.0)
+            trade_risk = min(base_r, 36.0)
+        if (not is_milestone) and max_dd_pct >= 1.80:  # OX66: DD contraction parity
+            trade_risk = trade_risk * 0.5
 
         pos_active[slot] = True
         pos_end_times[slot] = t + hold
@@ -280,7 +284,7 @@ def build_exhaustion_dataset() -> pd.DataFrame:
         t = df.open_time_ms.to_numpy(np.int64)
 
         atr_raw = df["atr_14"].fillna(df["close"] * 0.01).to_numpy(float)
-        atr = np.maximum(atr_raw, df["close"].to_numpy(float) * 0.012)
+        atr = apply_atr_floor(atr_raw, df["close"].to_numpy(float))  # OX66 unified R
 
         e200 = df["ema_200"].to_numpy(float)
         vwap_z = df["vwap_zscore"].fillna(0.0).to_numpy(float)
@@ -339,7 +343,7 @@ def build_exhaustion_dataset() -> pd.DataFrame:
         short_cond = (short_cond & (~long_cond)).astype(bool)
 
         is_cand, side, real_r, b_held = label_exhaustion_trades_numba(
-            c, h, lo, atr, long_cond, short_cond, 24, 2.8, 1.0,
+            c, h, lo, op, atr, long_cond, short_cond, 24, 2.8, 1.0,
             be_trigger_r=0.80, be_lock_r=0.20,
             profit_trigger_r=1.50, profit_lock_r=0.80,
             trail_trigger_r=2.00, trail_lock_r=1.50,
@@ -487,6 +491,7 @@ def run_strategy_benchmark():
     ax2.grid(True, linestyle=":", alpha=0.6)
 
     plt.tight_layout()
+    ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
     chart_path = ARTIFACT_DIR / "pivot_footprint_exhaustion_equity_vs_benchmark.png"
     plt.savefig(chart_path, dpi=180)
     plt.close()

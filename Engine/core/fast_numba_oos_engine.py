@@ -22,7 +22,9 @@ import numba as nb
 from numba import njit, prange
 import numpy as np
 import pandas as pd
-from Engine.core.canonical_indicators import compute_structural_pivots_and_sweeps
+from Engine.core.canonical_indicators import (
+    compute_structural_pivots_and_sweeps, apply_atr_floor,
+    SLEEVE_S1_PULLBACK, SLEEVE_S4_PIVOT_SWEEP)
 
 REPO = Path(__file__).resolve().parents[2]
 DATA_DIR = REPO / "binance_backtesting_data"
@@ -92,6 +94,7 @@ def label_triple_barriers_numba(
     c: np.ndarray,
     h: np.ndarray,
     lo: np.ndarray,
+    o: np.ndarray,
     atr: np.ndarray,
     long_cond: np.ndarray,
     short_cond: np.ndarray,
@@ -129,7 +132,7 @@ def label_triple_barriers_numba(
 
         is_candidate[i] = True
         side[i] = s
-        entry_p = c[i]
+        entry_p = o[i + 1]  # OX66: strict next-bar-open execution (no close fills)
         dist = atr[i]
         if dist <= 0:
             continue
@@ -270,9 +273,10 @@ def warmup_numba():
     dummy_c = np.array([100.0, 101.0, 102.0, 99.0, 103.0, 104.0], dtype=np.float64)
     dummy_h = np.array([101.0, 102.0, 103.0, 100.0, 104.0, 105.0], dtype=np.float64)
     dummy_lo = np.array([99.0, 100.0, 101.0, 98.0, 102.0, 103.0], dtype=np.float64)
+    dummy_o = np.array([100.0, 101.0, 102.0, 99.0, 103.0, 104.0], dtype=np.float64)
     dummy_atr = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0], dtype=np.float64)
     dummy_cond = np.array([True, False, False, False, False, False], dtype=np.bool_)
-    _ = label_triple_barriers_numba(dummy_c, dummy_h, dummy_lo, dummy_atr, dummy_cond, dummy_cond, 2, 2.0, 1.0)
+    _ = label_triple_barriers_numba(dummy_c, dummy_h, dummy_lo, dummy_o, dummy_atr, dummy_cond, dummy_cond, 2, 2.0, 1.0)
     _ = simulate_microstructure_ratchet_numba(dummy_c, dummy_h, dummy_lo, dummy_atr, np.array([0]), np.array([1]), 2, 2.0, 1.0, 1.4, 0.35, 0.25)
     t_warm = (time.perf_counter() - t0) * 1000
     print(f"[Numba Core] JIT Compiler initialized and warm in {t_warm:.1f} ms.")
@@ -310,8 +314,7 @@ def compile_dataset_with_numba(friction_r: float = 0.18):
         n = len(df)
 
         atr_raw = df["atr_14"].fillna(df["close"] * 0.01).to_numpy(float)
-        min_atr = df["close"].to_numpy(float) * 0.012  # Volatility targeting minimum 1.2% price stop
-        atr = np.maximum(atr_raw, min_atr)
+        atr = apply_atr_floor(atr_raw, df["close"].to_numpy(float))  # OX66 unified R
 
         atr_100 = df["atr_100"].fillna(df["close"] * 0.01).to_numpy(float)
         atr_ratio = np.clip(np.where(atr_100 > 0, atr / atr_100, 1.0), 0.2, 5.0)
@@ -369,7 +372,9 @@ def compile_dataset_with_numba(friction_r: float = 0.18):
         long_cond = (long_cond & (~short_cond)).astype(bool)
         short_cond = (short_cond & (~long_cond)).astype(bool)
 
-        sleeve_id = np.where(t3_pdl_sweep, 3, np.where(t2_liq_flush, 2, 1))
+        # OX66 unified taxonomy: sweeps -> S4(4); liq-flush is an S1(1) variant.
+        # S2/S3/T1 have no research coverage yet (live-only) — see OX66 report.
+        sleeve_id = np.where(t3_pdl_sweep, SLEEVE_S4_PIVOT_SWEEP, SLEEVE_S1_PULLBACK)
         tide_align = np.where(long_cond, tide, np.where(short_cond, -tide, 0.0))
 
         # Execute JIT Ratchet Labeler with Convex Asymmetric Payoff Geometry
@@ -377,7 +382,7 @@ def compile_dataset_with_numba(friction_r: float = 0.18):
         # (horizon 32 / target 3.0 / stop 1.2 / friction preserved from research).
         t_numba_0 = time.perf_counter()
         is_cand, side, label_y, real_r, b_held = label_triple_barriers_numba(
-            c, h, lo, atr, long_cond, short_cond, 32, 3.0, 1.2,
+            c, h, lo, op, atr, long_cond, short_cond, 32, 3.0, 1.2,
             be_trigger_r=0.80, be_lock_r=0.20,
             profit_trigger_r=1.50, profit_lock_r=0.80,
             friction_r=friction_r,
@@ -676,7 +681,9 @@ def run_fast_numba_walkforward(all_data: pd.DataFrame, return_trades: bool = Fal
 
         if not is_pass:
             print(f"\n[FAIL-FAST HALT] Window {w_id} ({w_name}) failed pass criteria! Halting immediately.")
-            break
+            import os as _os
+            if _os.environ.get("OX66_AUDIT_ALL_WINDOWS", "") != "1":
+                break
 
     t_wf_total = time.perf_counter() - t_wf_start
     overall_roi = (total_pnl / CAPITAL) * 100

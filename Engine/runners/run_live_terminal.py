@@ -8,7 +8,7 @@ certified 23-OOS elite quant multi-model suite (run_23_oos_altcoin_suite.py).
 Unifies:
 1. 11-Asset Institutional Core Universe (Binance USDT-M Perpetuals).
 2. Dynamic Institutional Risk Governor (Milestone Pass Lock, DD Defense, House Money).
-3. 5-Sleeve Alpha Engine (S1 Pullback, S2 BB, S3 ORB/CRT, S4 KRI Disparity, T1 Donchian).
+3. 5-Sleeve Alpha Engine (OX66 unified ids: S1=1 Pullback, S2=2 Bollinger, S3=3 ORB/CRT, S4=4 Pivot Sweeps, T1=5 Donchian).
 4. Full Execution Bridge with BinanceBroker (Dry-Run and Live REST/WebSocket).
 5. Microstructure Trailing Ratchets (BE Lock at +0.8R, Profit Lock at +1.5R, 24-bar timeout).
 6. Live BTC Buy & Hold Benchmark Alpha Tracker.
@@ -48,6 +48,10 @@ from Engine.core.canonical_indicators import (
     compute_kairi_zscore,
     compute_bollinger_bandwidth_zscore,
     compute_adx_series,
+    compute_structural_pivots_and_sweeps,
+    apply_atr_floor,
+    SLEEVE_S1_PULLBACK, SLEEVE_S2_BOLLINGER, SLEEVE_S3_ORB,
+    SLEEVE_S4_PIVOT_SWEEP, SLEEVE_T1_DONCHIAN,
 )
 from Engine.brokers.binance_broker import BinanceBroker
 
@@ -179,7 +183,7 @@ class InstitutionalRiskGovernor:
     4. Milestone Pass Lock: Once peak profit >= 500.0 USD and trades >= 15, locks in pass floor stop
        and restricts risk to min(10.0 USD, cushion * 0.20).
     5. Circuit Breaker: 4.85% maximum drawdown ceiling.
-    6. Concurrency Limits: Max 4 concurrent positions (max 2 S1, max 2 T1, max 2 ORB).
+    6. Concurrency Limits: Max 3 concurrent positions (max 2 S1, max 2 T1(id5), max 2 ORB, max 1/asset).
     """
 
     def __init__(self, initial_capital: float = 5000.0):
@@ -263,15 +267,15 @@ class InstitutionalRiskGovernor:
         if len(active_positions) >= self.max_concurrent:
             return False
 
-        s1_count = sum(1 for p in active_positions if p["sleeve_id"] == 1)
-        t1_count = sum(1 for p in active_positions if p["sleeve_id"] == 2)
-        orb_count = sum(1 for p in active_positions if p["sleeve_id"] == 3)
+        s1_count = sum(1 for p in active_positions if p["sleeve_id"] == SLEEVE_S1_PULLBACK)
+        t1_count = sum(1 for p in active_positions if p["sleeve_id"] == SLEEVE_T1_DONCHIAN)
+        orb_count = sum(1 for p in active_positions if p["sleeve_id"] == SLEEVE_S3_ORB)
 
-        if sleeve_id == 1 and s1_count >= self.max_s1_concurrent:
+        if sleeve_id == SLEEVE_S1_PULLBACK and s1_count >= self.max_s1_concurrent:
             return False
-        if sleeve_id == 2 and t1_count >= self.max_t1_concurrent:
+        if sleeve_id == SLEEVE_T1_DONCHIAN and t1_count >= self.max_t1_concurrent:
             return False
-        if sleeve_id == 3 and orb_count >= self.max_orb_concurrent:
+        if sleeve_id == SLEEVE_S3_ORB and orb_count >= self.max_orb_concurrent:
             return False
 
         # OX59 cluster: max 1 position per asset
@@ -477,11 +481,11 @@ class LivePositionTracker:
 
 class MultiSleeveAlphaEngine:
     """
-    Computes real-time signals across the 5 certified sleeves:
+    Computes real-time signals across the 5 unified sleeves (OX66 taxonomy):
     1. S1: Dual-Model Liquidation Pullback.
-    2. S2: Bollinger Mean Reversion (filtered by Z_BW <= 1.85 and ADX <= 32.0).
+    2. S2: Bollinger Mean Reversion (Z_BW <= 1.85, ADX <= 32.0).
     3. S3: Cross-Asset ORB/CRT Breakouts.
-    4. S4: Kairi Relative Index (KRI) Disparity Mean Reversion.
+    4. S4: Structural Pivot Sweeps + Footprint Exhaustion (simplified live trigger).
     5. T1: Quiet-Flow Donchian Trend Breakout.
     """
 
@@ -500,7 +504,8 @@ class MultiSleeveAlphaEngine:
             # Read last row group or slice
             table = pf.read(columns=[
                 "open_time_ms", "open", "high", "low", "close",
-                "volume", "rsi_14", "atr_14", "ema_200", "vwap_zscore", "zc_div", "volume_base"
+                "volume", "rsi_14", "atr_14", "ema_200", "vwap_zscore", "zc_div", "volume_base",
+                "future_cvd_15m", "volume_ratio", "session_vah", "session_val"
             ])
             df = table.to_pandas().iloc[skip:].dropna().reset_index(drop=True)
             return df
@@ -590,6 +595,9 @@ class MultiSleeveAlphaEngine:
         _volb = np.where(_volb == 0, 1.0, _volb)
         # OX59: normalized zc (research semantics) instead of raw CVD dollars
         zc_div = np.clip(df["zc_div"].to_numpy(float) / _volb, -3.0, 3.0) if "zc_div" in df.columns else np.zeros(len(df))
+        fut_delta = df["future_cvd_15m"].fillna(0.0).to_numpy(float)
+        vol_ratio = df["volume_ratio"].fillna(1.0).to_numpy(float)
+        tms = df["open_time_ms"].to_numpy(np.int64)
 
         # Compute Canonical Indicators
         upper, lower, bw, zbw = compute_bollinger_bandwidth_zscore(closes, period=96, std_mult=2.0, z_window=96)
@@ -598,7 +606,8 @@ class MultiSleeveAlphaEngine:
 
         idx = len(df) - 1
         cur_px = closes[idx]
-        cur_atr = atrs[idx]
+        cur_atr = float(apply_atr_floor(atrs[idx:idx+1], closes[idx:idx+1])[0])  # OX66 unified R
+        bar_ms = int(df["open_time_ms"].iloc[idx])
         cur_rsi = rsis[idx]
         cur_zbw = zbw[idx]
         cur_adx = adx[idx]
@@ -632,28 +641,50 @@ class MultiSleeveAlphaEngine:
             if regime == "BEAR_CONTAGION":
                 if cur_vwap_z > 0.5 and cur_rsi > 58.0:
                     signals.append({
-                        "symbol": symbol, "sleeve_name": "S1_SHORT", "sleeve_id": 1, "direction": -1,
+                        "symbol": symbol, "sleeve_name": "S1_SHORT", "sleeve_id": SLEEVE_S1_PULLBACK, "direction": -1,
                         "entry_price": cur_px, "stop_price": cur_px + 1.0 * cur_atr,
-                        "target_price": cur_px - 2.2 * cur_atr, "r_dist": cur_atr, "prob": 0.62, "base_risk": 32.0
+                        "target_price": cur_px - 2.2 * cur_atr, "r_dist": cur_atr, "prob": 0.62, "base_risk": 32.0,
+                        "bar_ms": bar_ms, "stop_mult": 1.0, "tgt_mult": 2.2
                     })
             else:
                 if cur_vwap_z < -0.5 and cur_rsi < 40.0 and cur_zc_div > 0.0:
                     signals.append({
-                        "symbol": symbol, "sleeve_name": "S1_PULLBACK", "sleeve_id": 1, "direction": 1,
+                        "symbol": symbol, "sleeve_name": "S1_PULLBACK", "sleeve_id": SLEEVE_S1_PULLBACK, "direction": 1,
                         "entry_price": cur_px, "stop_price": cur_px - 1.0 * cur_atr,
-                        "target_price": cur_px + 2.2 * cur_atr, "r_dist": cur_atr, "prob": 0.59, "base_risk": 42.0
+                        "target_price": cur_px + 2.2 * cur_atr, "r_dist": cur_atr, "prob": 0.59, "base_risk": 42.0,
+                        "bar_ms": bar_ms, "stop_mult": 1.0, "tgt_mult": 2.2
                     })
 
         # -------------------------------------------------------------------------
-        # 2. T1: Quiet-Flow Donchian Trend Breakout
+        # 2. S2: Bollinger Mean Reversion (Z_BW <= 1.85, ADX <= 32.0)
+        # -------------------------------------------------------------------------
+        if cur_atr > 0 and cur_zbw <= 1.85 and cur_adx <= 32.0:
+            if cur_px < lower[idx] and cur_rsi < 45.0:
+                signals.append({
+                    "symbol": symbol, "sleeve_name": "S2_BOLL_LONG", "sleeve_id": SLEEVE_S2_BOLLINGER, "direction": 1,
+                    "entry_price": cur_px, "stop_price": cur_px - 1.0 * cur_atr,
+                    "target_price": cur_px + 2.0 * cur_atr, "r_dist": cur_atr, "prob": 0.54, "base_risk": 24.0,
+                    "bar_ms": bar_ms, "stop_mult": 1.0, "tgt_mult": 2.0
+                })
+            elif cur_px > upper[idx] and cur_rsi > 55.0:
+                signals.append({
+                    "symbol": symbol, "sleeve_name": "S2_BOLL_SHORT", "sleeve_id": SLEEVE_S2_BOLLINGER, "direction": -1,
+                    "entry_price": cur_px, "stop_price": cur_px + 1.0 * cur_atr,
+                    "target_price": cur_px - 2.0 * cur_atr, "r_dist": cur_atr, "prob": 0.54, "base_risk": 24.0,
+                    "bar_ms": bar_ms, "stop_mult": 1.0, "tgt_mult": 2.0
+                })
+
+        # -------------------------------------------------------------------------
+        # 5. T1: Quiet-Flow Donchian Trend Breakout
         # -------------------------------------------------------------------------
         if regime != "BEAR_CONTAGION" and len(highs) >= 96 and cur_atr > 0:
             highest_96 = np.max(highs[-96:-1])
             if cur_px >= highest_96:
                 signals.append({
-                    "symbol": symbol, "sleeve_name": "T1_BREAKOUT", "sleeve_id": 2, "direction": 1,
+                    "symbol": symbol, "sleeve_name": "T1_BREAKOUT", "sleeve_id": SLEEVE_T1_DONCHIAN, "direction": 1,
                     "entry_price": cur_px, "stop_price": cur_px - 1.2 * cur_atr,
-                    "target_price": cur_px + 2.5 * cur_atr, "r_dist": 1.2 * cur_atr, "prob": 0.54, "base_risk": 36.0
+                    "target_price": cur_px + 2.5 * cur_atr, "r_dist": 1.2 * cur_atr, "prob": 0.54, "base_risk": 36.0,
+                    "bar_ms": bar_ms, "stop_mult": 1.0, "tgt_mult": 2.0833
                 })
 
         # -------------------------------------------------------------------------
@@ -664,16 +695,46 @@ class MultiSleeveAlphaEngine:
             session_low = np.min(lows[-16:-1])
             if cur_px > session_high and cur_rsi > 52.0 and (regime != "BEAR_CONTAGION" or cur_zc_div > 1.2):
                 signals.append({
-                    "symbol": symbol, "sleeve_name": "S3_ORB_LONG", "sleeve_id": 3, "direction": 1,
+                    "symbol": symbol, "sleeve_name": "S3_ORB_LONG", "sleeve_id": SLEEVE_S3_ORB, "direction": 1,
                     "entry_price": cur_px, "stop_price": cur_px - 1.0 * cur_atr,
-                    "target_price": cur_px + 2.4 * cur_atr, "r_dist": cur_atr, "prob": 0.56, "base_risk": 24.0
+                    "target_price": cur_px + 2.4 * cur_atr, "r_dist": cur_atr, "prob": 0.56, "base_risk": 24.0,
+                    "bar_ms": bar_ms, "stop_mult": 1.0, "tgt_mult": 2.4
                 })
             elif cur_px < session_low and cur_rsi < 48.0 and regime == "BEAR_CONTAGION":
                 signals.append({
-                    "symbol": symbol, "sleeve_name": "S3_ORB_SHORT", "sleeve_id": 3, "direction": -1,
+                    "symbol": symbol, "sleeve_name": "S3_ORB_SHORT", "sleeve_id": SLEEVE_S3_ORB, "direction": -1,
                     "entry_price": cur_px, "stop_price": cur_px + 1.0 * cur_atr,
-                    "target_price": cur_px - 2.4 * cur_atr, "r_dist": cur_atr, "prob": 0.56, "base_risk": 24.0
+                    "target_price": cur_px - 2.4 * cur_atr, "r_dist": cur_atr, "prob": 0.56, "base_risk": 24.0,
+                    "bar_ms": bar_ms, "stop_mult": 1.0, "tgt_mult": 2.4
                 })
+
+        # -------------------------------------------------------------------------
+        # 4. S4: Structural Pivot Sweep + Footprint Exhaustion (live trigger)
+        # -------------------------------------------------------------------------
+        # Simplified vs research (no liq/zc/wick gates — filed parity limitation):
+        # PDL/PDH sweep on the last closed bar + volume confirmation.
+        try:
+            atr_arr = apply_atr_floor(np.nan_to_num(atrs, nan=0.0), closes)
+            (_pdh, _pdl, _pwh, _pwl, _pmh, _pml, _pdl_d, _pdh_d, _pwl_d, _pwh_d,
+             _sweep_bull, _sweep_bear) = compute_structural_pivots_and_sweeps(
+                tms, highs, lows, closes, fut_delta, _volb, vol_ratio, atr_arr)
+            if cur_atr > 0 and vol_ratio[idx] >= 1.1:
+                if bool(_sweep_bull[idx]):
+                    signals.append({
+                        "symbol": symbol, "sleeve_name": "S4_PIVOT_LONG", "sleeve_id": SLEEVE_S4_PIVOT_SWEEP, "direction": 1,
+                        "entry_price": cur_px, "stop_price": cur_px - 1.0 * cur_atr,
+                        "target_price": cur_px + 2.8 * cur_atr, "r_dist": cur_atr, "prob": 0.56, "base_risk": 36.0,
+                        "bar_ms": bar_ms, "stop_mult": 1.0, "tgt_mult": 2.8
+                    })
+                elif bool(_sweep_bear[idx]):
+                    signals.append({
+                        "symbol": symbol, "sleeve_name": "S4_PIVOT_SHORT", "sleeve_id": SLEEVE_S4_PIVOT_SWEEP, "direction": -1,
+                        "entry_price": cur_px, "stop_price": cur_px + 1.0 * cur_atr,
+                        "target_price": cur_px - 2.8 * cur_atr, "r_dist": cur_atr, "prob": 0.56, "base_risk": 36.0,
+                        "bar_ms": bar_ms, "stop_mult": 1.0, "tgt_mult": 2.8
+                    })
+        except Exception as e:
+            metrics["s4_status"] = f"S4_SKIPPED: {e}"
 
         return metrics, signals
 
@@ -824,6 +885,42 @@ def render_live_dashboard(
 
 
 # ================================================================================
+# SIGNAL DEDUPLICATION + COOLDOWN (OX66)
+# ================================================================================
+
+class SignalDedup:
+    """Prevents stale-signal re-entry loops.
+
+    A signal is unique per (symbol, sleeve_id, direction, bar_ms). Rejects
+    exact duplicates of executed signals AND enforces a per-(symbol, sleeve)
+    cooldown after any execution. In-memory only: a process restart clears
+    memory (documented limitation).
+    """
+
+    def __init__(self, cooldown_sec: float = 6 * 3600):
+        self.cooldown_sec = cooldown_sec
+        self.executed_keys = set()
+        self.last_fire = {}
+
+    @staticmethod
+    def key(sig):
+        return (sig["symbol"], sig["sleeve_id"], sig["direction"], sig.get("bar_ms", 0))
+
+    def is_duplicate(self, sig) -> bool:
+        k = self.key(sig)
+        if k in self.executed_keys:
+            return True
+        ck = (sig["symbol"], sig["sleeve_id"])
+        if time.time() - self.last_fire.get(ck, 0.0) < self.cooldown_sec:
+            return True
+        return False
+
+    def mark(self, sig) -> None:
+        self.executed_keys.add(self.key(sig))
+        self.last_fire[(sig["symbol"], sig["sleeve_id"])] = time.time()
+
+
+# ================================================================================
 # MAIN OPERATIONAL PIPELINE LOOP
 # ================================================================================
 
@@ -843,11 +940,11 @@ def run_live_pipeline(
     ))
 
     broker = BinanceBroker(dry_run=dry_run, account_size=5000.0)
-    broker.connect()
 
     risk_gov = InstitutionalRiskGovernor(initial_capital=5000.0)
     tracker = LivePositionTracker(broker)
     alpha_engine = MultiSleeveAlphaEngine(data_dir=target_dir)
+    dedup = SignalDedup(cooldown_sec=6 * 3600)
 
     # Fetch initial macro regime and BTC benchmark price
     if not broker.connect():
@@ -911,15 +1008,25 @@ def run_live_pipeline(
                     if any(p["symbol"] == sig["symbol"] for p in tracker.positions):
                         continue
 
+                    # OX66: dedup + cooldown (kills stale re-entry loops)
+                    if dedup.is_duplicate(sig):
+                        continue
+
                     # Dynamic Risk Sizing (OX59 regime-aware)
                     risk_usd, _ = risk_gov.get_risk_budget(base_r=sig.get("base_risk", 24.0),
                                                           sleeve_id=slv_id, regime=macro["regime"])
                     if risk_usd <= 0:
                         continue
 
-                    stop_dist = abs(sig["entry_price"] - sig["stop_price"])
-                    if stop_dist <= 0:
+                    # OX66: anchor geometry to the LIVE touch, not the stale bar close
+                    live_entry = float(latest_prices.get(sig["symbol"], sig["entry_price"]))
+                    r_dist = float(sig["r_dist"])
+                    stop_dist = float(sig.get("stop_mult", 1.0)) * r_dist
+                    tgt_dist = float(sig.get("tgt_mult", 2.0)) * r_dist
+                    if stop_dist <= 0 or live_entry <= 0:
                         continue
+                    live_sl = live_entry - sig["direction"] * stop_dist
+                    live_tp = live_entry + sig["direction"] * tgt_dist
 
                     units = risk_usd / stop_dist
 
@@ -927,30 +1034,31 @@ def run_live_pipeline(
                     order_res = broker.execute_trade(
                         binance_symbol=sig["symbol"],
                         direction=sig["direction"],
-                        bin_entry=sig["entry_price"],
-                        bin_sl=sig["stop_price"],
-                        bin_tp=sig["target_price"],
+                        bin_entry=live_entry,
+                        bin_sl=live_sl,
+                        bin_tp=live_tp,
                         strategy=sig["sleeve_name"],
                         risk_capital=risk_usd,
                         units=units
                     )
 
                     if order_res:
+                        dedup.mark(sig)
                         ticket = int(order_res.get("ticket", order_res.get("orderId", 0)))
                         tracker.add_position(
                             symbol=sig["symbol"],
                             sleeve_name=sig["sleeve_name"],
                             sleeve_id=sig["sleeve_id"],
                             direction=sig["direction"],
-                            entry_price=sig["entry_price"],
-                            stop_price=sig["stop_price"],
-                            target_price=sig["target_price"],
-                            r_dist=sig["r_dist"],
+                            entry_price=live_entry,
+                            stop_price=live_sl,
+                            target_price=live_tp,
+                            r_dist=r_dist,
                             risk_usd=risk_usd,
                             units=units,
                             ticket=ticket
                         )
-                        RICH_CONSOLE.print(f"[bold green]🚀 ORDER EXECUTED[/bold green] {sig['symbol']} {sig['sleeve_name']} | Sized: {units:.4f} units ({risk_usd:.2f} USD risk)")
+                        RICH_CONSOLE.print(f"[bold green]🚀 ORDER EXECUTED[/bold green] {sig['symbol']} {sig['sleeve_name']} @ {live_entry:,.2f} (live touch) | Sized: {units:.4f} units ({risk_usd:.2f} USD risk)")
 
             # 6. Render Dashboard
             RICH_CONSOLE.clear()

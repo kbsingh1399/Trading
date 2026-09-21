@@ -1,0 +1,90 @@
+[Numba Core] JIT Compiler initialized and warm in 1072.4 ms.
+
+Processing 11 institutional perpetual assets using Numba JIT Ratchet Engine...
+  [BTCUSDT ] Numba Labeled: 211,189 bars -> 4,922 candidates in 328.87 ms
+  [ETHUSDT ] Numba Labeled: 211,195 bars -> 4,533 candidates in 0.80 ms
+  [XRPUSDT ] Numba Labeled: 211,201 bars -> 3,587 candidates in 0.69 ms
+  [BNBUSDT ] Numba Labeled: 211,206 bars -> 3,668 candidates in 0.73 ms
+  [DOGEUSDT] Numba Labeled: 211,208 bars -> 3,755 candidates in 0.67 ms
+  [ADAUSDT ] Numba Labeled: 211,211 bars -> 3,561 candidates in 0.64 ms
+  [TRXUSDT ] Numba Labeled: 211,213 bars -> 2,959 candidates in 0.60 ms
+  [LINKUSDT] Numba Labeled: 211,214 bars -> 3,804 candidates in 0.75 ms
+  [DOTUSDT ] Numba Labeled: 211,220 bars -> 3,861 candidates in 0.70 ms
+  [LTCUSDT ] Numba Labeled: 211,221 bars -> 3,781 candidates in 0.73 ms
+  [BCHUSDT ] Numba Labeled: 211,226 bars -> 3,790 candidates in 0.86 ms
+
+Completed Multi-Asset Numba Compilation: 42,221 candidates in 3.16 seconds!
+=============================================================================================================================
+FAST NUMBA-POWERED WALK-FORWARD SIMULATION (ALL 20 OOS WINDOWS - TRIPLE SLEEVE + QUANTILE CALIBRATION)
+=============================================================================================================================
+W#  | Window Name                            | Candidates | Trades | Win Rate | Net PnL     | Net ROI   | Max DD  | Verdict
+-----------------------------------------------------------------------------------------------------------------------------
+W01 | Q1 2021 Crypto Bull Run & Stimulus Ign | 1829       | 12     |   50.0%  |   -191.96 USD |   -3.84% |  4.61% | FAIL  
+
+[FAIL-FAST HALT] Window 1 (Q1 2021 Crypto Bull Run & Stimulus Ignition) failed pass criteria! Halting immediately.
+W02 | Q2 2021 May Liquidation Crash & China  | 1839       | 143    |   68.5%  |   +483.69 USD |   +9.67% |  2.50% | FAIL  
+
+[FAIL-FAST HALT] Window 2 (Q2 2021 May Liquidation Crash & China Ban) failed pass criteria! Halting immediately.
+W03 | Q3 2021 El Salvador Tender & Summer Re | 1978       | 39     |   74.4%  |   +525.93 USD |  +10.52% |  3.43% | PASS  
+W04 | Q4 2021 ATH Blowoff & Distribution Pea | 1828       | 8      |   25.0%  |   -220.12 USD |   -4.40% |  4.40% | FAIL  
+
+[FAIL-FAST HALT] Window 4 (Q4 2021 ATH Blowoff & Distribution Peak) failed pass criteria! Halting immediately.
+W05 | Q1 2022 Fed Rate Hike Cycle & Macro Sh | 1784       | 48     |   66.7%  |   +527.35 USD |  +10.55% |  2.32% | PASS  
+W06 | Q2 2022 Terra-Luna Collapse & 3AC Inso | 1547       | 25     |   56.0%  |   -229.43 USD |   -4.59% |  4.64% | FAIL  
+
+[FAIL-FAST HALT] Window 6 (Q2 2022 Terra-Luna Collapse & 3AC Insolvency) failed pass criteria! Halting immediately.
+W07 | Q3 2022 ETH Merge & Dollar Index Surge | 1763       | 20     |   70.0%  |    +84.81 USD |   +1.70% |  3.86% | FAIL  
+
+[FAIL-FAST HALT] Window 7 (Q3 2022 ETH Merge & Dollar Index Surge) failed pass criteria! Halting immediately.
+W08 | Q4 2022 FTX Bankruptcy & Cycle Capitul | 1759       | 22     |   63.6%  |   -111.39 USD |   -2.23% |  4.62% | FAIL  
+
+[FAIL-FAST HALT] Window 8 (Q4 2022 FTX Bankruptcy & Cycle Capitulation) failed pass criteria! Halting immediately.
+W09 | Q1 2023 SVB Bank Run & Short Squeeze R | 1896       | 16     |   50.0%  |   -234.52 USD |   -4.69% |  4.69% | FAIL  
+
+[FAIL-FAST HALT] Window 9 (Q1 2023 SVB Bank Run & Short Squeeze Recovery) failed pass criteria! Halting immediately.
+W10 | Q2 2023 BlackRock Spot ETF Filing & Co | 1793       | 12     |   50.0%  |    -71.98 USD |   -1.44% |  5.25% | FAIL  
+
+[FAIL-FAST HALT] Window 10 (Q2 2023 BlackRock Spot ETF Filing & Compression) failed pass criteria! Halting immediately.
+W11 | Q3 2023 Mid-Summer Flash Flush & Yield | 1819       | 13     |   69.2%  |    +83.56 USD |   +1.67% |  1.54% | FAIL  
+
+[FAIL-FAST HALT] Window 11 (Q3 2023 Mid-Summer Flash Flush & Yield Spike) failed pass criteria! Halting immediately.
+W12 | Q4 2023 Uptober Spot ETF Pre-Run & Ral | 1702       | 9      |   55.6%  |    -39.34 USD |   -0.79% |  4.53% | FAIL  
+
+[FAIL-FAST HALT] Window 12 (Q4 2023 Uptober Spot ETF Pre-Run & Rally) failed pass criteria! Halting immediately.
+W13 | Q1 2024 Spot ETF Inflows & Pre-Halving | 1644       | 10     |   50.0%  |   -179.34 USD |   -3.59% |  4.42% | FAIL  
+
+[FAIL-FAST HALT] Window 13 (Q1 2024 Spot ETF Inflows & Pre-Halving ATH) failed pass criteria! Halting immediately.
+W14 | Q2 2024 Bitcoin Halving & Post-ATH Re- | 1642       | 12     |   50.0%  |   -122.14 USD |   -2.44% |  4.22% | FAIL  
+
+[FAIL-FAST HALT] Window 14 (Q2 2024 Bitcoin Halving & Post-ATH Re-Accumulation) failed pass criteria! Halting immediately.
+W15 | Q3 2024 Global Carry Trade Unwind & 50 | 1754       | 14     |   71.4%  |   +180.22 USD |   +3.60% |  3.17% | FAIL  
+
+[FAIL-FAST HALT] Window 15 (Q3 2024 Global Carry Trade Unwind & 50bps Cut) failed pass criteria! Halting immediately.
+W16 | Q4 2024 US Presidential Election & Meg | 1839       | 24     |   75.0%  |    +88.77 USD |   +1.78% |  6.04% | FAIL  
+
+[FAIL-FAST HALT] Window 16 (Q4 2024 US Presidential Election & Mega Breakout) failed pass criteria! Halting immediately.
+W17 | Q1 2025 Strategic Reserve & Institutio | 1585       | 106    |   65.1%  |   +519.88 USD |  +10.40% |  2.24% | PASS  
+W18 | Q2 2025 Regulatory Clarity & Altcoin M | 1730       | 22     |   72.7%  |   -125.97 USD |   -2.52% |  3.57% | FAIL  
+
+[FAIL-FAST HALT] Window 18 (Q2 2025 Regulatory Clarity & Altcoin Momentum) failed pass criteria! Halting immediately.
+W19 | Q3 2025 Summer Microstructure Volatili | 1744       | 15     |   46.7%  |   -227.91 USD |   -4.56% |  4.56% | FAIL  
+
+[FAIL-FAST HALT] Window 19 (Q3 2025 Summer Microstructure Volatility) failed pass criteria! Halting immediately.
+W20 | Q4 2025 Year-End Macro Flow Rebalancin | 1851       | 25     |   68.0%  |   +516.31 USD |  +10.33% |  2.91% | PASS  
+W21 | Q1 2026 New Year Cross-Asset Flow      | 1635       | 20     |   50.0%  |   +328.45 USD |   +6.57% |  3.51% | FAIL  
+
+[FAIL-FAST HALT] Window 21 (Q1 2026 New Year Cross-Asset Flow) failed pass criteria! Halting immediately.
+W22 | Q2 2026 Modern Microstructure Flow     | 1556       | 4      |   50.0%  |   -131.75 USD |   -2.63% |  3.48% | FAIL  
+
+[FAIL-FAST HALT] Window 22 (Q2 2026 Modern Microstructure Flow) failed pass criteria! Halting immediately.
+W23 | Q3 2026 Live Production Regime         | 1284       | 13     |   84.6%  |    -11.21 USD |   -0.22% |  2.04% | FAIL  
+
+[FAIL-FAST HALT] Window 23 (Q3 2026 Live Production Regime) failed pass criteria! Halting immediately.
+=============================================================================================================================
+NUMBA ENGINE BENCHMARK SUMMARY:
+  Total Walk-Forward Execution Time: 14.21 seconds (across 20 OOS models)
+  Total Trades Taken               : 632
+  Total Cumulative PnL             : +1,441.93 USD (Net ROI: +28.84%)
+  Criteria Compliant Windows Passed: 4 / 23
+=============================================================================================================================
+EXIT_CODE=0

@@ -62,10 +62,13 @@ class BinanceBroker:
 
         if self.use_testnet:
             self.base_url = "https://testnet.binancefuture.com"
+            self.spot_base_url = "https://testnet.binance.vision"
         else:
             self.base_url = "https://fapi.binance.com"
+            self.spot_base_url = "https://api.binance.com"
 
         self.symbol_rules: Dict[str, dict] = {}
+        self.spot_rules: Dict[str, dict] = {}  # OX66: spot LOT_SIZE/PRICE_FILTER/NOTIONAL
         self.valid_perpetuals: set = set()
         self.active_orders: Dict[str, dict] = {}
         self.time_offset = 0
@@ -120,7 +123,7 @@ class BinanceBroker:
                 headers = {"X-MBX-APIKEY": self.api_key}
 
             query_str = urllib.parse.urlencode(req_params)
-            url = f"{self.base_url}{endpoint}"
+            url = f"{base_url or self.base_url}{endpoint}"
             data = None
 
             if method in ("GET", "DELETE"):
@@ -1107,3 +1110,184 @@ class BinanceBroker:
         except Exception as e:
             log.error(f"[BinanceBroker] Failed to fetch last fill for {symbol}: {e}")
         return None
+
+    # ==================================================================
+    # OX66 Mandate 2: SPOT market access + dual-leg carry primitives.
+    # Additive only — no existing futures path is modified. All order
+    # methods are dry_run-safe (simulated fills, zero network) unless the
+    # broker was constructed with dry_run=False AND credentials present.
+    # ==================================================================
+
+    def load_spot_rules(self) -> bool:
+        """Load spot LOT_SIZE / PRICE_FILTER / NOTIONAL into self.spot_rules."""
+        if self.dry_run:
+            return True  # sim path uses caller fixtures / defaults
+        try:
+            res = self._request("GET", "/api/v3/exchangeInfo",
+                                signed=False, max_retries=2,
+                                base_url=self.spot_base_url)
+            if not res or "symbols" not in res:
+                return False
+            for s in res["symbols"]:
+                if s.get("status") != "TRADING" or not s.get("isSpotTradingAllowed", True):
+                    continue
+                sym = s["symbol"]
+                rule = {"qty_prec": s.get("quantityPrecision", 5),
+                        "price_prec": s.get("pricePrecision", 5),
+                        "step_size": 0.0, "min_qty": 0.0,
+                        "tick_size": 0.0, "min_notional": 0.0}
+                for f in s.get("filters", []):
+                    ft = f.get("filterType")
+                    if ft == "LOT_SIZE":
+                        rule["step_size"] = float(f["stepSize"])
+                        rule["min_qty"] = float(f["minQty"])
+                    elif ft == "PRICE_FILTER":
+                        rule["tick_size"] = float(f["tickSize"])
+                    elif ft in ("NOTIONAL", "MIN_NOTIONAL"):
+                        rule["min_notional"] = float(
+                            f.get("minNotional", f.get("notional", 0.0)))
+                self.spot_rules[sym] = rule
+            log.info(f"[Binance] Loaded spot rules for {len(self.spot_rules)} symbols.")
+            return True
+        except Exception as e:
+            log.error(f"[Binance] load_spot_rules failed: {e}")
+            return False
+
+    def _format_spot_qty(self, symbol: str, qty: float) -> float:
+        rules = self.spot_rules.get(
+            symbol, {"qty_prec": 5, "step_size": 0.00001, "min_qty": 0.0})
+        step = rules["step_size"] or 0.00001
+        formatted = round(self._round_step(qty, step, direction="down"),
+                          rules.get("qty_prec", 5))
+        if formatted < rules.get("min_qty", 0.0):
+            log.warning(f"[{symbol}] Spot qty {formatted} below minQty. Rejecting to 0.")
+            return 0.0
+        min_notion = rules.get("min_notional", 0.0)
+        if min_notion and formatted <= 0:
+            return 0.0
+        return formatted
+
+    def _format_spot_price(self, symbol: str, price: float,
+                           direction: str = "nearest") -> float:
+        rules = self.spot_rules.get(symbol)
+        prec = rules.get("price_prec", 5) if rules else 5
+        if rules and rules.get("tick_size"):
+            return round(self._round_step(price, rules["tick_size"], direction), prec)
+        return round(price, prec)
+
+    def get_spot_book(self, symbol: str) -> Optional[Dict[str, float]]:
+        """Public spot BBO (read-only; safe in any mode). Returns bid/ask."""
+        try:
+            res = self._request("GET", "/api/v3/ticker/bookTicker",
+                                params={"symbol": symbol}, signed=False,
+                                max_retries=2, base_url=self.spot_base_url)
+            if res and "bidPrice" in res:
+                return {"bid": float(res["bidPrice"]), "ask": float(res["askPrice"])}
+        except Exception as e:
+            log.warning(f"[Binance] Spot book fetch failed for {symbol}: {e}")
+        return None
+
+    def _sim_fill(self, symbol: str, side: str, qty: float, ref_price: float,
+                  venue: str) -> Optional[dict]:
+        if ref_price is None or ref_price <= 0:
+            log.error(f"[{venue} SIM] Missing ref_price for {symbol}; cannot simulate fill.")
+            return None
+        return {"symbol": symbol, "side": side, "qty": qty,
+                "fill_price": float(ref_price), "status": "FILLED",
+                "orderId": int(time.time() * 1000000) % 2**31,
+                "venue": venue, "simulated": True}
+
+    def place_spot_market(self, symbol: str, side: str, quantity: float,
+                          client_id: str, ref_price: Optional[float] = None) -> Optional[dict]:
+        """Spot MARKET order (BUY/SELL). dry_run → costed sim fill, no network."""
+        qty = self._format_spot_qty(symbol, quantity)
+        if qty <= 0:
+            return None
+        if self.dry_run:
+            return self._sim_fill(symbol, side, qty, ref_price, "spot")
+        if not self.api_key or not self.secret_key:
+            log.error("[Binance] Spot order blocked: missing API credentials.")
+            return None
+        res = self._request("POST", "/api/v3/order", params={
+            "symbol": symbol, "side": side, "type": "MARKET",
+            "quantity": qty, "newClientOrderId": client_id}, signed=True,
+            base_url=self.spot_base_url)
+        if not res:
+            return None
+        try:
+            eq = float(res.get("executedQty", 0.0))
+            cq = float(res.get("cummulativeQuoteQty", 0.0))
+            return {"symbol": symbol, "side": side, "qty": eq,
+                    "fill_price": (cq / eq) if eq > 0 else 0.0,
+                    "status": res.get("status", "UNKNOWN"),
+                    "orderId": res.get("orderId"), "venue": "spot",
+                    "simulated": False, "raw": res}
+        except Exception as e:
+            log.error(f"[Binance] Spot fill parse failed: {e} :: {res}")
+            return None
+
+    def place_perp_market(self, symbol: str, side: str, quantity: float,
+                          client_id: str, ref_price: Optional[float] = None,
+                          reduce_only: bool = False) -> Optional[dict]:
+        """Perp MARKET order (BUY/SELL). dry_run → costed sim fill, no network."""
+        qty = self._format_qty(symbol, quantity)
+        if qty <= 0:
+            return None
+        if self.dry_run:
+            return self._sim_fill(symbol, side, qty, ref_price, "perp")
+        if not self.api_key or not self.secret_key:
+            log.error("[Binance] Perp order blocked: missing API credentials.")
+            return None
+        params = {"symbol": symbol, "side": side, "type": "MARKET",
+                  "quantity": qty, "newClientOrderId": client_id}
+        if reduce_only:
+            params["reduceOnly"] = "true"
+        res = self._request("POST", "/fapi/v1/order", params=params, signed=True)
+        if not res:
+            return None
+        try:
+            return {"symbol": symbol, "side": side,
+                    "qty": float(res.get("executedQty", 0.0)),
+                    "fill_price": float(res.get("avgPrice", 0.0) or 0.0),
+                    "status": res.get("status", "UNKNOWN"),
+                    "orderId": res.get("orderId"), "venue": "perp",
+                    "simulated": False, "raw": res}
+        except Exception as e:
+            log.error(f"[Binance] Perp fill parse failed: {e} :: {res}")
+            return None
+
+    def get_spot_asset_balance(self, asset: str) -> float:
+        """Free spot balance of an asset (live only; dry_run → 0.0)."""
+        if self.dry_run:
+            return 0.0
+        try:
+            res = self._request("GET", "/api/v3/account", signed=True,
+                                base_url=self.spot_base_url)
+            for b in (res or {}).get("balances", []):
+                if b.get("asset") == asset:
+                    return float(b.get("free", 0.0))
+        except Exception as e:
+            log.warning(f"[Binance] Spot balance fetch failed: {e}")
+        return 0.0
+
+    def get_perp_position_amt(self, symbol: str) -> float:
+        """Live perp position amount (live only; dry_run → 0.0)."""
+        if self.dry_run:
+            return 0.0
+        state, amt = self.get_position_state(symbol)
+        return amt if state == "OPEN" else 0.0
+
+    def set_isolated_1x(self, symbol: str) -> bool:
+        """OX66: force ISOLATED margin + 1x leverage (live only; dry_run → True)."""
+        if self.dry_run:
+            return True
+        try:
+            mt = self._request("POST", "/fapi/v1/marginType",
+                               params={"symbol": symbol, "marginType": "ISOLATED"},
+                               signed=True)
+            lv = self._request("POST", "/fapi/v1/leverage",
+                               params={"symbol": symbol, "leverage": 1}, signed=True)
+            return bool(mt is not None and lv is not None)
+        except Exception as e:
+            log.warning(f"[Binance] set_isolated_1x failed for {symbol}: {e}")
+            return False

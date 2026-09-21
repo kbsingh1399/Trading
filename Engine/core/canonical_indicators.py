@@ -687,3 +687,34 @@ def compute_structural_pivots_and_sweeps(
 
     return pdh, pdl, pwh, pwl, pmh, pml, pdl_dist, pdh_dist, pwl_dist, pwh_dist, pdl_sweep_bull, pdh_sweep_bear
 
+
+
+# ------------------------------------------------------------------------------
+# OX66 Mandate 3: unified R-geometry + sleeve taxonomy (research == live)
+# ------------------------------------------------------------------------------
+
+ATR_FLOOR_PCT = 0.012  # minimum R distance = 1.2% of price, everywhere
+
+# Unified sleeve taxonomy (terminal, S4 research, numba engine share these IDs):
+#   1 = S1 dual-model liquidation pullback (+ T2 liq-flush variant in research)
+#   2 = S2 Bollinger volatility expansion (live-only; no research coverage yet)
+#   3 = S3 London/NY ORB & CRT breakout (live-only; no research coverage yet)
+#   4 = S4 structural pivot sweeps + footprint exhaustion
+#   5 = T1 macro Donchian trend breakout (live-only; no research coverage yet)
+SLEEVE_S1_PULLBACK = 1
+SLEEVE_S2_BOLLINGER = 2
+SLEEVE_S3_ORB = 3
+SLEEVE_S4_PIVOT_SWEEP = 4
+SLEEVE_T1_DONCHIAN = 5
+
+
+def apply_atr_floor(atr: np.ndarray, close: np.ndarray,
+                    floor_pct: float = ATR_FLOOR_PCT) -> np.ndarray:
+    """Unify R geometry: R = max(raw ATR, floor_pct * price).
+
+    MUST be used by every engine (research labelers and the live terminal)
+    so backtested stops/targets/ratchets describe live behavior exactly.
+    """
+    atr = np.asarray(atr, dtype=np.float64)
+    close = np.asarray(close, dtype=np.float64)
+    return np.maximum(atr, close * floor_pct)

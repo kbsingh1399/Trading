@@ -1,0 +1,47 @@
+leg,window_id,name,start_eq,end_eq,pnl,roi_pct,max_dd_pct,status
+mandated_8bps_spot,1,Q1 2021 Crypto Bull Run & Stimulus Ignition,5103.67,5486.11,382.44,7.49,0.19,PROFIT
+mandated_8bps_spot,2,Q2 2021 May Liquidation Crash & China Ban,5486.11,5703.79,217.68,3.97,0.22,PROFIT
+mandated_8bps_spot,3,Q3 2021 El Salvador Tender & Summer Rebound,5703.79,5746.61,42.82,0.75,0.13,PROFIT
+mandated_8bps_spot,4,Q4 2021 ATH Blowoff & Distribution Peak,5746.61,5829.66,83.04,1.45,0.07,PROFIT
+mandated_8bps_spot,5,Q1 2022 Fed Rate Hike Cycle & Macro Shock,5829.66,5837.52,7.86,0.13,0.03,PROFIT
+mandated_8bps_spot,6,Q2 2022 Terra-Luna Collapse & 3AC Insolvency,5837.52,5837.52,0.0,0.0,0.0,LOSS
+mandated_8bps_spot,7,Q3 2022 ETH Merge & Dollar Index Surge,5837.52,5837.52,0.0,0.0,0.0,LOSS
+mandated_8bps_spot,8,Q4 2022 FTX Bankruptcy & Cycle Capitulation,5837.52,5837.52,0.0,0.0,0.0,LOSS
+mandated_8bps_spot,9,Q1 2023 SVB Bank Run & Short Squeeze Recovery,5837.52,5845.43,7.92,0.14,0.03,PROFIT
+mandated_8bps_spot,10,Q2 2023 BlackRock Spot ETF Filing & Compression,5845.43,5845.43,0.0,0.0,0.0,LOSS
+mandated_8bps_spot,11,Q3 2023 Mid-Summer Flash Flush & Yield Spike,5845.43,5845.43,0.0,0.0,0.0,LOSS
+mandated_8bps_spot,12,Q4 2023 Uptober Spot ETF Pre-Run & Rally,5845.43,5867.29,21.86,0.37,0.05,PROFIT
+mandated_8bps_spot,13,Q1 2024 Spot ETF Inflows & Pre-Halving ATH,5867.29,5971.09,103.8,1.77,0.11,PROFIT
+mandated_8bps_spot,14,Q2 2024 Bitcoin Halving & Post-ATH Re-Accumulation,5971.09,6004.21,33.13,0.55,0.03,PROFIT
+mandated_8bps_spot,15,Q3 2024 Global Carry Trade Unwind & 50bps Cut,6004.21,6009.05,4.84,0.08,0.03,PROFIT
+mandated_8bps_spot,16,Q4 2024 US Presidential Election & Mega Breakout,6009.05,6023.74,14.69,0.24,0.06,PROFIT
+mandated_8bps_spot,17,Q1 2025 Strategic Reserve & Institutional Wave,6023.74,6031.53,7.79,0.13,0.02,PROFIT
+mandated_8bps_spot,18,Q2 2025 Regulatory Clarity & Altcoin Momentum,6031.53,6031.53,0.0,0.0,0.0,LOSS
+mandated_8bps_spot,19,Q3 2025 Summer Microstructure Volatility,6031.53,6031.53,0.0,0.0,0.0,LOSS
+mandated_8bps_spot,20,Q4 2025 Year-End Macro Flow Rebalancing,6031.53,6031.53,0.0,0.0,0.0,LOSS
+mandated_8bps_spot,21,Q1 2026 New Year Cross-Asset Flow,6031.53,6031.53,0.0,0.0,0.0,LOSS
+mandated_8bps_spot,22,Q2 2026 Modern Microstructure Flow,6031.53,6031.53,0.0,0.0,0.0,LOSS
+mandated_8bps_spot,23,Q3 2026 Live Production Regime,6031.53,6031.53,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,1,Q1 2021 Crypto Bull Run & Stimulus Ignition,5113.68,5494.08,380.4,7.44,0.18,PROFIT
+sensitivity_10bps_spot,2,Q2 2021 May Liquidation Crash & China Ban,5494.08,5702.14,208.06,3.79,0.2,PROFIT
+sensitivity_10bps_spot,3,Q3 2021 El Salvador Tender & Summer Rebound,5702.14,5749.04,46.9,0.82,0.12,PROFIT
+sensitivity_10bps_spot,4,Q4 2021 ATH Blowoff & Distribution Peak,5749.04,5834.96,85.92,1.49,0.05,PROFIT
+sensitivity_10bps_spot,5,Q1 2022 Fed Rate Hike Cycle & Macro Shock,5834.96,5836.71,1.75,0.03,0.02,PROFIT
+sensitivity_10bps_spot,6,Q2 2022 Terra-Luna Collapse & 3AC Insolvency,5836.71,5836.71,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,7,Q3 2022 ETH Merge & Dollar Index Surge,5836.71,5836.71,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,8,Q4 2022 FTX Bankruptcy & Cycle Capitulation,5836.71,5836.71,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,9,Q1 2023 SVB Bank Run & Short Squeeze Recovery,5836.71,5844.31,7.6,0.13,0.04,PROFIT
+sensitivity_10bps_spot,10,Q2 2023 BlackRock Spot ETF Filing & Compression,5844.31,5844.31,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,11,Q3 2023 Mid-Summer Flash Flush & Yield Spike,5844.31,5844.31,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,12,Q4 2023 Uptober Spot ETF Pre-Run & Rally,5844.31,5846.65,2.33,0.04,0.03,PROFIT
+sensitivity_10bps_spot,13,Q1 2024 Spot ETF Inflows & Pre-Halving ATH,5846.65,5932.17,85.52,1.46,0.09,PROFIT
+sensitivity_10bps_spot,14,Q2 2024 Bitcoin Halving & Post-ATH Re-Accumulation,5932.17,5948.07,15.9,0.27,0.06,PROFIT
+sensitivity_10bps_spot,15,Q3 2024 Global Carry Trade Unwind & 50bps Cut,5948.07,5948.07,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,16,Q4 2024 US Presidential Election & Mega Breakout,5948.07,5948.07,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,17,Q1 2025 Strategic Reserve & Institutional Wave,5948.07,5948.07,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,18,Q2 2025 Regulatory Clarity & Altcoin Momentum,5948.07,5948.07,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,19,Q3 2025 Summer Microstructure Volatility,5948.07,5948.07,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,20,Q4 2025 Year-End Macro Flow Rebalancing,5948.07,5948.07,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,21,Q1 2026 New Year Cross-Asset Flow,5948.07,5948.07,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,22,Q2 2026 Modern Microstructure Flow,5948.07,5948.07,0.0,0.0,0.0,LOSS
+sensitivity_10bps_spot,23,Q3 2026 Live Production Regime,5948.07,5948.07,0.0,0.0,0.0,LOSS

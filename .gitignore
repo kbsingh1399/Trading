@@ -13,6 +13,8 @@ Seeding/
 !Engine/artifacts/*.png
 # Allow reports/ equity curve PNGs
 !reports/*.png
+# Allow OX66 S4 audit chart (nested)
+!reports/s4_exhaustion/*.png
 # Allow research papers and quant knowledge PDFs
 !Quant_Knowledge/**
 !papers/**

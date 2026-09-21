@@ -1,0 +1,502 @@
+{
+ "mandated_8bps_spot": {
+  "equity_end": 6031.53,
+  "net_pnl": 1031.53,
+  "roi_pct": 20.63,
+  "cagr_pct": 3.16,
+  "max_dd_pct": 0.22,
+  "sharpe_daily": 4.724,
+  "gross_funding": 1347.27,
+  "fee_drag": 417.57,
+  "basis_pnl": 101.82,
+  "rotations": 198,
+  "notional_rotated": 287976.58,
+  "n_settlements": 6600,
+  "span": [
+   "2020-09-01",
+   "2026-09-09"
+  ],
+  "regimes": [
+   {
+    "window_id": 1,
+    "name": "Q1 2021 Crypto Bull Run & Stimulus Ignition",
+    "start_eq": 5103.67,
+    "end_eq": 5486.11,
+    "pnl": 382.44,
+    "roi_pct": 7.49,
+    "max_dd_pct": 0.19,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 2,
+    "name": "Q2 2021 May Liquidation Crash & China Ban",
+    "start_eq": 5486.11,
+    "end_eq": 5703.79,
+    "pnl": 217.68,
+    "roi_pct": 3.97,
+    "max_dd_pct": 0.22,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 3,
+    "name": "Q3 2021 El Salvador Tender & Summer Rebound",
+    "start_eq": 5703.79,
+    "end_eq": 5746.61,
+    "pnl": 42.82,
+    "roi_pct": 0.75,
+    "max_dd_pct": 0.13,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 4,
+    "name": "Q4 2021 ATH Blowoff & Distribution Peak",
+    "start_eq": 5746.61,
+    "end_eq": 5829.66,
+    "pnl": 83.04,
+    "roi_pct": 1.45,
+    "max_dd_pct": 0.07,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 5,
+    "name": "Q1 2022 Fed Rate Hike Cycle & Macro Shock",
+    "start_eq": 5829.66,
+    "end_eq": 5837.52,
+    "pnl": 7.86,
+    "roi_pct": 0.13,
+    "max_dd_pct": 0.03,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 6,
+    "name": "Q2 2022 Terra-Luna Collapse & 3AC Insolvency",
+    "start_eq": 5837.52,
+    "end_eq": 5837.52,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 7,
+    "name": "Q3 2022 ETH Merge & Dollar Index Surge",
+    "start_eq": 5837.52,
+    "end_eq": 5837.52,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 8,
+    "name": "Q4 2022 FTX Bankruptcy & Cycle Capitulation",
+    "start_eq": 5837.52,
+    "end_eq": 5837.52,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 9,
+    "name": "Q1 2023 SVB Bank Run & Short Squeeze Recovery",
+    "start_eq": 5837.52,
+    "end_eq": 5845.43,
+    "pnl": 7.92,
+    "roi_pct": 0.14,
+    "max_dd_pct": 0.03,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 10,
+    "name": "Q2 2023 BlackRock Spot ETF Filing & Compression",
+    "start_eq": 5845.43,
+    "end_eq": 5845.43,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 11,
+    "name": "Q3 2023 Mid-Summer Flash Flush & Yield Spike",
+    "start_eq": 5845.43,
+    "end_eq": 5845.43,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 12,
+    "name": "Q4 2023 Uptober Spot ETF Pre-Run & Rally",
+    "start_eq": 5845.43,
+    "end_eq": 5867.29,
+    "pnl": 21.86,
+    "roi_pct": 0.37,
+    "max_dd_pct": 0.05,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 13,
+    "name": "Q1 2024 Spot ETF Inflows & Pre-Halving ATH",
+    "start_eq": 5867.29,
+    "end_eq": 5971.09,
+    "pnl": 103.8,
+    "roi_pct": 1.77,
+    "max_dd_pct": 0.11,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 14,
+    "name": "Q2 2024 Bitcoin Halving & Post-ATH Re-Accumulation",
+    "start_eq": 5971.09,
+    "end_eq": 6004.21,
+    "pnl": 33.13,
+    "roi_pct": 0.55,
+    "max_dd_pct": 0.03,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 15,
+    "name": "Q3 2024 Global Carry Trade Unwind & 50bps Cut",
+    "start_eq": 6004.21,
+    "end_eq": 6009.05,
+    "pnl": 4.84,
+    "roi_pct": 0.08,
+    "max_dd_pct": 0.03,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 16,
+    "name": "Q4 2024 US Presidential Election & Mega Breakout",
+    "start_eq": 6009.05,
+    "end_eq": 6023.74,
+    "pnl": 14.69,
+    "roi_pct": 0.24,
+    "max_dd_pct": 0.06,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 17,
+    "name": "Q1 2025 Strategic Reserve & Institutional Wave",
+    "start_eq": 6023.74,
+    "end_eq": 6031.53,
+    "pnl": 7.79,
+    "roi_pct": 0.13,
+    "max_dd_pct": 0.02,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 18,
+    "name": "Q2 2025 Regulatory Clarity & Altcoin Momentum",
+    "start_eq": 6031.53,
+    "end_eq": 6031.53,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 19,
+    "name": "Q3 2025 Summer Microstructure Volatility",
+    "start_eq": 6031.53,
+    "end_eq": 6031.53,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 20,
+    "name": "Q4 2025 Year-End Macro Flow Rebalancing",
+    "start_eq": 6031.53,
+    "end_eq": 6031.53,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 21,
+    "name": "Q1 2026 New Year Cross-Asset Flow",
+    "start_eq": 6031.53,
+    "end_eq": 6031.53,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 22,
+    "name": "Q2 2026 Modern Microstructure Flow",
+    "start_eq": 6031.53,
+    "end_eq": 6031.53,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 23,
+    "name": "Q3 2026 Live Production Regime",
+    "start_eq": 6031.53,
+    "end_eq": 6031.53,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   }
+  ]
+ },
+ "sensitivity_10bps_spot": {
+  "equity_end": 5948.07,
+  "net_pnl": 948.07,
+  "roi_pct": 18.96,
+  "cagr_pct": 2.93,
+  "max_dd_pct": 0.2,
+  "sharpe_daily": 4.433,
+  "gross_funding": 1251.18,
+  "fee_drag": 398.65,
+  "basis_pnl": 95.54,
+  "rotations": 167,
+  "notional_rotated": 241606.04,
+  "n_settlements": 6600,
+  "span": [
+   "2020-09-01",
+   "2026-09-09"
+  ],
+  "regimes": [
+   {
+    "window_id": 1,
+    "name": "Q1 2021 Crypto Bull Run & Stimulus Ignition",
+    "start_eq": 5113.68,
+    "end_eq": 5494.08,
+    "pnl": 380.4,
+    "roi_pct": 7.44,
+    "max_dd_pct": 0.18,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 2,
+    "name": "Q2 2021 May Liquidation Crash & China Ban",
+    "start_eq": 5494.08,
+    "end_eq": 5702.14,
+    "pnl": 208.06,
+    "roi_pct": 3.79,
+    "max_dd_pct": 0.2,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 3,
+    "name": "Q3 2021 El Salvador Tender & Summer Rebound",
+    "start_eq": 5702.14,
+    "end_eq": 5749.04,
+    "pnl": 46.9,
+    "roi_pct": 0.82,
+    "max_dd_pct": 0.12,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 4,
+    "name": "Q4 2021 ATH Blowoff & Distribution Peak",
+    "start_eq": 5749.04,
+    "end_eq": 5834.96,
+    "pnl": 85.92,
+    "roi_pct": 1.49,
+    "max_dd_pct": 0.05,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 5,
+    "name": "Q1 2022 Fed Rate Hike Cycle & Macro Shock",
+    "start_eq": 5834.96,
+    "end_eq": 5836.71,
+    "pnl": 1.75,
+    "roi_pct": 0.03,
+    "max_dd_pct": 0.02,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 6,
+    "name": "Q2 2022 Terra-Luna Collapse & 3AC Insolvency",
+    "start_eq": 5836.71,
+    "end_eq": 5836.71,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 7,
+    "name": "Q3 2022 ETH Merge & Dollar Index Surge",
+    "start_eq": 5836.71,
+    "end_eq": 5836.71,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 8,
+    "name": "Q4 2022 FTX Bankruptcy & Cycle Capitulation",
+    "start_eq": 5836.71,
+    "end_eq": 5836.71,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 9,
+    "name": "Q1 2023 SVB Bank Run & Short Squeeze Recovery",
+    "start_eq": 5836.71,
+    "end_eq": 5844.31,
+    "pnl": 7.6,
+    "roi_pct": 0.13,
+    "max_dd_pct": 0.04,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 10,
+    "name": "Q2 2023 BlackRock Spot ETF Filing & Compression",
+    "start_eq": 5844.31,
+    "end_eq": 5844.31,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 11,
+    "name": "Q3 2023 Mid-Summer Flash Flush & Yield Spike",
+    "start_eq": 5844.31,
+    "end_eq": 5844.31,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 12,
+    "name": "Q4 2023 Uptober Spot ETF Pre-Run & Rally",
+    "start_eq": 5844.31,
+    "end_eq": 5846.65,
+    "pnl": 2.33,
+    "roi_pct": 0.04,
+    "max_dd_pct": 0.03,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 13,
+    "name": "Q1 2024 Spot ETF Inflows & Pre-Halving ATH",
+    "start_eq": 5846.65,
+    "end_eq": 5932.17,
+    "pnl": 85.52,
+    "roi_pct": 1.46,
+    "max_dd_pct": 0.09,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 14,
+    "name": "Q2 2024 Bitcoin Halving & Post-ATH Re-Accumulation",
+    "start_eq": 5932.17,
+    "end_eq": 5948.07,
+    "pnl": 15.9,
+    "roi_pct": 0.27,
+    "max_dd_pct": 0.06,
+    "status": "PROFIT"
+   },
+   {
+    "window_id": 15,
+    "name": "Q3 2024 Global Carry Trade Unwind & 50bps Cut",
+    "start_eq": 5948.07,
+    "end_eq": 5948.07,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 16,
+    "name": "Q4 2024 US Presidential Election & Mega Breakout",
+    "start_eq": 5948.07,
+    "end_eq": 5948.07,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 17,
+    "name": "Q1 2025 Strategic Reserve & Institutional Wave",
+    "start_eq": 5948.07,
+    "end_eq": 5948.07,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 18,
+    "name": "Q2 2025 Regulatory Clarity & Altcoin Momentum",
+    "start_eq": 5948.07,
+    "end_eq": 5948.07,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 19,
+    "name": "Q3 2025 Summer Microstructure Volatility",
+    "start_eq": 5948.07,
+    "end_eq": 5948.07,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 20,
+    "name": "Q4 2025 Year-End Macro Flow Rebalancing",
+    "start_eq": 5948.07,
+    "end_eq": 5948.07,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 21,
+    "name": "Q1 2026 New Year Cross-Asset Flow",
+    "start_eq": 5948.07,
+    "end_eq": 5948.07,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 22,
+    "name": "Q2 2026 Modern Microstructure Flow",
+    "start_eq": 5948.07,
+    "end_eq": 5948.07,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   },
+   {
+    "window_id": 23,
+    "name": "Q3 2026 Live Production Regime",
+    "start_eq": 5948.07,
+    "end_eq": 5948.07,
+    "pnl": 0.0,
+    "roi_pct": 0.0,
+    "max_dd_pct": 0.0,
+    "status": "LOSS"
+   }
+  ]
+ }
+}
