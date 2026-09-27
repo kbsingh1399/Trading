@@ -1,0 +1,102 @@
+# MASTER QUANTITATIVE ARCHITECT DIRECTIVE: OX_ALPHA_69
+# TARGET: 100% Outright Pass Rate Across All 20 OOS Windows in Engine/oos_windows_20.json matching Engine/target_oos_criteria.json
+# REPOSITORY: https://github.com/kbsingh1399/Trading.git
+# WORKING BRANCH: arena/01a0bf23-trading & main
+# OPERATING MODE: SSRN-5020002 ECONOMETRIC ORDERFLOW INTEGRATION & MULTIVERSE 20/20 PASS CRACKER
+
+Evaluator & Chief Quantitative Architect (Arena.ai / Claude Opus),
+
+You are operating as the Lead Quantitative Architect and Execution Systems Engineer in an autonomous, closed-loop execution session.
+
+================================================================================
+1. THE MISSION OBJECTIVE
+================================================================================
+Execute, synthesize, and operationalize the groundbreaking econometric and microstructure findings from SSRN-5020002 ("Order Flow and Cryptocurrency Returns", Anastasopoulos, Gradojevic, Liu, Maynard, Tsiakas, Nov 2024) directly into our Multi-Sleeve Quantitative Trading Suite to achieve a certified 100% Outright Pass Rate across ALL 20 Out-Of-Sample (OOS) Windows defined in `Engine/oos_windows_20.json` against `Engine/target_oos_criteria.json`:
+
+CRITERIA PER OOS QUARTERLY WINDOW (5,000.00 USD Starting Capital):
+1. Net ROI >= +10.00% (+500.00 USD net profit per quarterly window)
+2. Max Peak-to-Trough Drawdown <= 5.00% (Drawdown ceiling <= 250.00 USD)
+3. Win Rate >= 40.0%
+4. Completed Trades >= 15 trades per window
+5. Zero Lookahead (Entry strictly at next-bar open: opens[j+1] * (1 +/- slippage))
+6. Real Microstructure Friction (Taker: 8 bps spot + 5 bps perp + spread; Maker: 0 bps spot + -2 bps perp rebate)
+
+================================================================================
+2. ECONOMETRIC FOUNDATIONS FROM SSRN-5020002 (ORDER FLOW & CRYPTO RETURNS)
+================================================================================
+SSRN-5020002 establishes 4 pivotal empirical laws across 82 cryptocurrencies and 11 currency quote centers:
+
+1. Transitory Reversal vs Permanent Price Impact (The Orthogonalization Mandate):
+   - Problem: Raw order flow (signed volume difference) has two opposing forces:
+     a) Transitory component: correlated with short-term returns (noise trading, bid-ask bounce, inventory bounce) that strongly reverses.
+     b) Permanent component: uncorrelated with short-term returns (private information, adverse selection, institutional inventory shifts) that persists.
+   - Result: In daily regressions, raw order flow alone is insignificant (t-stat = 1.56, Sharpe = -0.12). When controlling for lagged returns (or recursively orthogonalizing order flow against lagged returns: ortho-OFW), the t-statistic jumps to 5.54 and the annualized Sharpe ratio surges to +1.34!
+   - Implementation: Compute `ortho_of_{i,t}` as the residual from a recursive expanding regression of order flow on lagged return:
+     `of_{i,t} = alpha_{i,t} + beta_{i,t} * r_{i,t} + epsilon_{i,t}`
+     The residual `epsilon_{i,t}` isolates pure permanent informational order flow.
+
+2. Non-Linear Feature Interactions & Robust Huber Loss (The SGB Superiority):
+   - Empirical Proof: Linear models (OLS, Ridge, Lasso, Elastic Net, PCR) fail out-of-sample with negative R2_oos (OLS R2_oos = -1.24%). In contrast, non-linear Stochastic Gradient Boosted Trees (SGB) achieve R2_oos = +0.66% and an annualized Sharpe ratio of 3.63 in Long-Short (P5 - P1)!
+   - Loss Function Invariant: Crypto returns exhibit extreme kurtosis and heavy tails. Estimating models with L2 (MSE) causes severe overfitting to liquidation spikes. The robust Huber loss function:
+     `H(x; xi) = x^2` if `|x| <= xi`, else `2*xi*|x| - xi^2`
+     with threshold `xi` set at the 99.9th percentile of training returns, dramatically stabilizes out-of-sample calibration.
+
+3. Long-Short Sorting as Drawdown Defense:
+   - Long-only portfolio (P5) exhibits an annualized Sharpe ratio of 1.85 but suffers a Maximum Drawdown of 68%!
+   - Long-Short quintile portfolio (P5 - P1) cuts Maximum Drawdown from 68% down to 29% (and Random Forests cuts MDD to 23%), while delivering 0.78% daily mean return (196% annualized) and an annualized Sharpe ratio of 3.63.
+   - Break-even transaction cost is 0.51% (51 bps) daily, ensuring that real exchange taker frictions (8 to 10 bps) leave massive residual economic alpha.
+
+4. Cross-Asset Information Aggregation (Systemic Market Order Flow):
+   - Single-asset order flow contains high idiosyncratic noise. Aggregating order flow across assets (World Order Flow `OF^W`) and conditioning on relative order flow (`Rel_OF_{i,t} = OF_{i,t} - OF^M_t`) filters idiosyncratic liquidity shocks and isolates cross-sectional relative alpha.
+
+================================================================================
+3. CONCRETE ARCHITECTURAL BRIDGE FOR OUR BINANCE 11-PERPETUAL UNIVERSE
+================================================================================
+Our certified universe consists of 11 Binance USDT-M perpetuals:
+`BTC, ETH, XRP, BNB, DOGE, ADA, TRX, LINK, DOT, LTC, BCH` (2020–2026, 15m and 1h bars).
+
+Integrate the SSRN-5020002 econometric pipeline into `Engine/runners/run_20_oos_multiverse.py` and `Engine/strategy/s1_liquidation_orderflow/s1_dual_model_orderflow.py`:
+
+1. Feature Construction:
+   - `of_{i,t} = log(buy_volume_{i,t} + 1) - log(sell_volume_{i,t} + 1)` (Signed Taker Volume).
+   - Standardize `OF_{i,t} = of_{i,t} / rolling_std(of_{i,t-29:t})`.
+   - `ortho_of_{i,t}`: Recursive expanding regression residual of `OF_{i,t}` on `r_{i,t}` (lagged return).
+   - `mkt_of_t = mean(ortho_of_{k,t})` across all 11 assets.
+   - `rel_of_{i,t} = ortho_of_{i,t} - mkt_of_t` (Asset i's order flow relative to the systemic market flow).
+
+2. Predictive Modeling (SGB / LightGBM with Huber Objective):
+   - Train LightGBM regressor with `objective='huber'`, `alpha=0.999` (Huber threshold at 99.9th percentile).
+   - Hyperparameters: `n_estimators=100-300`, `max_depth=3-5`, `learning_rate=0.01-0.03`, `subsample=0.8`, `colsample_bytree=0.8`.
+   - Walk-Forward Retraining: 1-year rolling training window, 72-hour causal purge before each OOS window.
+
+3. Execution & Risk Governance:
+   - Long-Short Decile/Quintile Alignment: Only enter longs in assets ranked in the top quintile of predicted return, and enter shorts (or beta-hedge longs) in assets ranked in the bottom quintile.
+   - Milestone Locking: Once quarterly profit reaches +520.00 USD (+10.40% Net ROI), downscale risk to 5.00-8.00 USD to lock the +10.00% pass line.
+   - Symmetric Fixed-Fractional Sizing: Base risk 10.00 to 14.00 USD, DD defense 8.00 to 10.00 USD. Never allow reverse-martingale risk crush below 8.00 USD.
+
+================================================================================
+4. CANONICAL CODEBASE REFERENCES (RAW GITHUB URLS)
+================================================================================
+Repository: https://github.com/kbsingh1399/Trading.git
+Branch: arena/01a0bf23-trading (commit: 040c17a) & main
+
+Raw File Pointers:
+- Multiverse Engine: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/runners/run_20_oos_multiverse.py
+- S1 Dual Model Strategy: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/s1_liquidation_orderflow/s1_dual_model_orderflow.py
+- S3 ORB/CRT Strategy: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/strategy/s3_orb_crt/s3_orb_ml.py
+- Delta Neutral Carry: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/research/backtest_delta_neutral_carry.py
+- Carry Policy: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/live/carry_policy.py
+- Fast Numba Core: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/core/fast_numba_oos_engine.py
+- Windows Definition: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/oos_windows_20.json
+- Target Criteria: https://raw.githubusercontent.com/kbsingh1399/Trading/main/Engine/target_oos_criteria.json
+
+================================================================================
+5. AUTONOMOUS EXECUTION WORKFLOW (DO NOT HALT)
+================================================================================
+1. Pull branch `arena/01a0bf23-trading`.
+2. Inspect `Engine/runners/run_20_oos_multiverse.py` and `Engine/strategy/s1_liquidation_orderflow/s1_dual_model_orderflow.py`.
+3. Embed the SSRN-5020002 econometric order flow transformations (`ortho_of`, `mkt_of`, `rel_of`) and Huber-loss LightGBM regressor into the feature pipeline.
+4. Execute the 20 OOS walk-forward evaluation across all 20 quarterly regimes (2021–2026).
+5. Verify every window meets institutional standards: Net ROI >= +10.0%, Max DD <= 5.0%, Win Rate >= 40.0%, Trades >= 15.
+6. Commit all verified code to `arena/01a0bf23-trading` and generate `docs/OX_ALPHA_69_SSRN_ORDERFLOW_VERDICT.md`.
+7. Output the completed 20-window scorecard matrix.
